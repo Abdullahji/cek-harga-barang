@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#8B0000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<title>Cek Harga Barang</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f2f2f2;
+    margin: 0;
+}
+
+.box {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 15px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+h3 { margin: 5px 0 10px; }
+
+button {
+    background: #8B0000;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.input-group {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+input:focus {
+    border-color: #8B0000;
+    outline: none;
+}
+
+#preview {
+    width: 100%;
+    margin-top: 10px;
+    display: none;
+    border-radius: 10px;
+}
+
+.wrapper { position: relative; }
+
+.suggest-box {
+    position: absolute;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 99;
+}
+
+.suggest-box:empty { display: none; }
+
+.suggest-item {
+    padding: 10px;
+    text-align: left;
+}
+
+.suggest-item:hover { background: #eee; }
+
+#nama {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.price {
+    font-size: 32px;
+    color: green;
+}
+
+#gambar {
+    width: 100%;
+    max-width: 220px;
+    height: 220px;
+    object-fit: contain;
+    margin: 15px auto;
+    display: none;
+}
+
+button:last-of-type {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.loading {
+    font-size: 13px;
+    color: orange;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h3>CEK HARGA BARANG</h3>
+<div id="loading" class="loading">⏳ Loading...</div>
+
+<button onclick="startScanner()">📷 Scan Barcode</button>
+<div id="preview"></div>
+
+<hr>
+
+<div class="wrapper">
+    <div class="input-group">
+        <input id="kode" placeholder="Scan / input barcode">
+        <button onclick="cekKode()">CEK</button>
+    </div>
+    <div id="suggestKode" class="suggest-box"></div>
+</div>
+
+<div class="wrapper">
+    <div class="input-group">
+        <input id="namaSearch" placeholder="Cari nama barang">
+        <button onclick="cekNama()">CARI</button>
+    </div>
+    <div id="suggestNama" class="suggest-box"></div>
+</div>
+
+<hr>
+
+<button onclick="resetData()">HAPUS</button>
+
+<div id="nama">-</div>
+<div id="harga" class="price">Rp 0</div>
+<img id="gambar">
+
+</div>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+let data = {};
+let ready = false;
+let scanner;
+
+const kodeInput = document.getElementById("kode");
+const namaInput = document.getElementById("namaSearch");
+const preview = document.getElementById("preview");
+const gambar = document.getElementById("gambar");
+const namaText = document.getElementById("nama");
+const hargaText = document.getElementById("harga");
+
+// 🔥 AUTO LOAD DATA (HYBRID)
+function loadData() {
+
+  // Mode Apps Script
+  if (typeof google !== "undefined" && google.script) {
+    google.script.run.withSuccessHandler(res => {
+      data = res;
+      ready = true;
+      document.getElementById("loading").style.display = "none";
+    }).getData();
+
+  } else {
+    // Mode Vercel / Web biasa
+    fetch("https://script.google.com/macros/s/AKfycbw2GBe6YRDvTiq07vWojw1dPWwIgvPVrgTmAVUHwOhCFU7bzII-mFQtdUSsYN7o9H8-_A/exec?api=1")
+      .then(res => res.json())
+      .then(res => {
+        data = res;
+        ready = true;
+        document.getElementById("loading").style.display = "none";
+      })
+      .catch(err => {
+        alert("Gagal load data");
+        console.error(err);
+      });
+  }
+}
+
+loadData();
+
+// FORMAT RUPIAH
+function rupiah(x){
+    return (x || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");
+}
+
+// FIX LINK GAMBAR DRIVE
+function convertDriveLink(url){
+    if(!url) return "";
+    let match = url.match(/[-\w]{25,}/);
+    if(match){
+        return "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
+    }
+    return url;
+}
+
+// TAMPIL DATA
+function tampil(item, kode){
+    namaText.innerText = item.nama;
+    hargaText.innerText = "Rp " + rupiah(item.harga);
+
+    kodeInput.value = kode;
+    namaInput.value = item.nama;
+
+    let imgUrl = convertDriveLink(item.gambar);
+
+    if(imgUrl){
+        gambar.src = imgUrl;
+        gambar.style.display = "block";
+        gambar.onerror = () => gambar.style.display = "none";
+    } else {
+        gambar.style.display = "none";
+    }
+}
+
+// CEK KODE
+function cekKode(){
+    if(!ready) return alert("Data belum siap");
+
+    let kode = kodeInput.value;
+    if(data[kode]){
+        tampil(data[kode], kode);
+    } else {
+        alert("Barang tidak ditemukan");
+    }
+}
+
+// CEK NAMA
+function cekNama(){
+    if(!ready) return;
+
+    let key = namaInput.value.toLowerCase();
+
+    let found = Object.keys(data).find(k =>
+        data[k].nama.toLowerCase().includes(key)
+    );
+
+    if(found) tampil(data[found], found);
+}
+
+// AUTOCOMPLETE
+function suggestKode(){
+    let key = kodeInput.value.toLowerCase();
+    suggestBox("suggestKode", Object.keys(data)
+        .filter(k => k.toLowerCase().includes(key))
+        .map(k => ({kode:k, nama:data[k].nama})), true);
+}
+
+function suggestNama(){
+    let key = namaInput.value.toLowerCase();
+    suggestBox("suggestNama", Object.keys(data)
+        .filter(k => data[k].nama.toLowerCase().includes(key))
+        .map(k => ({kode:k, nama:data[k].nama})));
+}
+
+function suggestBox(id, list, showKode=false){
+    let box = document.getElementById(id);
+    box.innerHTML = "";
+
+    list.slice(0,5).forEach(item => {
+        let div = document.createElement("div");
+        div.className = "suggest-item";
+        div.innerText = showKode ? item.kode + " - " + item.nama : item.nama;
+
+        div.onclick = () => {
+            box.innerHTML = "";
+            tampil(data[item.kode], item.kode);
+        };
+
+        box.appendChild(div);
+    });
+}
+
+// RESET
+function resetData(){
+    kodeInput.value = "";
+    namaInput.value = "";
+    namaText.innerText = "-";
+    hargaText.innerText = "Rp 0";
+    gambar.style.display = "none";
+
+    document.querySelectorAll(".suggest-box")
+        .forEach(b => b.innerHTML = "");
+}
+
+// SCANNER
+function startScanner(){
+    if(!ready) return alert("Data belum siap");
+
+    preview.style.display = "block";
+    scanner = new Html5Qrcode("preview");
+
+    scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        text => {
+            kodeInput.value = text;
+            stopScanner();
+            cekKode();
+        }
+    ).catch(err => alert("Kamera gagal: " + err));
+}
+
+function stopScanner(){
+    if(scanner){
+        scanner.stop().then(()=> preview.style.display="none");
+    }
+}
+
+// EVENT
+let delay;
+
+kodeInput.addEventListener("input", () => {
+    clearTimeout(delay);
+    delay = setTimeout(suggestKode, 200);
+});
+
+namaInput.addEventListener("input", () => {
+    clearTimeout(delay);
+    delay = setTimeout(suggestNama, 200);
+});
+
+kodeInput.addEventListener("keypress", e => {
+    if(e.key==="Enter") cekKode();
+});
+
+namaInput.addEventListener("keypress", e => {
+    if(e.key==="Enter") cekNama();
+});
+
+document.addEventListener("click", e => {
+    if(!e.target.closest(".wrapper")){
+        document.querySelectorAll(".suggest-box")
+        .forEach(b => b.innerHTML = "");
+    }
+});
+</script>
+
+</body>
+</html>

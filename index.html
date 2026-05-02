@@ -1,357 +1,266 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<meta name="theme-color" content="#8B0000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-
-<title>Cek Harga Barang</title>
-
-<style>
-body {
-    font-family: Arial;
-    background: #f2f2f2;
-    margin: 0;
-}
-
-.box {
-    width: 100%;
-    max-width: 420px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 15px;
-    min-height: 100vh;
-    box-sizing: border-box;
-    text-align: center;
-}
-
-h3 { margin: 5px 0 10px; }
-
-button {
-    background: #8B0000;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.input-group {
-    display: flex;
-    gap: 8px;
-    margin: 8px 0;
-}
-
-input {
-    flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-input:focus {
-    border-color: #8B0000;
-    outline: none;
-}
-
-#preview {
-    width: 100%;
-    margin-top: 10px;
-    display: none;
-    border-radius: 10px;
-}
-
-.wrapper { position: relative; }
-
-.suggest-box {
-    position: absolute;
-    width: 100%;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    max-height: 150px;
-    overflow-y: auto;
-    z-index: 99;
-}
-
-.suggest-box:empty { display: none; }
-
-.suggest-item {
-    padding: 10px;
-    text-align: left;
-}
-
-.suggest-item:hover { background: #eee; }
-
-#nama {
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-.price {
-    font-size: 32px;
-    color: green;
-}
-
-#gambar {
-    width: 100%;
-    max-width: 220px;
-    height: 220px;
-    object-fit: contain;
-    margin: 15px auto;
-    display: none;
-}
-
-button:last-of-type {
-    width: 100%;
-    margin-top: 10px;
-}
-
-.loading {
-    font-size: 13px;
-    color: orange;
-}
-</style>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .animate-bounce-slow { animation: bounce 3s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); } }
+  </style>
 </head>
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-10">
 
-<body>
-
-<div class="box">
-
-<h3>CEK HARGA BARANG</h3>
-<div id="loading" class="loading">⏳ Loading...</div>
-
-<button onclick="startScanner()">📷 Scan Barcode</button>
-<div id="preview"></div>
-
-<hr>
-
-<div class="wrapper">
-    <div class="input-group">
-        <input id="kode" placeholder="Scan / input barcode">
-        <button onclick="cekKode()">CEK</button>
+  <div class="max-w-md mx-auto px-4 pt-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 uppercase">Cek Harga Barang</h1>
     </div>
-    <div id="suggestKode" class="suggest-box"></div>
-</div>
 
-<div class="wrapper">
-    <div class="input-group">
-        <input id="namaSearch" placeholder="Cari nama barang">
-        <button onclick="cekNama()">CARI</button>
+    <!-- Loading State -->
+    <div id="loader" class="flex items-center justify-center gap-3 p-4 mb-6 bg-amber-50 border border-amber-100 rounded-2xl text-amber-700 shadow-sm">
+      <i data-lucide="loader-2" class="animate-spin w-5 h-5"></i>
+      <span class="text-sm font-semibold">Menghubungkan ke Database...</span>
     </div>
-    <div id="suggestNama" class="suggest-box"></div>
-</div>
 
-<hr>
+    <!-- Main Buttons -->
+    <div class="space-y-4">
+      <button onclick="startScanner()" class="w-full bg-[#8B0000] hover:bg-[#600000] text-white py-4 rounded-2xl font-bold shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+        <i data-lucide="camera"></i> SCAN BARCODE
+      </button>
 
-<button onclick="resetData()">HAPUS</button>
+      <div id="scanner-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-square shadow-2xl">
+        <div id="reader" style="width: 100%"></div>
+        <button onclick="stopScanner()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
+          <i data-lucide="x-circle"></i>
+        </button>
+      </div>
 
-<div id="nama">-</div>
-<div id="harga" class="price">Rp 0</div>
-<img id="gambar">
+      <div class="pt-4 space-y-4">
+        <!-- Input Barcode -->
+        <div class="relative group">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block">Barcode Manual</label>
+          <div class="flex gap-2">
+            <input id="kode" type="text" placeholder="Masukkan Kode..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#8B0000] focus:outline-none text-sm font-medium">
+            <button onclick="cekKode()" class="bg-slate-800 text-white px-6 font-bold rounded-xl active:scale-95">CEK</button>
+          </div>
+          <div id="suggestKode" class="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl hidden"></div>
+        </div>
 
-</div>
+        <!-- Input Nama -->
+        <div class="relative group">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block">Cari Nama</label>
+          <div class="flex gap-2">
+            <input id="namaSearch" type="text" placeholder="Cari Nama Barang..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#8B0000] focus:outline-none text-sm font-medium">
+            <button onclick="cekNama()" class="bg-slate-800 text-white px-6 font-bold rounded-xl active:scale-95">CARI</button>
+          </div>
+          <div id="suggestNama" class="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl hidden"></div>
+        </div>
+      </div>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+      <button onclick="resetAll()" class="w-full flex items-center justify-center gap-2 py-3 text-slate-400 font-bold hover:text-slate-600">
+        <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus
+      </button>
 
-<script>
-let data = {};
-let ready = false;
-let scanner;
+      <hr class="border-slate-200">
 
-const kodeInput = document.getElementById("kode");
-const namaInput = document.getElementById("namaSearch");
-const preview = document.getElementById("preview");
-const gambar = document.getElementById("gambar");
-const namaText = document.getElementById("nama");
-const hargaText = document.getElementById("harga");
+      <!-- Result Card -->
+      <div id="result-card" class="hidden">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden ring-1 ring-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div class="bg-[#8B0000] p-6 text-center">
+            <p class="text-[10px] font-bold text-white/60 tracking-[0.2em] uppercase mb-1">Ditemukan</p>
+            <h2 id="res-nama" class="text-white text-lg font-black uppercase leading-tight">NAMA BARANG</h2>
+          </div>
+          <div class="p-6 text-center">
+            <div class="bg-slate-50 rounded-2xl mb-6 flex items-center justify-center p-4 min-h-[180px]">
+               <img id="res-img" class="max-h-[180px] object-contain hidden">
+               <div id="img-placeholder" class="text-slate-300 flex flex-col items-center">
+                 <i data-lucide="package-search" class="w-16 h-16 mb-2"></i>
+                 <span class="text-[10px] font-bold uppercase tracking-widest">Tidak Ada Foto</span>
+               </div>
+            </div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Harga Terkini</p>
+            <div id="res-harga" class="text-4xl font-black text-emerald-600 tracking-tighter mb-4">Rp 0</div>
+            <div id="res-kode" class="inline-block bg-slate-100 px-4 py-1.5 rounded-full text-[10px] font-bold text-slate-500 tracking-widest uppercase">KODE: 12345</div>
+          </div>
+        </div>
+      </div>
 
-// 🔥 AUTO LOAD DATA (HYBRID)
-function loadData() {
+    </div>
+  </div>
 
-  // Mode Apps Script
-  if (typeof google !== "undefined" && google.script) {
-    google.script.run.withSuccessHandler(res => {
-      data = res;
-      ready = true;
-      document.getElementById("loading").style.display = "none";
-    }).getData();
+  <!-- Modal Interaktif -->
+  <div id="modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl transform transition-all scale-95 opacity-0 duration-300" id="modal-content">
+      <div id="modal-icon" class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full"></div>
+      <h3 id="modal-title" class="text-xl font-extrabold mb-2 text-slate-800">Judul</h3>
+      <p id="modal-msg" class="text-slate-500 font-medium mb-8 leading-relaxed">Pesan error atau info disini.</p>
+      <button onclick="closeModal()" id="modal-btn" class="w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg active:scale-95 transition-transform">Tutup</button>
+    </div>
+  </div>
 
-  } else {
-    // Mode Vercel / Web biasa
-    fetch("https://script.google.com/macros/s/AKfycbw2GBe6YRDvTiq07vWojw1dPWwIgvPVrgTmAVUHwOhCFU7bzII-mFQtdUSsYN7o9H8-_A/exec?api=1")
-      .then(res => res.json())
-      .then(res => {
-        data = res;
-        ready = true;
-        document.getElementById("loading").style.display = "none";
-      })
-      .catch(err => {
-        alert("Gagal load data");
-        console.error(err);
-      });
-  }
-}
+  <script>
+    let data = {};
+    let isReady = false;
+    let html5QrCode;
 
-loadData();
+    // Inisialisasi Ikon Lucide
+    lucide.createIcons();
 
-// FORMAT RUPIAH
-function rupiah(x){
-    return (x || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,".");
-}
-
-// FIX LINK GAMBAR DRIVE
-function convertDriveLink(url){
-    if(!url) return "";
-    let match = url.match(/[-\w]{25,}/);
-    if(match){
-        return "https://drive.google.com/thumbnail?id=" + match[0] + "&sz=w1000";
+    // Fungsi Load Data
+    function loadData() {
+      if (typeof google !== "undefined" && google.script) {
+        google.script.run.withSuccessHandler(res => {
+          data = res;
+          isReady = true;
+          document.getElementById('loader').classList.add('hidden');
+        }).getData();
+      } else {
+        // Fallback untuk testing browser biasa
+        fetch("https://script.google.com/macros/s/AKfycbw2GBe6YRDvTiq07vWojw1dPWwIgvPVrgTmAVUHwOhCFU7bzII-mFQtdUSsYN7o9H8-_A/exec?api=1")
+          .then(res => res.json())
+          .then(res => {
+            data = res;
+            isReady = true;
+            document.getElementById('loader').classList.add('hidden');
+          });
+      }
     }
-    return url;
-}
+    loadData();
 
-// TAMPIL DATA
-function tampil(item, kode){
-    namaText.innerText = item.nama;
-    hargaText.innerText = "Rp " + rupiah(item.harga);
+    // Modal Controller
+    function showModal(title, msg, type = 'error') {
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content');
+      const icon = document.getElementById('modal-icon');
+      const btn = document.getElementById('modal-btn');
+      
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-msg').innerText = msg;
+      
+      modal.classList.remove('hidden');
+      setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 10);
+      setTimeout(() => content.classList.replace('opacity-0', 'opacity-100'), 10);
 
-    kodeInput.value = kode;
-    namaInput.value = item.nama;
-
-    let imgUrl = convertDriveLink(item.gambar);
-
-    if(imgUrl){
-        gambar.src = imgUrl;
-        gambar.style.display = "block";
-        gambar.onerror = () => gambar.style.display = "none";
-    } else {
-        gambar.style.display = "none";
+      if (type === 'error') {
+        icon.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-red-100 text-red-600";
+        icon.innerHTML = '<i data-lucide="x-circle" style="width:40px;height:40px"></i>';
+        btn.className = "w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg bg-[#8B0000]";
+      } else {
+        icon.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-amber-100 text-amber-600";
+        icon.innerHTML = '<i data-lucide="alert-circle" style="width:40px;height:40px"></i>';
+        btn.className = "w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg bg-amber-600";
+      }
+      lucide.createIcons();
     }
-}
 
-// CEK KODE
-function cekKode(){
-    if(!ready) return alert("Data belum siap");
-
-    let kode = kodeInput.value;
-    if(data[kode]){
-        tampil(data[kode], kode);
-    } else {
-        alert("Barang tidak ditemukan");
+    function closeModal() {
+      const content = document.getElementById('modal-content');
+      content.classList.replace('scale-100', 'scale-95');
+      content.classList.replace('opacity-100', 'opacity-0');
+      setTimeout(() => document.getElementById('modal').classList.add('hidden'), 300);
     }
-}
 
-// CEK NAMA
-function cekNama(){
-    if(!ready) return;
+    // Logic Tampil Data
+    function formatIDR(val) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
+    }
 
-    let key = namaInput.value.toLowerCase();
+    function display(key) {
+      const item = data[key];
+      if (!item) return;
 
-    let found = Object.keys(data).find(k =>
-        data[k].nama.toLowerCase().includes(key)
-    );
+      document.getElementById('result-card').classList.remove('hidden');
+      document.getElementById('res-nama').innerText = item.nama;
+      document.getElementById('res-harga').innerText = formatIDR(item.harga);
+      document.getElementById('res-kode').innerText = "KODE: " + key;
 
-    if(found) tampil(data[found], found);
-}
+      const img = document.getElementById('res-img');
+      const placeholder = document.getElementById('img-placeholder');
+      
+      if (item.gambar) {
+        let driveId = item.gambar.match(/[-\w]{25,}/);
+        img.src = driveId ? "https://drive.google.com/thumbnail?id=" + driveId[0] + "&sz=w1000" : item.gambar;
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        img.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+      
+      document.getElementById('kode').value = key;
+      document.getElementById('namaSearch').value = item.nama;
+      hideSuggest();
+    }
 
-// AUTOCOMPLETE
-function suggestKode(){
-    let key = kodeInput.value.toLowerCase();
-    suggestBox("suggestKode", Object.keys(data)
-        .filter(k => k.toLowerCase().includes(key))
-        .map(k => ({kode:k, nama:data[k].nama})), true);
-}
+    // Event Handlers
+    function cekKode() {
+      let val = document.getElementById('kode').value;
+      if (data[val]) display(val);
+      else showModal("Barang Tidak Ada", `Kode ${val} tidak ditemukan di database.`, 'error');
+    }
 
-function suggestNama(){
-    let key = namaInput.value.toLowerCase();
-    suggestBox("suggestNama", Object.keys(data)
-        .filter(k => data[k].nama.toLowerCase().includes(key))
-        .map(k => ({kode:k, nama:data[k].nama})));
-}
+    function cekNama() {
+      let val = document.getElementById('namaSearch').value.toLowerCase();
+      let key = Object.keys(data).find(k => data[k].nama.toLowerCase().includes(val));
+      if (key) display(key);
+      else showModal("Pencarian Gagal", "Barang dengan nama tersebut tidak ditemukan.", 'warning');
+    }
 
-function suggestBox(id, list, showKode=false){
-    let box = document.getElementById(id);
-    box.innerHTML = "";
-
-    list.slice(0,5).forEach(item => {
-        let div = document.createElement("div");
-        div.className = "suggest-item";
-        div.innerText = showKode ? item.kode + " - " + item.nama : item.nama;
-
-        div.onclick = () => {
-            box.innerHTML = "";
-            tampil(data[item.kode], item.kode);
-        };
-
-        box.appendChild(div);
-    });
-}
-
-// RESET
-function resetData(){
-    kodeInput.value = "";
-    namaInput.value = "";
-    namaText.innerText = "-";
-    hargaText.innerText = "Rp 0";
-    gambar.style.display = "none";
-
-    document.querySelectorAll(".suggest-box")
-        .forEach(b => b.innerHTML = "");
-}
-
-// SCANNER
-function startScanner(){
-    if(!ready) return alert("Data belum siap");
-
-    preview.style.display = "block";
-    scanner = new Html5Qrcode("preview");
-
-    scanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
-        text => {
-            kodeInput.value = text;
-            stopScanner();
-            cekKode();
+    // Scanner
+    function startScanner() {
+      if (!isReady) return;
+      document.getElementById('scanner-container').classList.remove('hidden');
+      html5QrCode = new Html5Qrcode("reader");
+      html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
+        decodedText => {
+          stopScanner();
+          display(decodedText);
         }
-    ).catch(err => alert("Kamera gagal: " + err));
-}
-
-function stopScanner(){
-    if(scanner){
-        scanner.stop().then(()=> preview.style.display="none");
+      );
     }
-}
 
-// EVENT
-let delay;
-
-kodeInput.addEventListener("input", () => {
-    clearTimeout(delay);
-    delay = setTimeout(suggestKode, 200);
-});
-
-namaInput.addEventListener("input", () => {
-    clearTimeout(delay);
-    delay = setTimeout(suggestNama, 200);
-});
-
-kodeInput.addEventListener("keypress", e => {
-    if(e.key==="Enter") cekKode();
-});
-
-namaInput.addEventListener("keypress", e => {
-    if(e.key==="Enter") cekNama();
-});
-
-document.addEventListener("click", e => {
-    if(!e.target.closest(".wrapper")){
-        document.querySelectorAll(".suggest-box")
-        .forEach(b => b.innerHTML = "");
+    function stopScanner() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+          document.getElementById('scanner-container').classList.add('hidden');
+        });
+      }
     }
-});
-</script>
 
+    // Autocomplete
+    function hideSuggest() {
+      document.getElementById('suggestKode').classList.add('hidden');
+      document.getElementById('suggestNama').classList.add('hidden');
+    }
+
+    document.getElementById('kode').addEventListener('input', e => {
+      let val = e.target.value.toLowerCase();
+      if (!val) return hideSuggest();
+      let matches = Object.keys(data).filter(k => k.includes(val)).slice(0, 5);
+      let list = document.getElementById('suggestKode');
+      list.innerHTML = matches.map(k => `<div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer"><div class="text-[10px] font-bold text-[#8B0000] uppercase">${k}</div><div class="text-sm font-medium text-slate-600">${data[k].nama}</div></div>`).join('');
+      list.classList.remove('hidden');
+    });
+
+    document.getElementById('namaSearch').addEventListener('input', e => {
+      let val = e.target.value.toLowerCase();
+      if (!val) return hideSuggest();
+      let matches = Object.keys(data).filter(k => data[k].nama.toLowerCase().includes(val)).slice(0, 5);
+      let list = document.getElementById('suggestNama');
+      list.innerHTML = matches.map(k => `<div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer"><div class="text-sm font-bold text-slate-700">${data[k].nama}</div><div class="text-[10px] font-medium text-slate-400 uppercase tracking-widest">${k}</div></div>`).join('');
+      list.classList.remove('hidden');
+    });
+
+    function resetAll() {
+      document.getElementById('kode').value = "";
+      document.getElementById('namaSearch').value = "";
+      document.getElementById('result-card').classList.add('hidden');
+      hideSuggest();
+    }
+  </script>
 </body>
 </html>

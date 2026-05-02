@@ -1,132 +1,170 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#8B0000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <title>Cek Harga Barang</title>
+
+  <!-- Library -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://unpkg.com/html5-qrcode"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <style>
-    body { font-family: 'Inter', sans-serif; }
-    .animate-bounce-slow { animation: bounce 3s infinite; }
-    @keyframes bounce { 0%, 100% { transform: translateY(-5%); animation-timing-function: cubic-bezier(0.8,0,1,1); } 50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); } }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Animasi Halus */
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-enter { animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.9) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Custom Scrollbar for suggestions */
+    .suggest-scroll::-webkit-scrollbar { width: 4px; }
+    .suggest-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen pb-10">
 
-  <div class="max-w-md mx-auto px-4 pt-8">
+<body class="bg-white md:bg-slate-100 flex justify-center min-h-screen">
+
+  <div class="w-full max-w-md bg-white min-h-screen flex flex-col px-6 py-8 shadow-none md:shadow-2xl relative">
+    
     <!-- Header -->
-    <div class="text-center mb-8">
-      <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 uppercase">Cek Harga Barang</h1>
+    <header class="text-center mb-8">
+      <h1 class="text-3xl font-[900] tracking-tight text-slate-800 uppercase">Cek Harga Barang</h1>
+    </header>
+
+    <!-- Loader (Syncing Status) -->
+    <div id="loader" class="flex items-center justify-center gap-3 p-5 mb-8 bg-amber-50 border border-amber-100 rounded-2xl text-amber-700 shadow-sm shadow-amber-900/5">
+      <i data-lucide="loader-2" class="animate-spin w-6 h-6"></i>
+      <span class="text-base font-bold tracking-wide">Sinkronisasi Data...</span>
     </div>
 
-    <!-- Loading State -->
-    <div id="loader" class="flex items-center justify-center gap-3 p-4 mb-6 bg-amber-50 border border-amber-100 rounded-2xl text-amber-700 shadow-sm">
-      <i data-lucide="loader-2" class="animate-spin w-5 h-5"></i>
-      <span class="text-sm font-semibold">Menghubungkan ke Database...</span>
-    </div>
-
-    <!-- Main Buttons -->
-    <div class="space-y-4">
-      <button onclick="startScanner()" class="w-full bg-[#8B0000] hover:bg-[#600000] text-white py-4 rounded-2xl font-bold shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
-        <i data-lucide="camera"></i> SCAN BARCODE
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col gap-6">
+      
+      <!-- Scan Button Toggle -->
+      <button onclick="toggleScanner()" id="btn-scan" class="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#8B0000] py-5 text-lg font-black text-white shadow-xl shadow-red-900/20 transition-all active:scale-95">
+        <i data-lucide="camera" class="w-6 h-6"></i>
+        <span>Scan Barcode</span>
       </button>
 
-      <div id="scanner-container" class="hidden relative rounded-2xl overflow-hidden bg-black aspect-square shadow-2xl">
+      <!-- Scanner Container -->
+      <div id="scanner-wrap" class="hidden relative rounded-3xl overflow-hidden bg-black aspect-square shadow-2xl border-4 border-slate-100 fade-in">
         <div id="reader" style="width: 100%"></div>
-        <button onclick="stopScanner()" class="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full text-white">
-          <i data-lucide="x-circle"></i>
-        </button>
+        <div class="absolute bottom-4 left-0 right-0 flex justify-center pointer-events-none">
+            <div class="bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] text-white font-bold tracking-widest uppercase">Mencari Barcode...</div>
+        </div>
       </div>
 
-      <div class="pt-4 space-y-4">
+      <!-- Manual Inputs -->
+      <div class="space-y-5">
         <!-- Input Barcode -->
-        <div class="relative group">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block">Barcode Manual</label>
+        <div class="relative">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2 block">Barcode Manual</label>
           <div class="flex gap-2">
-            <input id="kode" type="text" placeholder="Masukkan Kode..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#8B0000] focus:outline-none text-sm font-medium">
-            <button onclick="cekKode()" class="bg-slate-800 text-white px-6 font-bold rounded-xl active:scale-95">CEK</button>
+            <input id="kode" type="text" placeholder="Masukkan Kode..." class="flex-1 px-5 py-4 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#8B0000] focus:border-transparent focus:outline-none text-base font-bold transition-all">
+            <button onclick="cekKode()" class="bg-slate-800 text-white px-8 font-black rounded-2xl active:scale-95 shadow-lg shadow-black/10">CEK</button>
           </div>
-          <div id="suggestKode" class="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl hidden"></div>
+          <div id="suggestKode" class="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl hidden max-h-60 overflow-y-auto suggest-scroll"></div>
         </div>
 
         <!-- Input Nama -->
-        <div class="relative group">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 mb-1 block">Cari Nama</label>
+        <div class="relative">
+          <label class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1 mb-2 block">Cari Nama</label>
           <div class="flex gap-2">
-            <input id="namaSearch" type="text" placeholder="Cari Nama Barang..." class="flex-1 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#8B0000] focus:outline-none text-sm font-medium">
-            <button onclick="cekNama()" class="bg-slate-800 text-white px-6 font-bold rounded-xl active:scale-95">CARI</button>
+            <input id="namaSearch" type="text" placeholder="Cari Nama Barang..." class="flex-1 px-5 py-4 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-[#8B0000] focus:border-transparent focus:outline-none text-base font-bold transition-all">
+            <button onclick="cekNama()" class="bg-slate-800 text-white px-8 font-black rounded-2xl active:scale-95 shadow-lg shadow-black/10">CARI</button>
           </div>
-          <div id="suggestNama" class="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl hidden"></div>
+          <div id="suggestNama" class="absolute z-50 left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl hidden max-h-60 overflow-y-auto suggest-scroll"></div>
         </div>
       </div>
 
-      <button onclick="resetAll()" class="w-full flex items-center justify-center gap-2 py-3 text-slate-400 font-bold hover:text-slate-600">
-        <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus
-      </button>
-
-      <hr class="border-slate-200">
-
-      <!-- Result Card -->
-      <div id="result-card" class="hidden">
-        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden ring-1 ring-slate-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <!-- Result Section -->
+      <div id="result-area" class="hidden mt-4 pb-10">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-slate-100 fade-in">
           <div class="bg-[#8B0000] p-6 text-center">
-            <p class="text-[10px] font-bold text-white/60 tracking-[0.2em] uppercase mb-1">Ditemukan</p>
-            <h2 id="res-nama" class="text-white text-lg font-black uppercase leading-tight">NAMA BARANG</h2>
+            <p class="text-[10px] font-bold text-white/50 tracking-[0.3em] uppercase mb-1">Berhasil Ditemukan</p>
+            <h2 id="res-nama" class="text-white text-xl font-black uppercase leading-tight">NAMA BARANG</h2>
           </div>
-          <div class="p-6 text-center">
-            <div class="bg-slate-50 rounded-2xl mb-6 flex items-center justify-center p-4 min-h-[180px]">
-               <img id="res-img" class="max-h-[180px] object-contain hidden">
-               <div id="img-placeholder" class="text-slate-300 flex flex-col items-center">
-                 <i data-lucide="package-search" class="w-16 h-16 mb-2"></i>
-                 <span class="text-[10px] font-bold uppercase tracking-widest">Tidak Ada Foto</span>
+          
+          <div class="p-8 text-center">
+            <div class="bg-slate-50 rounded-3xl mb-6 flex items-center justify-center p-4 min-h-[220px] border border-slate-100">
+               <img id="res-img" class="max-h-[200px] object-contain drop-shadow-xl hidden transition-transform hover:scale-105">
+               <div id="img-placeholder" class="text-slate-200 flex flex-col items-center">
+                 <i data-lucide="package-search" class="w-20 h-20 mb-3"></i>
+                 <span class="text-[10px] font-black uppercase tracking-[0.4em]">Tanpa Pratinjau</span>
                </div>
             </div>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Harga Terkini</p>
-            <div id="res-harga" class="text-4xl font-black text-emerald-600 tracking-tighter mb-4">Rp 0</div>
-            <div id="res-kode" class="inline-block bg-slate-100 px-4 py-1.5 rounded-full text-[10px] font-bold text-slate-500 tracking-widest uppercase">KODE: 12345</div>
+
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-1">Harga Terkini</p>
+            <div id="res-harga" class="text-5xl font-[900] text-emerald-600 tracking-tighter mb-6">Rp 0</div>
+            
+            <div class="flex items-center justify-center gap-2 bg-slate-100 px-5 py-2 rounded-full inline-flex">
+                <span id="res-kode" class="text-[10px] font-black text-slate-500 tracking-widest uppercase">KODE: 12345678</span>
+            </div>
           </div>
         </div>
+
+        <button onclick="resetAll()" class="w-full flex items-center justify-center gap-2 py-6 text-slate-300 font-black tracking-widest uppercase text-[11px] hover:text-slate-500 transition-colors">
+            <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Pencarian
+        </button>
       </div>
 
-    </div>
-  </div>
+    </main>
 
-  <!-- Modal Interaktif -->
-  <div id="modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-    <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl transform transition-all scale-95 opacity-0 duration-300" id="modal-content">
-      <div id="modal-icon" class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full"></div>
-      <h3 id="modal-title" class="text-xl font-extrabold mb-2 text-slate-800">Judul</h3>
-      <p id="modal-msg" class="text-slate-500 font-medium mb-8 leading-relaxed">Pesan error atau info disini.</p>
-      <button onclick="closeModal()" id="modal-btn" class="w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg active:scale-95 transition-transform">Tutup</button>
+    <!-- Modal Notifikasi -->
+    <div id="modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+      <div class="bg-white w-full max-w-sm rounded-[2.5rem] p-8 text-center shadow-2xl modal-enter" id="modal-content">
+        <div id="modal-icon-wrap" class="w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full">
+            <div id="modal-icon"></div>
+        </div>
+        <h3 id="modal-title" class="text-2xl font-[900] mb-2 text-slate-800 uppercase tracking-tight">Judul</h3>
+        <p id="modal-msg" class="text-slate-500 font-bold mb-8 leading-relaxed">Pesan info disini.</p>
+        <button onclick="closeModal()" id="modal-btn" class="w-full py-5 rounded-2xl text-white font-black text-lg shadow-xl active:scale-95 transition-all">MENGERTI</button>
+      </div>
     </div>
+
   </div>
 
   <script>
     let data = {};
     let isReady = false;
     let html5QrCode;
+    let isScanning = false;
 
-    // Inisialisasi Ikon Lucide
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // Fungsi Load Data
+    // Load Data Hybrid
     function loadData() {
-      if (typeof google !== "undefined" && google.script) {
-        google.script.run.withSuccessHandler(res => {
+      const finishLoad = (res) => {
           data = res;
           isReady = true;
-          document.getElementById('loader').classList.add('hidden');
-        }).getData();
+          document.getElementById('loader').style.display = 'none';
+      };
+
+      if (typeof google !== "undefined" && google.script) {
+        google.script.run.withSuccessHandler(finishLoad).getData();
       } else {
-        // Fallback untuk testing browser biasa
         fetch("https://script.google.com/macros/s/AKfycbw2GBe6YRDvTiq07vWojw1dPWwIgvPVrgTmAVUHwOhCFU7bzII-mFQtdUSsYN7o9H8-_A/exec?api=1")
           .then(res => res.json())
-          .then(res => {
-            data = res;
-            isReady = true;
-            document.getElementById('loader').classList.add('hidden');
-          });
+          .then(finishLoad)
+          .catch(() => alert("Gagal mengambil data. Periksa internet."));
       }
     }
     loadData();
@@ -134,37 +172,32 @@
     // Modal Controller
     function showModal(title, msg, type = 'error') {
       const modal = document.getElementById('modal');
-      const content = document.getElementById('modal-content');
+      const iconWrap = document.getElementById('modal-icon-wrap');
       const icon = document.getElementById('modal-icon');
       const btn = document.getElementById('modal-btn');
       
       document.getElementById('modal-title').innerText = title;
       document.getElementById('modal-msg').innerText = msg;
       
-      modal.classList.remove('hidden');
-      setTimeout(() => content.classList.replace('scale-95', 'scale-100'), 10);
-      setTimeout(() => content.classList.replace('opacity-0', 'opacity-100'), 10);
-
       if (type === 'error') {
-        icon.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-red-100 text-red-600";
-        icon.innerHTML = '<i data-lucide="x-circle" style="width:40px;height:40px"></i>';
-        btn.className = "w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg bg-[#8B0000]";
+        iconWrap.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-red-100 text-red-600";
+        icon.innerHTML = '<i data-lucide="x-circle" style="width:44px;height:44px"></i>';
+        btn.className = "w-full py-5 rounded-2xl bg-[#8B0000] text-white font-black text-lg shadow-xl shadow-red-900/30";
       } else {
-        icon.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-amber-100 text-amber-600";
-        icon.innerHTML = '<i data-lucide="alert-circle" style="width:40px;height:40px"></i>';
-        btn.className = "w-full py-4 rounded-2xl text-white font-bold text-lg shadow-lg bg-amber-600";
+        iconWrap.className = "w-20 h-20 mx-auto mb-6 flex items-center justify-center rounded-full bg-amber-100 text-amber-600";
+        icon.innerHTML = '<i data-lucide="alert-circle" style="width:44px;height:44px"></i>';
+        btn.className = "w-full py-5 rounded-2xl bg-amber-600 text-white font-black text-lg shadow-xl shadow-amber-900/30";
       }
+      
+      modal.classList.remove('hidden');
       lucide.createIcons();
     }
 
     function closeModal() {
-      const content = document.getElementById('modal-content');
-      content.classList.replace('scale-100', 'scale-95');
-      content.classList.replace('opacity-100', 'opacity-0');
-      setTimeout(() => document.getElementById('modal').classList.add('hidden'), 300);
+      document.getElementById('modal').classList.add('hidden');
     }
 
-    // Logic Tampil Data
+    // Tools
     function formatIDR(val) {
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(val);
     }
@@ -173,10 +206,10 @@
       const item = data[key];
       if (!item) return;
 
-      document.getElementById('result-card').classList.remove('hidden');
+      document.getElementById('result-area').classList.remove('hidden');
       document.getElementById('res-nama').innerText = item.nama;
       document.getElementById('res-harga').innerText = formatIDR(item.harga);
-      document.getElementById('res-kode').innerText = "KODE: " + key;
+      document.getElementById('res-kode').innerText = "BARCODE: " + key;
 
       const img = document.getElementById('res-img');
       const placeholder = document.getElementById('img-placeholder');
@@ -185,6 +218,7 @@
         let driveId = item.gambar.match(/[-\w]{25,}/);
         img.src = driveId ? "https://drive.google.com/thumbnail?id=" + driveId[0] + "&sz=w1000" : item.gambar;
         img.classList.remove('hidden');
+        img.onload = () => img.classList.add('fade-in');
         placeholder.classList.add('hidden');
       } else {
         img.classList.add('hidden');
@@ -194,39 +228,66 @@
       document.getElementById('kode').value = key;
       document.getElementById('namaSearch').value = item.nama;
       hideSuggest();
+      
+      // Auto scroll to result di mobile
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
 
-    // Event Handlers
+    // Search Logic
     function cekKode() {
-      let val = document.getElementById('kode').value;
+      if (!isReady) return;
+      let val = document.getElementById('kode').value.trim();
+      if (!val) return showModal("Input Kosong", "Silakan ketik atau scan kode barang.", "warning");
       if (data[val]) display(val);
-      else showModal("Barang Tidak Ada", `Kode ${val} tidak ditemukan di database.`, 'error');
+      else showModal("Tidak Ditemukan", `Kode [${val}] tidak terdaftar di sistem kami.`, 'error');
     }
 
     function cekNama() {
-      let val = document.getElementById('namaSearch').value.toLowerCase();
+      if (!isReady) return;
+      let val = document.getElementById('namaSearch').value.toLowerCase().trim();
+      if (!val) return showModal("Input Kosong", "Masukkan nama barang yang ingin dicari.", "warning");
       let key = Object.keys(data).find(k => data[k].nama.toLowerCase().includes(val));
       if (key) display(key);
-      else showModal("Pencarian Gagal", "Barang dengan nama tersebut tidak ditemukan.", 'warning');
+      else showModal("Hasil Nihil", "Barang dengan nama tersebut tidak ditemukan.", 'warning');
     }
 
-    // Scanner
-    function startScanner() {
+    // Scanner Logic
+    function toggleScanner() {
       if (!isReady) return;
-      document.getElementById('scanner-container').classList.remove('hidden');
+      const btn = document.getElementById('btn-scan');
+      if (!isScanning) {
+        startScanner();
+        btn.innerHTML = '<i data-lucide="x-circle"></i> <span>Batalkan Scan</span>';
+        btn.classList.replace('bg-[#8B0000]', 'bg-slate-800');
+      } else {
+        stopScanner();
+        btn.innerHTML = '<i data-lucide="camera"></i> <span>Scan Barcode</span>';
+        btn.classList.replace('bg-slate-800', 'bg-[#8B0000]');
+      }
+      isScanning = !isScanning;
+      lucide.createIcons();
+    }
+
+    function startScanner() {
+      document.getElementById('scanner-wrap').classList.remove('hidden');
       html5QrCode = new Html5Qrcode("reader");
-      html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, 
+      html5QrCode.start(
+        { facingMode: "environment" }, 
+        { fps: 15, qrbox: { width: 250, height: 250 } }, 
         decodedText => {
-          stopScanner();
+          toggleScanner();
           display(decodedText);
         }
-      );
+      ).catch(err => {
+          showModal("Kamera Error", "Gagal mengakses kamera. Mohon izinkan akses kamera di browser Anda.", "error");
+          toggleScanner();
+      });
     }
 
     function stopScanner() {
       if (html5QrCode) {
         html5QrCode.stop().then(() => {
-          document.getElementById('scanner-container').classList.add('hidden');
+          document.getElementById('scanner-wrap').classList.add('hidden');
         });
       }
     }
@@ -237,30 +298,56 @@
       document.getElementById('suggestNama').classList.add('hidden');
     }
 
-    document.getElementById('kode').addEventListener('input', e => {
+    const inputKode = document.getElementById('kode');
+    const inputNama = document.getElementById('namaSearch');
+
+    inputKode.addEventListener('input', e => {
       let val = e.target.value.toLowerCase();
       if (!val) return hideSuggest();
       let matches = Object.keys(data).filter(k => k.includes(val)).slice(0, 5);
       let list = document.getElementById('suggestKode');
-      list.innerHTML = matches.map(k => `<div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer"><div class="text-[10px] font-bold text-[#8B0000] uppercase">${k}</div><div class="text-sm font-medium text-slate-600">${data[k].nama}</div></div>`).join('');
+      list.innerHTML = matches.map(k => `
+        <div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer flex justify-between items-center active:bg-slate-100">
+            <div>
+                <div class="text-[10px] font-black text-[#8B0000] uppercase tracking-widest">${k}</div>
+                <div class="text-sm font-bold text-slate-600 truncate max-w-[200px]">${data[k].nama}</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+        </div>`).join('');
       list.classList.remove('hidden');
+      lucide.createIcons();
     });
 
-    document.getElementById('namaSearch').addEventListener('input', e => {
+    inputNama.addEventListener('input', e => {
       let val = e.target.value.toLowerCase();
       if (!val) return hideSuggest();
       let matches = Object.keys(data).filter(k => data[k].nama.toLowerCase().includes(val)).slice(0, 5);
       let list = document.getElementById('suggestNama');
-      list.innerHTML = matches.map(k => `<div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer"><div class="text-sm font-bold text-slate-700">${data[k].nama}</div><div class="text-[10px] font-medium text-slate-400 uppercase tracking-widest">${k}</div></div>`).join('');
+      list.innerHTML = matches.map(k => `
+        <div onclick="display('${k}')" class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer flex justify-between items-center active:bg-slate-100">
+            <div>
+                <div class="text-sm font-black text-slate-700 leading-tight">${data[k].nama}</div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">${k}</div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+        </div>`).join('');
       list.classList.remove('hidden');
+      lucide.createIcons();
     });
 
+    // Reset UI
     function resetAll() {
-      document.getElementById('kode').value = "";
-      document.getElementById('namaSearch').value = "";
-      document.getElementById('result-card').classList.add('hidden');
+      inputKode.value = "";
+      inputNama.value = "";
+      document.getElementById('result-area').classList.add('hidden');
       hideSuggest();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // Close suggestions on outside click
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.relative')) hideSuggest();
+    });
   </script>
 </body>
 </html>

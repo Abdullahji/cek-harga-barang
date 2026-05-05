@@ -425,51 +425,87 @@
       else overlay.classList.remove('active');
     }
 
-    function fetchSupplierData() {
-      showLoading(true);
+    // --- KONFIGURASI VERCEL ---
+    // Copy URL Web App GAS Anda ke sini setelah Deploy (Pilih 'Anyone')
+    const GAS_WEBAPP_URL = ""; 
+
+    async function callGAS(action, payload = null) {
       if (typeof google !== 'undefined') {
-        google.script.run.withSuccessHandler(res => {
-          showLoading(false);
-          if (res && res.sukses) {
-            rawSupplierData = res.data || [];
-            filteredSupplierData = [...rawSupplierData];
-            currentPage = 1; 
-            renderSupplierTable();
-          } else {
-            console.error('GAS Error:', res ? res.pesan : 'No response');
-            renderSupplierTable();
-          }
-        }).withFailureHandler(err => {
-          showLoading(false);
-          console.error('GAS Failure:', err);
-          renderSupplierTable();
-        }).ambilDataSupplier();
+        return new Promise((resolve, reject) => {
+          google.script.run
+            .withSuccessHandler(resolve)
+            .withFailureHandler(reject)[action](payload);
+        });
       } else {
-        setTimeout(() => {
-          rawSupplierData = [
-            { namaBarang: 'CONTOH BARANG A', barcode: '123456789', supplier: 'SUPPLIER A', hargaBall: 500000, hargaPak: 50000, hargaBks: 5000, tglBeli: '04/05/2026' },
-            { namaBarang: 'CONTOH BARANG B', barcode: '123456790', supplier: 'SUPPLIER B', hargaBall: 600000, hargaPak: 60000, hargaBks: 6000, tglBeli: '05/05/2026' },
-            { namaBarang: 'CONTOH BARANG C', barcode: '123456791', supplier: 'SUPPLIER C', hargaBall: 700000, hargaPak: 70000, hargaBks: 7000, tglBeli: '06/05/2026' }
-          ];
-          filteredSupplierData = [...rawSupplierData];
-          currentPage = 1;
-          renderSupplierTable();
-          showLoading(false);
-        }, 800);
+        if (!GAS_WEBAPP_URL) {
+          console.warn("GAS_WEBAPP_URL belum diisi. Menggunakan data simulasi.");
+          return null; 
+        }
+        try {
+          const response = await fetch(GAS_WEBAPP_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action, payload })
+          });
+          return await response.json();
+        } catch (err) {
+          console.error("Fetch Error:", err);
+          return { sukses: false, pesan: "Gagal terhubung ke Server GAS." };
+        }
       }
     }
 
-    function fetchCekHargaData() {
-      if (typeof google !== 'undefined') {
-        google.script.run.withSuccessHandler(res => {
-          if (res && res.sukses) {
-            rawCekHargaData = res.data || [];
-          }
-        }).ambilDataCekHarga();
+    async function fetchSupplierData() {
+      showLoading(true);
+      const res = await callGAS('ambilDataSupplier');
+      
+      showLoading(false);
+      if (res && res.sukses) {
+        rawSupplierData = res.data || [];
+        filteredSupplierData = [...rawSupplierData];
+        currentPage = 1; 
+        renderSupplierTable();
+      } else if (!res) {
+        // Fallback Mock Data jika URL belum diisi
+        setTimeout(() => {
+          rawSupplierData = [
+            { id: 'S-1', namaBarang: 'CONTOH BARANG A', barcode: '123456789', supplier: 'SUPPLIER A', hargaBall: 500000, hargaPak: 50000, hargaBks: 5000, tglBeli: '04/05/2026' }
+          ];
+          filteredSupplierData = [...rawSupplierData];
+          renderSupplierTable();
+        }, 800);
       } else {
-        rawCekHargaData = [
-          { namaBarang: 'CONTOH BARANG A', barcode: '123456789', hargaBarang: 5000 }
-        ];
+        alert("Eror: " + res.pesan);
+      }
+    }
+
+    async function fetchCekHargaData() {
+      const res = await callGAS('ambilDataCekHarga');
+      if (res && res.sukses) {
+        rawCekHargaData = res.data || [];
+      } else if (!res) {
+        rawCekHargaData = [{ namaBarang: 'CONTOH BARANG A', barcode: '123456789', hargaBarang: 5000 }];
+      }
+    }
+
+    async function handleSimpanSupplier(e) {
+      e.preventDefault();
+      const form = e.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      showLoading(true);
+      const res = await callGAS('simpanKeSupplier', data);
+      
+      showLoading(false);
+      if (res && res.sukses) {
+        alert(res.pesan);
+        clearForm();
+        if (!document.getElementById('addFormContainer').classList.contains('hidden')) toggleAddForm();
+        fetchSupplierData();
+      } else if (!res) {
+        alert('Mode Demo: Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.');
+      } else {
+        alert('Error: ' + res.pesan);
       }
     }
 

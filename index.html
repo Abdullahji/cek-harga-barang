@@ -26,9 +26,14 @@
     .nav-btn.active { background-color: #fff7ed; color: #ea580c; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
     .nav-btn.active i { color: #ea580c; }
     .tab-btn.active { background-color: white; color: #ea580c; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transform: scale(1.02); }
+    #sidebarBackdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px); z-index: 40; transition: opacity 0.3s ease; }
+    #sidebarBackdrop.active { display: block; }
   </style>
 </head>
 <body class="overflow-hidden">
+
+  <!-- Sidebar Backdrop -->
+  <div id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
   <!-- Loading Screen -->
   <div id="loadingOverlay" class="loading-overlay">
@@ -48,7 +53,7 @@
             <i data-lucide="database" class="w-6 h-6"></i>
           </div>
           <div>
-            <h1 class="text-xl font-extrabold tracking-tight text-slate-700">TOKO WINA</h1>
+            <h1 class="text-xl font-extrabold tracking-tight text-slate-900">TOKO WINA</h1>
           </div>
           <button onclick="toggleSidebar()" class="lg:hidden ml-auto p-2 text-slate-400"><i data-lucide="x"></i></button>
         </div>
@@ -86,11 +91,11 @@
           <div class="bg-slate-50 p-4 rounded-2xl flex items-center gap-4 border border-slate-100">
             <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-lg shadow-inner">S</div>
             <div>
-              <p class="text-xs font-black text-slate-900">Sundusing</p>
+              <p class="text-xs font-black text-slate-900">A S F A R</p>
               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Administrator</p>
             </div>
           </div>
-          <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] text-center">© <span class="current-year">2026</span> - 45F4R</p>
+          <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] text-center">© <span class="current-year"></span> - 45F4R</p>
         </div>
       </div>
     </aside>
@@ -100,18 +105,18 @@
       
       <!-- Top Header -->
       <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 flex items-center justify-between shrink-0 z-30 sticky top-0">
-        <div class="flex items-center gap-6">
-          <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500 bg-slate-50 rounded-xl"><i data-lucide="menu"></i></button>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500 bg-slate-50 rounded-xl active:scale-95"><i data-lucide="menu"></i></button>
           <div>
-            <h2 id="headerTitle" class="text-xl font-black text-slate-900 tracking-tight">Cek Harga Barang</h2>
-            <div class="flex items-center gap-2 mt-1">
-               <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-               <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Retail Price Checker</p>
+            <h2 id="headerTitle" class="text-xl font-black text-slate-900 tracking-tight leading-none">Cek Harga Barang</h2>
+            <div class="flex items-center gap-2 mt-2">
+               <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+               <p class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">#TOKO WINA System</p>
             </div>
           </div>
         </div>
-        <div class="w-11 h-11 bg-slate-100 rounded-2xl border-2 border-white shadow-sm overflow-hidden">
-          <img src="https://ui-avatars.com/api/?name=Sundusing&background=FB923C&color=fff" />
+        <div class="w-10 h-10 sm:w-11 sm:h-11 bg-slate-100 rounded-2xl border-2 border-white shadow-sm overflow-hidden flex-shrink-0">
+          <img src="https://ui-avatars.com/api/?name=Asfar&background=FB923C&color=fff" />
         </div>
       </header>
 
@@ -150,20 +155,20 @@
         </section>
 
         <!-- SECTION: SUPPLIER -->
-        <section id="section-supplier" class="page-section max-w-6xl mx-auto space-y-6 pb-14">
-          <div class="bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden">
+        <section id="section-supplier" class="page-section max-w-6xl mx-auto space-y-6 pb-14 opacity-0 translate-y-4">
+          <div class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-2.5 h-full bg-orange-500"></div>
-            <div class="flex-1">
-              <h2 class="text-3xl font-black tracking-tight mb-1">Master Data</h2>
-              <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">Database Supplier & Harga</p>
+            <div class="flex-1 text-center lg:text-left">
+              <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Master Data</h2>
+              <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Database Supplier & Harga Modal</p>
             </div>
-            <div class="flex gap-3">
-               <button onclick="toggleAddForm()" id="btnAddToggle" class="px-8 py-4 text-sm font-black rounded-2xl bg-orange-600 text-white shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center gap-2">
+            <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+               <button onclick="toggleAddForm()" id="btnAddToggle" class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-orange-600 text-white shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center justify-center gap-2">
                  <i data-lucide="plus-circle" class="w-5 h-5"></i>
                  <span>TAMBAH BARANG</span>
                </button>
-               <button onclick="fetchSupplierData()" class="bg-white p-4 rounded-2xl text-slate-300 hover:text-orange-600 shadow-sm border border-slate-100 transition-all">
-                 <i data-lucide="rotate-cw" id="refreshIcon" class="w-6 h-6"></i>
+               <button onclick="fetchSupplierData()" class="bg-white p-3.5 sm:p-4 rounded-2xl text-slate-300 hover:text-orange-600 shadow-sm border border-slate-100 transition-all active:rotate-180 duration-500">
+                 <i data-lucide="rotate-cw" id="refreshIcon" class="w-5 h-5 sm:w-6 h-6"></i>
                </button>
             </div>
           </div>
@@ -195,11 +200,11 @@
                      <!-- Input Harga -->
                      <div class="md:col-span-2 lg:col-span-3 flex items-center gap-3 pb-2 border-b border-slate-50 pt-4">
                         <i data-lucide="calculator" class="w-5 h-5 text-orange-500"></i>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kalkulaso Harga (Beli/Modal)</p>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kalkulasi Harga Modal</p>
                      </div>
 
                        <div class="space-y-4 bg-orange-50/50 p-6 rounded-[2rem] border border-orange-100 space-y-4">
-                        <p class="text-[10px] font-black text-orange-600 text-center uppercase tracking-widest">Tingkat 1: BALL/DUS</p>
+                        <p class="text-[10px] font-black text-orange-600 text-center uppercase tracking-widest">Tingkat 1: BALL/DUSS</p>
                         <div class="space-y-2">
                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga per Ball/Dus</label>
                            <input type="text" id="calc-hargaBall" oninput="formatCurrency(this); hitungOtomatis()" class="w-full px-5 py-4 rounded-xl bg-white border-none font-black text-orange-700 shadow-sm text-lg outline-none" placeholder="Rp 0" />
@@ -220,22 +225,21 @@
                            <input type="hidden" name="hargaPak" id="val-hargaPak" value="0">
                         </div>
                         <div class="space-y-2">
-                           <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Isi per Pak (Bks)</label>
+                           <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Isi per Pak/Bks</label>
                            <input type="number" name="isiPak" id="calc-isiPak" value="1" oninput="hitungOtomatis()" class="w-full px-5 py-4 rounded-xl bg-white border-none font-bold text-slate-600 outline-none" placeholder="1" />
                         </div>
                      </div>
 
-                     <!-- TINGKAT 3: PIECIES/ECERAN -->
+                     <!-- TINGKAT 3: PIECES/ECERAN -->
                      <div class="bg-emerald-50/50 p-6 rounded-[2rem] border border-emerald-100 space-y-4">
-                        <p class="text-[10px] font-black text-emerald-600 text-center uppercase tracking-widest">Tingkat 3: PIECIES/ECERAN</p>
+                        <p class="text-[10px] font-black text-emerald-600 text-center uppercase tracking-widest">Tingkat 3: PIECES/ECERAN</p>
                         <div class="space-y-2">
-                           <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Modal/Beli Pcs/Eceran</label>
+                           <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Modal Per Pcs/Eceran</label>
                            <input type="text" id="calc-hargaBks" oninput="formatCurrency(this)" class="w-full px-5 py-4 rounded-xl bg-white border-2 border-emerald-100 font-black text-emerald-700 shadow-md text-xl outline-none transition-all" placeholder="Rp 0" />
                            <input type="hidden" name="hargaBks" id="val-hargaBks" value="0" required>
                         </div>
                         <div class="flex items-center justify-center pt-2 gap-2 text-emerald-400">
                            <i data-lucide="sparkles" class="w-4 h-4"></i>
-                           <span class="text-[9px] font-black uppercase tracking-[0.2em]">Target Profit Sistem</span>
                         </div>
                      </div>
 
@@ -274,25 +278,31 @@
               </div>
             </div>
 
-            <div class="bg-white rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
-              <div class="overflow-x-auto custom-scrollbar">
+            <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+              <!-- Desktop Table View -->
+              <div class="hidden lg:block overflow-x-auto custom-scrollbar">
                 <table class="w-full text-left min-w-[1000px]">
                   <thead>
-                    <tr class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest border-b border-slate-100">
-                      <th class="px-8 py-6 w-20 text-center sticky left-0 bg-slate-50 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.02)]">No</th>
-                      <th class="px-8 py-6">Nama Barang / Barcode</th>
-                      <th class="px-8 py-6">Supplier</th>
-                      <th class="px-8 py-6">Harga Ball</th>
-                      <th class="px-8 py-6">Harga Pak</th>
-                      <th class="px-8 py-6">Harga Eceran</th>
-                      <th class="px-8 py-6 text-center">Tanggal Pembelian</th>
-                      <th class="px-8 py-6 text-center">Aksi</th>
+                    <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                      <th class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No</th>
+                      <th class="px-8 py-7">Nama Barang / Barcode</th>
+                      <th class="px-8 py-7">Supplier</th>
+                      <th class="px-8 py-7">Harga Ball/Dus</th>
+                      <th class="px-8 py-7">Harga Pak/Bks</th>
+                      <th class="px-8 py-7">Harga Pcs/Eceran</th>
+                      <th class="px-8 py-7 text-center">Tanggal Pembelian</th>
+                      <th class="px-8 py-7 text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody id="supplierTableBody" class="divide-y divide-slate-50">
                     <!-- Rows -->
                   </tbody>
                 </table>
+              </div>
+
+              <!-- Mobile Card View -->
+              <div id="supplierCardContainer" class="block lg:hidden divide-y divide-slate-100 bg-slate-50/50">
+                <!-- Cards appear here on mobile -->
               </div>
 
               <!-- Pagination Info & Controls -->
@@ -322,7 +332,7 @@
               <div class="w-1.5 h-1.5 rounded-full bg-orange-500"></div>
               <div class="w-1.5 h-1.5 rounded-full bg-orange-600"></div>
             </div>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center mb-1">© <span class="current-year">2026</span> - 45F4R</p>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] text-center mb-1">© <span class="current-year"></span> - 45F4R</p>
             <p class="text-[8px] font-bold text-slate-300 uppercase tracking-[0.1em]">#TOKO WINA</p>
           </div>
         </footer>
@@ -354,7 +364,22 @@
 
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('-translate-x-full');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const isOpen = !sidebar.classList.contains('-translate-x-full');
+      
+      if (isOpen) {
+        sidebar.classList.add('-translate-x-full');
+        backdrop.classList.remove('active');
+        backdrop.style.opacity = '0';
+        setTimeout(() => { backdrop.style.display = 'none'; }, 300);
+      } else {
+        backdrop.style.display = 'block';
+        setTimeout(() => {
+          sidebar.classList.remove('-translate-x-full');
+          backdrop.classList.add('active');
+          backdrop.style.opacity = '1';
+        }, 10);
+      }
     }
 
     function toggleSubmenu(id) {
@@ -601,10 +626,13 @@
     function renderSupplierTable() {
       const data = filteredSupplierData;
       const tbody = document.getElementById('supplierTableBody');
+      const cardContainer = document.getElementById('supplierCardContainer');
       const totalData = data.length;
       
       if (totalData === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="py-32 text-center text-slate-300 font-extrabold uppercase text-sm tracking-widest">Tidak ada data</td></tr>';
+        const emptyMsg = '<tr><td colspan="8" class="py-32 text-center text-slate-300 font-extrabold uppercase text-sm tracking-widest">Tidak ada data</td></tr>';
+        tbody.innerHTML = emptyMsg;
+        cardContainer.innerHTML = '<div class="py-20 text-center text-slate-300 font-extrabold uppercase text-xs tracking-widest">Tidak ada data</div>';
         document.getElementById('paginationInfo').innerText = 'Showing 0 to 0 of 0 data';
         return;
       }
@@ -614,6 +642,7 @@
       const endIndex = Math.min(startIndex + itemsPerPage, totalData);
       const paginatedData = data.slice(startIndex, endIndex);
 
+      // Render Desktop Rows
       tbody.innerHTML = paginatedData.map((it, idx) => `
           <tr class="hover:bg-slate-50/70 transition-all group animate-in fade-in slide-in-from-left duration-300" style="animation-delay: ${idx * 50}ms">
             <td class="px-8 py-6 text-center font-bold text-slate-300 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 shadow-[2px_0_5px_rgba(0,0,0,0.01)]">${startIndex + idx + 1}</td>
@@ -635,6 +664,47 @@
             </td>
           </tr>
         `).join('');
+
+      // Render Mobile Cards
+      cardContainer.innerHTML = paginatedData.map((it, idx) => `
+        <div class="mb-6 bg-white p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6" style="animation-delay: ${idx * 50}ms">
+          <div class="flex justify-between items-start gap-4">
+            <div class="flex-1">
+              <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest mb-1">${it.supplier}</p>
+              <h3 class="text-lg font-black text-slate-900 leading-tight">${it.namaBarang}</h3>
+              <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter">${it.barcode || '-'}</p>
+            </div>
+            <button onclick="persiapkanEdit('${it.id}')" class="p-3 bg-slate-50 text-slate-400 rounded-xl active:scale-90 transition-all">
+              <i data-lucide="edit-3" class="w-5 h-5"></i>
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 gap-4 pt-4 border-t border-slate-50">
+            <div class="flex items-center justify-between bg-slate-50/70 p-4 rounded-2xl border border-slate-100/50">
+              <div>
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Ball/Dus</p>
+                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaBall)}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga Pak/Bks</p>
+                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaPak)}</p>
+              </div>
+            </div>
+
+            <!-- Harga eceran di bawah Harga Ball/Pak -->
+            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between">
+              <div>
+                <p class="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">Harga Pcs/Eceran</p>
+                <p class="text-xl font-black text-emerald-700">${formatIDR(it.hargaBks)}</p>
+              </div>
+              <div class="text-right">
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tgl Pembelian</p>
+                <p class="text-[10px] font-black text-slate-600">${it.tglBeli}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
 
       // Update Info & Buttons
       document.getElementById('paginationInfo').innerText = `Showing ${startIndex + 1} to ${endIndex} of ${totalData} data`;

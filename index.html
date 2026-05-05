@@ -89,11 +89,35 @@
       #sidebarBackdrop.active {
         display: block;
       }
+      /* Custom Dialog Styles */
+      #customDialog.active {
+        display: flex;
+      }
+      .dialog-success #dialogIcon { background-color: #f0fdf4; color: #16a34a; }
+      .dialog-error #dialogIcon { background-color: #fef2f2; color: #dc2626; }
+      .dialog-warning #dialogIcon { background-color: #fffbeb; color: #d97706; }
+      .dialog-info #dialogIcon { background-color: #f0f9ff; color: #0284c7; }
     </style>
   </head>
   <body class="overflow-hidden">
     <!-- Sidebar Backdrop -->
     <div id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+    <!-- Global Custom Dialog -->
+    <div id="customDialog" class="fixed inset-0 z-[9999] items-center justify-center p-6 hidden">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"></div>
+      <div id="dialogContent" class="relative bg-white w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div id="dialogIcon" class="w-16 h-16 rounded-full mx-auto mb-6 flex items-center justify-center">
+          <i data-lucide="info" id="iconTarget" class="w-8 h-8"></i>
+        </div>
+        <h3 id="dialogTitle" class="text-xl font-black text-slate-900 text-center mb-2">Pesan</h3>
+        <p id="dialogMessage" class="text-slate-500 text-center text-sm font-medium mb-8 leading-relaxed">Isi pesan...</p>
+        <div id="dialogActions" class="flex flex-col gap-3">
+          <button id="dialogConfirmBtn" class="w-full py-4 bg-[#0F172A] text-white rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all">OK</button>
+          <button id="dialogCancelBtn" class="w-full py-4 bg-slate-100 text-slate-400 rounded-2xl font-black text-sm uppercase tracking-widest active:scale-95 transition-all hidden">Batal</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Loading Screen -->
     <div id="loadingOverlay" class="loading-overlay">
@@ -679,13 +703,16 @@
                             <label class="text-[8px] md:text-[9px] font-black text-slate-300 uppercase ml-1"
                               >Supplier</label
                             >
-                            <input
-                              id="filter-supplier"
-                              type="text"
-                              onkeyup="filterSupplierTable()"
-                              placeholder="Nama Supplier..."
-                              class="w-full px-4 py-2.5 md:py-3 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-2 focus:ring-orange-100"
-                            />
+                            <div class="relative">
+                              <select
+                                id="filter-supplier"
+                                onchange="filterSupplierTable()"
+                                class="w-full px-4 py-2.5 md:py-3 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-2 focus:ring-orange-100 appearance-none cursor-pointer"
+                              >
+                                <option value="">Semua Supplier</option>
+                              </select>
+                              <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none"></i>
+                            </div>
                           </div>
                           <div class="space-y-1">
                             <label class="text-[8px] md:text-[9px] font-black text-slate-300 uppercase ml-1"
@@ -788,9 +815,9 @@
 
                     <!-- Refresh Trigger -->
                     <button
-                      onclick="fetchSupplierData()"
+                      onclick="refreshAllData()"
                       class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
-                      title="Refresh"
+                      title="Refresh All"
                     >
                       <i data-lucide="rotate-cw" id="refreshIconSync" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
@@ -1010,6 +1037,61 @@
         else overlay.classList.remove("active");
       }
 
+      // --- CUSTOM DIALOG & TOAST ---
+      function showAlert(title, message, type = "info") {
+        const dialog = document.getElementById("customDialog");
+        const t = document.getElementById("dialogTitle");
+        const m = document.getElementById("dialogMessage");
+        const c = document.getElementById("dialogContent");
+        const btnConfirm = document.getElementById("dialogConfirmBtn");
+        const btnCancel = document.getElementById("dialogCancelBtn");
+        const icon = document.getElementById("iconTarget");
+
+        c.parentElement.className =
+          `fixed inset-0 z-[9999] items-center justify-center p-6 flex dialog-${type}`;
+        t.innerText = title;
+        m.innerText = message;
+        btnCancel.classList.add("hidden");
+        btnConfirm.onclick = () => dialog.classList.add("hidden");
+
+        const iconMap = {
+          success: "check-circle-2",
+          error: "x-circle",
+          warning: "alert-triangle",
+          info: "info",
+        };
+        icon.setAttribute("data-lucide", iconMap[type] || "info");
+        lucide.createIcons();
+        dialog.classList.remove("hidden");
+      }
+
+      function showConfirm(title, message, onConfirm) {
+        const dialog = document.getElementById("customDialog");
+        const t = document.getElementById("dialogTitle");
+        const m = document.getElementById("dialogMessage");
+        const c = document.getElementById("dialogContent");
+        const btnConfirm = document.getElementById("dialogConfirmBtn");
+        const btnCancel = document.getElementById("dialogCancelBtn");
+
+        c.parentElement.className =
+          "fixed inset-0 z-[9999] items-center justify-center p-6 flex dialog-warning";
+        t.innerText = title;
+        m.innerText = message;
+        btnCancel.classList.remove("hidden");
+
+        btnConfirm.onclick = () => {
+          dialog.classList.add("hidden");
+          onConfirm();
+        };
+        btnCancel.onclick = () => dialog.classList.add("hidden");
+
+        document
+          .getElementById("iconTarget")
+          .setAttribute("data-lucide", "help-circle");
+        lucide.createIcons();
+        dialog.classList.remove("hidden");
+      }
+
       /* ... cari di bagian script index.html ... */
 
       // --- KONFIGURASI KONEKSI DATABASE ---
@@ -1058,9 +1140,10 @@
         showLoading(false);
         if (res && res.sukses) {
           rawSupplierData = res.data || [];
+          updateSupplierDropdown();
           filterSupplierTable();
         } else if (!res) {
-          // Fallback Mock Data jika URL belum diisi
+          // Fallback Mock Data
           setTimeout(() => {
             rawSupplierData = [
               {
@@ -1074,11 +1157,39 @@
                 tglBeli: "04/05/2026",
               },
             ];
+            updateSupplierDropdown();
             filterSupplierTable();
           }, 800);
         } else {
-          alert("Eror: " + res.pesan);
+          showAlert("Error", res.pesan, "error");
         }
+      }
+
+      function updateSupplierDropdown() {
+        const select = document.getElementById("filter-supplier");
+        if (!select) return;
+
+        const suppliers = [
+          ...new Set(rawSupplierData.map((it) => it.supplier)),
+        ].sort();
+        select.innerHTML = '<option value="">Semua Supplier</option>';
+        suppliers.forEach((s) => {
+          if (s && s !== "-") {
+            const opt = document.createElement("option");
+            opt.value = s;
+            opt.innerText = s;
+            select.appendChild(opt);
+          }
+        });
+        lucide.createIcons();
+      }
+
+      async function refreshAllData() {
+        const icon = document.getElementById("refreshIconSync");
+        if (icon) icon.classList.add("animate-spin");
+        await Promise.all([fetchSupplierData(), fetchCekHargaData()]);
+        if (icon) icon.classList.remove("animate-spin");
+        showAlert("Berhasil", "Semua data telah diperbarui!", "success");
       }
 
       async function fetchCekHargaData() {
@@ -1107,7 +1218,7 @@
 
         showLoading(false);
         if (res && res.sukses) {
-          alert(res.pesan);
+          showAlert("Sukses", res.pesan, "success");
           clearForm();
           if (
             !document
@@ -1117,11 +1228,13 @@
             toggleAddForm();
           fetchSupplierData();
         } else if (!res) {
-          alert(
-            "Mode Demo: Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.",
+          showAlert(
+            "Mode Demo",
+            "Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.",
+            "info"
           );
         } else {
-          alert("Error: " + res.pesan);
+          showAlert("Error", res.pesan, "error");
         }
       }
 
@@ -1500,18 +1613,23 @@
       });
 
       async function handleDeleteSupplier(id) {
-        if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
-        showLoading(true);
-        const res = await callGAS("hapusDataSupplier", { id });
-        showLoading(false);
-        if (res && res.sukses) {
-          alert(res.pesan);
-          fetchSupplierData();
-        } else if (!res) {
-          alert("Mode Demo: Data tidak terhapus.");
-        } else {
-          alert("Error: " + res.pesan);
-        }
+        showConfirm(
+          "Konfirmasi Hapus",
+          "Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.",
+          async () => {
+            showLoading(true);
+            const res = await callGAS("hapusDataSupplier", { id });
+            showLoading(false);
+            if (res && res.sukses) {
+              showAlert("Terhapus", res.pesan, "success");
+              fetchSupplierData();
+            } else if (!res) {
+              showAlert("Mode Demo", "Data tidak benar-benar terhapus.", "info");
+            } else {
+              showAlert("Error", res.pesan, "error");
+            }
+          },
+        );
       }
 
       function changePage(delta) {
@@ -1689,8 +1807,10 @@
           lucide.createIcons();
           if (isScanning) toggleScanner();
         } else {
-          alert(
+          showAlert(
+            "Produk Tidak Ditemukan",
             'Produk "' + (codeParam || query) + '" belum terdaftar di sistem!',
+            "warning"
           );
         }
       }
@@ -1754,35 +1874,7 @@
         }).format(n || 0);
       }
 
-      // --- FITUR BARU: SIMPAN SUPPLIER ---
-      function handleSimpanSupplier(e) {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
-
-        showLoading(true);
-        if (typeof google !== "undefined") {
-          google.script.run
-            .withSuccessHandler((res) => {
-              showLoading(false);
-              if (res.sukses) {
-                alert(res.pesan);
-                clearForm();
-                toggleAddForm();
-                fetchSupplierData(); // Refresh list
-              } else {
-                alert("Error: " + res.pesan);
-              }
-            })
-            .simpanKeSupplier(data);
-        } else {
-          setTimeout(() => {
-            showLoading(false);
-            alert("Mode Demo: Data tidak tersimpan.");
-          }, 800);
-        }
-      }
+      // --- FITUR BARU: SIMPAN SUPPLIER --- (REMOVED REDUNDANT)
     </script>
   </body>
 </html>

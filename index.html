@@ -313,10 +313,18 @@
                     <input
                       type="text"
                       id="manualInput"
+                      oninput="handleAutocomplete()"
                       onkeyup="if (event.key === 'Enter') cariBarang();"
                       placeholder="Masukkan Nama / Barcode Barang . . ."
                       class="w-full pl-16 pr-6 py-5 rounded-full bg-white font-bold text-sm md:text-lg shadow-md border-none outline-none focus:ring-4 focus:ring-slate-100 transition-all placeholder:text-slate-400"
                     />
+                    <!-- Result Suggestions moved here -->
+                    <div
+                      id="searchSuggestions"
+                      class="hidden absolute top-full left-0 right-0 mt-3 bg-white border border-slate-100 rounded-[1.5rem] shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-50"
+                    >
+                      <!-- Suggestions will be rendered here -->
+                    </div>
                   </div>
                   <button
                     onclick="cariBarang()"
@@ -333,14 +341,6 @@
                   >
                     Hapus Inputan
                   </button>
-                </div>
-
-                <!-- Result Suggestions -->
-                <div
-                  id="searchSuggestions"
-                  class="hidden bg-white border border-slate-100 rounded-[1.5rem] shadow-xl max-h-60 overflow-y-auto custom-scrollbar"
-                >
-                  <!-- Suggestions will be rendered here -->
                 </div>
               </div>
 
@@ -1531,46 +1531,48 @@
       }
 
       function filterSupplierTable() {
-        const query = document
-          .getElementById("supplierSearch")
-          .value.toLowerCase();
-        const fSupp =
-          document.getElementById("filter-supplier")?.value.toLowerCase() || "";
-        const fBar =
-          document.getElementById("filter-barcode")?.value.toLowerCase() || "";
-        const fNama =
-          document.getElementById("filter-nama")?.value.toLowerCase() || "";
+        try {
+          const query = (document.getElementById("supplierSearch")?.value || "").toLowerCase();
+          const fSupp = (document.getElementById("filter-supplier")?.value || "").toLowerCase();
+          const fBar = (document.getElementById("filter-barcode")?.value || "").toLowerCase();
+          const fNama = (document.getElementById("filter-nama")?.value || "").toLowerCase();
 
-        filteredSupplierData = rawSupplierData.filter((it) => {
-          const matchesGlobal =
-            (it.namaBarang && it.namaBarang.toLowerCase().includes(query)) ||
-            (it.supplier && it.supplier.toLowerCase().includes(query)) ||
-            (it.barcode && it.barcode.toLowerCase().includes(query));
+          filteredSupplierData = rawSupplierData.filter((it) => {
+            const nama = String(it.namaBarang || "").toLowerCase();
+            const supplier = String(it.supplier || "").toLowerCase();
+            const barcode = String(it.barcode || "").toLowerCase();
 
-          const matchesSupplier =
-            it.supplier && it.supplier.toLowerCase().includes(fSupp);
-          const matchesBarcode =
-            it.barcode && it.barcode.toLowerCase().includes(fBar);
-          const matchesNama =
-            it.namaBarang && it.namaBarang.toLowerCase().includes(fNama);
+            const matchesGlobal =
+              nama.includes(query) ||
+              supplier.includes(query) ||
+              barcode.includes(query);
 
-          return (
-            matchesGlobal && matchesSupplier && matchesBarcode && matchesNama
-          );
-        });
+            const matchesSupplier = supplier.includes(fSupp);
+            const matchesBarcode = barcode.includes(fBar);
+            const matchesNama = nama.includes(fNama);
 
-        // Sorting Logic
-        filteredSupplierData.sort((a, b) => {
-          // Default sorting by ID or Date if available
-          const valA = a.id || "";
-          const valB = b.id || "";
-          return sortOrder === "asc"
-            ? valA.localeCompare(valB)
-            : valB.localeCompare(valA);
-        });
+            return (
+              matchesGlobal && matchesSupplier && matchesBarcode && matchesNama
+            );
+          });
 
-        currentPage = 1;
-        renderSupplierTable();
+          // Sorting Logic
+          filteredSupplierData.sort((a, b) => {
+            const valA = String(a.id || "");
+            const valB = String(b.id || "");
+            return sortOrder === "asc"
+              ? valA.localeCompare(valB)
+              : valB.localeCompare(valA);
+          });
+
+          currentPage = 1;
+          renderSupplierTable();
+        } catch (err) {
+          console.error("Filter Error:", err);
+          // Fallback minimal render if filter fails
+          filteredSupplierData = [...rawSupplierData];
+          renderSupplierTable();
+        }
       }
 
       function toggleScanner() {
@@ -1690,6 +1692,33 @@
           alert(
             'Produk "' + (codeParam || query) + '" belum terdaftar di sistem!',
           );
+        }
+      }
+
+      function handleAutocomplete() {
+        const query = document
+          .getElementById("manualInput")
+          .value.toLowerCase()
+          .trim();
+        const suggestions = document.getElementById("searchSuggestions");
+
+        if (query.length < 2) {
+          suggestions.classList.add("hidden");
+          return;
+        }
+
+        const matches = rawCekHargaData
+          .filter(
+            (it) =>
+              (it.namaBarang && it.namaBarang.toLowerCase().includes(query)) ||
+              (it.barcode && it.barcode.toLowerCase().includes(query)),
+          )
+          .slice(0, 10); // Limit to 10 suggestions
+
+        if (matches.length > 0) {
+          showSuggestions(matches);
+        } else {
+          suggestions.classList.add("hidden");
         }
       }
 

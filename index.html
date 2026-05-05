@@ -425,34 +425,41 @@
       else overlay.classList.remove('active');
     }
 
-    // --- KONFIGURASI VERCEL ---
-    // Copy URL Web App GAS Anda ke sini setelah Deploy (Pilih 'Anyone')
-    const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbztsAyCoHtqxmncezTN_jGoG4IVj9L8nOQ4s_zvqxUBAgGbWC3yFCTiSHLfFJfNzRdACA/exec"; 
+/* ... cari di bagian script index.html ... */
 
-    async function callGAS(action, payload = null) {
-      if (typeof google !== 'undefined') {
-        return new Promise((resolve, reject) => {
-          google.script.run
-            .withSuccessHandler(resolve)
-            .withFailureHandler(reject)[action](payload);
-        });
-      } else {
-        if (!GAS_WEBAPP_URL) {
-          console.warn("GAS_WEBAPP_URL belum diisi. Menggunakan data simulasi.");
-          return null; 
-        }
-        try {
-          const response = await fetch(GAS_WEBAPP_URL, {
-            method: 'POST',
-            body: JSON.stringify({ action, payload })
-          });
-          return await response.json();
-        } catch (err) {
-          console.error("Fetch Error:", err);
-          return { sukses: false, pesan: "Gagal terhubung ke Server GAS." };
-        }
-      }
+// --- KONFIGURASI KONEKSI DATABASE ---
+// 1. Deploy script kode.gs di atas sebagai Web App.
+// 2. Set "Who has access" ke "Anyone".
+// 3. Paste URL-nya di sini:
+const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbztsAyCoHtqxmncezTN_jGoG4IVj9L8nOQ4s_zvqxUBAgGbWC3yFCTiSHLfFJfNzRdACA/exec"; 
+
+async function callGAS(action, payload = null) {
+  if (typeof google !== 'undefined') {
+    // Mode Internal (Apps Script View)
+    return new Promise((resolve, reject) => {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(reject)[action](payload);
+    });
+  } else {
+    // Mode External (Vercel/Github View) via API Bridge
+    if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("URL_WEBAPP_GAS")) {
+      console.warn("⚠️ GAS_WEBAPP_URL belum diisi!");
+      return null; 
     }
+    try {
+      const response = await fetch(GAS_WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action, payload })
+      });
+      return await response.json();
+    } catch (err) {
+      console.error("Fetch Error:", err);
+      return { sukses: false, pesan: "Gagal terhubung ke Server GAS. Periksa URL & Set 'Anyone'." };
+    }
+  }
+}
 
     async function fetchSupplierData() {
       showLoading(true);

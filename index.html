@@ -609,27 +609,42 @@
                           placeholder="..."
                         />
                       </div>
-                      <div class="space-y-2">
-                        <label
-                          class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
-                          >Barcode</label
-                        >
-                        <div class="flex gap-2">
-                          <input
-                            type="text"
-                            name="barcode"
-                            id="supplier-barcode-input"
-                            class="flex-1 px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono"
-                            placeholder="000000"
-                          />
-                          <button
-                            type="button"
-                            onclick="startSupplierScan()"
-                            class="px-5 bg-slate-900 text-white rounded-2xl active:scale-95 transition-all shadow-lg shadow-slate-200"
-                            title="Scan Barcode"
-                          >
-                            <i data-lucide="scan-barcode" class="w-5 h-5"></i>
-                          </button>
+                      <div class="space-y-4 md:col-span-2 lg:col-span-3">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode Produk (Opsional)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div class="space-y-2">
+                             <div class="flex items-center justify-between px-1">
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Barcode Ball</span>
+                                <button type="button" onclick="startSupplierScan('barcodeBall')" class="text-orange-500 hover:text-orange-600 transition-colors">
+                                   <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
+                                </button>
+                             </div>
+                             <input type="text" name="barcodeBall" id="supplier-barcodeBall" 
+                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
+                               placeholder="Barcode Ball..." />
+                          </div>
+                          <div class="space-y-2">
+                             <div class="flex items-center justify-between px-1">
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Barcode Pak</span>
+                                <button type="button" onclick="startSupplierScan('barcodePak')" class="text-orange-500 hover:text-orange-600 transition-colors">
+                                   <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
+                                </button>
+                             </div>
+                             <input type="text" name="barcodePak" id="supplier-barcodePak" 
+                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
+                               placeholder="Barcode Pak..." />
+                          </div>
+                          <div class="space-y-2">
+                             <div class="flex items-center justify-between px-1">
+                                <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Barcode Bks</span>
+                                <button type="button" onclick="startSupplierScan('barcodeBks')" class="text-orange-500 hover:text-orange-600 transition-colors">
+                                   <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
+                                </button>
+                             </div>
+                             <input type="text" name="barcodeBks" id="supplier-barcodeBks" 
+                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
+                               placeholder="Barcode Bks..." />
+                          </div>
                         </div>
                       </div>
 
@@ -975,20 +990,19 @@
                         <tr
                           class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700"
                         >
-                          <th
-                            class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]"
-                          >
-                            No
-                          </th>
-                          <th class="px-8 py-7">Nama Barang / Barcode</th>
-                          <th class="px-8 py-7">Kategori</th>
-                          <th class="px-8 py-7">Supplier</th>
-                          <th class="px-8 py-7">Harga Ball/Dus</th>
-                          <th class="px-8 py-7">Harga Pak/Bks</th>
-                          <th class="px-8 py-7">Harga Pcs/Eceran</th>
-                          <th class="px-8 py-7 text-center">
-                            Tanggal Pembelian
-                          </th>
+                          <th id="th-no" class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No</th>
+                          <th id="th-tanggal" class="px-8 py-7 text-center">Tanggal Pembelian</th>
+                          <th id="th-supplier" class="px-8 py-7">Supplier</th>
+                          <th id="th-item" class="px-8 py-7">Nama Barang</th>
+                          <th id="th-category" class="px-8 py-7">Kategori Barang</th>
+                          <th id="th-barcodeBall" class="px-8 py-7">Barcode Ball</th>
+                          <th id="th-barcodePak" class="px-8 py-7">Barcode Pak</th>
+                          <th id="th-barcodeBks" class="px-8 py-7">Barcode Bks</th>
+                          <th id="th-hargaBall" class="px-8 py-7">Harga Ball</th>
+                          <th id="th-isiBall" class="px-8 py-7 text-center">Isi Ball</th>
+                          <th id="th-hargaPak" class="px-8 py-7">Harga Pak</th>
+                          <th id="th-isiPak" class="px-8 py-7 text-center">Isi Pak</th>
+                          <th id="th-hargaEceran" class="px-8 py-7">Harga Bks</th>
                           <th class="px-8 py-7 text-center">Aksi</th>
                         </tr>
                       </thead>
@@ -1080,13 +1094,18 @@
       let isDarkMode = false;
       let visibleColumns = {
         no: true,
+        tanggal: true,
+        supplier: true,
         item: true,
         category: true,
-        supplier: true,
+        barcodeBall: true,
+        barcodePak: true,
+        barcodeBks: true,
         hargaBall: true,
+        isiBall: true,
         hargaPak: true,
+        isiPak: true,
         hargaEceran: true,
-        tanggal: true,
       };
 
       // Pagination State
@@ -1158,70 +1177,56 @@
       }
 
       function switchPage(page) {
-        document
-          .querySelectorAll(".page-section")
-          .forEach((s) => {
-            s.classList.remove("active");
-            s.classList.add("hidden");
-          });
+        // Reset all sections
+        document.querySelectorAll(".page-section").forEach((s) => {
+          s.classList.add("hidden");
+          s.classList.remove("active", "opacity-0", "translate-y-4");
+        });
 
         const activeSection = document.getElementById("section-" + page);
         if (activeSection) {
           activeSection.classList.remove("hidden");
-          setTimeout(() => {
-            activeSection.classList.add("active");
-            activeSection.classList.remove("opacity-0", "translate-y-4");
-            activeSection.classList.add(
-              "animate-in",
-              "fade-in",
-              "slide-in-from-bottom-4",
-              "duration-500",
-            );
-          }, 10);
-
+          activeSection.classList.add("active");
+          
           if (page === "dashboard") {
             renderDashboard();
           }
         }
 
-        document
-          .querySelectorAll(".nav-btn")
-          .forEach((b) => b.classList.remove("active", "text-orange-600", "bg-slate-50"));
+        // Update nav buttons
+        document.querySelectorAll(".nav-btn").forEach((b) => {
+          b.classList.remove("active", "text-orange-600", "bg-slate-50");
+        });
         
         const activeNav = document.getElementById("nav-" + page);
         if (activeNav) {
           activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
         }
 
-        // Auto expand submenu for Master Data items
-        if (page === "supplier") {
-          const submenu = document.getElementById("submenu-master");
-          if (submenu && submenu.classList.contains("hidden"))
-            toggleSubmenu("master");
-        }
-
+        // Menu titles
         const titles = {
-          "dashboard": "Dashboard Overview",
+          "dashboard": "Ringkasan Sistem",
           "cek-harga": "Cek Harga Barang",
           "supplier": "Database Supplier"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
-        if (page === "supplier" && rawSupplierData.length === 0)
+        // Auto load data if needed
+        if (page === "supplier") {
+          const submenu = document.getElementById("submenu-master");
+          if (submenu) submenu.classList.remove("hidden");
+          fetchCategoryData();
           fetchSupplierData();
+        }
 
-        // Auto close sidebar on mobile/tablet after navigation
-        const sidebar = document.getElementById("sidebar");
-        if (
-          window.innerWidth < 1024 &&
-          !sidebar.classList.contains("-translate-x-full")
-        ) {
-          toggleSidebar();
+        if (window.innerWidth < 1024) {
+          const sidebar = document.getElementById("sidebar");
+          if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
         }
       }
 
       function renderDashboard() {
-  const totalProduk = rawCekHargaData.length;
+        const totalProduk = rawCekHargaData.length;
   const totalSupplier = [...new Set(rawSupplierData.map(it => it.supplier))].filter(s => s && s !== "-").length;
   const totalEntries = rawSupplierData.length;
  
@@ -1241,20 +1246,28 @@
       const div = document.createElement("div");
       div.className = "flex items-center gap-4 p-4 hover:bg-slate-50 rounded-[1.5rem] transition-all group cursor-pointer";
       div.onclick = () => { switchPage('supplier'); };
+      
+      const nama = item.namaBarang || item.NamaBarang || item.item || item["Nama Barang"] || "N/A";
+      const supp = item.supplier || item.Supplier || "Unknown";
+      const eceran = item.hargaBks || item.HargaBks || item.hargaEceran || item["Harga Eceran"] || 0;
+      const tgl = item.tglBeli || item.TglBeli || item.tanggal || item.Tanggal || item["Tanggal Pembelian"] || "-";
+      const idNo = item.id || item.ID || item.no || item.No || "?";
+      const idDisplay = String(idNo).replace('S-', '');
+
       div.innerHTML = `
         <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
-          ${item.id ? item.id.replace('S-', '') : '?'}
+          #${idDisplay}
         </div>
         <div class="flex-1 min-w-0">
-          <p class="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase truncate mb-0.5">${item.namaBarang || 'N/A'}</p>
+          <p class="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase truncate mb-0.5">${nama}</p>
           <div class="flex items-center gap-2">
-            <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter truncate max-w-[100px]">${item.supplier || 'Unknown'}</span>
+            <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter truncate max-w-[100px]">${supp}</span>
             <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-            <span class="text-[9px] font-bold text-slate-400">${item.tglBeli || '-'}</span>
+            <span class="text-[9px] font-bold text-slate-400">${tgl}</span>
           </div>
         </div>
         <div class="text-right shrink-0">
-          <p class="text-[11px] font-black text-slate-900">${formatIDR(item.hargaBks || 0)}</p>
+          <p class="text-[11px] font-black text-slate-900">${formatIDR(eceran)}</p>
           <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Eceran</p>
         </div>
       `;
@@ -1264,10 +1277,16 @@
   lucide.createIcons();
 }
 
+      let loadingCount = 0;
       function showLoading(show) {
         const overlay = document.getElementById("loadingOverlay");
-        if (show) overlay.classList.add("active");
-        else overlay.classList.remove("active");
+        if (show) {
+          loadingCount++;
+          overlay.classList.add("active");
+        } else {
+          loadingCount = Math.max(0, loadingCount - 1);
+          if (loadingCount === 0) overlay.classList.remove("active");
+        }
       }
 
       // Karena lucide.createIcons() mengganti elemen <i> dengan <svg> baru,
@@ -1343,56 +1362,56 @@
       // 3. Paste URL-nya di sini:
       const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbztsAyCoHtqxmncezTN_jGoG4IVj9L8nOQ4s_zvqxUBAgGbWC3yFCTiSHLfFJfNzRdACA/exec";
 
+      // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
-        if (typeof google !== "undefined") {
-          // Mode Internal (Apps Script View)
+        if (typeof google !== "undefined" && google.script && google.script.run) {
           return new Promise((resolve, reject) => {
             google.script.run
               .withSuccessHandler(resolve)
-              .withFailureHandler(reject)
-              [action](payload);
+              .withFailureHandler(err => {
+                console.error("GAS Error:", err);
+                reject(err);
+              })[action](payload);
           });
         } else {
-          // Mode External (Vercel/Github View) via API Bridge
+          // Fallback via Fetch (Bridge)
           if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("URL_WEBAPP_GAS")) {
-            console.warn("⚠️ GAS_WEBAPP_URL belum diisi!");
-            return null;
+            console.warn("GAS_WEBAPP_URL not configured.");
+            return { sukses: false, pesan: "Server not configured" };
           }
           try {
-            const response = await fetch(GAS_WEBAPP_URL, {
+            const resp = await fetch(GAS_WEBAPP_URL, {
               method: "POST",
               headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify({ action, payload }),
             });
-            return await response.json();
+            return await resp.json();
           } catch (err) {
-            console.error("Fetch Error:", err);
-            return {
-              sukses: false,
-              pesan:
-                "Gagal terhubung ke Server GAS. Periksa URL & Set 'Anyone'.",
-            };
+            return { sukses: false, pesan: err.toString() };
           }
         }
       }
 
+      let isMasterCategoryLoaded = false;
       async function fetchCategoryData() {
         try {
           const res = await callGAS("ambilMasterCategory");
-          if (res && res.sukses && Array.isArray(res.data)) {
-            rawCategoryData = res.data.filter(c => c);
+          if (res && res.sukses && Array.isArray(res.data) && res.data.length > 0) {
+            rawCategoryData = res.data;
+            isMasterCategoryLoaded = true;
           } else {
-            console.warn("GAS ambilMasterCategory failed, checking supplier data for categories.");
-            extractCategoriesFromSuppliers();
+            console.warn("Using fallback categories.");
+            if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
           }
         } catch (err) {
-          console.error("fetchCategoryData error:", err);
-          extractCategoriesFromSuppliers();
+          if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
         }
         updateCategorySelects();
       }
 
       function extractCategoriesFromSuppliers() {
+        if (isMasterCategoryLoaded && rawCategoryData.length > 0) return;
+        
         if (!Array.isArray(rawSupplierData) || rawSupplierData.length === 0) {
           if (!rawCategoryData || rawCategoryData.length === 0) {
             rawCategoryData = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
@@ -1439,7 +1458,6 @@
         showLoading(true);
         try {
           const res = await callGAS("ambilDataSupplier");
-          showLoading(false);
           
           if (res && res.sukses && Array.isArray(res.data)) {
             rawSupplierData = res.data;
@@ -1452,16 +1470,19 @@
             showAlert("Error", res.pesan || "Gagal mengambil data", "error");
             rawSupplierData = [];
           }
+          
+          updateSupplierDropdown();
+          extractCategoriesFromSuppliers(); 
+          updateCategorySelects();
+          filterSupplierTable(); // This triggers render
+          
         } catch (err) {
-          showLoading(false);
           console.error("fetchSupplierData error:", err);
           rawSupplierData = [];
+          filterSupplierTable();
+        } finally {
+          showLoading(false);
         }
-        
-        updateSupplierDropdown();
-        extractCategoriesFromSuppliers(); // Try to get categories from supplier data if fetchCategoryData failed
-        updateCategorySelects();
-        filterSupplierTable();
       }
 
       function updateSupplierDropdown() {
@@ -1514,27 +1535,24 @@
         const data = Object.fromEntries(formData.entries());
 
         showLoading(true);
-        const res = await callGAS("simpanKeSupplier", data);
-
-        showLoading(false);
-        if (res && res.sukses) {
-          showAlert("Sukses", res.pesan, "success");
-          clearForm();
-          if (
-            !document
-              .getElementById("addFormContainer")
-              .classList.contains("hidden")
-          )
-            toggleAddForm();
-          fetchSupplierData();
-        } else if (!res) {
-          showAlert(
-            "Mode Demo",
-            "Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.",
-            "info"
-          );
-        } else {
-          showAlert("Error", res.pesan, "error");
+        try {
+          const res = await callGAS("simpanKeSupplier", data);
+          if (res && res.sukses) {
+            showAlert("Sukses", res.pesan, "success");
+            clearForm();
+            if (!document.getElementById("addFormContainer").classList.contains("hidden")) {
+              toggleAddForm();
+            }
+            await fetchSupplierData();
+          } else if (!res) {
+            showAlert("Mode Demo", "Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.", "info");
+          } else {
+            showAlert("Error", res.pesan, "error");
+          }
+        } catch (err) {
+          console.error("Save error:", err);
+        } finally {
+          showLoading(false);
         }
       }
 
@@ -1628,17 +1646,21 @@
       }
 
       function persiapkanEdit(id) {
-        const it = rawSupplierData.find((item) => (item.id || item.ID || item.No) == id);
+        const it = rawSupplierData.find((item) => (item.id || item.ID || item.No || item.no) == id);
         if (!it) return;
 
         toggleAddForm(); 
         document.getElementById("formTitle").innerText = "Edit Data Barang";
 
         const form = document.getElementById("tambahSupplierForm");
-        form.querySelector('[name="supplier"]').value = it.supplier || it.Supplier || it["Supplier"] || "";
-        form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || it.CategoryBarang || it.category || it.Kategori || it["Category Barang"] || "";
-        form.querySelector('[name="namaBarang"]').value = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "";
-        form.querySelector('[name="barcode"]').value = it.barcode || it.Barcode || "";
+        form.querySelector('[name="supplier"]').value = it.supplier || it.Supplier || "";
+        form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || it.CategoryBarang || "";
+        form.querySelector('[name="namaBarang"]').value = it.namaBarang || it.NamaBarang || "";
+        
+        // Load 3 Barcodes
+        form.querySelector('[name="barcodeBall"]').value = it.barcodeBall || "";
+        form.querySelector('[name="barcodePak"]').value = it.barcodePak || "";
+        form.querySelector('[name="barcodeBks"]').value = it.barcodeBks || "";
 
         // Hidden values
         document.getElementById("val-hargaBall").value = it.hargaBall || it.HargaBall || 0;
@@ -1651,6 +1673,17 @@
         document.getElementById("calc-hargaBall").value = formatIDR(it.hargaBall || it.HargaBall);
         document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak || it.HargaPak);
         document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks || it.HargaBks || it.hargaEceran);
+
+        // Pertahankan tanggal beli asli jika ada
+        let tglInput = document.getElementById("edit-tglBeli");
+        if (!tglInput) {
+            tglInput = document.createElement("input");
+            tglInput.type = "hidden";
+            tglInput.name = "tglBeli";
+            tglInput.id = "edit-tglBeli";
+            form.appendChild(tglInput);
+        }
+        tglInput.value = it.tglBeli || "";
 
         // Add row ID for backend knowing this is an update
         let rowIdInput = document.getElementById("edit-rowId");
@@ -1682,9 +1715,11 @@
         const form = document.getElementById("tambahSupplierForm");
         form.reset();
 
-        // Reset hidden field if exists
-        const rowIdInput = document.getElementById("edit-rowId");
-        if (rowIdInput) rowIdInput.value = "";
+        // Reset hidden fields
+        ["edit-rowId", "edit-tglBeli"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
 
         // Reset button text
         const btnText = form.querySelector('button[type="submit"] span');
@@ -1715,7 +1750,7 @@
   const totalData = data.length;
  
   if (totalData === 0) {
-    const emptyMsg = `<tr><td colspan="10" class="py-32 text-center text-slate-300 font-extrabold uppercase text-sm tracking-widest">Tidak ada data</td></tr>`;
+    const emptyMsg = `<tr><td colspan="14" class="py-32 text-center text-slate-300 font-extrabold uppercase text-sm tracking-widest">Tidak ada data</td></tr>`;
     tbody.innerHTML = emptyMsg;
     cardContainer.innerHTML =
       '<div class="py-20 text-center text-slate-300 font-extrabold uppercase text-xs tracking-widest">Tidak ada data</div>';
@@ -1728,83 +1763,130 @@
   const endIndex = Math.min(startIndex + itemsPerPage, totalData);
   const paginatedData = data.slice(startIndex, endIndex);
  
+  // Update header visibility
+   Object.keys(visibleColumns).forEach(k => {
+     const h = document.getElementById("th-" + k);
+     if (h) h.classList.toggle("hidden", !visibleColumns[k]);
+   });
+
   // Render Desktop Rows
   tbody.innerHTML = paginatedData
     .map((it, idx) => {
       const rowNo = startIndex + idx + 1;
       const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
-      const barcode = it.barcode || it.Barcode || "-";
-      const cat = it.categoryBarang || it.CategoryBarang || it.category || it["Category Barang"] || it.Kategori || "-";
+      const cat = it.categoryBarang || it.CategoryBarang || it.category || it.Category || it.Kategori || "-";
       const supp = it.supplier || it.Supplier || "-";
       
+      const hBall = it.hargaBall || it.HargaBall || 0;
+      const hPak = it.hargaPak || it.HargaPak || 0;
+      const hBks = it.hargaBks || it.HargaBks || it.hargaEceran || it["Harga Eceran"] || 0;
+      const iBall = it.isiBall || it.IsiBall || 0;
+      const iPak = it.isiPak || it.IsiPak || 0;
+      const tgl = it.tglBeli || it.TglBeli || it.tanggal || it.Tanggal || it["Tanggal Pembelian"] || "-";
+      const idFinal = it.id || it.ID || it.no || it.No || rowNo;
+
+      const bBall = it.barcodeBall || it.BarcodeBall || "-";
+      const bPak = it.barcodePak || it.BarcodePak || "-";
+      const bBks = it.barcodeBks || it.BarcodeBks || "-";
+
       return `
-    <tr class="hover:bg-slate-50/70 transition-all group animate-in fade-in slide-in-from-left duration-300" style="animation-delay: ${idx * 50}ms">
-      <td class="px-8 py-6 text-center font-bold text-slate-300 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 shadow-[2px_0_5px_rgba(0,0,0,0.01)] ${!visibleColumns.no ? "hidden" : ""}">
-        #${rowNo}
+    <tr class="hover:bg-slate-50/70 transition-all group border-b border-slate-50 text-[11px]">
+      <td class="px-8 py-6 text-center font-bold text-slate-400 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 ${!visibleColumns.no ? "hidden" : ""}">
+        ${rowNo}.
       </td>
-      <td class="px-8 py-6 ${!visibleColumns.item ? "hidden" : ""}">
-         <p class="text-[14px] font-black text-slate-800 leading-tight group-hover:text-orange-600 transition-colors">${nama}</p>
-         <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter">${barcode}</p>
-      </td>
-      <td class="px-8 py-6 ${!visibleColumns.category ? "hidden" : ""}">
-         <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${cat}</span>
+      <td class="px-8 py-6 text-slate-600 font-bold whitespace-nowrap ${!visibleColumns.tanggal ? "hidden" : ""}">
+        ${tgl}
       </td>
       <td class="px-8 py-6 ${!visibleColumns.supplier ? "hidden" : ""}">
-         <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${supp}</span>
+         <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap">${supp}</span>
       </td>
-      <td class="px-8 py-6 text-sm font-black text-slate-700 ${!visibleColumns.hargaBall ? "hidden" : ""}">
-        ${formatIDR(it.hargaBall || it.HargaBall)}
+      <td class="px-8 py-6 min-w-[200px] ${!visibleColumns.item ? "hidden" : ""}">
+         <p class="font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase leading-tight">${nama}</p>
       </td>
-      <td class="px-8 py-6 text-sm font-black text-slate-700 ${!visibleColumns.hargaPak ? "hidden" : ""}">
-        ${formatIDR(it.hargaPak || it.HargaPak)}
+      <td class="px-8 py-6 ${!visibleColumns.category ? "hidden" : ""}">
+         <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap">${cat}</span>
       </td>
-      <td class="px-8 py-6 text-sm font-black text-emerald-600 ${!visibleColumns.hargaEceran ? "hidden" : ""}">
-        ${formatIDR(it.hargaBks || it.HargaBks || it.hargaEceran)}
+      <td class="px-8 py-6 font-mono text-slate-500 whitespace-nowrap ${!visibleColumns.barcodeBall ? "hidden" : ""}">
+        ${bBall}
       </td>
-      <td class="px-8 py-6 text-center text-sm font-black text-slate-700 uppercase whitespace-nowrap tracking-tighter ${!visibleColumns.tanggal ? "hidden" : ""}">
-        ${it.tglBeli || it.TglBeli || it.tanggal || "-"}
+      <td class="px-8 py-6 font-mono text-slate-500 whitespace-nowrap ${!visibleColumns.barcodePak ? "hidden" : ""}">
+        ${bPak}
+      </td>
+      <td class="px-8 py-6 font-mono text-slate-500 whitespace-nowrap ${!visibleColumns.barcodeBks ? "hidden" : ""}">
+        ${bBks}
+      </td>
+      <td class="px-8 py-6 font-black text-slate-700 whitespace-nowrap ${!visibleColumns.hargaBall ? "hidden" : ""}">
+        ${formatIDR(hBall)}
+      </td>
+      <td class="px-8 py-6 text-center font-black text-slate-500 ${!visibleColumns.isiBall ? "hidden" : ""}">
+        ${iBall}
+      </td>
+      <td class="px-8 py-6 font-black text-slate-700 whitespace-nowrap ${!visibleColumns.hargaPak ? "hidden" : ""}">
+        ${formatIDR(hPak)}
+      </td>
+      <td class="px-8 py-6 text-center font-black text-slate-500 ${!visibleColumns.isiPak ? "hidden" : ""}">
+        ${iPak}
+      </td>
+      <td class="px-8 py-6 font-black text-emerald-600 whitespace-nowrap ${!visibleColumns.hargaEceran ? "hidden" : ""}">
+        ${formatIDR(hBks)}
       </td>
       <td class="px-8 py-6 text-center">
          <div class="flex items-center justify-center gap-2">
-           <button onclick="persiapkanEdit('${it.id || it.ID || it.No}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-orange-600 hover:border-orange-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Edit">
+           <button onclick="persiapkanEdit('${idFinal}')" class="p-2 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-orange-600 transition-all active:scale-95">
              <i data-lucide="edit-3" class="w-4 h-4"></i>
            </button>
-           <button onclick="handleDeleteSupplier('${it.id || it.ID || it.No}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-red-500 hover:border-red-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Hapus">
+           <button onclick="handleDeleteSupplier('${idFinal}')" class="p-2 bg-white border border-slate-100 rounded-lg text-slate-400 hover:text-red-500 transition-all active:scale-95">
              <i data-lucide="trash-2" class="w-4 h-4"></i>
            </button>
          </div>
       </td>
     </tr>
-  `;
+  `
     })
     .join("");
- 
+
   // Render Mobile Cards
   cardContainer.innerHTML = paginatedData
     .map((it, idx) => {
       const rowNo = startIndex + idx + 1;
       const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
-      const barcode = it.barcode || it.Barcode || "-";
-      const cat = it.categoryBarang || it.CategoryBarang || it.category || it["Category Barang"] || it.Kategori || "-";
+      const cat = it.categoryBarang || it.CategoryBarang || it.category || it.Category || it.Kategori || "-";
       const supp = it.supplier || it.Supplier || "-";
- 
+
+      const hBall = it.hargaBall || it.HargaBall || 0;
+      const hPak = it.hargaPak || it.HargaPak || 0;
+      const hBks = it.hargaBks || it.HargaBks || it.hargaEceran || it["Harga Eceran"] || 0;
+      const iBall = it.isiBall || it.IsiBall || 0;
+      const iPak = it.isiPak || it.IsiPak || 0;
+      const tgl = it.tglBeli || it.TglBeli || it.tanggal || it.Tanggal || it["Tanggal Pembelian"] || "-";
+      const idFinal = it.id || it.ID || it.no || it.No || rowNo;
+
+      const bBall = it.barcodeBall || it.BarcodeBall || "-";
+      const bPak = it.barcodePak || it.BarcodePak || "-";
+      const bBks = it.barcodeBks || it.BarcodeBks || "-";
+
       return `
-  <div class="mb-6 bg-white p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6" style="animation-delay: ${idx * 50}ms">
+  <div class="mb-6 bg-white p-6 space-y-5 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6">
     <div class="flex justify-between items-start gap-4">
       <div class="flex-1">
-        <div class="flex items-center gap-2 mb-2">
-          <span class="text-[9px] font-black text-slate-300 py-1 px-2 bg-slate-100 rounded-lg ${!visibleColumns.no ? "hidden" : ""}">#${rowNo}</span>
+        <div class="flex items-center gap-2 mb-2 flex-wrap">
+          <span class="text-[9px] font-black text-slate-300 py-1 px-2 bg-slate-100 rounded-lg ${!visibleColumns.no ? "hidden" : ""}">${rowNo}.</span>
           <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest ${!visibleColumns.supplier ? "hidden" : ""}">${supp}</p>
           <span class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg ${!visibleColumns.category ? "hidden" : ""}">${cat}</span>
+          <span class="text-[9px] font-black text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-lg ${!visibleColumns.tanggal ? "hidden" : ""}">${tgl}</span>
         </div>
-        <h3 class="text-lg font-black text-slate-900 leading-tight ${!visibleColumns.item ? "hidden" : ""}">${nama}</h3>
-        <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter ${!visibleColumns.item ? "hidden" : ""}">${barcode}</p>
+        <h3 class="text-lg font-black text-slate-900 leading-tight uppercase ${!visibleColumns.item ? "hidden" : ""}">${nama}</h3>
+        <div class="mt-3 space-y-1">
+          <p class="text-[10px] font-bold text-slate-400 font-mono ${!visibleColumns.barcodeBall ? "hidden" : ""}">BALL: ${bBall}</p>
+          <p class="text-[10px] font-bold text-slate-400 font-mono ${!visibleColumns.barcodePak ? "hidden" : ""}">PAK: ${bPak}</p>
+          <p class="text-[10px] font-bold text-slate-400 font-mono ${!visibleColumns.barcodeBks ? "hidden" : ""}">BKS: ${bBks}</p>
+        </div>
       </div>
       <div class="flex flex-col gap-2">
-        <button onclick="persiapkanEdit('${it.id || it.ID || it.No}')" class="p-3 bg-slate-50 text-slate-400 rounded-xl active:scale-90 transition-all">
+        <button onclick="persiapkanEdit('${idFinal}')" class="p-3 bg-slate-50 text-slate-400 rounded-xl active:scale-95 transition-all">
           <i data-lucide="edit-3" class="w-5 h-5"></i>
         </button>
-        <button onclick="handleDeleteSupplier('${it.id || it.ID || it.No}')" class="p-3 bg-red-50 text-red-400 rounded-xl active:scale-90 transition-all">
+        <button onclick="handleDeleteSupplier('${idFinal}')" class="p-3 bg-red-50 text-red-400 rounded-xl active:scale-95 transition-all">
           <i data-lucide="trash-2" class="w-5 h-5"></i>
         </button>
       </div>
@@ -1813,32 +1895,26 @@
     <div class="grid grid-cols-1 gap-4 pt-4 border-t border-slate-50">
       <div class="flex items-center justify-between bg-slate-50/70 p-4 rounded-2xl border border-slate-100/50">
         <div class="${!visibleColumns.hargaBall ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Ball/Dus</p>
-          <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaBall || it.HargaBall)}</p>
+          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Ball/Dus (Isi ${iBall})</p>
+          <p class="text-sm font-black text-slate-700">${formatIDR(hBall)}</p>
         </div>
         <div class="text-right ${!visibleColumns.hargaPak ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Pak/Bks</p>
-          <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaPak || it.HargaPak)}</p>
+          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Pak/Bks (Isi ${iPak})</p>
+          <p class="text-sm font-black text-slate-700">${formatIDR(hPak)}</p>
         </div>
       </div>
- 
+
       <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between">
         <div class="${!visibleColumns.hargaEceran ? "hidden" : ""}">
           <p class="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">Eceran</p>
-          <p class="text-xl font-black text-emerald-700">${formatIDR(it.hargaBks || it.HargaBks)}</p>
-        </div>
-        <div class="text-right ${!visibleColumns.tanggal ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tgl Pembelian</p>
-          <p class="text-[10px] font-black text-slate-600">${it.tglBeli || it.TglBeli || "-"}</p>
+          <p class="text-xl font-black text-emerald-700">${formatIDR(hBks)}</p>
         </div>
       </div>
     </div>
   </div>
-`;
+  `;
     })
     .join("");
- 
-  // Update Info & Pagination Buttons
   document.getElementById("paginationInfo").innerText =
     `Showing ${startIndex + 1} to ${endIndex} of ${totalData} data`;
  
@@ -1880,13 +1956,18 @@
 
         const labels = {
           no: "No.",
-          item: "Nama / Barcode",
-          category: "Kategori",
-          supplier: "Supplier",
-          hargaBall: "Harga Ball",
-          hargaPak: "Harga Pak",
-          hargaEceran: "Harga Eceran",
           tanggal: "Tanggal",
+          supplier: "Supplier",
+          item: "Nama Barang",
+          category: "Kategori",
+          barcodeBall: "Barcode Ball",
+          barcodePak: "Barcode Pak",
+          barcodeBks: "Barcode Bks",
+          hargaBall: "Harga Ball",
+          isiBall: "Isi Ball",
+          hargaPak: "Harga Pak",
+          isiPak: "Isi Pak",
+          hargaEceran: "Harga Bks",
         };
 
         container.innerHTML = "";
@@ -1947,15 +2028,20 @@
           "Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.",
           async () => {
             showLoading(true);
-            const res = await callGAS("hapusDataSupplier", { id });
-            showLoading(false);
-            if (res && res.sukses) {
-              showAlert("Terhapus", res.pesan, "success");
-              fetchSupplierData();
-            } else if (!res) {
-              showAlert("Mode Demo", "Data tidak benar-benar terhapus.", "info");
-            } else {
-              showAlert("Error", res.pesan, "error");
+            try {
+              const res = await callGAS("hapusDataSupplier", { id });
+              if (res && res.sukses) {
+                showAlert("Terhapus", res.pesan, "success");
+                await fetchSupplierData();
+              } else if (!res) {
+                showAlert("Mode Demo", "Data tidak benar-benar terhapus.", "info");
+              } else {
+                showAlert("Error", res.pesan, "error");
+              }
+            } catch (err) {
+               console.error("Delete error:", err);
+            } finally {
+              showLoading(false);
             }
           },
         );
@@ -2014,17 +2100,21 @@
           filteredSupplierData = rawSupplierData.filter((it) => {
             if (!it) return false;
             
-            // Extremely flexible property access to handle spaces, casing, and varying names
-            const nama = String(it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || it["NAMA BARANG"] || "").toLowerCase();
-            const supplier = String(it.supplier || it.Supplier || it["Supplier"] || it["SUPPLIER"] || "").toLowerCase();
-            const barcode = String(it.barcode || it.Barcode || it["Barcode"] || it["BARCODE"] || "").toLowerCase();
-            const category = String(it.categoryBarang || it.category || it.CategoryBarang || it.Kategori || it["Category Barang"] || it["Kategori"] || "").toLowerCase();
+            const nama = String(it.namaBarang || "").toLowerCase();
+            const supplier = String(it.supplier || "").toLowerCase();
+            const cat = String(it.categoryBarang || "").toLowerCase();
+            
+            const bBall = String(it.barcodeBall || "").toLowerCase();
+            const bPak = String(it.barcodePak || "").toLowerCase();
+            const bBks = String(it.barcodeBks || "").toLowerCase();
+            const hasBarcodeMatch = bBall.includes(query) || bPak.includes(query) || bBks.includes(query);
+            const hasBarcodeAdvancedHighlight = fBar && (bBall.includes(fBar) || bPak.includes(fBar) || bBks.includes(fBar));
 
-            if (query && !nama.includes(query) && !supplier.includes(query) && !barcode.includes(query)) return false;
+            if (query && !nama.includes(query) && !supplier.includes(query) && !hasBarcodeMatch) return false;
             
             if (fSupp && supplier !== fSupp) return false;
-            if (fCat && category !== fCat) return false;
-            if (fBar && !barcode.includes(fBar)) return false;
+            if (fCat && cat !== fCat) return false;
+            if (fBar && !hasBarcodeAdvancedHighlight) return false;
             if (fNama && !nama.includes(fNama)) return false;
 
             return true;
@@ -2234,9 +2324,12 @@
 
       // --- GLOBAL SCANNER LOGIC ---
       let globalScanner = null;
-      function startSupplierScan() {
+      let activeScannerTargetId = null;
+
+      function startSupplierScan(targetId) {
         const modal = document.getElementById("scannerModal");
         modal.classList.replace("hidden", "flex");
+        activeScannerTargetId = targetId || "supplier-barcodeBall";
         
         if (globalScanner) {
           globalScanner.stop().catch(() => {});
@@ -2247,7 +2340,8 @@
           { facingMode: "environment" },
           { fps: 20, qrbox: 250 },
           (text) => {
-            document.getElementById("supplier-barcode-input").value = text;
+            const input = document.getElementById("supplier-" + activeScannerTargetId) || document.getElementById(activeScannerTargetId);
+            if (input) input.value = text;
             closeGlobalScanner();
             showAlert("Berhasil", "Barcode '" + text + "' berhasil di-scan!", "success");
           }

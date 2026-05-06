@@ -1212,6 +1212,7 @@
         if (page === "supplier") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
+          fetchCategoryData();
           fetchSupplierData();
         }
 
@@ -1351,56 +1352,56 @@
       // 3. Paste URL-nya di sini:
       const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbztsAyCoHtqxmncezTN_jGoG4IVj9L8nOQ4s_zvqxUBAgGbWC3yFCTiSHLfFJfNzRdACA/exec";
 
+      // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
-        if (typeof google !== "undefined") {
-          // Mode Internal (Apps Script View)
+        if (typeof google !== "undefined" && google.script && google.script.run) {
           return new Promise((resolve, reject) => {
             google.script.run
               .withSuccessHandler(resolve)
-              .withFailureHandler(reject)
-              [action](payload);
+              .withFailureHandler(err => {
+                console.error("GAS Error:", err);
+                reject(err);
+              })[action](payload);
           });
         } else {
-          // Mode External (Vercel/Github View) via API Bridge
+          // Fallback via Fetch (Bridge)
           if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("URL_WEBAPP_GAS")) {
-            console.warn("⚠️ GAS_WEBAPP_URL belum diisi!");
-            return null;
+            console.warn("GAS_WEBAPP_URL not configured.");
+            return { sukses: false, pesan: "Server not configured" };
           }
           try {
-            const response = await fetch(GAS_WEBAPP_URL, {
+            const resp = await fetch(GAS_WEBAPP_URL, {
               method: "POST",
               headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify({ action, payload }),
             });
-            return await response.json();
+            return await resp.json();
           } catch (err) {
-            console.error("Fetch Error:", err);
-            return {
-              sukses: false,
-              pesan:
-                "Gagal terhubung ke Server GAS. Periksa URL & Set 'Anyone'.",
-            };
+            return { sukses: false, pesan: err.toString() };
           }
         }
       }
 
+      let isMasterCategoryLoaded = false;
       async function fetchCategoryData() {
         try {
           const res = await callGAS("ambilMasterCategory");
-          if (res && res.sukses && Array.isArray(res.data)) {
-            rawCategoryData = res.data.filter(c => c);
+          if (res && res.sukses && Array.isArray(res.data) && res.data.length > 0) {
+            rawCategoryData = res.data;
+            isMasterCategoryLoaded = true;
           } else {
-            console.warn("GAS ambilMasterCategory failed, checking supplier data for categories.");
-            extractCategoriesFromSuppliers();
+            console.warn("Using fallback categories.");
+            if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
           }
         } catch (err) {
-          console.error("fetchCategoryData error:", err);
-          extractCategoriesFromSuppliers();
+          if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
         }
         updateCategorySelects();
       }
 
       function extractCategoriesFromSuppliers() {
+        if (isMasterCategoryLoaded && rawCategoryData.length > 0) return;
+        
         if (!Array.isArray(rawSupplierData) || rawSupplierData.length === 0) {
           if (!rawCategoryData || rawCategoryData.length === 0) {
             rawCategoryData = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
@@ -1771,16 +1772,17 @@
       if (it.barcodeBall) barcodes.push(`B:${it.barcodeBall}`);
       if (it.barcodePak) barcodes.push(`P:${it.barcodePak}`);
       if (it.barcodeBks) barcodes.push(`E:${it.barcodeBks}`);
+      if (barcodes.length === 0 && it.barcode) barcodes.push(it.barcode);
       const barcodeDisplay = barcodes.length > 0 ? barcodes.join(" | ") : "-";
 
       return `
     <tr class="hover:bg-slate-50/70 transition-all group border-b border-slate-50">
-      <td class="px-8 py-6 text-center font-bold text-slate-300 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 shadow-[2px_0_5px_rgba(0,0,0,0.01)] ${!visibleColumns.no ? "hidden" : ""}">
+      <td class="px-8 py-6 text-center font-bold text-slate-400 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 ${!visibleColumns.no ? "hidden" : ""}">
         #${it.no || rowNo}
       </td>
       <td class="px-8 py-6 ${!visibleColumns.item ? "hidden" : ""}">
-         <p class="text-[14px] font-black text-slate-800 leading-tight group-hover:text-orange-600 transition-colors uppercase">${nama}</p>
-         <p class="text-[9px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter">${barcodeDisplay}</p>
+         <p class="text-[14px] font-black text-slate-900 leading-tight group-hover:text-orange-600 transition-colors uppercase">${nama}</p>
+         <p class="text-[9px] font-bold text-slate-500 mt-1 font-mono uppercase tracking-tighter">${barcodeDisplay}</p>
       </td>
       <td class="px-8 py-6 ${!visibleColumns.category ? "hidden" : ""}">
          <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${cat}</span>
@@ -1833,6 +1835,7 @@
       if (it.barcodeBall) barcodes.push(`B:${it.barcodeBall}`);
       if (it.barcodePak) barcodes.push(`P:${it.barcodePak}`);
       if (it.barcodeBks) barcodes.push(`E:${it.barcodeBks}`);
+      if (barcodes.length === 0 && it.barcode) barcodes.push(it.barcode);
       const barcodeDisplay = barcodes.length > 0 ? barcodes.join(" | ") : "-";
 
       return `

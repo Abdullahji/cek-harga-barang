@@ -566,23 +566,27 @@
                         </p>
                       </div>
 
-                      <div class="space-y-2">
-                        <label
-                          class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
-                          >Supplier</label
-                        >
-                        <input
-                          type="text"
-                          name="supplier"
-                          required
-                          class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner"
-                          placeholder="..."
-                        />
+                      <div class="space-y-4 md:col-span-2 lg:col-span-3">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">No.</label>
+                            <input type="text" name="no" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Otomatis..." />
+                          </div>
+                          <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
+                            <input type="date" name="tglBeli" id="form-tglBeli" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
+                          </div>
+                          <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Supplier</label>
+                            <input type="text" name="supplier" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
+                          </div>
+                        </div>
                       </div>
+
                       <div class="space-y-2">
                         <label
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
-                          >Category Barang</label
+                          >Kategori Barang</label
                         >
                         <div class="relative">
                           <select
@@ -596,7 +600,7 @@
                           <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
                         </div>
                       </div>
-                      <div class="space-y-2">
+                      <div class="space-y-2 md:col-span-2">
                         <label
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
                           >Nama Barang</label
@@ -990,11 +994,16 @@
                         <tr
                           class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700"
                         >
-                          <th id="th-no" class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No</th>
-                          <th id="th-tanggal" class="px-8 py-7 text-center">Tanggal Pembelian</th>
+                          <th id="th-no" class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No.</th>
+                          <th id="th-tglBeli" class="px-8 py-7 text-center">Tanggal Pembelian</th>
                           <th id="th-supplier" class="px-8 py-7">Supplier</th>
-                          <th id="th-item" class="px-8 py-7">Nama Barang</th>
-                          <th id="th-category" class="px-8 py-7">Kategori Barang</th>
+                          <th id="th-namaBarang" class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group" onclick="sortByHeader('namaBarang')">
+                             <div class="flex items-center gap-2">
+                               <span>Nama Barang</span>
+                               <i data-lucide="arrow-up-z-a" class="w-3 h-3 text-orange-400 opacity-50 group-hover:opacity-100"></i>
+                             </div>
+                          </th>
+                          <th id="th-categoryBarang" class="px-8 py-7">Kategori Barang</th>
                           <th id="th-barcodeBall" class="px-8 py-7">Barcode Ball</th>
                           <th id="th-barcodePak" class="px-8 py-7">Barcode Pak</th>
                           <th id="th-barcodeBks" class="px-8 py-7">Barcode Bks</th>
@@ -1002,7 +1011,7 @@
                           <th id="th-isiBall" class="px-8 py-7 text-center">Isi Ball</th>
                           <th id="th-hargaPak" class="px-8 py-7">Harga Pak</th>
                           <th id="th-isiPak" class="px-8 py-7 text-center">Isi Pak</th>
-                          <th id="th-hargaEceran" class="px-8 py-7">Harga Bks</th>
+                          <th id="th-hargaBks" class="px-8 py-7">Harga Bks</th>
                           <th class="px-8 py-7 text-center">Aksi</th>
                         </tr>
                       </thead>
@@ -1094,10 +1103,10 @@
       let isDarkMode = false;
       let visibleColumns = {
         no: true,
-        tanggal: true,
+        tglBeli: true,
         supplier: true,
-        item: true,
-        category: true,
+        namaBarang: true,
+        categoryBarang: true,
         barcodeBall: true,
         barcodePak: true,
         barcodeBks: true,
@@ -1105,7 +1114,7 @@
         isiBall: true,
         hargaPak: true,
         isiPak: true,
-        hargaEceran: true,
+        hargaBks: true,
       };
 
       // Pagination State
@@ -1360,24 +1369,31 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbztsAyCoHtqxmncezTN_jGoG4IVj9L8nOQ4s_zvqxUBAgGbWC3yFCTiSHLfFJfNzRdACA/exec";
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxvSQv_-vbWIZKBimdzS8KAdvsQy0UdfLySnRjxn1BaMs8zYufdrM8Jll-QS4Uj7tVHSg/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
-        if (typeof google !== "undefined" && google.script && google.script.run) {
+        // Deteksi apakah sedang di dalam Google Apps Script Environment
+        const isGAS = typeof google !== "undefined" && google.script && google.script.run;
+        
+        if (isGAS) {
           return new Promise((resolve, reject) => {
             google.script.run
-              .withSuccessHandler(resolve)
+              .withSuccessHandler(res => {
+                console.log(`GAS Response [${action}]:`, res);
+                resolve(res);
+              })
               .withFailureHandler(err => {
-                console.error("GAS Error:", err);
+                console.error(`GAS Error [${action}]:`, err);
                 reject(err);
-              })[action](payload);
+              })
+              .dispatchAction({ action, payload });
           });
         } else {
-          // Fallback via Fetch (Bridge)
-          if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("URL_WEBAPP_GAS")) {
-            console.warn("GAS_WEBAPP_URL not configured.");
-            return { sukses: false, pesan: "Server not configured" };
+          // Fallback via Fetch (standalone / development preview)
+          if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("script.google.com") === false) {
+            console.warn("GAS_WEBAPP_URL belum diatur. Menjalankan mode DEMO.");
+            return null; // Akan memicu fallback mock data
           }
           try {
             const resp = await fetch(GAS_WEBAPP_URL, {
@@ -1387,7 +1403,8 @@
             });
             return await resp.json();
           } catch (err) {
-            return { sukses: false, pesan: err.toString() };
+            console.error("Fetch Error:", err);
+            return { sukses: false, pesan: "Gagal terhubung ke Server." };
           }
         }
       }
@@ -1461,10 +1478,24 @@
           
           if (res && res.sukses && Array.isArray(res.data)) {
             rawSupplierData = res.data;
-          } else if (!res || (res.sukses && !res.data)) {
-            // Mock fallback if nothing found
+          } else if (!res) {
+            // Mode Demo / Fallback
             rawSupplierData = [
-              { id: "S-1", namaBarang: "CONTOH BARANG A", categoryBarang: "SNACK", barcode: "123456789", supplier: "SUPPLIER A", hargaBall: 500000, hargaPak: 50000, hargaBks: 5000, tglBeli: "04/05/2024" }
+              { 
+                id: "S-1", 
+                namaBarang: "CONTOH BARANG A", 
+                categoryBarang: "SNACK", 
+                barcodeBall: "123", 
+                barcodePak: "456", 
+                barcodeBks: "789", 
+                supplier: "SUPPLIER A", 
+                hargaBall: 500000, 
+                hargaPak: 50000, 
+                hargaBks: 5000, 
+                tglBeli: "04/05/2024",
+                isiBall: 10,
+                isiPak: 10
+              }
             ];
           } else {
             showAlert("Error", res.pesan || "Gagal mengambil data", "error");
@@ -1646,16 +1677,32 @@
       }
 
       function persiapkanEdit(id) {
-        const it = rawSupplierData.find((item) => (item.id || item.ID || item.No || item.no) == id);
+        const it = rawSupplierData.find((item) => item.id == id);
         if (!it) return;
 
+        const form = document.getElementById("tambahSupplierForm");
         toggleAddForm(); 
         document.getElementById("formTitle").innerText = "Edit Data Barang";
 
-        const form = document.getElementById("tambahSupplierForm");
-        form.querySelector('[name="supplier"]').value = it.supplier || it.Supplier || "";
-        form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || it.CategoryBarang || "";
-        form.querySelector('[name="namaBarang"]').value = it.namaBarang || it.NamaBarang || "";
+        // Set No dan Tanggal
+        form.querySelector('[name="no"]').value = it.no || "";
+        
+        const fTgl = document.getElementById("form-tglBeli");
+        if (fTgl) {
+          // Konversi dd/mm/yyyy ke yyyy-mm-dd untuk input type="date"
+          if (it.tglBeli && it.tglBeli.includes("/")) {
+            const parts = it.tglBeli.split("/");
+            if (parts.length === 3) {
+              fTgl.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            }
+          } else {
+             fTgl.value = "";
+          }
+        }
+
+        form.querySelector('[name="supplier"]').value = it.supplier || "";
+        form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || "";
+        form.querySelector('[name="namaBarang"]').value = it.namaBarang || "";
         
         // Load 3 Barcodes
         form.querySelector('[name="barcodeBall"]').value = it.barcodeBall || "";
@@ -1663,16 +1710,16 @@
         form.querySelector('[name="barcodeBks"]').value = it.barcodeBks || "";
 
         // Hidden values
-        document.getElementById("val-hargaBall").value = it.hargaBall || it.HargaBall || 0;
-        document.getElementById("calc-isiBall").value = it.isiBall || it.IsiBall || 1;
-        document.getElementById("val-hargaPak").value = it.hargaPak || it.HargaPak || 0;
-        document.getElementById("calc-isiPak").value = it.isiPak || it.IsiPak || 1;
-        document.getElementById("val-hargaBks").value = it.hargaBks || it.HargaBks || it.hargaEceran || 0;
+        document.getElementById("val-hargaBall").value = it.hargaBall || 0;
+        document.getElementById("calc-isiBall").value = it.isiBall || 1;
+        document.getElementById("val-hargaPak").value = it.hargaPak || 0;
+        document.getElementById("calc-isiPak").value = it.isiPak || 1;
+        document.getElementById("val-hargaBks").value = it.hargaBks || 0;
 
         // Mask visible values
-        document.getElementById("calc-hargaBall").value = formatIDR(it.hargaBall || it.HargaBall);
-        document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak || it.HargaPak);
-        document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks || it.HargaBks || it.hargaEceran);
+        document.getElementById("calc-hargaBall").value = formatIDR(it.hargaBall);
+        document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak);
+        document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks);
 
         // Pertahankan tanggal beli asli jika ada
         let tglInput = document.getElementById("edit-tglBeli");
@@ -1715,8 +1762,15 @@
         const form = document.getElementById("tambahSupplierForm");
         form.reset();
 
+        // Set default date to today
+        const fTgl = document.getElementById("form-tglBeli");
+        if (fTgl) {
+          const today = new Date().toISOString().split('T')[0];
+          fTgl.value = today;
+        }
+
         // Reset hidden fields
-        ["edit-rowId", "edit-tglBeli"].forEach(id => {
+        ["edit-rowId"].forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = "";
         });
@@ -1773,37 +1827,37 @@
   tbody.innerHTML = paginatedData
     .map((it, idx) => {
       const rowNo = startIndex + idx + 1;
-      const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
-      const cat = it.categoryBarang || it.CategoryBarang || it.category || it.Category || it.Kategori || "-";
-      const supp = it.supplier || it.Supplier || "-";
+      const nama = it.namaBarang || "-";
+      const cat = it.categoryBarang || "-";
+      const supp = it.supplier || "-";
       
-      const hBall = it.hargaBall || it.HargaBall || 0;
-      const hPak = it.hargaPak || it.HargaPak || 0;
-      const hBks = it.hargaBks || it.HargaBks || it.hargaEceran || it["Harga Eceran"] || 0;
-      const iBall = it.isiBall || it.IsiBall || 0;
-      const iPak = it.isiPak || it.IsiPak || 0;
-      const tgl = it.tglBeli || it.TglBeli || it.tanggal || it.Tanggal || it["Tanggal Pembelian"] || "-";
-      const idFinal = it.id || it.ID || it.no || it.No || rowNo;
+      const hBall = it.hargaBall || 0;
+      const hPak = it.hargaPak || 0;
+      const hBks = it.hargaBks || 0;
+      const iBall = it.isiBall || 0;
+      const iPak = it.isiPak || 0;
+      const tgl = it.tglBeli || "-";
+      const idFinal = it.id || rowNo;
 
-      const bBall = it.barcodeBall || it.BarcodeBall || "-";
-      const bPak = it.barcodePak || it.BarcodePak || "-";
-      const bBks = it.barcodeBks || it.BarcodeBks || "-";
+      const bBall = it.barcodeBall || "-";
+      const bPak = it.barcodePak || "-";
+      const bBks = it.barcodeBks || "-";
 
       return `
     <tr class="hover:bg-slate-50/70 transition-all group border-b border-slate-50 text-[11px]">
       <td class="px-8 py-6 text-center font-bold text-slate-400 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 ${!visibleColumns.no ? "hidden" : ""}">
-        ${rowNo}.
+        ${it.no || rowNo}.
       </td>
-      <td class="px-8 py-6 text-slate-600 font-bold whitespace-nowrap ${!visibleColumns.tanggal ? "hidden" : ""}">
+      <td class="px-8 py-6 text-slate-600 font-bold whitespace-nowrap ${!visibleColumns.tglBeli ? "hidden" : ""}">
         ${tgl}
       </td>
       <td class="px-8 py-6 ${!visibleColumns.supplier ? "hidden" : ""}">
          <span class="px-2 py-1 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap">${supp}</span>
       </td>
-      <td class="px-8 py-6 min-w-[200px] ${!visibleColumns.item ? "hidden" : ""}">
+      <td class="px-8 py-6 min-w-[200px] ${!visibleColumns.namaBarang ? "hidden" : ""}">
          <p class="font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase leading-tight">${nama}</p>
       </td>
-      <td class="px-8 py-6 ${!visibleColumns.category ? "hidden" : ""}">
+      <td class="px-8 py-6 ${!visibleColumns.categoryBarang ? "hidden" : ""}">
          <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap">${cat}</span>
       </td>
       <td class="px-8 py-6 font-mono text-slate-500 whitespace-nowrap ${!visibleColumns.barcodeBall ? "hidden" : ""}">
@@ -1827,7 +1881,7 @@
       <td class="px-8 py-6 text-center font-black text-slate-500 ${!visibleColumns.isiPak ? "hidden" : ""}">
         ${iPak}
       </td>
-      <td class="px-8 py-6 font-black text-emerald-600 whitespace-nowrap ${!visibleColumns.hargaEceran ? "hidden" : ""}">
+      <td class="px-8 py-6 font-black text-emerald-600 whitespace-nowrap ${!visibleColumns.hargaBks ? "hidden" : ""}">
         ${formatIDR(hBks)}
       </td>
       <td class="px-8 py-6 text-center">
@@ -1849,21 +1903,21 @@
   cardContainer.innerHTML = paginatedData
     .map((it, idx) => {
       const rowNo = startIndex + idx + 1;
-      const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
-      const cat = it.categoryBarang || it.CategoryBarang || it.category || it.Category || it.Kategori || "-";
-      const supp = it.supplier || it.Supplier || "-";
+      const nama = it.namaBarang || "-";
+      const cat = it.categoryBarang || "-";
+      const supp = it.supplier || "-";
 
-      const hBall = it.hargaBall || it.HargaBall || 0;
-      const hPak = it.hargaPak || it.HargaPak || 0;
-      const hBks = it.hargaBks || it.HargaBks || it.hargaEceran || it["Harga Eceran"] || 0;
-      const iBall = it.isiBall || it.IsiBall || 0;
-      const iPak = it.isiPak || it.IsiPak || 0;
-      const tgl = it.tglBeli || it.TglBeli || it.tanggal || it.Tanggal || it["Tanggal Pembelian"] || "-";
-      const idFinal = it.id || it.ID || it.no || it.No || rowNo;
+      const hBall = it.hargaBall || 0;
+      const hPak = it.hargaPak || 0;
+      const hBks = it.hargaBks || 0;
+      const iBall = it.isiBall || 0;
+      const iPak = it.isiPak || 0;
+      const tgl = it.tglBeli || "-";
+      const idFinal = it.id || rowNo;
 
-      const bBall = it.barcodeBall || it.BarcodeBall || "-";
-      const bPak = it.barcodePak || it.BarcodePak || "-";
-      const bBks = it.barcodeBks || it.BarcodeBks || "-";
+      const bBall = it.barcodeBall || "-";
+      const bPak = it.barcodePak || "-";
+      const bBks = it.barcodeBks || "-";
 
       return `
   <div class="mb-6 bg-white p-6 space-y-5 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6">
@@ -1872,10 +1926,10 @@
         <div class="flex items-center gap-2 mb-2 flex-wrap">
           <span class="text-[9px] font-black text-slate-300 py-1 px-2 bg-slate-100 rounded-lg ${!visibleColumns.no ? "hidden" : ""}">${rowNo}.</span>
           <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest ${!visibleColumns.supplier ? "hidden" : ""}">${supp}</p>
-          <span class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg ${!visibleColumns.category ? "hidden" : ""}">${cat}</span>
-          <span class="text-[9px] font-black text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-lg ${!visibleColumns.tanggal ? "hidden" : ""}">${tgl}</span>
+          <span class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg ${!visibleColumns.categoryBarang ? "hidden" : ""}">${cat}</span>
+          <span class="text-[9px] font-black text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-lg ${!visibleColumns.tglBeli ? "hidden" : ""}">${tgl}</span>
         </div>
-        <h3 class="text-lg font-black text-slate-900 leading-tight uppercase ${!visibleColumns.item ? "hidden" : ""}">${nama}</h3>
+        <h3 class="text-lg font-black text-slate-900 leading-tight uppercase ${!visibleColumns.namaBarang ? "hidden" : ""}">${nama}</h3>
         <div class="mt-3 space-y-1">
           <p class="text-[10px] font-bold text-slate-400 font-mono ${!visibleColumns.barcodeBall ? "hidden" : ""}">BALL: ${bBall}</p>
           <p class="text-[10px] font-bold text-slate-400 font-mono ${!visibleColumns.barcodePak ? "hidden" : ""}">PAK: ${bPak}</p>
@@ -1895,18 +1949,18 @@
     <div class="grid grid-cols-1 gap-4 pt-4 border-t border-slate-50">
       <div class="flex items-center justify-between bg-slate-50/70 p-4 rounded-2xl border border-slate-100/50">
         <div class="${!visibleColumns.hargaBall ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Ball/Dus (Isi ${iBall})</p>
+          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Ball (Isi ${iBall})</p>
           <p class="text-sm font-black text-slate-700">${formatIDR(hBall)}</p>
         </div>
         <div class="text-right ${!visibleColumns.hargaPak ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Pak/Bks (Isi ${iPak})</p>
+          <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Pak (Isi ${iPak})</p>
           <p class="text-sm font-black text-slate-700">${formatIDR(hPak)}</p>
         </div>
       </div>
 
       <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between">
-        <div class="${!visibleColumns.hargaEceran ? "hidden" : ""}">
-          <p class="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">Eceran</p>
+        <div class="${!visibleColumns.hargaBks ? "hidden" : ""}">
+          <p class="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">Harga Bks</p>
           <p class="text-xl font-black text-emerald-700">${formatIDR(hBks)}</p>
         </div>
       </div>
@@ -1956,10 +2010,10 @@
 
         const labels = {
           no: "No.",
-          tanggal: "Tanggal",
+          tglBeli: "Tanggal",
           supplier: "Supplier",
-          item: "Nama Barang",
-          category: "Kategori",
+          namaBarang: "Nama Barang",
+          categoryBarang: "Kategori",
           barcodeBall: "Barcode Ball",
           barcodePak: "Barcode Pak",
           barcodeBks: "Barcode Bks",
@@ -1967,7 +2021,7 @@
           isiBall: "Isi Ball",
           hargaPak: "Harga Pak",
           isiPak: "Isi Pak",
-          hargaEceran: "Harga Bks",
+          hargaBks: "Harga Bks",
         };
 
         container.innerHTML = "";
@@ -2007,6 +2061,13 @@
 
       function setSortOrder(order) {
         sortOrder = order;
+        filterSupplierTable();
+        updateSortButtonStates();
+      }
+
+      function sortByHeader(key) {
+        sortBy = key;
+        sortOrder = sortOrder === "asc" ? "desc" : "asc";
         filterSupplierTable();
         updateSortButtonStates();
       }

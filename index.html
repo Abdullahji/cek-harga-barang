@@ -23,6 +23,20 @@
         background-color: #f8fafc;
         -webkit-tap-highlight-color: transparent;
       }
+      .dark body {
+        background-color: #020617;
+      }
+      /* Dark mode overrides */
+      .dark .bg-white { background-color: #0f172a !important; }
+      .dark .bg-slate-50 { background-color: #1e293b !important; }
+      .dark .text-slate-900 { color: #f8fafc !important; }
+      .dark .text-slate-800 { color: #f1f5f9 !important; }
+      .dark .text-slate-700 { color: #e2e8f0 !important; }
+      .dark .border-slate-100 { border-color: #1e293b !important; }
+      .dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3); }
+      .dark aside { background-color: #020617 !important; border-color: #0f172a !important; }
+      .dark #dialogContent { background-color: #0f172a !important; }
+
       .custom-scrollbar::-webkit-scrollbar {
         width: 4px;
       }
@@ -119,6 +133,24 @@
       </div>
     </div>
 
+    <!-- Global Scanner Modal -->
+    <div id="scannerModal" class="fixed inset-0 z-[10000] hidden items-center justify-center p-6">
+      <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md" onclick="closeGlobalScanner()"></div>
+      <div class="relative bg-white w-full max-w-md rounded-[3rem] p-8 shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-xl font-black text-slate-900">Scan Barcode</h3>
+          <button onclick="closeGlobalScanner()" class="p-3 bg-slate-100 text-slate-500 rounded-2xl active:scale-90">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="relative aspect-square rounded-[2rem] overflow-hidden bg-slate-100 mb-4">
+          <div id="global-reader" class="w-full h-full"></div>
+          <div class="absolute inset-8 border-2 border-orange-500 rounded-3xl animate-pulse pointer-events-none"></div>
+        </div>
+        <p class="text-[10px] font-black text-slate-400 text-center uppercase tracking-widest">Posisikan Barcode di Tengah Kotak</p>
+      </div>
+    </div>
+
     <!-- Loading Screen -->
     <div id="loadingOverlay" class="loading-overlay">
       <div class="flex flex-col items-center">
@@ -165,6 +197,15 @@
             >
               Menu Utama
             </p>
+
+            <button
+              onclick="switchPage('dashboard')"
+              id="nav-dashboard"
+              class="nav-btn w-full flex items-center gap-4 px-6 py-4.5 rounded-2xl text-slate-400 transition-all hover:bg-slate-50"
+            >
+              <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+              <span class="font-bold text-sm">Dashboard</span>
+            </button>
 
             <button
               onclick="switchPage('cek-harga')"
@@ -243,48 +284,127 @@
       <!-- Main Content -->
       <main class="flex-1 flex flex-col bg-[#F8FAFC] overflow-hidden">
         <!-- Top Header -->
-        <header
-          class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 px-8 flex items-center justify-between shrink-0 z-30 sticky top-0"
+    <header
+      class="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-8 flex items-center justify-between shrink-0 z-30 sticky top-0"
+    >
+      <div class="flex items-center gap-4 sm:gap-6">
+        <button
+          onclick="toggleSidebar()"
+          class="lg:hidden p-2 text-slate-500 bg-slate-50 dark:bg-slate-800 rounded-xl active:scale-95"
         >
-          <div class="flex items-center gap-4 sm:gap-6">
-            <button
-              onclick="toggleSidebar()"
-              class="lg:hidden p-2 text-slate-500 bg-slate-50 rounded-xl active:scale-95"
-            >
-              <i data-lucide="menu"></i>
-            </button>
-            <div>
-              <h2
-                id="headerTitle"
-                class="text-xl font-black text-slate-900 tracking-tight leading-none"
-              >
-                Cek Harga Barang
-              </h2>
-              <div class="flex items-center gap-2 mt-2">
-                <div
-                  class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"
-                ></div>
-                <p
-                  class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400"
-                >
-                  #TOKO WINA System
-                </p>
-              </div>
-            </div>
-          </div>
-          <div
-            class="w-10 h-10 sm:w-11 sm:h-11 bg-slate-100 rounded-2xl border-2 border-white shadow-sm overflow-hidden flex-shrink-0"
+          <i data-lucide="menu"></i>
+        </button>
+        <div>
+          <h2
+            id="headerTitle"
+            class="text-xl font-black text-slate-900 dark:text-white tracking-tight leading-none"
           >
-            <img
-              src="https://ui-avatars.com/api/?name=Asfar&background=FB923C&color=fff"
-            />
+            Cek Harga Barang
+          </h2>
+          <div class="flex items-center gap-2 mt-2">
+            <div
+              class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"
+            ></div>
+            <p
+              class="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400"
+            >
+              #TOKO WINA System
+            </p>
           </div>
-        </header>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Dark Mode Toggle -->
+        <button 
+          onclick="toggleDarkMode()" 
+          class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-slate-50 dark:bg-slate-800 rounded-2xl text-slate-400 hover:text-orange-600 transition-all active:scale-90"
+        >
+          <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+        </button>
+        <div
+          class="w-10 h-10 sm:w-11 sm:h-11 bg-slate-100 dark:bg-slate-800 rounded-2xl border-2 border-white dark:border-slate-700 shadow-sm overflow-hidden flex-shrink-0"
+        >
+          <img
+            src="https://ui-avatars.com/api/?name=Asfar&background=FB923C&color=fff"
+          />
+        </div>
+      </div>
+    </header>
 
         <div
           class="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar flex flex-col"
         >
           <div class="flex-1">
+            <!-- SECTION: DASHBOARD -->
+            <section
+              id="section-dashboard"
+              class="page-section hidden max-w-6xl mx-auto space-y-10 py-4 px-2 translate-y-4 opacity-0 transition-all"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Stat Card 1 -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500">
+                    <i data-lucide="package" class="w-20 h-20 text-blue-600"></i>
+                  </div>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Item Produk</p>
+                  <h3 id="stat-total-produk" class="text-4xl font-black text-slate-900 mb-2">0</h3>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[10px] font-black text-blue-600 uppercase tracking-wider">Cek Harga</span>
+                  </div>
+                </div>
+                <!-- Stat Card 2 -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500 text-orange-600">
+                    <i data-lucide="truck" class="w-20 h-20"></i>
+                  </div>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Supplier</p>
+                  <h3 id="stat-total-supplier" class="text-4xl font-black text-slate-900 mb-2">0</h3>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md bg-orange-50 text-[10px] font-black text-orange-600 uppercase tracking-wider">Verified</span>
+                  </div>
+                </div>
+                <!-- Stat Card 3 -->
+                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+                  <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500 text-emerald-600">
+                    <i data-lucide="history" class="w-20 h-20"></i>
+                  </div>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Data Inventory</p>
+                  <h3 id="stat-total-supplier-item" class="text-4xl font-black text-slate-900 mb-2">0</h3>
+                  <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-wider">Entries</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm">
+                  <div class="flex items-center justify-between mb-8">
+                    <h4 class="text-xl font-black text-slate-900">Input Terbaru</h4>
+                    <button onclick="switchPage('supplier')" class="text-[10px] font-black text-orange-600 uppercase tracking-widest hover:underline">Lihat Semua</button>
+                  </div>
+                  <div id="recent-entries-list" class="space-y-4">
+                    <!-- Recent items go here -->
+                  </div>
+                </div>
+                
+                <div class="bg-[#0F172A] p-10 rounded-[3rem] text-white overflow-hidden relative shadow-2xl">
+                  <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-orange-500/20 rounded-full blur-[100px]"></div>
+                  <div class="relative z-10 space-y-6">
+                    <div class="inline-block px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-[10px] font-black uppercase tracking-widest">Update Terakhir</div>
+                    <h3 class="text-2xl font-bold leading-tight">Sistem inventarisasi Toko Wina terhubung secara real-time ke Cloud.</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Pastikan untuk mengecek harga secara berkala sebelum melakukan restock barang ke supplier.</p>
+                    <div class="flex items-center gap-6 pt-4">
+                      <div class="flex -space-x-3">
+                        <img src="https://ui-avatars.com/api/?name=User&background=64748b&color=fff" class="w-10 h-10 rounded-xl border-2 border-slate-900" />
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=FB923C&color=fff" class="w-10 h-10 rounded-xl border-2 border-slate-900" />
+                      </div>
+                      <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">2 Active Users</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             <!-- SECTION: CEK HARGA -->
             <section
               id="section-cek-harga"
@@ -465,6 +585,23 @@
                       <div class="space-y-2">
                         <label
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
+                          >Category Barang</label
+                        >
+                        <div class="relative">
+                          <select
+                            name="categoryBarang"
+                            id="form-category-select"
+                            required
+                            class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none cursor-pointer"
+                          >
+                            <option value="">Pilih Kategori...</option>
+                          </select>
+                          <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+                        </div>
+                      </div>
+                      <div class="space-y-2">
+                        <label
+                          class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
                           >Nama Barang</label
                         >
                         <input
@@ -480,12 +617,23 @@
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
                           >Barcode</label
                         >
-                        <input
-                          type="text"
-                          name="barcode"
-                          class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono"
-                          placeholder="000000"
-                        />
+                        <div class="flex gap-2">
+                          <input
+                            type="text"
+                            name="barcode"
+                            id="supplier-barcode-input"
+                            class="flex-1 px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono"
+                            placeholder="000000"
+                          />
+                          <button
+                            type="button"
+                            onclick="startSupplierScan()"
+                            class="px-5 bg-slate-900 text-white rounded-2xl active:scale-95 transition-all shadow-lg shadow-slate-200"
+                            title="Scan Barcode"
+                          >
+                            <i data-lucide="scan-barcode" class="w-5 h-5"></i>
+                          </button>
+                        </div>
                       </div>
 
                       <!-- Input Harga -->
@@ -675,7 +823,7 @@
                     <input
                       type="text"
                       id="supplierSearch"
-                      onkeyup="filterSupplierTable()"
+                      oninput="debouncedFilter()"
                       placeholder="Cari..."
                       class="w-full pl-10 md:pl-16 pr-4 md:pr-8 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-orange-500/10 transition-all"
                     />
@@ -701,6 +849,21 @@
                         <div class="space-y-3 md:space-y-4">
                           <div class="space-y-1">
                             <label class="text-[8px] md:text-[9px] font-black text-slate-300 uppercase ml-1"
+                              >Kategori</label
+                            >
+                            <div class="relative">
+                              <select
+                                id="filter-category"
+                                onchange="filterSupplierTable()"
+                                class="w-full px-4 py-2.5 md:py-3 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-2 focus:ring-orange-100 appearance-none cursor-pointer"
+                              >
+                                <option value="">Semua Kategori</option>
+                              </select>
+                              <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none"></i>
+                            </div>
+                          </div>
+                          <div class="space-y-1">
+                            <label class="text-[8px] md:text-[9px] font-black text-slate-300 uppercase ml-1"
                               >Supplier</label
                             >
                             <div class="relative">
@@ -721,7 +884,7 @@
                             <input
                               id="filter-barcode"
                               type="text"
-                              onkeyup="filterSupplierTable()"
+                              oninput="debouncedFilter()"
                               placeholder="Barcode..."
                               class="w-full px-4 py-2.5 md:py-3 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-2 focus:ring-orange-100"
                             />
@@ -733,7 +896,7 @@
                             <input
                               id="filter-nama"
                               type="text"
-                              onkeyup="filterSupplierTable()"
+                              oninput="debouncedFilter()"
                               placeholder="Nama Barang..."
                               class="w-full px-4 py-2.5 md:py-3 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-2 focus:ring-orange-100"
                             />
@@ -766,22 +929,22 @@
                         </p>
                         <div class="space-y-1">
                           <button
-                            onclick="setSortOrder('desc')"
-                            id="sort-desc"
+                            onclick="setSortOrder('asc')"
+                            id="sort-asc"
                             class="w-full text-left px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-bold text-[11px] md:text-xs transition-all flex items-center justify-between group"
                           >
-                            <span>Terbaru</span>
+                            <span>A - Z (Nama)</span>
                             <i
                               data-lucide="check"
                               class="w-3 h-3 md:w-4 md:h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"
                             ></i>
                           </button>
                           <button
-                            onclick="setSortOrder('asc')"
-                            id="sort-asc"
+                            onclick="setSortOrder('desc')"
+                            id="sort-desc"
                             class="w-full text-left px-3 md:px-4 py-2.5 md:py-3 rounded-xl font-bold text-[11px] md:text-xs transition-all flex items-center justify-between group"
                           >
-                            <span>Terlama</span>
+                            <span>Z - A (Nama)</span>
                             <i
                               data-lucide="check"
                               class="w-3 h-3 md:w-4 md:h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"
@@ -840,6 +1003,7 @@
                             No
                           </th>
                           <th class="px-8 py-7">Nama Barang / Barcode</th>
+                          <th class="px-8 py-7">Kategori</th>
                           <th class="px-8 py-7">Supplier</th>
                           <th class="px-8 py-7">Harga Ball/Dus</th>
                           <th class="px-8 py-7">Harga Pak/Bks</th>
@@ -925,16 +1089,20 @@
 
     <script>
       let rawSupplierData = [];
+      let rawCategoryData = [];
       let filteredSupplierData = []; // Track filtered data for pagination
       let rawCekHargaData = [];
       let html5QrcodeScanner = null;
       let isScanning = false;
 
       // Logic Control States
-      let sortOrder = "desc"; // desc (terbaru), asc (terlama)
+      let sortOrder = "asc"; // asc (A-Z), desc (Z-A)
+      let sortBy = "namaBarang"; // Sort by product name as requested
+      let isDarkMode = false;
       let visibleColumns = {
         no: true,
         item: true,
+        category: true,
         supplier: true,
         hargaBall: true,
         hargaPak: true,
@@ -947,15 +1115,39 @@
       let itemsPerPage = 10;
 
       window.onload = () => {
+        // Load Dark Mode Preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          toggleDarkMode(true);
+        }
+
         lucide.createIcons();
-        switchPage("cek-harga");
+        switchPage("dashboard");
         fetchCekHargaData();
+        fetchCategoryData();
+        fetchSupplierData();
 
         // Set current year
         document.querySelectorAll(".current-year").forEach((el) => {
           el.textContent = new Date().getFullYear();
         });
       };
+
+      function toggleDarkMode(init = false) {
+        if (!init) isDarkMode = !isDarkMode;
+        else isDarkMode = localStorage.getItem('theme') === 'dark';
+
+        if (isDarkMode) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+          document.getElementById('theme-icon').setAttribute('data-lucide', 'sun');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+          document.getElementById('theme-icon').setAttribute('data-lucide', 'moon');
+        }
+        lucide.createIcons();
+      }
 
       function toggleSidebar() {
         const sidebar = document.getElementById("sidebar");
@@ -989,24 +1181,38 @@
       function switchPage(page) {
         document
           .querySelectorAll(".page-section")
-          .forEach((s) => s.classList.remove("active"));
+          .forEach((s) => {
+            s.classList.remove("active");
+            s.classList.add("hidden");
+          });
+
         const activeSection = document.getElementById("section-" + page);
         if (activeSection) {
-          activeSection.classList.add("active");
-          activeSection.classList.remove("opacity-0", "translate-y-4");
-          activeSection.classList.add(
-            "animate-in",
-            "fade-in",
-            "slide-in-from-bottom-4",
-            "duration-500",
-          );
+          activeSection.classList.remove("hidden");
+          setTimeout(() => {
+            activeSection.classList.add("active");
+            activeSection.classList.remove("opacity-0", "translate-y-4");
+            activeSection.classList.add(
+              "animate-in",
+              "fade-in",
+              "slide-in-from-bottom-4",
+              "duration-500",
+            );
+          }, 10);
+
+          if (page === "dashboard") {
+            renderDashboard();
+          }
         }
 
         document
           .querySelectorAll(".nav-btn")
-          .forEach((b) => b.classList.remove("active"));
+          .forEach((b) => b.classList.remove("active", "text-orange-600", "bg-slate-50"));
+        
         const activeNav = document.getElementById("nav-" + page);
-        if (activeNav) activeNav.classList.add("active");
+        if (activeNav) {
+          activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
+        }
 
         // Auto expand submenu for Master Data items
         if (page === "supplier") {
@@ -1015,8 +1221,12 @@
             toggleSubmenu("master");
         }
 
-        document.getElementById("headerTitle").innerText =
-          page === "cek-harga" ? "Cek Harga" : "Master Data";
+        const titles = {
+          "dashboard": "Dashboard Overview",
+          "cek-harga": "Cek Harga Barang",
+          "supplier": "Database Supplier"
+        };
+        document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         if (page === "supplier" && rawSupplierData.length === 0)
           fetchSupplierData();
@@ -1029,6 +1239,55 @@
         ) {
           toggleSidebar();
         }
+      }
+
+      function renderDashboard() {
+        // Calculate Totals
+        const totalProduk = rawCekHargaData.length;
+        const totalSupplier = [...new Set(rawSupplierData.map(it => it.supplier))].filter(s => s && s !== "-").length;
+        const totalEntries = rawSupplierData.length;
+
+        document.getElementById("stat-total-produk").innerText = totalProduk;
+        document.getElementById("stat-total-supplier").innerText = totalSupplier;
+        document.getElementById("stat-total-supplier-item").innerText = totalEntries;
+
+        const recentList = document.getElementById("recent-entries-list");
+        recentList.innerHTML = "";
+
+        // Get 5 latest entries from supplier data
+        const latest = [...rawSupplierData].reverse().slice(0, 5);
+
+        if (latest.length === 0) {
+          recentList.innerHTML = `<div class="p-8 text-center text-slate-400 font-bold text-xs border-2 border-dashed border-slate-100 rounded-3xl uppercase tracking-widest">Belum ada data terbaru.</div>`;
+        } else {
+          latest.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "flex items-center gap-4 p-4 hover:bg-slate-50 rounded-[1.5rem] transition-all group cursor-pointer";
+            div.onclick = () => {
+              switchPage('supplier');
+              // Optionally scroll to item here
+            };
+            div.innerHTML = `
+              <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
+                ${item.id ? item.id.replace('S-', '') : '?'}
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase truncate mb-0.5">${item.namaBarang || 'N/A'}</p>
+                <div class="flex items-center gap-2">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter truncate max-w-[100px]">${item.supplier || 'Unknown'}</span>
+                  <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                  <span class="text-[9px] font-bold text-slate-400">${item.tglBeli || '-'}</span>
+                </div>
+              </div>
+              <div class="text-right shrink-0">
+                <p class="text-[11px] font-black text-slate-900">${formatCurrency(item.hargaJual)}</p>
+                <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest">Retail</p>
+              </div>
+            `;
+            recentList.appendChild(div);
+          });
+        }
+        lucide.createIcons();
       }
 
       function showLoading(show) {
@@ -1133,36 +1392,92 @@
         }
       }
 
+      async function fetchCategoryData() {
+        try {
+          const res = await callGAS("ambilMasterCategory");
+          if (res && res.sukses && Array.isArray(res.data)) {
+            rawCategoryData = res.data.filter(c => c);
+          } else {
+            console.warn("GAS ambilMasterCategory failed, checking supplier data for categories.");
+            extractCategoriesFromSuppliers();
+          }
+        } catch (err) {
+          console.error("fetchCategoryData error:", err);
+          extractCategoriesFromSuppliers();
+        }
+        updateCategorySelects();
+      }
+
+      function extractCategoriesFromSuppliers() {
+        if (!Array.isArray(rawSupplierData) || rawSupplierData.length === 0) {
+          if (!rawCategoryData || rawCategoryData.length === 0) {
+            rawCategoryData = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
+          }
+          return;
+        }
+        const cats = [...new Set(rawSupplierData.map(it => it.categoryBarang || it.CategoryBarang || it.category || it["Category Barang"] || it.Kategori || "").filter(c => c))];
+        if (cats.length > 0) {
+          rawCategoryData = cats.sort();
+        } else if (!rawCategoryData || rawCategoryData.length === 0) {
+          rawCategoryData = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
+        }
+      }
+
+      function updateCategorySelects() {
+        const formSelect = document.getElementById("form-category-select");
+        const filterSelect = document.getElementById("filter-category");
+        
+        const populate = (select) => {
+          if (!select) return;
+          const currentVal = select.value;
+          const isFilter = select.id === "filter-category";
+          
+          select.innerHTML = isFilter ? '<option value="">Semua Kategori</option>' : '<option value="">Pilih Kategori...</option>';
+          
+          if (Array.isArray(rawCategoryData)) {
+            rawCategoryData.forEach(cat => {
+              if (cat) {
+                const opt = document.createElement("option");
+                opt.value = cat;
+                opt.innerText = cat;
+                select.appendChild(opt);
+              }
+            });
+          }
+          select.value = currentVal;
+        };
+
+        populate(formSelect);
+        populate(filterSelect);
+      }
+
       async function fetchSupplierData() {
         showLoading(true);
-        const res = await callGAS("ambilDataSupplier");
-
-        showLoading(false);
-        if (res && res.sukses) {
-          rawSupplierData = res.data || [];
-          updateSupplierDropdown();
-          filterSupplierTable();
-        } else if (!res) {
-          // Fallback Mock Data
-          setTimeout(() => {
+        try {
+          const res = await callGAS("ambilDataSupplier");
+          showLoading(false);
+          
+          if (res && res.sukses && Array.isArray(res.data)) {
+            rawSupplierData = res.data;
+          } else if (!res || (res.sukses && !res.data)) {
+            // Mock fallback if nothing found
             rawSupplierData = [
-              {
-                id: "S-1",
-                namaBarang: "CONTOH BARANG A",
-                barcode: "123456789",
-                supplier: "SUPPLIER A",
-                hargaBall: 500000,
-                hargaPak: 50000,
-                hargaBks: 5000,
-                tglBeli: "04/05/2026",
-              },
+              { id: "S-1", namaBarang: "CONTOH BARANG A", categoryBarang: "SNACK", barcode: "123456789", supplier: "SUPPLIER A", hargaBall: 500000, hargaPak: 50000, hargaBks: 5000, tglBeli: "04/05/2024" }
             ];
-            updateSupplierDropdown();
-            filterSupplierTable();
-          }, 800);
-        } else {
-          showAlert("Error", res.pesan, "error");
+          } else {
+            showAlert("Error", res.pesan || "Gagal mengambil data", "error");
+            rawSupplierData = [];
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("fetchSupplierData error:", err);
+          rawSupplierData = [];
         }
+        
+        updateSupplierDropdown();
+        extractCategoriesFromSuppliers(); // Try to get categories from supplier data if fetchCategoryData failed
+        updateCategorySelects();
+        filterSupplierTable();
       }
 
       function updateSupplierDropdown() {
@@ -1315,27 +1630,26 @@
       }
 
       function persiapkanEdit(id) {
-        const it = rawSupplierData.find((item) => item.id == id);
+        const it = rawSupplierData.find((item) => (item.id || item.ID || item.No) == id);
         if (!it) return;
 
         const form = document.getElementById("tambahSupplierForm");
-        form.querySelector('[name="supplier"]').value = it.supplier;
-        form.querySelector('[name="namaBarang"]').value = it.namaBarang;
-        form.querySelector('[name="barcode"]').value = it.barcode;
+        form.querySelector('[name="supplier"]').value = it.supplier || it.Supplier || it["Supplier"] || "";
+        form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || it.CategoryBarang || it.category || it.Kategori || it["Category Barang"] || "";
+        form.querySelector('[name="namaBarang"]').value = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "";
+        form.querySelector('[name="barcode"]').value = it.barcode || it.Barcode || "";
 
         // Hidden values
-        document.getElementById("val-hargaBall").value = it.hargaBall;
-        document.getElementById("calc-isiBall").value = it.isiBall || 1;
-        document.getElementById("val-hargaPak").value = it.hargaPak;
-        document.getElementById("calc-isiPak").value = it.isiPak || 1;
-        document.getElementById("val-hargaBks").value = it.hargaBks;
+        document.getElementById("val-hargaBall").value = it.hargaBall || it.HargaBall || 0;
+        document.getElementById("calc-isiBall").value = it.isiBall || it.IsiBall || 1;
+        document.getElementById("val-hargaPak").value = it.hargaPak || it.HargaPak || 0;
+        document.getElementById("calc-isiPak").value = it.isiPak || it.IsiPak || 1;
+        document.getElementById("val-hargaBks").value = it.hargaBks || it.HargaBks || it.hargaEceran || 0;
 
         // Mask visible values
-        document.getElementById("calc-hargaBall").value = formatIDR(
-          it.hargaBall,
-        );
-        document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak);
-        document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks);
+        document.getElementById("calc-hargaBall").value = formatIDR(it.hargaBall || it.HargaBall);
+        document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak || it.HargaPak);
+        document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks || it.HargaBks || it.hargaEceran);
 
         // Add row ID for backend knowing this is an update
         let rowIdInput = document.getElementById("edit-rowId");
@@ -1418,36 +1732,44 @@
         tbody.innerHTML = paginatedData
           .map((it, idx) => {
             const rowNo = startIndex + idx + 1;
+            const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
+            const barcode = it.barcode || it.Barcode || "-";
+            const cat = it.categoryBarang || it.CategoryBarang || it.category || it["Category Barang"] || it.Kategori || "-";
+            const supp = it.supplier || it.Supplier || "-";
+            
             return `
           <tr class="hover:bg-slate-50/70 transition-all group animate-in fade-in slide-in-from-left duration-300" style="animation-delay: ${idx * 50}ms">
             <td class="px-8 py-6 text-center font-bold text-slate-300 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 shadow-[2px_0_5px_rgba(0,0,0,0.01)] ${!visibleColumns.no ? "hidden" : ""}">
               #${rowNo}
             </td>
             <td class="px-8 py-6 ${!visibleColumns.item ? "hidden" : ""}">
-               <p class="text-[14px] font-black text-slate-800 leading-tight group-hover:text-orange-600 transition-colors">${it.namaBarang}</p>
-               <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter">${it.barcode || "-"}</p>
+               <p class="text-[14px] font-black text-slate-800 leading-tight group-hover:text-orange-600 transition-colors">${nama}</p>
+               <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter">${barcode}</p>
+            </td>
+            <td class="px-8 py-6 ${!visibleColumns.category ? "hidden" : ""}">
+               <span class="inline-block px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${cat}</span>
             </td>
             <td class="px-8 py-6 ${!visibleColumns.supplier ? "hidden" : ""}">
-               <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${it.supplier}</span>
+               <span class="inline-block px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-tight">${supp}</span>
             </td>
             <td class="px-8 py-6 text-sm font-black text-slate-700 ${!visibleColumns.hargaBall ? "hidden" : ""}">
-              ${formatIDR(it.hargaBall)}
+              ${formatIDR(it.hargaBall || it.HargaBall)}
             </td>
             <td class="px-8 py-6 text-sm font-black text-slate-700 ${!visibleColumns.hargaPak ? "hidden" : ""}">
-              ${formatIDR(it.hargaPak)}
+              ${formatIDR(it.hargaPak || it.HargaPak)}
             </td>
             <td class="px-8 py-6 text-sm font-black text-emerald-600 ${!visibleColumns.hargaEceran ? "hidden" : ""}">
-              ${formatIDR(it.hargaBks)}
+              ${formatIDR(it.hargaBks || it.HargaBks || it.hargaEceran)}
             </td>
             <td class="px-8 py-6 text-center text-sm font-black text-slate-700 uppercase whitespace-nowrap tracking-tighter ${!visibleColumns.tanggal ? "hidden" : ""}">
-              ${it.tglBeli}
+              ${it.tglBeli || it.TglBeli || it.tanggal || "-"}
             </td>
             <td class="px-8 py-6 text-center">
                <div class="flex items-center justify-center gap-2">
-                 <button onclick="persiapkanEdit('${it.id}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-orange-600 hover:border-orange-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Edit">
+                 <button onclick="persiapkanEdit('${it.id || it.ID || it.No}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-orange-600 hover:border-orange-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Edit">
                    <i data-lucide="edit-3" class="w-4 h-4"></i>
                  </button>
-                 <button onclick="handleDeleteSupplier('${it.id}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-red-500 hover:border-red-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Hapus">
+                 <button onclick="handleDeleteSupplier('${it.id || it.ID || it.No}')" class="p-3 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-red-500 hover:border-red-100 shadow-sm transition-all active:scale-90 touch-manipulation" title="Hapus">
                    <i data-lucide="trash-2" class="w-4 h-4"></i>
                  </button>
                </div>
@@ -1461,22 +1783,28 @@
         cardContainer.innerHTML = paginatedData
           .map((it, idx) => {
             const rowNo = startIndex + idx + 1;
+            const nama = it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || "-";
+            const barcode = it.barcode || it.Barcode || "-";
+            const cat = it.categoryBarang || it.CategoryBarang || it.category || it["Category Barang"] || it.Kategori || "-";
+            const supp = it.supplier || it.Supplier || "-";
+
             return `
         <div class="mb-6 bg-white p-6 space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6" style="animation-delay: ${idx * 50}ms">
           <div class="flex justify-between items-start gap-4">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-2">
                 <span class="text-[9px] font-black text-slate-300 py-1 px-2 bg-slate-100 rounded-lg ${!visibleColumns.no ? "hidden" : ""}">#${rowNo}</span>
-                <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest ${!visibleColumns.supplier ? "hidden" : ""}">${it.supplier}</p>
+                <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest ${!visibleColumns.supplier ? "hidden" : ""}">${supp}</p>
+                <span class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg ${!visibleColumns.category ? "hidden" : ""}">${cat}</span>
               </div>
-              <h3 class="text-lg font-black text-slate-900 leading-tight ${!visibleColumns.item ? "hidden" : ""}">${it.namaBarang}</h3>
-              <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter ${!visibleColumns.item ? "hidden" : ""}">${it.barcode || "-"}</p>
+              <h3 class="text-lg font-black text-slate-900 leading-tight ${!visibleColumns.item ? "hidden" : ""}">${nama}</h3>
+              <p class="text-[10px] font-bold text-slate-400 mt-1 font-mono uppercase tracking-tighter ${!visibleColumns.item ? "hidden" : ""}">${barcode}</p>
             </div>
             <div class="flex flex-col gap-2">
-              <button onclick="persiapkanEdit('${it.id}')" class="p-3 bg-slate-50 text-slate-400 rounded-xl active:scale-90 transition-all">
+              <button onclick="persiapkanEdit('${it.id || it.ID || it.No}')" class="p-3 bg-slate-50 text-slate-400 rounded-xl active:scale-90 transition-all">
                 <i data-lucide="edit-3" class="w-5 h-5"></i>
               </button>
-              <button onclick="handleDeleteSupplier('${it.id}')" class="p-3 bg-red-50 text-red-400 rounded-xl active:scale-90 transition-all">
+              <button onclick="handleDeleteSupplier('${it.id || it.ID || it.No}')" class="p-3 bg-red-50 text-red-400 rounded-xl active:scale-90 transition-all">
                 <i data-lucide="trash-2" class="w-5 h-5"></i>
               </button>
             </div>
@@ -1486,22 +1814,22 @@
             <div class="flex items-center justify-between bg-slate-50/70 p-4 rounded-2xl border border-slate-100/50">
               <div class="${!visibleColumns.hargaBall ? "hidden" : ""}">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Ball/Dus</p>
-                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaBall)}</p>
+                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaBall || it.HargaBall)}</p>
               </div>
               <div class="text-right ${!visibleColumns.hargaPak ? "hidden" : ""}">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Pak/Bks</p>
-                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaPak)}</p>
+                <p class="text-sm font-black text-slate-700">${formatIDR(it.hargaPak || it.HargaPak)}</p>
               </div>
             </div>
 
             <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-center justify-between">
               <div class="${!visibleColumns.hargaEceran ? "hidden" : ""}">
                 <p class="text-[8px] font-black text-emerald-600 uppercase tracking-widest mb-1">Eceran</p>
-                <p class="text-xl font-black text-emerald-700">${formatIDR(it.hargaBks)}</p>
+                <p class="text-xl font-black text-emerald-700">${formatIDR(it.hargaBks || it.HargaBks)}</p>
               </div>
               <div class="text-right ${!visibleColumns.tanggal ? "hidden" : ""}">
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tgl Pembelian</p>
-                <p class="text-[10px] font-black text-slate-600">${it.tglBeli}</p>
+                <p class="text-[10px] font-black text-slate-600">${it.tglBeli || it.TglBeli || "-"}</p>
               </div>
             </div>
           </div>
@@ -1530,13 +1858,20 @@
       function toggleDropdown(id) {
         // Close other dropdowns
         ["dropdownFilter", "dropdownSort", "dropdownColumns"].forEach((d) => {
-          if (d !== id) document.getElementById(d)?.classList.add("hidden");
+          if (d !== id) {
+            const el = document.getElementById(d);
+            if (el) el.classList.add("hidden");
+          }
         });
         const el = document.getElementById(id);
         if (el) {
           el.classList.toggle("hidden");
+          if (!el.classList.contains("hidden")) {
+            lucide.createIcons();
+          }
           if (id === "dropdownColumns") renderColumnCheckboxes();
           if (id === "dropdownSort") updateSortButtonStates();
+          if (id === "dropdownFilter") updateSupplierDropdown();
         }
       }
 
@@ -1547,6 +1882,7 @@
         const labels = {
           no: "No.",
           item: "Nama / Barcode",
+          category: "Kategori",
           supplier: "Supplier",
           hargaBall: "Harga Ball",
           hargaPak: "Harga Pak",
@@ -1595,17 +1931,10 @@
         updateSortButtonStates();
       }
 
-      function resetAdvancedFilters() {
-        document.getElementById("filter-supplier").value = "";
-        document.getElementById("filter-barcode").value = "";
-        document.getElementById("filter-nama").value = "";
-        filterSupplierTable();
-      }
-
       // Close dropdowns when clicking outside
       document.addEventListener("click", (e) => {
         if (!e.target.closest(".relative")) {
-          ["dropdownFilter", "dropdownSort", "dropdownColumns"].forEach((id) => {
+          ["dropdownSort", "dropdownColumns"].forEach((id) => {
             const el = document.getElementById(id);
             if (el) el.classList.add("hidden");
           });
@@ -1648,47 +1977,89 @@
         renderSupplierTable();
       }
 
+      // Debounce Logic for Filtering Performance
+      let filterTimeout;
+      function debouncedFilter() {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(() => {
+          filterSupplierTable();
+        }, 150);
+      }
+
+      function resetAdvancedFilters() {
+        const ids = ["filter-supplier", "filter-category", "filter-barcode", "filter-nama"];
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = "";
+        });
+        filterSupplierTable();
+      }
+
       function filterSupplierTable() {
         try {
-          const query = (document.getElementById("supplierSearch")?.value || "").toLowerCase();
-          const fSupp = (document.getElementById("filter-supplier")?.value || "").toLowerCase();
-          const fBar = (document.getElementById("filter-barcode")?.value || "").toLowerCase();
-          const fNama = (document.getElementById("filter-nama")?.value || "").toLowerCase();
+          if (!Array.isArray(rawSupplierData)) return;
+          
+          const qEl = document.getElementById("supplierSearch");
+          const fsEl = document.getElementById("filter-supplier");
+          const fcEl = document.getElementById("filter-category");
+          const fbEl = document.getElementById("filter-barcode");
+          const fnEl = document.getElementById("filter-nama");
+
+          const query = (qEl?.value || "").toLowerCase().trim();
+          const fSupp = (fsEl?.value || "").toLowerCase().trim();
+          const fCat = (fcEl?.value || "").toLowerCase().trim();
+          const fBar = (fbEl?.value || "").toLowerCase().trim();
+          const fNama = (fnEl?.value || "").toLowerCase().trim();
 
           filteredSupplierData = rawSupplierData.filter((it) => {
-            const nama = String(it.namaBarang || "").toLowerCase();
-            const supplier = String(it.supplier || "").toLowerCase();
-            const barcode = String(it.barcode || "").toLowerCase();
+            if (!it) return false;
+            
+            // Extremely flexible property access to handle spaces, casing, and varying names
+            const nama = String(it.namaBarang || it.NamaBarang || it.item || it["Nama Barang"] || it["NAMA BARANG"] || "").toLowerCase();
+            const supplier = String(it.supplier || it.Supplier || it["Supplier"] || it["SUPPLIER"] || "").toLowerCase();
+            const barcode = String(it.barcode || it.Barcode || it["Barcode"] || it["BARCODE"] || "").toLowerCase();
+            const category = String(it.categoryBarang || it.category || it.CategoryBarang || it.Kategori || it["Category Barang"] || it["Kategori"] || "").toLowerCase();
 
-            const matchesGlobal =
-              nama.includes(query) ||
-              supplier.includes(query) ||
-              barcode.includes(query);
+            if (query && !nama.includes(query) && !supplier.includes(query) && !barcode.includes(query)) return false;
+            
+            if (fSupp && supplier !== fSupp) return false;
+            if (fCat && category !== fCat) return false;
+            if (fBar && !barcode.includes(fBar)) return false;
+            if (fNama && !nama.includes(fNama)) return false;
 
-            const matchesSupplier = supplier.includes(fSupp);
-            const matchesBarcode = barcode.includes(fBar);
-            const matchesNama = nama.includes(fNama);
-
-            return (
-              matchesGlobal && matchesSupplier && matchesBarcode && matchesNama
-            );
+            return true;
           });
 
-          // Sorting Logic
+          sortSupplierData();
+        } catch (err) {
+          console.error("filterSupplierTable failed:", err);
+          filteredSupplierData = Array.isArray(rawSupplierData) ? [...rawSupplierData] : [];
+          renderSupplierTable();
+        }
+      }
+
+      function sortSupplierData() {
+        try {
+          if (!Array.isArray(filteredSupplierData)) return;
+
           filteredSupplierData.sort((a, b) => {
-            const valA = String(a.id || "");
-            const valB = String(b.id || "");
-            return sortOrder === "asc"
-              ? valA.localeCompare(valB)
-              : valB.localeCompare(valA);
+            const getVal = (obj, key) => {
+              if (!obj) return "";
+              // Handle property variations
+              return String(obj[key] || obj.namaBarang || obj.NamaBarang || obj.item || obj["Nama Barang"] || obj.supplier || obj.Supplier || "").toLowerCase();
+            };
+
+            const valA = getVal(a, sortBy);
+            const valB = getVal(b, sortBy);
+            
+            if (sortOrder === "asc") return valA.localeCompare(valB, 'id', { sensitivity: 'base' });
+            return valB.localeCompare(valA, 'id', { sensitivity: 'base' });
           });
 
           currentPage = 1;
           renderSupplierTable();
         } catch (err) {
-          console.error("Filter Error:", err);
-          // Fallback minimal render if filter fails
-          filteredSupplierData = [...rawSupplierData];
+          console.error("sortSupplierData fail:", err);
           renderSupplierTable();
         }
       }
@@ -1859,6 +2230,50 @@
           )
           .join("");
         lucide.createIcons();
+      }
+
+      // --- GLOBAL SCANNER LOGIC ---
+      let globalScanner = null;
+      function startSupplierScan() {
+        const modal = document.getElementById("scannerModal");
+        modal.classList.replace("hidden", "flex");
+        
+        if (globalScanner) {
+          globalScanner.stop().catch(() => {});
+        }
+
+        globalScanner = new Html5Qrcode("global-reader");
+        globalScanner.start(
+          { facingMode: "environment" },
+          { fps: 20, qrbox: 250 },
+          (text) => {
+            document.getElementById("supplier-barcode-input").value = text;
+            closeGlobalScanner();
+            showAlert("Berhasil", "Barcode '" + text + "' berhasil di-scan!", "success");
+          }
+        ).catch(err => {
+          console.error("Scanner Error:", err);
+          showAlert("Error", "Gagal mengakses kamera. Pastikan izin kamera diberikan.", "error");
+          closeGlobalScanner();
+        });
+
+        lucide.createIcons();
+      }
+
+      function closeGlobalScanner() {
+        const modal = document.getElementById("scannerModal");
+        if (globalScanner) {
+          globalScanner.stop().then(() => {
+            globalScanner = null;
+            modal.classList.replace("flex", "hidden");
+          }).catch(err => {
+            console.error("Stop Error:", err);
+            globalScanner = null;
+            modal.classList.replace("flex", "hidden");
+          });
+        } else {
+          modal.classList.replace("flex", "hidden");
+        }
       }
 
       function tutupHasil() {

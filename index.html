@@ -169,7 +169,7 @@
       }
       #sidebar.collapsed .submenu-header-popup {
         display: block;
-        color: #ef4444; /* Red color as requested */
+        color: #64748b; /* Slate 500 (Matches sidebar text) */
         font-weight: 800;
         font-size: 14px;
         margin-bottom: 0.75rem;
@@ -406,7 +406,7 @@
                   <div
                     class="dot"
                   ></div>
-                  <span class="font-bold text-xs uppercase tracking-widest"
+                  <span class="font-bold text-xs capitalize tracking-widest"
                     >Supplier</span
                   >
                 </button>
@@ -2775,8 +2775,8 @@
           const suppliers = [...new Set(rawSupplierData.map(s => s.supplier || s.Supplier))].filter(Boolean);
           suggestions = suppliers.filter(s => s.toLowerCase().includes(query));
         } else if (type === 'namaBarang') {
-          // Get unique product names from rawCekHargaData
-          const products = [...new Set(rawCekHargaData.map(b => b.namaBarang || b.NamaBarang))].filter(Boolean);
+          // Get unique product names from rawSupplierData (Database Supplier)
+          const products = [...new Set(rawSupplierData.map(b => b.namaBarang || b.NamaBarang))].filter(Boolean);
           suggestions = products.filter(p => p.toLowerCase().includes(query));
         }
 

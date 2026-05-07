@@ -111,6 +111,104 @@
       .dialog-error #dialogIcon { background-color: #fef2f2; color: #dc2626; }
       .dialog-warning #dialogIcon { background-color: #fffbeb; color: #d97706; }
       .dialog-info #dialogIcon { background-color: #f0f9ff; color: #0284c7; }
+
+      /* Sidebar Collapse Toggle */
+      #sidebar {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+      }
+      #sidebar.collapsed {
+        width: 80px;
+      }
+      #sidebar.collapsed .sidebar-text, 
+      #sidebar.collapsed .sidebar-header-text,
+      #sidebar.collapsed #submenu-master,
+      #sidebar.collapsed .sidebar-footer-text,
+      #sidebar.collapsed .nav-btn span,
+      #sidebar.collapsed .sidebar-group-header span:first-child,
+      #sidebar.collapsed .nav-chevron,
+      #sidebar.collapsed .nav-dot {
+        display: none !important;
+      }
+      #sidebar.collapsed .group-collapsed-dot {
+        display: block !important;
+        width: 100%;
+        text-align: center;
+      }
+      #sidebar.collapsed .p-8 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      #sidebar.collapsed .nav-btn,
+      #sidebar.collapsed .sidebar-submenu-trigger {
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+      }
+      #sidebar.collapsed .sidebar-group-header {
+        text-align: center;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      #sidebar.collapsed .sidebar-admin-card {
+        padding: 0.5rem;
+        justify-content: center;
+      }
+      #sidebar.collapsed .sidebar-admin-info {
+        display: none;
+      }
+
+      .collapse-toggle {
+        position: absolute;
+        top: 2rem;
+        right: -14px;
+        width: 28px;
+        height: 28px;
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 60;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        transition: all 0.3s ease;
+      }
+      .collapse-toggle:hover {
+        background-color: #f8fafc;
+        transform: scale(1.1);
+      }
+      #sidebar.collapsed .collapse-toggle i {
+        transform: rotate(180deg);
+      }
+
+      /* Form Autocomplete Styles */
+      .form-suggestion-box {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #f1f5f9;
+        border-radius: 1rem;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        z-index: 100;
+        margin-top: 0.5rem;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .form-suggestion-item {
+        padding: 0.75rem 1.25rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #475569;
+        transition: all 0.2s;
+      }
+      .form-suggestion-item:hover {
+        background-color: #fff7ed;
+        color: #ea580c;
+      }
     </style>
   </head>
   <body class="overflow-hidden">
@@ -169,16 +267,22 @@
       <!-- Sidebar -->
       <aside
         id="sidebar"
-        class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-transform duration-300 shadow-2xl lg:shadow-none"
+        class="fixed inset-y-0 left-0 w-72 bg-white border-r border-slate-100 z-50 transform -translate-x-full lg:relative lg:translate-x-0 transition-all duration-300 shadow-2xl lg:shadow-none"
       >
+        <!-- Collapse Toggle (Desktop Only) -->
+        <button id="sidebarCollapseBtn" onclick="toggleSidebarCollapse()" class="hidden lg:flex collapse-toggle">
+          <i data-lucide="chevron-left" class="w-4 h-4 text-slate-400"></i>
+        </button>
+
         <div class="p-8 flex flex-col h-full">
           <div class="flex items-center gap-4 mb-14">
             <div
-              class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-100"
+              class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-100 shrink-0"
             >
-              <i data-lucide="store" class="w-6 h-6"></i>
+               <!-- <i data-lucide="store" class="w-6 h-6"></i> //Logo store avatar -->
+              <img src="https://lh3.googleusercontent.com/u/0/d/1lZ2_SK5lZq0cPMcIXfW0iXB3W4-3CjFY" class="w-8 h-8 object-contain" alt="Logo Toko">
             </div>
-            <div>
+            <div class="sidebar-header-text">
               <h1 class="text-xl font-extrabold tracking-tight text-slate-900">
                 TOKO WINA
               </h1>
@@ -193,9 +297,10 @@
 
           <nav class="flex-1 space-y-3">
             <p
-              class="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em] px-5 mb-4"
+              class="text-[10px] font-black text-slate-300 uppercase tracking-[0.25em] px-5 mb-4 sidebar-group-header"
             >
-              Menu Utama
+              <span class="sidebar-text">Menu Utama</span>
+              <span class="hidden lg:inline group-collapsed-dot font-black">...</span>
             </p>
 
             <button
@@ -220,14 +325,14 @@
             <div class="space-y-1">
               <button
                 onclick="toggleSubmenu('master')"
-                class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all"
+                class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all sidebar-submenu-trigger"
               >
                 <i data-lucide="package" class="w-5 h-5 text-orange-500"></i>
-                <span class="font-bold text-sm">Master Data</span>
+                <span class="font-bold text-sm sidebar-text">Master Data</span>
                 <i
                   id="icon-master"
                   data-lucide="chevron-down"
-                  class="ml-auto w-4 h-4 transition-transform duration-300"
+                  class="ml-auto w-4 h-4 transition-transform duration-300 nav-chevron"
                 ></i>
               </button>
               <div id="submenu-master" class="pl-10 space-y-1 hidden">
@@ -247,23 +352,25 @@
             </div>
 
             <button
-              class="w-full flex items-center gap-4 px-6 py-4.5 rounded-2xl text-slate-400 hover:bg-slate-50 transition-all opacity-50 cursor-not-allowed"
+              class="nav-btn w-full flex items-center gap-4 px-6 py-4.5 rounded-2xl text-slate-400 hover:bg-slate-50 transition-all opacity-50 cursor-not-allowed"
             >
               <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
-              <span class="font-bold text-sm">Laporan</span>
+              <span class="font-bold text-sm sidebar-text">Laporan</span>
             </button>
           </nav>
 
           <div class="mt-auto pt-6 flex flex-col gap-4">
             <div
-              class="bg-slate-50 p-4 rounded-2xl flex items-center gap-4 border border-slate-100"
+              class="bg-slate-50 p-4 rounded-2xl flex items-center gap-4 border border-slate-100 sidebar-admin-card"
             >
               <div
-                class="w-10 h-10 rounded-xl overflow-hidden bg-slate-200 flex items-center justify-center shadow-inner"
+                class="w-10 h-10 rounded-xl overflow-hidden bg-slate-200 flex items-center justify-center shadow-inner shrink-0"
               >
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Asfar" alt="Avatar" class="w-full h-full object-cover" />
+                <!-- <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Asfar" alt="Avatar" class="w-full h-full object-cover" />
+               -->
+               <img src="https://lh3.googleusercontent.com/u/0/d/15fcwWUqb5Tufa6jt4pSHE37CAd0e5mJ4" alt="Administrator" class="w-full h-full object-cover" />
               </div>
-              <div>
+              <div class="sidebar-admin-info">
                 <p class="text-xs font-black text-slate-900">A S F A R</p>
                 <p
                   class="text-[10px] font-bold text-slate-400 uppercase tracking-tight"
@@ -273,7 +380,7 @@
               </div>
             </div>
             <p
-              class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] text-center"
+              class="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] text-center sidebar-footer-text"
             >
               © <span class="current-year"></span> - 45F4R
             </p>
@@ -572,9 +679,10 @@
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
                             <input type="date" name="tglBeli" id="form-tglBeli" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
                           </div>
-                          <div class="space-y-2">
+                          <div class="space-y-2 relative">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Supplier</label>
-                            <input type="text" name="supplier" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
+                            <input type="text" name="supplier" id="form-supplier" required autocomplete="off" oninput="handleFormAutocomplete(this, 'supplier')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
+                            <div id="supplier-suggestions" class="form-suggestion-box hidden"></div>
                           </div>
                         </div>
                       </div>
@@ -596,7 +704,7 @@
                           <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
                         </div>
                       </div>
-                      <div class="space-y-2 md:col-span-2">
+                      <div class="space-y-2 md:col-span-2 relative">
                         <label
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
                           >Nama Barang</label
@@ -604,10 +712,14 @@
                         <input
                           type="text"
                           name="namaBarang"
+                          id="form-namaBarang"
                           required
+                          autocomplete="off"
+                          oninput="handleFormAutocomplete(this, 'namaBarang')"
                           class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner"
                           placeholder="..."
                         />
+                        <div id="namaBarang-suggestions" class="form-suggestion-box hidden"></div>
                       </div>
                       <div class="space-y-4 md:col-span-2 lg:col-span-3">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode Produk (Opsional)</label>
@@ -987,7 +1099,7 @@
                 >
                   <!-- Desktop Table View -->
                   <div class="hidden lg:block overflow-x-auto custom-scrollbar">
-                    <table class="w-full text-left min-w-[1000px]">
+                    <table class="w-full text-left min-w-[1200px]">
                       <thead>
                         <tr
                           class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700"
@@ -1892,7 +2004,8 @@
       const hBks = it.hargaBks || 0;
       const iBall = it.isiBall || 0;
       const iPak = it.isiPak || 0;
-      const tgl = it.tglBeli || "-";
+      const tglRaw = it.tglBeli || "-";
+      const tgl = tglRaw.includes(" ") ? tglRaw.split(" ")[0] : tglRaw;
       const idFinal = it.id || rowNo;
 
       const bBall = it.barcodeBall || "-";
@@ -1902,7 +2015,7 @@
       return `
     <tr class="hover:bg-slate-50/70 transition-all group border-b border-slate-50 text-[11px]">
       <td class="px-8 py-6 text-center font-bold text-slate-400 sticky left-0 bg-white group-hover:bg-slate-50 transition-colors z-10 ${!visibleColumns.no ? "hidden" : ""}">
-        ${it.no || rowNo}.
+        ${rowNo}.
       </td>
       <td class="px-8 py-6 text-slate-600 font-bold whitespace-nowrap ${!visibleColumns.tglBeli ? "hidden" : ""}">
         ${tgl}
@@ -1968,7 +2081,8 @@
       const hBks = it.hargaBks || 0;
       const iBall = it.isiBall || 0;
       const iPak = it.isiPak || 0;
-      const tgl = it.tglBeli || "-";
+      const tglRaw = it.tglBeli || "-";
+      const tgl = tglRaw.includes(" ") ? tglRaw.split(" ")[0] : tglRaw;
       const idFinal = it.id || rowNo;
 
       const bBall = it.barcodeBall || "-";
@@ -2566,7 +2680,56 @@
         }).format(n || 0);
       }
 
-      // --- FITUR BARU: SIMPAN SUPPLIER --- (REMOVED REDUNDANT)
+      function toggleSidebarCollapse() {
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("collapsed");
+        lucide.createIcons();
+      }
+
+      function handleFormAutocomplete(input, type) {
+        const query = input.value.toLowerCase().trim();
+        const suggestionBox = document.getElementById(type + "-suggestions");
+        
+        if (query.length < 2) {
+          suggestionBox.classList.add("hidden");
+          return;
+        }
+
+        let suggestions = [];
+        if (type === 'supplier') {
+          // Get unique suppliers from rawSupplierData
+          const suppliers = [...new Set(rawSupplierData.map(s => s.supplier || s.Supplier))].filter(Boolean);
+          suggestions = suppliers.filter(s => s.toLowerCase().includes(query));
+        } else if (type === 'namaBarang') {
+          // Get unique product names from rawCekHargaData
+          const products = [...new Set(rawCekHargaData.map(b => b.namaBarang || b.NamaBarang))].filter(Boolean);
+          suggestions = products.filter(p => p.toLowerCase().includes(query));
+        }
+
+        if (suggestions.length > 0) {
+          suggestionBox.innerHTML = suggestions.slice(0, 5).map(s => `
+            <div class="form-suggestion-item" onclick="selectFormSuggestion('${s.replace(/'/g, "\\'")}', '${type}')">
+              ${s}
+            </div>
+          `).join('');
+          suggestionBox.classList.remove("hidden");
+        } else {
+          suggestionBox.classList.add("hidden");
+        }
+      }
+
+      function selectFormSuggestion(value, type) {
+        const input = document.getElementById("form-" + type);
+        input.value = value;
+        document.getElementById(type + "-suggestions").classList.add("hidden");
+      }
+
+      // Close suggestions when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.relative')) {
+          document.querySelectorAll('.form-suggestion-box').forEach(box => box.classList.add('hidden'));
+        }
+      });
     </script>
   </body>
 </html>

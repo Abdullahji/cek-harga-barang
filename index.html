@@ -176,7 +176,7 @@
             <div
               class="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-orange-100"
             >
-              <i data-lucide="database" class="w-6 h-6"></i>
+              <i data-lucide="store" class="w-6 h-6"></i>
             </div>
             <div>
               <h1 class="text-xl font-extrabold tracking-tight text-slate-900">
@@ -222,7 +222,7 @@
                 onclick="toggleSubmenu('master')"
                 class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all"
               >
-                <i data-lucide="database" class="w-5 h-5 text-orange-500"></i>
+                <i data-lucide="package" class="w-5 h-5 text-orange-500"></i>
                 <span class="font-bold text-sm">Master Data</span>
                 <i
                   id="icon-master"
@@ -259,9 +259,9 @@
               class="bg-slate-50 p-4 rounded-2xl flex items-center gap-4 border border-slate-100"
             >
               <div
-                class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-lg shadow-inner"
+                class="w-10 h-10 rounded-xl overflow-hidden bg-slate-200 flex items-center justify-center shadow-inner"
               >
-                S
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Asfar" alt="Avatar" class="w-full h-full object-cover" />
               </div>
               <div>
                 <p class="text-xs font-black text-slate-900">A S F A R</p>
@@ -567,11 +567,7 @@
                       </div>
 
                       <div class="space-y-4 md:col-span-2 lg:col-span-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">No.</label>
-                            <input type="text" name="no" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Otomatis..." />
-                          </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                           <div class="space-y-2">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
                             <input type="date" name="tglBeli" id="form-tglBeli" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
@@ -856,59 +852,13 @@
                     </button>
 
                     <!-- Sort Trigger -->
-                    <div class="relative">
-                      <button
-                        onclick="toggleDropdown('dropdownSort')"
-                        class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
-                        title="Urutan"
-                      >
-                        <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
-                      </button>
-                      <div
-                        id="dropdownSort"
-                        class="hidden absolute top-full right-0 mt-3 w-64 bg-white rounded-3xl border border-slate-100 shadow-2xl z-[60] p-6 animate-in fade-in slide-in-from-top-2 duration-300"
-                      >
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
-                          Urutkan Berdasarkan
-                        </p>
-                        <div class="space-y-1 mb-6">
-                          <button onclick="setSortBy('tglBeli')" id="sortby-tglBeli" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-between group">
-                            <span>Tanggal Pembelian</span>
-                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
-                          </button>
-                          <button onclick="setSortBy('namaBarang')" id="sortby-namaBarang" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-between group">
-                            <span>Nama Barang</span>
-                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
-                          </button>
-                          <button onclick="setSortBy('hargaBall')" id="sortby-hargaBall" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-between group">
-                            <span>Harga Ball</span>
-                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
-                          </button>
-                          <button onclick="setSortBy('hargaPak')" id="sortby-hargaPak" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-between group">
-                            <span>Harga Pak</span>
-                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
-                          </button>
-                          <button onclick="setSortBy('hargaBks')" id="sortby-hargaBks" class="w-full text-left px-4 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-between group">
-                            <span>Harga Bks</span>
-                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
-                          </button>
-                        </div>
-
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
-                          Arah Urutan
-                        </p>
-                        <div class="flex gap-2">
-                          <button onclick="setSortOrder('asc')" id="sort-asc-btn" class="flex-1 px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-center gap-2 transition-all">
-                            <i data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
-                            <span>ASC</span>
-                          </button>
-                          <button onclick="setSortOrder('desc')" id="sort-desc-btn" class="flex-1 px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-center gap-2 transition-all">
-                            <i data-lucide="arrow-down-wide-narrow" class="w-4 h-4"></i>
-                            <span>DESC</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <button
+                      onclick="toggleSortPanel()"
+                      class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
+                      title="Urutan"
+                    >
+                      <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
 
                     <!-- Refresh Trigger -->
                     <button
@@ -976,6 +926,58 @@
                         <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                         Reset Filter
                       </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- SORT PANEL -->
+                <div id="sortExpanded" class="hidden bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden mb-6">
+                  <div class="p-6 md:p-8 space-y-6">
+                    <div class="flex items-center gap-3 mb-2">
+                       <i data-lucide="arrow-down-narrow-wide" class="w-5 h-5 text-orange-500"></i>
+                       <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Pengaturan Urutan</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div class="space-y-4">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Urutkan Berdasarkan</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <button id="sortby-tglBeli" onclick="setSortBy('tglBeli')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Tanggal Pembelian</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                          <button id="sortby-namaBarang" onclick="setSortBy('namaBarang')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Nama Barang</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                          <button id="sortby-hargaBall" onclick="setSortBy('hargaBall')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Harga Ball</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                          <button id="sortby-hargaPak" onclick="setSortBy('hargaPak')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Harga Pak</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                          <button id="sortby-hargaBks" onclick="setSortBy('hargaBks')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Harga Bks</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div class="space-y-4">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Arah Urutan</label>
+                        <div class="flex flex-col gap-2">
+                          <button id="sort-asc-btn" onclick="setSortOrder('asc')" class="px-4 py-4 rounded-xl border border-slate-100 font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
+                            <i data-lucide="arrow-up-narrow-wide" class="w-4 h-4 text-orange-500"></i>
+                            <span>Urutan Menaik (A - Z / Kecil ke Besar)</span>
+                          </button>
+                          <button id="sort-desc-btn" onclick="setSortOrder('desc')" class="px-4 py-4 rounded-xl border border-slate-100 font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-95">
+                            <i data-lucide="arrow-down-wide-narrow" class="w-4 h-4 text-orange-500"></i>
+                            <span>Urutan Menurun (Z - A / Besar ke Kecil)</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1142,7 +1144,7 @@
       let currentPage = 1;
       let itemsPerPage = 10;
 
-      window.onload = () => {
+      window.onload = async () => {
         // Load Dark Mode Preference
         if (localStorage.getItem('theme') === 'dark' || 
             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -1150,10 +1152,15 @@
         }
 
         lucide.createIcons();
+
+        // Fetch data first, then show dashboard
+        await Promise.all([
+          fetchCekHargaData(),
+          fetchCategoryData(),
+          fetchSupplierData()
+        ]);
+        
         switchPage("dashboard");
-        fetchCekHargaData();
-        fetchCategoryData();
-        fetchSupplierData();
 
         // Set current year
         document.querySelectorAll(".current-year").forEach((el) => {
@@ -1390,7 +1397,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzWDmiIx8Oe0yHoQ91NWeCPy0h_6GQTkMkY-ci4vhuwvbXuidv35ryGD591SZNAC6Ww1w/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxoNrTeuOeWbVbhJTmm3FaGDUgkP_zPZYE7YgNpK25ziSLjAjRCSSB2DzDFwfTfwJifiA/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -1529,6 +1536,10 @@
           updateCategorySelects();
           filterSupplierTable(); // This triggers render
           
+          // Re-render dashboard if active
+          if (document.getElementById("section-dashboard")?.classList.contains("active")) {
+            renderDashboard();
+          }
         } catch (err) {
           console.error("fetchSupplierData error:", err);
           rawSupplierData = [];
@@ -1561,6 +1572,9 @@
        isRefreshing = true;
        applyRefreshSpin();
        await Promise.all([fetchSupplierData(), fetchCekHargaData()]);
+       if (document.getElementById("section-dashboard")?.classList.contains("active")) {
+          renderDashboard();
+       }
        isRefreshing = false;
        applyRefreshSpin();
        showAlert("Berhasil", "Semua data telah diperbarui!", "success");
@@ -1570,6 +1584,10 @@
         const res = await callGAS("ambilDataCekHarga");
         if (res && res.sukses) {
           rawCekHargaData = res.data || [];
+          // Re-render dashboard if active
+          if (document.getElementById("section-dashboard")?.classList.contains("active")) {
+            renderDashboard();
+          }
         } else if (!res) {
           rawCekHargaData = [
             {
@@ -1626,9 +1644,26 @@
 
       function toggleAdvancedFilters() {
         const panel = document.getElementById("filterExpanded");
+        const sortPanel = document.getElementById("sortExpanded");
+        if (sortPanel) sortPanel.classList.add("hidden"); // Close sort if filter is opened
+
         if (panel.classList.contains("hidden")) {
           panel.classList.remove("hidden");
           panel.classList.add("animate-in", "slide-in-from-top-4", "duration-500");
+        } else {
+          panel.classList.add("hidden");
+        }
+      }
+
+      function toggleSortPanel() {
+        const panel = document.getElementById("sortExpanded");
+        const filterPanel = document.getElementById("filterExpanded");
+        if (filterPanel) filterPanel.classList.add("hidden"); // Close filter if sort is opened
+
+        if (panel.classList.contains("hidden")) {
+          panel.classList.remove("hidden");
+          panel.classList.add("animate-in", "slide-in-from-top-4", "duration-500");
+          updateSortButtonStates();
         } else {
           panel.classList.add("hidden");
         }
@@ -1706,8 +1741,7 @@
         toggleAddForm(); 
         document.getElementById("formTitle").innerText = "Edit Data Barang";
 
-        // Set No dan Tanggal
-        form.querySelector('[name="no"]').value = it.no || "";
+        // Set No dan Tanggal (No removed as it is system generated)
         
         const fTgl = document.getElementById("form-tglBeli");
         if (fTgl) {
@@ -2008,7 +2042,7 @@
 
       function toggleDropdown(id) {
         // Close other dropdowns
-        ["dropdownFilter", "dropdownSort", "dropdownColumns"].forEach((d) => {
+        ["dropdownFilter", "dropdownColumns"].forEach((d) => {
           if (d !== id) {
             const el = document.getElementById(d);
             if (el) el.classList.add("hidden");
@@ -2021,7 +2055,6 @@
             lucide.createIcons();
           }
           if (id === "dropdownColumns") renderColumnCheckboxes();
-          if (id === "dropdownSort") updateSortButtonStates();
           if (id === "dropdownFilter") updateSupplierDropdown();
         }
       }
@@ -2078,7 +2111,8 @@
            const icon = th.querySelector("i");
            if (sortBy === key) {
               th.classList.add("text-orange-400");
-              dropBtn.classList.add("bg-orange-50", "text-orange-600", "active");
+              dropBtn.classList.add("bg-orange-50", "text-orange-600", "active", "border-orange-200");
+              dropBtn.classList.remove("border-slate-100");
               if (icon) {
                 icon.dataset.lucide = sortOrder === "asc" ? "arrow-up" : "arrow-down";
                 icon.classList.remove("text-slate-500", "opacity-50");
@@ -2086,7 +2120,8 @@
               }
            } else {
               th.classList.remove("text-orange-400");
-              dropBtn.classList.remove("bg-orange-50", "text-orange-600", "active");
+              dropBtn.classList.remove("bg-orange-50", "text-orange-600", "active", "border-orange-200");
+              dropBtn.classList.add("border-slate-100");
               if (icon) {
                 icon.dataset.lucide = "chevrons-up-down";
                 icon.classList.add("text-slate-500", "opacity-50");
@@ -2099,12 +2134,18 @@
         ["asc", "desc"].forEach((order) => {
           const btn = document.getElementById("sort-" + order + "-btn");
           if (!btn) return;
+          const icon = btn.querySelector("i");
+
           if (sortOrder === order) {
             btn.classList.add("bg-orange-600", "text-white", "border-orange-600");
-            btn.classList.remove("border-slate-100");
+            btn.classList.remove("border-slate-100", "text-slate-900");
+            if (icon) icon.classList.remove("text-orange-500");
+            if (icon) icon.classList.add("text-white");
           } else {
             btn.classList.remove("bg-orange-600", "text-white", "border-orange-600");
-            btn.classList.add("border-slate-100");
+            btn.classList.add("border-slate-100", "text-slate-900");
+            if (icon) icon.classList.add("text-orange-500");
+            if (icon) icon.classList.remove("text-white");
           }
         });
         
@@ -2137,8 +2178,7 @@
       // Close dropdowns when clicking outside
       document.addEventListener("click", (e) => {
   if (!e.target.closest(".relative")) {
-    // [FIX] dropdownFilter ditambahkan ke daftar
-    ["dropdownFilter", "dropdownSort", "dropdownColumns"].forEach((id) => {
+    ["dropdownFilter", "dropdownColumns"].forEach((id) => {
       const el = document.getElementById(id);
       if (el) el.classList.add("hidden");
     });

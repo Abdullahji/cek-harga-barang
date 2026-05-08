@@ -651,7 +651,7 @@
                 </div>
               </div>
 
-              <div id="searchResult" class="hidden pt-2"></div>
+              <div id="searchResult" class="hidden pt-2 mx-auto max-w-xl"></div>
             </section>
 
             <!-- SECTION: SUPPLIER -->
@@ -2739,6 +2739,7 @@
 
       function showSuggestions(matches) {
         const suggestions = document.getElementById("searchSuggestions");
+        const searchArea = document.getElementById("manualInput").closest(".space-y-6");
         suggestions.classList.remove("hidden");
         suggestions.innerHTML = matches
           .map(
@@ -2754,9 +2755,9 @@
           )
           .join("");
         lucide.createIcons();
-        // Scroll ke daftar saran agar terlihat di HP
+        // Scroll agar input dan daftar saran berada di tengah viewport (Fokus ke Pencarian)
         setTimeout(() => {
-          suggestions.scrollIntoView({ behavior: "smooth", block: "start" });
+          if (searchArea) searchArea.scrollIntoView({ behavior: "smooth", block: "center" });
         }, 100);
       }
 

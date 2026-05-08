@@ -2664,7 +2664,7 @@
           }
 
           resContainer.innerHTML = `
-          <div class="bg-white border border-slate-100 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl p-8 md:p-12 text-center relative overflow-hidden group animate-in fade-in zoom-in duration-300">
+          <div class="bg-white border border-slate-100 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl p-8 md:p-12 text-center relative overflow-hidden group animate-in fade-in zoom-in duration-300 mx-auto max-w-xl">
             <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
             
             <button onclick="tutupHasil()" class="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all active:scale-90">
@@ -2696,6 +2696,10 @@
         `;
           lucide.createIcons();
           if (isScanning) toggleScanner();
+          // Scroll to result
+          setTimeout(() => {
+            resContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 300);
         } else {
           showAlert(
             "Produk Tidak Ditemukan",

@@ -2754,6 +2754,10 @@
           )
           .join("");
         lucide.createIcons();
+        // Scroll ke daftar saran agar terlihat di HP
+        setTimeout(() => {
+          suggestions.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
       }
 
       // --- GLOBAL SCANNER LOGIC ---

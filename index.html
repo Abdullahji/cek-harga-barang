@@ -272,7 +272,7 @@
       }
     </style>
   </head>
-  <body class="overflow-x-hidden">
+  <body class="overflow-x-hidden" style="overscroll-behavior-y: contain;">
     <!-- Sidebar Backdrop -->
     <div id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
@@ -324,7 +324,7 @@
       </div>
     </div>
 
-    <div class="flex min-h-screen">
+    <div class="flex h-screen overflow-hidden">
       <!-- Sidebar -->
       <aside
         id="sidebar"
@@ -451,10 +451,10 @@
       </aside>
 
       <!-- Main Content -->
-      <main class="flex-1 flex flex-col bg-[#F8FAFC]">
+      <main class="flex-1 w-full min-w-0 flex flex-col bg-[#F8FAFC] overflow-hidden">
         <!-- Top Header -->
     <header
-      class="h-20 bg-slate-900 border-b border-slate-800 px-8 flex items-center justify-between shrink-0 z-30 sticky top-0"
+      class="h-20 bg-slate-900 border-b border-slate-800 px-8 flex items-center justify-between shrink-0"
     >
       <div class="flex items-center gap-4 sm:gap-6">
         <button
@@ -501,7 +501,7 @@
     </header>
 
         <div
-          class="flex-1 p-6 sm:p-10 flex flex-col"
+          class="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar flex flex-col"
         >
           <div class="flex-1">
             <!-- SECTION: DASHBOARD -->
@@ -963,6 +963,7 @@
                             value="0"
                             required
                           />
+                          <input type="hidden" name="rowId" id="edit-rowId" value="" />
                         </div>
                         <div
                           class="flex items-center justify-center pt-2 gap-2 text-emerald-400"
@@ -1845,16 +1846,22 @@
         const data = Object.fromEntries(formData.entries());
 
         // Validasi Duplikasi Nama Barang (Skip jika sedang edit item yang sama)
-        const rowId = document.getElementById("edit-rowId").value;
-        const lowerName = data.namaBarang.toLowerCase().trim();
-        const isDuplicate = rawSupplierData.some(item => 
-          item.namaBarang.toLowerCase().trim() === lowerName && 
-          item.id !== rowId
-        );
+        const rowIdEl = document.getElementById("edit-rowId");
+        const rowId = rowIdEl ? rowIdEl.value : "";
+        const lowerName = (data.namaBarang || "").toLowerCase().trim();
+        
+        if (lowerName && lowerName !== "-" && Array.isArray(rawSupplierData)) {
+          const lowerSupplier = (data.supplier || "").toLowerCase().trim();
+          const isDuplicate = rawSupplierData.some(item => {
+            const itemName = (item.namaBarang || item.NamaBarang || "").toLowerCase().trim();
+            const itemSupplier = (item.supplier || item.Supplier || "").toLowerCase().trim();
+            return itemName === lowerName && itemSupplier === lowerSupplier && item.id !== rowId;
+          });
 
-        if (isDuplicate) {
-          showAlert("Warning", `Produk dengan nama "${data.namaBarang}" sudah ada! Gunakan nama lain untuk menghindari kekeliruan.`, "warning");
-          return;
+          if (isDuplicate) {
+            showAlert("Peringatan", `Produk "${data.namaBarang}" dari supplier "${data.supplier}" sudah ada!`, "warning");
+            return;
+          }
         }
 
         showLoading(true);
@@ -2032,14 +2039,7 @@
 
         // Add row ID for backend knowing this is an update
         let rowIdInput = document.getElementById("edit-rowId");
-        if (!rowIdInput) {
-          rowIdInput = document.createElement("input");
-          rowIdInput.type = "hidden";
-          rowIdInput.name = "rowId";
-          rowIdInput.id = "edit-rowId";
-          form.appendChild(rowIdInput);
-        }
-        rowIdInput.value = id;
+        if (rowIdInput) rowIdInput.value = id;
 
         // Change button text
         const btnText = form.querySelector('button[type="submit"] span');

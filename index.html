@@ -649,15 +649,6 @@
                     CARI
                   </button>
                 </div>
-
-                <div class="flex justify-center">
-                  <button
-                    onclick="tutupHasil()"
-                    class="text-slate-300 hover:text-slate-500 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all py-2"
-                  >
-                    Hapus Inputan
-                  </button>
-                </div>
               </div>
 
               <div id="searchResult" class="hidden pt-2"></div>
@@ -2747,7 +2738,7 @@
         suggestions.innerHTML = matches
           .map(
             (it) => `
-        <button onclick="document.getElementById('manualInput').value='${it.namaBarang}'; cariBarang();" class="w-full text-left px-6 py-4 hover:bg-orange-50 border-b border-slate-50 transition-all flex items-center justify-between group">
+        <button onclick="document.getElementById('manualInput').value='${it.barcode || it.namaBarang}'; cariBarang();" class="w-full text-left px-6 py-4 hover:bg-orange-50 border-b border-slate-50 transition-all flex items-center justify-between group">
           <div>
             <p class="font-black text-slate-800 text-sm italic group-hover:text-orange-600">${it.namaBarang}</p>
             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">${it.barcode || "-"}</p>

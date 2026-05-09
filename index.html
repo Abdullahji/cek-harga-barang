@@ -768,7 +768,7 @@
                              </div>
                           </div>
                           <div class="space-y-2">
-                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Expired Date (Column O)</label>
+                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Expired Date</label>
                              <div class="relative group">
                                <input type="date" name="expiredDate" id="form-expiredDate" oninput="toggleClearBtn('form-expiredDate', 'clear-expiredDate')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
                                <button type="button" id="clear-expiredDate" onclick="clearField('form-expiredDate'); toggleClearBtn('form-expiredDate', 'clear-expiredDate')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
@@ -2094,30 +2094,32 @@
 
         // Set No dan Tanggal (No removed as it is system generated)
         
-        const fTgl = document.getElementById("form-tglBeli");
-        if (fTgl) {
-          // Konversi dd/mm/yyyy ke yyyy-mm-dd untuk input type="date"
-          if (it.tglBeli && it.tglBeli.includes("/")) {
-            const parts = it.tglBeli.split("/");
-            if (parts.length === 3) {
-              fTgl.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // Helper to parse various date formats for <input type="date">
+        const formatDateForInput = (d) => {
+          if (!d || d === "-") return "";
+          if (typeof d === "string") {
+            if (d.includes("/")) {
+              const p = d.split("/");
+              if (p.length === 3) return `${p[2].padStart(4, '0')}-${p[1].padStart(2, '0')}-${p[0].padStart(2, '0')}`;
             }
-          } else {
-             fTgl.value = "";
+            if (d.includes("-") && d.split("-")[0].length === 4) {
+              return d.split(" ")[0]; // Already yyyy-mm-dd
+            }
           }
-        }
+          try {
+            const dt = new Date(d);
+            if (!isNaN(dt.getTime())) {
+              return dt.toISOString().split("T")[0];
+            }
+          } catch(e) {}
+          return "";
+        };
+
+        const fTgl = document.getElementById("form-tglBeli");
+        if (fTgl) fTgl.value = formatDateForInput(it.tglBeli);
 
         const fExp = document.getElementById("form-expiredDate");
-        if (fExp) {
-           if (it.expiredDate && it.expiredDate.includes("/")) {
-             const parts = it.expiredDate.split("/");
-             if (parts.length === 3) {
-               fExp.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
-             }
-           } else {
-             fExp.value = "";
-           }
-        }
+        if (fExp) fExp.value = formatDateForInput(it.expiredDate);
 
         form.querySelector('[name="supplier"]').value = it.supplier || "";
         form.querySelector('[name="categoryBarang"]').value = it.categoryBarang || "";
@@ -3063,9 +3065,9 @@
           if (diffDays < 0) {
             return `<span class="px-2 py-0.5 bg-red-600 text-white rounded text-[8px] font-black uppercase">EXPIRED</span>`;
           } else if (diffDays <= 15) {
-            return `<span class="px-2 py-0.5 bg-red-500 text-white rounded text-[8px] font-black uppercase shadow-sm animate-pulse">SISA ${diffDays} HARI</span>`;
+            return `<span class="px-2 py-0.5 bg-yellow-400 text-slate-800 rounded text-[8px] font-black uppercase shadow-sm">SISA ${diffDays} HARI</span>`;
           } else if (diffDays <= 30) {
-            return `<span class="px-2 py-0.5 bg-orange-400 text-white rounded text-[8px] font-black uppercase shadow-sm">SEGERA EXPIRED</span>`;
+            return `<span class="px-2 py-0.5 bg-orange-500 text-white rounded text-[8px] font-black uppercase shadow-sm">SISA ${diffDays} HARI</span>`;
           }
           return "";
         } catch (e) {

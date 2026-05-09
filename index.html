@@ -733,11 +733,21 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                           <div class="space-y-2">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
-                            <input type="date" name="tglBeli" id="form-tglBeli" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
+                            <div class="relative group">
+                              <input type="date" name="tglBeli" id="form-tglBeli" oninput="toggleClearBtn('form-tglBeli', 'clear-tglBeli')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" />
+                              <button type="button" id="clear-tglBeli" onclick="clearField('form-tglBeli'); toggleClearBtn('form-tglBeli', 'clear-tglBeli')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                                <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                              </button>
+                            </div>
                           </div>
                           <div class="space-y-2 relative">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Supplier</label>
-                            <input type="text" name="supplier" id="form-supplier" required autocomplete="off" oninput="handleFormAutocomplete(this, 'supplier')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
+                            <div class="relative group">
+                              <input type="text" name="supplier" id="form-supplier" required autocomplete="off" oninput="handleFormAutocomplete(this, 'supplier'); toggleClearBtn('form-supplier', 'clear-supplier')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
+                              <button type="button" id="clear-supplier" onclick="clearField('form-supplier'); toggleClearBtn('form-supplier', 'clear-supplier')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                                <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                              </button>
+                            </div>
                             <div id="supplier-suggestions" class="form-suggestion-box hidden"></div>
                           </div>
                         </div>
@@ -765,16 +775,21 @@
                           class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1"
                           >Nama Barang</label
                         >
-                        <input
-                          type="text"
-                          name="namaBarang"
-                          id="form-namaBarang"
-                          required
-                          autocomplete="off"
-                          oninput="handleFormAutocomplete(this, 'namaBarang')"
-                          class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner"
-                          placeholder="..."
-                        />
+                        <div class="relative group">
+                          <input
+                            type="text"
+                            name="namaBarang"
+                            id="form-namaBarang"
+                            required
+                            autocomplete="off"
+                            oninput="handleFormAutocomplete(this, 'namaBarang'); toggleClearBtn('form-namaBarang', 'clear-namaBarang')"
+                            class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner"
+                            placeholder="..."
+                          />
+                          <button type="button" id="clear-namaBarang" onclick="clearField('form-namaBarang'); toggleClearBtn('form-namaBarang', 'clear-namaBarang')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                            <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                          </button>
+                        </div>
                         <div id="namaBarang-suggestions" class="form-suggestion-box hidden"></div>
                       </div>
                       <div class="space-y-4 md:col-span-2 lg:col-span-3">
@@ -787,9 +802,14 @@
                                    <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
                                 </button>
                              </div>
-                             <input type="text" name="barcodeBall" id="supplier-barcodeBall" 
-                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
-                               placeholder="Barcode Ball..." />
+                             <div class="relative group">
+                                <input type="text" name="barcodeBall" id="supplier-barcodeBall" oninput="toggleClearBtn('supplier-barcodeBall', 'clear-barcodeBall')"
+                                  class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs pr-10" 
+                                  placeholder="Barcode Ball..." />
+                                <button type="button" id="clear-barcodeBall" onclick="clearField('supplier-barcodeBall'); toggleClearBtn('supplier-barcodeBall', 'clear-barcodeBall')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-all">
+                                  <i data-lucide="x" class="w-3 h-3 text-slate-400"></i>
+                                </button>
+                             </div>
                           </div>
                           <div class="space-y-2">
                              <div class="flex items-center justify-between px-1">
@@ -798,9 +818,14 @@
                                    <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
                                 </button>
                              </div>
-                             <input type="text" name="barcodePak" id="supplier-barcodePak" 
-                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
-                               placeholder="Barcode Pak..." />
+                             <div class="relative group">
+                                <input type="text" name="barcodePak" id="supplier-barcodePak" oninput="toggleClearBtn('supplier-barcodePak', 'clear-barcodePak')"
+                                  class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs pr-10" 
+                                  placeholder="Barcode Pak..." />
+                                <button type="button" id="clear-barcodePak" onclick="clearField('supplier-barcodePak'); toggleClearBtn('supplier-barcodePak', 'clear-barcodePak')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-all">
+                                  <i data-lucide="x" class="w-3 h-3 text-slate-400"></i>
+                                </button>
+                             </div>
                           </div>
                           <div class="space-y-2">
                              <div class="flex items-center justify-between px-1">
@@ -809,9 +834,14 @@
                                    <i data-lucide="scan-barcode" class="w-3.5 h-3.5"></i>
                                 </button>
                              </div>
-                             <input type="text" name="barcodeBks" id="supplier-barcodeBks" 
-                               class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs" 
-                               placeholder="Barcode Bks..." />
+                             <div class="relative group">
+                                <input type="text" name="barcodeBks" id="supplier-barcodeBks" oninput="toggleClearBtn('supplier-barcodeBks', 'clear-barcodeBks')"
+                                  class="w-full px-5 py-3 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner font-mono text-xs pr-10" 
+                                  placeholder="Barcode Bks..." />
+                                <button type="button" id="clear-barcodeBks" onclick="clearField('supplier-barcodeBks'); toggleClearBtn('supplier-barcodeBks', 'clear-barcodeBks')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 hover:bg-slate-100 rounded-full transition-all">
+                                  <i data-lucide="x" class="w-3 h-3 text-slate-400"></i>
+                                </button>
+                             </div>
                           </div>
                         </div>
                       </div>
@@ -844,16 +874,22 @@
                             class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1"
                             >Harga per Ball/Dus</label
                           >
-                          <input
-                            type="text"
-                            id="calc-hargaBall"
-                            oninput="
-                              formatCurrency(this);
-                              hitungOtomatis();
-                            "
-                            class="w-full px-5 py-4 rounded-xl bg-white border-none font-black text-orange-700 shadow-sm text-lg outline-none"
-                            placeholder="Rp 0"
-                          />
+                          <div class="relative group">
+                            <input
+                              type="text"
+                              id="calc-hargaBall"
+                              oninput="
+                                formatCurrency(this);
+                                hitungOtomatis();
+                                toggleClearBtn('calc-hargaBall', 'clear-hargaBall');
+                              "
+                              class="w-full px-5 py-4 rounded-xl bg-white border-none font-black text-orange-700 shadow-sm text-lg outline-none pr-12"
+                              placeholder="Rp 0"
+                            />
+                            <button type="button" id="clear-hargaBall" onclick="clearField('calc-hargaBall'); hitungOtomatis(); toggleClearBtn('calc-hargaBall', 'clear-hargaBall')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                              <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                          </div>
                           <input
                             type="hidden"
                             name="hargaBall"
@@ -866,15 +902,20 @@
                             class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1"
                             >Isi per Ball/Dus</label
                           >
-                          <input
-                            type="number"
-                            name="isiBall"
-                            id="calc-isiBall"
-                            value="1"
-                            oninput="hitungOtomatis()"
-                            class="w-full px-5 py-4 rounded-xl bg-white border-none font-bold text-slate-600 outline-none"
-                            placeholder="1"
-                          />
+                          <div class="relative group">
+                            <input
+                              type="number"
+                              name="isiBall"
+                              id="calc-isiBall"
+                              value="1"
+                              oninput="hitungOtomatis(); toggleClearBtn('calc-isiBall', 'clear-isiBall')"
+                              class="w-full px-5 py-4 rounded-xl bg-white border-none font-bold text-slate-600 outline-none pr-12"
+                              placeholder="1"
+                            />
+                            <button type="button" id="clear-isiBall" onclick="clearField('calc-isiBall'); hitungOtomatis(); toggleClearBtn('calc-isiBall', 'clear-isiBall')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                              <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -892,16 +933,22 @@
                             class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1"
                             >Harga per Pak/Bks</label
                           >
-                          <input
-                            type="text"
-                            id="calc-hargaPak"
-                            oninput="
-                              formatCurrency(this);
-                              hitungOtomatis();
-                            "
-                            class="w-full px-5 py-4 rounded-xl bg-white border-none font-black text-slate-700 shadow-sm text-lg outline-none transition-all"
-                            placeholder="Rp 0"
-                          />
+                          <div class="relative group">
+                            <input
+                              type="text"
+                              id="calc-hargaPak"
+                              oninput="
+                                formatCurrency(this);
+                                hitungOtomatis();
+                                toggleClearBtn('calc-hargaPak', 'clear-hargaPak');
+                              "
+                              class="w-full px-5 py-4 rounded-xl bg-white border-none font-black text-slate-700 shadow-sm text-lg outline-none transition-all pr-12"
+                              placeholder="Rp 0"
+                            />
+                            <button type="button" id="clear-hargaPak" onclick="clearField('calc-hargaPak'); hitungOtomatis(); toggleClearBtn('calc-hargaPak', 'clear-hargaPak')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                              <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                          </div>
                           <input
                             type="hidden"
                             name="hargaPak"
@@ -914,15 +961,20 @@
                             class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1"
                             >Isi per Pak/Bks</label
                           >
-                          <input
-                            type="number"
-                            name="isiPak"
-                            id="calc-isiPak"
-                            value="1"
-                            oninput="hitungOtomatis()"
-                            class="w-full px-5 py-4 rounded-xl bg-white border-none font-bold text-slate-600 outline-none"
-                            placeholder="1"
-                          />
+                          <div class="relative group">
+                            <input
+                              type="number"
+                              name="isiPak"
+                              id="calc-isiPak"
+                              value="1"
+                              oninput="hitungOtomatis(); toggleClearBtn('calc-isiPak', 'clear-isiPak')"
+                              class="w-full px-5 py-4 rounded-xl bg-white border-none font-bold text-slate-600 outline-none pr-12"
+                              placeholder="1"
+                            />
+                            <button type="button" id="clear-isiPak" onclick="clearField('calc-isiPak'); hitungOtomatis(); toggleClearBtn('calc-isiPak', 'clear-isiPak')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                              <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -940,13 +992,18 @@
                             class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1"
                             >Harga Modal Per Pcs/Eceran</label
                           >
-                          <input
-                            type="text"
-                            id="calc-hargaBks"
-                            oninput="formatCurrency(this)"
-                            class="w-full px-5 py-4 rounded-xl bg-white border-2 border-emerald-100 font-black text-emerald-700 shadow-md text-xl outline-none transition-all"
-                            placeholder="Rp 0"
-                          />
+                          <div class="relative group">
+                            <input
+                              type="text"
+                              id="calc-hargaBks"
+                              oninput="formatCurrency(this); toggleClearBtn('calc-hargaBks', 'clear-hargaBks')"
+                              class="w-full px-5 py-4 rounded-xl bg-white border-2 border-emerald-100 font-black text-emerald-700 shadow-md text-xl outline-none transition-all pr-12"
+                              placeholder="Rp 0"
+                            />
+                            <button type="button" id="clear-hargaBks" onclick="clearField('calc-hargaBks'); hitungOtomatis(); toggleClearBtn('calc-hargaBks', 'clear-hargaBks')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
+                              <i data-lucide="x" class="w-4 h-4 text-slate-400"></i>
+                            </button>
+                          </div>
                           <input
                             type="hidden"
                             name="hargaBks"
@@ -1628,7 +1685,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxoNrTeuOeWbVbhJTmm3FaGDUgkP_zPZYE7YgNpK25ziSLjAjRCSSB2DzDFwfTfwJifiA/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwpOfCFUHtHsZnRnZ7UeX2bip3Kr9e6fWZ5iIzFgW7nKdq_zPrG-bn3T9rdgx6usiYd-Q/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -1730,7 +1787,7 @@
         populate(filterSelect);
       }
 
-      async function fetchSupplierData() {
+      async function fetchSupplierData(keepPage = false) {
         showLoading(true);
         try {
           const res = await callGAS("ambilDataSupplier");
@@ -1765,7 +1822,7 @@
           updateSupplierDropdown();
           extractCategoriesFromSuppliers(); 
           updateCategorySelects();
-          filterSupplierTable(); // This triggers render
+          filterSupplierTable(keepPage); // This triggers render
           
           // Re-render dashboard if active
           if (document.getElementById("section-dashboard")?.classList.contains("active")) {
@@ -1860,11 +1917,34 @@
           const res = await callGAS("simpanKeSupplier", data);
           if (res && res.sukses) {
             showAlert("Sukses", res.pesan, "success");
+            
+            // OPTIMASI: Update data lokal secara langsung agar TIDAK PERLU fetch ulang yang lama
+            if (rowId) {
+              // Jika Edit: cari dan ganti item di array lokal
+              const idx = rawSupplierData.findIndex(it => it.id === rowId);
+              if (idx !== -1) {
+                // Pastikan ID tetap sama
+                const updatedItem = { ...data, id: rowId };
+                rawSupplierData[idx] = updatedItem;
+              }
+            } else {
+              // Jika Tambah: masukan ke array lokal (biasanya server kasih ID baru di res.id)
+              const newItem = { ...data, id: res.id || ("S-" + (rawSupplierData.length + 1)) };
+              rawSupplierData.push(newItem);
+            }
+
             clearForm();
             if (!document.getElementById("addFormContainer").classList.contains("hidden")) {
               toggleAddForm();
             }
-            await fetchSupplierData();
+
+            // Render ulang tanpa fetch ke server lagi
+            filterSupplierTable(rowId !== "");
+            
+            // Re-render dashboard
+            if (document.getElementById("section-dashboard")?.classList.contains("active")) {
+              renderDashboard();
+            }
           } else if (!res) {
             showAlert("Mode Demo", "Hubungkan GAS_WEBAPP_URL untuk menyimpan data asli.", "info");
           } else {
@@ -1884,6 +1964,11 @@
         if (isHidden) {
           container.classList.remove("hidden");
           container.classList.add("flex");
+          
+          // Scroll modal ke paling atas saat dibuka
+          const formModal = container.querySelector('.relative.bg-white');
+          if (formModal) formModal.scrollTop = 0;
+          
           document.getElementById("formTitle").innerText = "Tambah Data Barang";
           clearForm();
         } else {
@@ -2028,6 +2113,19 @@
         document.getElementById("calc-hargaPak").value = formatIDR(it.hargaPak);
         document.getElementById("calc-hargaBks").value = formatIDR(it.hargaBks);
 
+        // [POLISH] Show clear buttons for all populated fields
+        const inputsToTrigger = [
+          "form-tglBeli", "form-supplier", "form-namaBarang", 
+          "supplier-barcodeBall", "supplier-barcodePak", "supplier-barcodeBks",
+          "calc-hargaBall", "calc-isiBall", "calc-hargaPak", "calc-isiPak", "calc-hargaBks"
+        ];
+        inputsToTrigger.forEach(id => {
+          const btnId = id.startsWith("form-") ? id.replace("form-", "clear-") : 
+                         id.startsWith("supplier-") ? id.replace("supplier-", "clear-") :
+                         id.startsWith("calc-") ? id.replace("calc-", "clear-") : null;
+          if (btnId) toggleClearBtn(id, btnId);
+        });
+
         // Add row ID for backend knowing this is an update
         let rowIdInput = document.getElementById("edit-rowId");
         if (rowIdInput) rowIdInput.value = id;
@@ -2080,6 +2178,15 @@
             el.classList.add("bg-white");
           }
         });
+
+        // Hide all clear buttons
+        const clearBtns = form.querySelectorAll('button[id^="clear-"]');
+        clearBtns.forEach(btn => btn.classList.add('hidden'));
+        
+        const supplierClear = document.getElementById("clear-supplier");
+        if (supplierClear) supplierClear.classList.add("hidden");
+        const namaClear = document.getElementById("clear-namaBarang");
+        if (namaClear) namaClear.classList.add("hidden");
       }
 
       function renderSupplierTable() {
@@ -2490,7 +2597,7 @@
         filterSupplierTable();
       }
 
-      function filterSupplierTable() {
+      function filterSupplierTable(keepPage = false) {
         try {
           if (!Array.isArray(rawSupplierData)) return;
           
@@ -2529,7 +2636,7 @@
             return true;
           });
 
-          sortSupplierData();
+          sortSupplierData(keepPage);
         } catch (err) {
           console.error("filterSupplierTable failed:", err);
           filteredSupplierData = Array.isArray(rawSupplierData) ? [...rawSupplierData] : [];
@@ -2537,7 +2644,7 @@
         }
       }
 
-      function sortSupplierData() {
+      function sortSupplierData(keepPage = false) {
         try {
           if (!Array.isArray(filteredSupplierData)) return;
 
@@ -2575,7 +2682,7 @@
             return valB.localeCompare(valA, 'id', { sensitivity: 'base' });
           });
 
-          currentPage = 1;
+          if (!keepPage) currentPage = 1;
           renderSupplierTable();
         } catch (err) {
           console.error("sortSupplierData fail:", err);

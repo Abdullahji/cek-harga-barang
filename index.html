@@ -1410,6 +1410,9 @@
 
         // Optimized Initial Fetch: Combined Call
         try {
+          // Show skeleton initially
+          renderDashboardSkeleton();
+          
           const res = await callGAS("ambilInisialisasiData");
           if (res && res.sukses) {
             rawSupplierData = res.supplier || [];
@@ -1518,10 +1521,14 @@
       }
 
       function switchPage(page) {
+        // Stop any pending rendering
+        if (filterTimeout) clearTimeout(filterTimeout);
+
         // Reset all sections
-        document.querySelectorAll(".page-section").forEach((s) => {
+        const sections = document.querySelectorAll(".page-section");
+        sections.forEach((s) => {
           s.classList.add("hidden");
-          s.classList.remove("active", "opacity-0", "translate-y-4");
+          s.classList.remove("active");
         });
 
         const activeSection = document.getElementById("section-" + page);
@@ -1535,7 +1542,8 @@
         }
 
         // Update nav buttons
-        document.querySelectorAll(".nav-btn").forEach((b) => {
+        const navBtns = document.querySelectorAll(".nav-btn");
+        navBtns.forEach((b) => {
           b.classList.remove("active", "text-orange-600", "bg-slate-50");
         });
         
@@ -1550,19 +1558,49 @@
           "cek-harga": "Cek Harga Barang",
           "supplier": "Database Supplier"
         };
-        document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
+        const hTitle = document.getElementById("headerTitle");
+        if (hTitle) hTitle.innerText = titles[page] || "Toko Wina";
 
         // Auto load data if needed
         if (page === "supplier") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
-          fetchCategoryData();
-          fetchSupplierData();
+          
+          if (rawSupplierData.length === 0) {
+            fetchCategoryData();
+            fetchSupplierData();
+          } else {
+            // Lazy render if data exists
+            if (document.getElementById("supplierTableBody").children.length === 0 || document.getElementById("supplierTableBody").innerText.includes("Processing")) {
+              filterSupplierTable();
+            }
+          }
         }
 
         if (window.innerWidth < 1024) {
           const sidebar = document.getElementById("sidebar");
-          if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+          if (sidebar && !sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+        }
+      }
+
+      function renderDashboardSkeleton() {
+        const stats = ["stat-total-produk", "stat-total-supplier", "stat-total-supplier-item"];
+        stats.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.innerHTML = '<div class="w-16 h-8 bg-slate-100 animate-pulse rounded-lg"></div>';
+        });
+
+        const recentList = document.getElementById("recent-entries-list");
+        if (recentList) {
+          recentList.innerHTML = Array(3).fill(0).map(() => `
+            <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 animate-pulse">
+              <div class="w-10 h-10 bg-slate-200 rounded-xl"></div>
+              <div class="flex-1 space-y-2">
+                <div class="w-24 h-3 bg-slate-200 rounded"></div>
+                <div class="w-32 h-2 bg-slate-100 rounded"></div>
+              </div>
+            </div>
+          `).join('');
         }
       }
 
@@ -1809,7 +1847,24 @@
           const res = await callGAS("ambilDataSupplier");
           
           if (res && res.sukses && Array.isArray(res.data)) {
-            rawSupplierData = res.data;
+            // NORMALIZE KEYS TO camelCase for consistency
+            rawSupplierData = res.data.map(item => ({
+              id: item.id || item.ID || item.no || item.No || "",
+              tglBeli: item.tglBeli || item.TglBeli || item["Tanggal Pembelian"] || "-",
+              supplier: item.supplier || item.Supplier || "-",
+              namaBarang: item.namaBarang || item.NamaBarang || item.item || "-",
+              categoryBarang: item.categoryBarang || item.CategoryBarang || item.category || "-",
+              barcodeBall: item.barcodeBall || item.BarcodeBall || "-",
+              barcodePak: item.barcodePak || item.BarcodePak || "-",
+              barcodeBks: item.barcodeBks || item.BarcodeBks || "-",
+              hargaBall: parseFloat(item.hargaBall || item.HargaBall) || 0,
+              isiBall: parseInt(item.isiBall || item.IsiBall) || 1,
+              hargaPak: parseFloat(item.hargaPak || item.HargaPak) || 0,
+              isiPak: parseInt(item.isiPak || item.IsiPak) || 1,
+              hargaBks: parseFloat(item.hargaBks || item.HargaBks) || 0,
+              hargaNaik: item.hargaNaik || item.HargaNaik || "Tidak",
+              expiredDate: item.expiredDate || item.ExpiredDate || "-"
+            }));
             updateSortButtonStates(); // Set initial active states
           } else if (!res) {
             // Mode Demo / Fallback
@@ -1909,7 +1964,39 @@
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
 
-        // Validasi Duplikasi Nama Barang (Skip jika sedang edit item yang sama)
+        // Format dates to dd/mm/yyyy for Spreadsheet consistency (Column O & Column B)
+        const formatDateToGAS = (dateVal) => {
+          if (!dateVal) return "-";
+          if (dateVal.includes("-")) {
+            const p = dateVal.split("-");
+            if (p.length === 3 && p[0].length === 4) return `${p[2]}/${p[1]}/${p[0]}`;
+          }
+          return dateVal;
+        };
+        
+        data.tglBeli = formatDateToGAS(data.tglBeli);
+        data.expiredDate = formatDateToGAS(data.expiredDate);
+
+        // Normalize data for local consistency
+        const normalizedData = {
+          id: data.id,
+          tglBeli: data.tglBeli,
+          supplier: data.supplier,
+          namaBarang: data.namaBarang,
+          categoryBarang: data.categoryBarang,
+          barcodeBall: data.barcodeBall,
+          barcodePak: data.barcodePak,
+          barcodeBks: data.barcodeBks,
+          hargaBall: parseInt(data.hargaBall) || 0,
+          isiBall: parseInt(data.isiBall) || 1,
+          hargaPak: parseInt(data.hargaPak) || 0,
+          isiPak: parseInt(data.isiPak) || 1,
+          hargaBks: parseInt(data.hargaBks) || 0,
+          hargaNaik: data.hargaNaik || "Tidak",
+          expiredDate: data.expiredDate
+        };
+
+        // Validasi Duplikasi Nama Barang
         const rowIdEl = document.getElementById("edit-rowId");
         const rowId = rowIdEl ? rowIdEl.value : "";
         const lowerName = (data.namaBarang || "").toLowerCase().trim();
@@ -1930,22 +2017,18 @@
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanKeSupplier", data);
+          const res = await callGAS("simpanKeSupplier", normalizedData);
           if (res && res.sukses) {
             showAlert("Sukses", res.pesan, "success");
             
             // OPTIMASI: Update data lokal secara langsung agar TIDAK PERLU fetch ulang yang lama
             if (rowId) {
-              // Jika Edit: cari dan ganti item di array lokal
-              const idx = rawSupplierData.findIndex(it => it.id === rowId);
+              const idx = rawSupplierData.findIndex(it => String(it.id) === String(rowId));
               if (idx !== -1) {
-                // Pastikan ID tetap sama
-                const updatedItem = { ...data, id: rowId };
-                rawSupplierData[idx] = updatedItem;
+                rawSupplierData[idx] = { ...normalizedData, id: rowId };
               }
             } else {
-              // Jika Tambah: masukan ke array lokal (biasanya server kasih ID baru di res.id)
-              const newItem = { ...data, id: res.id || ("S-" + (rawSupplierData.length + 1)) };
+              const newItem = { ...normalizedData, id: res.id || ("S-" + (rawSupplierData.length + 1)) };
               rawSupplierData.push(newItem);
             }
 

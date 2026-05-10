@@ -577,7 +577,7 @@
             <!-- SECTION: CEK HARGA -->
             <section
               id="section-cek-harga"
-              class="page-section hidden max-w-2xl mx-auto space-y-10 py-4 px-2 pb-60"
+              class="page-section hidden max-w-2xl mx-auto space-y-10 py-4 px-2"
             >
               <div class="text-center space-y-2">
                 <h1
@@ -2874,14 +2874,12 @@
 
           // Dynamic Font Size for Price
           const formattedPrice = formatIDR(item.hargaBarang);
-          let fontSizeClass = "text-5xl md:text-8xl"; // Default for mobile
+          let fontSizeClass = "text-6xl md:text-8xl"; // Default
           
           if (formattedPrice.length > 15) {
-            fontSizeClass = "text-2xl md:text-5xl";
+            fontSizeClass = "text-5xl md:text-6xl";
           } else if (formattedPrice.length > 12) {
-            fontSizeClass = "text-3xl md:text-6xl";
-          } else if (formattedPrice.length > 9) {
-            fontSizeClass = "text-4xl md:text-7xl";
+            fontSizeClass = "text-6xl md:text-7xl";
           }
 
           // Helper untuk handle URL Google Drive
@@ -2898,12 +2896,12 @@
           <div class="bg-white border border-slate-100 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl p-8 md:p-12 text-center relative overflow-hidden group animate-in fade-in zoom-in duration-300 mx-auto max-w-xl">
             <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
             
-            <button onclick="tutupHasil()" class="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all active:scale-90 z-20">
+            <button onclick="tutupHasil()" class="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all active:scale-90">
                <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <div class="flex flex-col items-center mb-8 px-12">
-              <h3 class="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
+            <div class="flex flex-col items-center mb-8">
+              <h3 class="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
               <p class="text-[10px] font-black text-slate-400 mt-3 bg-slate-50 px-5 py-1.5 rounded-full uppercase tracking-[0.2em] border border-slate-100">Barcode: ${item.barcode || "-"}</p>
             </div>
 
@@ -2928,16 +2926,16 @@
           lucide.createIcons();
           if (isScanning) toggleScanner();
           
-          // Clear and Dismiss Keyboard (to show result fully on mobile)
+          // Clear and Refocus Input for next physical scan
           const input = document.getElementById("manualInput");
           input.value = "";
-          input.blur(); 
+          input.focus();
           toggleClearBtn('manualInput', 'clearManualInput');
 
-          // Scroll to result (Centered)
+          // Scroll to result
           setTimeout(() => {
             resContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }, 400);
+          }, 300);
         } else {
           showAlert(
             "Produk Tidak Ditemukan",

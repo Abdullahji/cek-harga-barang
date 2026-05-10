@@ -1165,6 +1165,20 @@
                             class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all">
                         </div>
                       </div>
+
+                      <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Expired (Status)</label>
+                        <div class="relative">
+                          <select id="filter-expired" onchange="debouncedFilter()" 
+                            class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all appearance-none cursor-pointer">
+                            <option value="">Semua Data</option>
+                            <option value="expired">Sudah Expired</option>
+                            <option value="critical">Sisa &lt;= 15 Hari</option>
+                            <option value="warning">Sisa &lt;= 30 Hari</option>
+                          </select>
+                          <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="flex justify-end pt-4 border-t border-slate-50">
@@ -1206,6 +1220,10 @@
                           </button>
                           <button id="sortby-hargaBks" onclick="setSortBy('hargaBks')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
                             <span>Harga Pcs/Ecer</span>
+                            <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
+                          </button>
+                          <button id="sortby-expiredDate" onclick="setSortBy('expiredDate')" class="px-4 py-3 rounded-xl border border-slate-100 font-bold text-xs flex items-center justify-between transition-all group active:scale-95">
+                            <span>Expired Date</span>
                             <i data-lucide="check" class="w-4 h-4 text-orange-500 opacity-0 group-[.active]:opacity-100"></i>
                           </button>
                         </div>
@@ -1532,6 +1550,12 @@
           if (page === "dashboard") {
             renderDashboard();
           }
+          if (page === "cek-harga") {
+            setTimeout(() => {
+              const input = document.getElementById("manualInput");
+              if (input) input.focus();
+            }, 500);
+          }
         }
 
         // Update nav buttons
@@ -1701,7 +1725,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwSJUlVM9nu-Ai9KyxoNyVbr0wRtjXX-CbDWnx3bDxSw4b84ZB7QWi-E0zQFkHReI2JBg/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwpOfCFUHtHsZnRnZ7UeX2bip3Kr9e6fWZ5iIzFgW7nKdq_zPrG-bn3T9rdgx6usiYd-Q/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2642,7 +2666,7 @@
       }
 
       function resetAdvancedFilters() {
-        const ids = ["filter-supplier", "filter-category", "filter-barcode", "filter-nama"];
+        const ids = ["filter-supplier", "filter-category", "filter-barcode", "filter-nama", "filter-expired", "filter-min-price", "filter-max-price"];
         ids.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = "";
@@ -2659,12 +2683,18 @@
           const fcEl = document.getElementById("filter-category");
           const fbEl = document.getElementById("filter-barcode");
           const fnEl = document.getElementById("filter-nama");
+          const feEl = document.getElementById("filter-expired");
+          const minPEl = document.getElementById("filter-min-price");
+          const maxPEl = document.getElementById("filter-max-price");
 
           const query = (qEl?.value || "").toLowerCase().trim();
           const fSupp = (fsEl?.value || "").toLowerCase().trim();
           const fCat = (fcEl?.value || "").toLowerCase().trim();
           const fBar = (fbEl?.value || "").toLowerCase().trim();
           const fNama = (fnEl?.value || "").toLowerCase().trim();
+          const fExp = feEl?.value || "";
+          const minPrice = parseFloat(minPEl?.value) || 0;
+          const maxPrice = parseFloat(maxPEl?.value) || Infinity;
 
           filteredSupplierData = rawSupplierData.filter((it) => {
             if (!it) return false;
@@ -2672,6 +2702,8 @@
             const nama = String(it.namaBarang || "").toLowerCase();
             const supplier = String(it.supplier || "").toLowerCase();
             const cat = String(it.categoryBarang || "").toLowerCase();
+            const expD = it.expiredDate || "-";
+            const price = parseFloat(it.hargaBall) || 0;
             
             const bBall = String(it.barcodeBall || "").toLowerCase();
             const bPak = String(it.barcodePak || "").toLowerCase();
@@ -2685,6 +2717,32 @@
             if (fCat && cat !== fCat) return false;
             if (fBar && !hasBarcodeAdvancedHighlight) return false;
             if (fNama && !nama.includes(fNama)) return false;
+
+            // Price Range Filter
+            if (price < minPrice || price > maxPrice) return false;
+
+            // Expired Filter Logic
+            if (fExp && expD !== "-") {
+              try {
+                let expDate;
+                if (expD.includes("/")) {
+                  const p = expD.split("/");
+                  expDate = new Date(p[2], p[1] - 1, p[0]);
+                } else {
+                  expDate = new Date(expD);
+                }
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                expDate.setHours(0,0,0,0);
+                const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+
+                if (fExp === "expired" && diffDays >= 0) return false;
+                if (fExp === "critical" && (diffDays < 0 || diffDays > 15)) return false;
+                if (fExp === "warning" && (diffDays < 0 || diffDays > 30)) return false;
+              } catch(e) { return false; }
+            } else if (fExp && expD === "-") {
+              return false;
+            }
 
             return true;
           });
@@ -2814,6 +2872,16 @@
         if (item) {
           resContainer.classList.remove("hidden");
 
+          // Dynamic Font Size for Price
+          const formattedPrice = formatIDR(item.hargaBarang);
+          let fontSizeClass = "text-6xl md:text-8xl"; // Default
+          
+          if (formattedPrice.length > 15) {
+            fontSizeClass = "text-5xl md:text-6xl";
+          } else if (formattedPrice.length > 12) {
+            fontSizeClass = "text-6xl md:text-7xl";
+          }
+
           // Helper untuk handle URL Google Drive
           let finalImageUrl = item.gambarBarang;
           if (finalImageUrl && finalImageUrl.includes("drive.google.com")) {
@@ -2846,7 +2914,7 @@
             </div>
 
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">HARGA JUAL ECERAN</p>
-            <div class="text-6xl md:text-8xl font-black text-emerald-600 tracking-tighter mb-4">${formatIDR(item.hargaBarang)}</div>
+            <div class="${fontSizeClass} font-black text-emerald-600 tracking-tighter mb-4 transition-all duration-300">${formattedPrice}</div>
             
             <div class="flex justify-center gap-2 pt-6">
               <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
@@ -2857,6 +2925,13 @@
         `;
           lucide.createIcons();
           if (isScanning) toggleScanner();
+          
+          // Clear and Refocus Input for next physical scan
+          const input = document.getElementById("manualInput");
+          input.value = "";
+          input.focus();
+          toggleClearBtn('manualInput', 'clearManualInput');
+
           // Scroll to result
           setTimeout(() => {
             resContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2973,7 +3048,10 @@
       function tutupHasil() {
         document.getElementById("searchResult").classList.add("hidden");
         document.getElementById("searchSuggestions").classList.add("hidden");
-        document.getElementById("manualInput").value = ""; // Kosongkan input
+        const input = document.getElementById("manualInput");
+        input.value = ""; // Kosongkan input
+        input.focus();    // Fokus kembali
+        toggleClearBtn('manualInput', 'clearManualInput');
       }
       function formatIDR(n) {
         return new Intl.NumberFormat("id-ID", {

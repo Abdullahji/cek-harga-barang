@@ -2903,7 +2903,7 @@
             </button>
 
             <div class="flex flex-col items-center mb-8 px-12">
-              <h3 class="text-3xl md:text-5xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
+              <h3 class="text-4xl md:text-6xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
               <p class="text-[10px] font-black text-slate-400 mt-3 bg-slate-50 px-5 py-1.5 rounded-full uppercase tracking-[0.2em] border border-slate-100">Barcode: ${item.barcode || "-"}</p>
             </div>
 
@@ -2928,15 +2928,15 @@
           lucide.createIcons();
           if (isScanning) toggleScanner();
           
-          // Clear and Dismiss Keyboard (to show result fully on mobile)
+          // Clear and Refocus Input (Crucial for External Scanner "Continuous Scan")
           const input = document.getElementById("manualInput");
           input.value = "";
-          input.blur(); 
+          input.focus(); 
           toggleClearBtn('manualInput', 'clearManualInput');
 
-          // Scroll to result (Centered)
+          // Scroll to result (Start at top to avoid being covered by mobile keyboard)
           setTimeout(() => {
-            resContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }, 400);
         } else {
           showAlert(

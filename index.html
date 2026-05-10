@@ -1659,7 +1659,7 @@
     }
 
       // --- CUSTOM DIALOG & TOAST ---
-      function showAlert(title, message, type = "info") {
+      function showAlert(title, message, type = "info", onConfirm = null) {
         const dialog = document.getElementById("customDialog");
         const t = document.getElementById("dialogTitle");
         const m = document.getElementById("dialogMessage");
@@ -1673,7 +1673,10 @@
         t.innerText = title;
         m.innerText = message;
         btnCancel.classList.add("hidden");
-        btnConfirm.onclick = () => dialog.classList.add("hidden");
+        btnConfirm.onclick = () => {
+          dialog.classList.add("hidden");
+          if (onConfirm) onConfirm();
+        };
 
         const iconMap = {
           success: "check-circle-2",
@@ -2831,14 +2834,17 @@
       }
 
       function cariBarang(codeParam) {
-        const query = (
-          codeParam ||
-          document.getElementById("manualInput").value ||
-          ""
-        )
-          .toLowerCase()
-          .trim();
+        const inputField = document.getElementById("manualInput");
+        const queryOriginal = (codeParam || inputField.value || "");
+        const query = queryOriginal.toLowerCase().trim();
+        
         if (!query) return;
+
+        // Kosongkan input field agar scanner eksternal tidak mendobel karakter pada scan berikutnya
+        if (!codeParam) {
+          inputField.value = "";
+          toggleClearBtn('manualInput', 'clearManualInput');
+        }
 
         // 1. Cari Exact Barcode
         let item = rawCekHargaData.find(
@@ -2926,14 +2932,20 @@
           // Scroll to result
           setTimeout(() => {
             resContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Selalu kembalikan fokus ke input untuk scan berikutnya
+            inputField.focus();
           }, 300);
         } else {
           showAlert(
             "Produk Tidak Ditemukan",
-            'Produk "' + (codeParam || query) + '" belum terdaftar di sistem!',
-            "warning"
+            'Produk "' + (codeParam || queryOriginal) + '" belum terdaftar di sistem!',
+            "warning",
+            () => {
+              inputField.value = "";
+              inputField.focus();
+            }
           );
-          document.getElementById("manualInput").value = "";
+          inputField.value = "";
         }
       }
 
@@ -3039,7 +3051,9 @@
       function tutupHasil() {
         document.getElementById("searchResult").classList.add("hidden");
         document.getElementById("searchSuggestions").classList.add("hidden");
-        document.getElementById("manualInput").value = ""; // Kosongkan input
+        const inputField = document.getElementById("manualInput");
+        inputField.value = ""; // Kosongkan input
+        inputField.focus(); // Kembalikan fokus untuk scan berikutnya
       }
       function formatIDR(n) {
         return new Intl.NumberFormat("id-ID", {

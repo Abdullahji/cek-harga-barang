@@ -2876,6 +2876,20 @@
             }
           }
 
+          const formattedPrice = formatIDR(item.hargaBarang);
+          const priceLength = formattedPrice.length;
+          let fontSizeClass = "text-5xl sm:text-7xl md:text-9xl";
+          
+          if (priceLength > 18) {
+            fontSizeClass = "text-xl sm:text-3xl md:text-5xl";
+          } else if (priceLength > 15) {
+            fontSizeClass = "text-2xl sm:text-4xl md:text-6xl";
+          } else if (priceLength > 12) {
+            fontSizeClass = "text-3xl sm:text-5xl md:text-7xl";
+          } else if (priceLength > 9) {
+            fontSizeClass = "text-4xl sm:text-6xl md:text-8xl";
+          }
+
           resContainer.innerHTML = `
           <div class="bg-white border border-slate-100 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl p-8 md:p-12 text-center relative overflow-hidden group animate-in fade-in zoom-in duration-300 mx-auto max-w-xl">
             <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
@@ -2898,7 +2912,7 @@
             </div>
 
             <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">HARGA JUAL ECERAN</p>
-            <div class="text-4xl sm:text-6xl md:text-8xl font-black text-emerald-600 tracking-tighter mb-4 break-words px-4 leading-none">${formatIDR(item.hargaBarang)}</div>
+            <div class="${fontSizeClass} font-black text-emerald-600 tracking-tighter mb-4 whitespace-nowrap px-2 leading-none overflow-hidden text-ellipsis">${formattedPrice}</div>
             
             <div class="flex justify-center gap-2 pt-6">
               <div class="w-2 h-2 rounded-full bg-emerald-500"></div>

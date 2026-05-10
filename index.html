@@ -1725,7 +1725,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwB7Uo0ISSxbB2zN4ve7rPDN55CYSfGuhAZqJZQmUG6C43B92e4jf__MW4Fd47ZDATmqg/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwpOfCFUHtHsZnRnZ7UeX2bip3Kr9e6fWZ5iIzFgW7nKdq_zPrG-bn3T9rdgx6usiYd-Q/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2874,12 +2874,14 @@
 
           // Dynamic Font Size for Price
           const formattedPrice = formatIDR(item.hargaBarang);
-          let fontSizeClass = "text-6xl md:text-8xl"; // Default
+          let fontSizeClass = "text-5xl md:text-8xl"; // Default for mobile
           
           if (formattedPrice.length > 15) {
-            fontSizeClass = "text-5xl md:text-6xl";
+            fontSizeClass = "text-2xl md:text-5xl";
           } else if (formattedPrice.length > 12) {
-            fontSizeClass = "text-6xl md:text-7xl";
+            fontSizeClass = "text-3xl md:text-6xl";
+          } else if (formattedPrice.length > 9) {
+            fontSizeClass = "text-4xl md:text-7xl";
           }
 
           // Helper untuk handle URL Google Drive
@@ -2896,12 +2898,12 @@
           <div class="bg-white border border-slate-100 rounded-[2.5rem] md:rounded-[3.5rem] shadow-2xl p-8 md:p-12 text-center relative overflow-hidden group animate-in fade-in zoom-in duration-300 mx-auto max-w-xl">
             <div class="absolute top-0 left-0 w-full h-2 bg-emerald-500"></div>
             
-            <button onclick="tutupHasil()" class="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all active:scale-90">
+            <button onclick="tutupHasil()" class="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 rounded-2xl hover:text-red-500 hover:bg-red-50 transition-all active:scale-90 z-20">
                <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
-            <div class="flex flex-col items-center mb-8">
-              <h3 class="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
+            <div class="flex flex-col items-center mb-8 px-10">
+              <h3 class="text-xl md:text-3xl font-black text-slate-900 uppercase tracking-tight leading-tight">${item.namaBarang}</h3>
               <p class="text-[10px] font-black text-slate-400 mt-3 bg-slate-50 px-5 py-1.5 rounded-full uppercase tracking-[0.2em] border border-slate-100">Barcode: ${item.barcode || "-"}</p>
             </div>
 

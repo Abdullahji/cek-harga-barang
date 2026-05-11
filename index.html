@@ -410,6 +410,14 @@
                     >Supplier</span
                   >
                 </button>
+                <button
+                  onclick="switchPage('category')"
+                  id="nav-category"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Category Brg</span>
+                </button>
               </div>
             </div>
 
@@ -1327,28 +1335,15 @@
                   </div>
 
                   <!-- Pagination Info & Controls -->
-                  <div
-                    class="px-8 py-6 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-6 bg-slate-50/30"
-                  >
-                    <p
-                      id="paginationInfo"
-                      class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]"
-                    >
-                      Showing 0 to 0 of 0 data
+                  <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <p id="paginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                      SHOWING 0 TO 0 OF 0 DATA
                     </p>
-                    <div class="flex items-center gap-3">
-                      <button
-                        id="btnPrev"
-                        onclick="changePage(-1)"
-                        class="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 text-slate-600 hover:text-orange-600 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
+                    <div class="flex gap-2">
+                      <button onclick="changePage(-1)" id="prevBtn-supplier" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         <i data-lucide="chevron-left" class="w-5 h-5"></i>
                       </button>
-                      <button
-                        id="btnNext"
-                        onclick="changePage(1)"
-                        class="w-12 h-12 flex items-center justify-center bg-white rounded-xl shadow-sm border border-slate-100 text-slate-600 hover:text-orange-600 transition-all active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
+                      <button onclick="changePage(1)" id="nextBtn-supplier" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
                         <i data-lucide="chevron-right" class="w-5 h-5"></i>
                       </button>
                     </div>
@@ -1357,6 +1352,91 @@
               </div>
             </section>
           </div>
+
+            <!-- SECTION: CATEGORY -->
+            <section
+              id="section-category"
+              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Category Barang</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Manajemen Kategori Produk</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openCategoryModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH CATEGORY</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <div class="overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[600px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-8 py-7 w-24 text-center">No.</th>
+                        <th class="px-8 py-7 w-40">ID Category</th>
+                        <th class="px-8 py-7">Nama Category</th>
+                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="categoryTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+                <!-- Pagination Category -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="categoryPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('category')" id="prevBtn-category" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('category')" id="nextBtn-category" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- MODAL CATEGORY -->
+            <div id="categoryModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeCategoryModal()"></div>
+              <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200">
+                <div class="flex justify-between items-center mb-8">
+                  <h3 id="categoryFormTitle" class="text-xl font-black text-slate-900">Tambah Category</h3>
+                  <button onclick="closeCategoryModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <form id="categoryForm" onsubmit="handleSimpanCategory(event)" class="space-y-6">
+                  <input type="hidden" id="form-categoryId-old" />
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">ID Kategori (Otomatis)</label>
+                    <input type="text" id="form-categoryId" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none cursor-not-allowed shadow-inner" placeholder="Generated..." readonly />
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Category</label>
+                    <input type="text" id="form-categoryName" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: SNACK" required />
+                  </div>
+                  <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>SIMPAN CATEGORY</span>
+                  </button>
+                </form>
+              </div>
+            </div>
 
           <!-- Footer -->
           <footer class="mt-auto py-10 bg-white border-t border-slate-100">
@@ -1416,6 +1496,8 @@
       // Pagination State
       let currentPage = 1;
       let itemsPerPage = 10;
+      let categoryCurrentPage = 1;
+      let categoryItemsPerPage = 10;
 
       window.onload = async () => {
         // Load Dark Mode Preference
@@ -1549,6 +1631,8 @@
           
           if (page === "dashboard") {
             renderDashboard();
+          } else if (page === "category") {
+            renderCategoryData();
           }
         }
 
@@ -1722,7 +1806,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyhIX-Ely94BS3i2FEmOMF7Ic0yGMTMD6j6_9UAAsBccPrUYQO3V5pLAqwq2dxdFEXn/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzgqqQ4jKY0g00yHznxPcaDZtSaztnhWyv_29meQSt7r2r78b0Cqka1VpkvKEJl96DM5A/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -1766,14 +1850,16 @@
       async function fetchCategoryData() {
         try {
           const res = await callGAS("ambilMasterCategory");
-          if (res && res.sukses && Array.isArray(res.data) && res.data.length > 0) {
+          if (res && res.sukses && Array.isArray(res.data)) {
+            // If data is returned (even empty array), use it
             rawCategoryData = res.data;
             isMasterCategoryLoaded = true;
           } else {
-            console.warn("Using fallback categories.");
+            console.warn("Using fallback categories or supplier extraction.");
             if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
           }
         } catch (err) {
+          console.error("fetchCategoryData Error:", err);
           if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
         }
         updateCategorySelects();
@@ -1811,8 +1897,16 @@
             rawCategoryData.forEach(cat => {
               if (cat) {
                 const opt = document.createElement("option");
-                opt.value = cat;
-                opt.innerText = cat;
+                // Handle both object structure ([ID, Name]) and simple string
+                if (typeof cat === 'object') {
+                  const catName = cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
+                  const catId = cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
+                  opt.value = catName; // Usually we use the name as value in this app's logic
+                  opt.innerText = catName;
+                } else {
+                  opt.value = cat;
+                  opt.innerText = cat;
+                }
                 select.appendChild(opt);
               }
             });
@@ -1822,6 +1916,184 @@
 
         populate(formSelect);
         populate(filterSelect);
+      }
+
+      // --- CATEGORY MANAGEMENT ---
+      function renderCategoryData() {
+        const tbody = document.getElementById("categoryTableBody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        if (!Array.isArray(rawCategoryData) || rawCategoryData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data category.</td></tr>`;
+          document.getElementById("categoryPaginationInfo").innerText = "SHOWING 0 TO 0 OF 0 DATA";
+          updatePaginationButtons("category", 0, 1);
+          return;
+        }
+
+        const totalData = rawCategoryData.length;
+        const totalPages = Math.ceil(totalData / categoryItemsPerPage);
+        
+        // Ensure current page is valid
+        if (categoryCurrentPage > totalPages && totalPages > 0) categoryCurrentPage = totalPages;
+        
+        const startIndex = (categoryCurrentPage - 1) * categoryItemsPerPage;
+        const endIndex = Math.min(startIndex + categoryItemsPerPage, totalData);
+        const paginatedData = rawCategoryData.slice(startIndex, endIndex);
+
+        paginatedData.forEach((cat, index) => {
+          const catName = typeof cat === 'object' ? (cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0]) : cat;
+          const catId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0]) : "-";
+          
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50 transition-colors group";
+          tr.innerHTML = `
+            <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + index + 1}</td>
+            <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
+            <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
+            <td class="px-8 py-5">
+              <div class="flex justify-center gap-2">
+                <button onclick="openCategoryModal('${catId}', '${catName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button onclick="handleHapusCategory('${catId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+        
+        document.getElementById("categoryPaginationInfo").innerText = `SHOWING ${startIndex + 1} TO ${endIndex} OF ${totalData} DATA`;
+        updatePaginationButtons("category", categoryCurrentPage, totalPages);
+        lucide.createIcons();
+      }
+
+      function updatePaginationButtons(type, current, total) {
+        const prevBtn = document.getElementById(`prevBtn-${type}`);
+        const nextBtn = document.getElementById(`nextBtn-${type}`);
+        if (!prevBtn || !nextBtn) return;
+        
+        prevBtn.disabled = current <= 1;
+        nextBtn.disabled = current >= total;
+      }
+
+      function prevPage(type) {
+        if (type === 'category' && categoryCurrentPage > 1) {
+          categoryCurrentPage--;
+          renderCategoryData();
+        } else if (type === 'supplier') {
+          changePage(-1); // existing function
+        }
+      }
+
+      function nextPage(type) {
+        if (type === 'category') {
+          const totalPages = Math.ceil(rawCategoryData.length / categoryItemsPerPage);
+          if (categoryCurrentPage < totalPages) {
+            categoryCurrentPage++;
+            renderCategoryData();
+          }
+        } else if (type === 'supplier') {
+          changePage(1); // existing function
+        }
+      }
+
+      function openCategoryModal(id = "", name = "") {
+        const modal = document.getElementById("categoryModal");
+        const title = document.getElementById("categoryFormTitle");
+        const inputId = document.getElementById("form-categoryId");
+        const inputName = document.getElementById("form-categoryName");
+        const inputOldId = document.getElementById("form-categoryId-old");
+
+        if (name === "") {
+          // ADD MODE
+          title.innerText = "Tambah Category";
+          inputOldId.value = "";
+          
+          let lastIdNum = 0;
+          if (Array.isArray(rawCategoryData)) {
+            rawCategoryData.forEach(cat => {
+              const currentId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["ID"] || Object.values(cat)[0]) : cat;
+              const numMatch = String(currentId).match(/\d+/);
+              if (numMatch) {
+                const num = parseInt(numMatch[0]);
+                if (num > lastIdNum) lastIdNum = num;
+              }
+            });
+          }
+          inputId.value = (lastIdNum + 1).toString().padStart(3, '0');
+        } else {
+          // EDIT MODE
+          title.innerText = "Edit Category";
+          inputId.value = id;
+          inputOldId.value = id;
+        }
+
+        inputName.value = name;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        inputName.focus();
+      }
+
+      function closeCategoryModal() {
+        const modal = document.getElementById("categoryModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.getElementById("categoryForm").reset();
+      }
+
+      async function handleSimpanCategory(e) {
+        e.preventDefault();
+        const id = document.getElementById("form-categoryId").value.trim().toUpperCase();
+        const name = document.getElementById("form-categoryName").value.trim().toUpperCase();
+        const oldId = document.getElementById("form-categoryId-old").value;
+
+        if (!id || !name) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanMasterCategory", { id, name, oldId });
+          if (res && res.sukses) {
+            toast("success", id ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!");
+            closeCategoryModal();
+            await fetchCategoryData();
+            if (document.getElementById("section-category").classList.contains("active")) {
+              renderCategoryData();
+            }
+          } else {
+            showAlert("error", res ? res.pesan : "Gagal menyimpan category.");
+          }
+        } catch (err) {
+          console.error(err);
+          showAlert("error", "Terjadi kesalahan sistem.");
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      async function handleHapusCategory(catId) {
+        showConfirm("Hapus Category?", `Apakah Anda yakin ingin menghapus category "${catId}"? Data barang dengan category ini akan terpengaruh.`, async () => {
+          showLoading(true);
+          try {
+            const res = await callGAS("hapusMasterCategory", { id: catId });
+            if (res && res.sukses) {
+              toast("info", "Category berhasil dihapus.");
+              await fetchCategoryData();
+              if (document.getElementById("section-category").classList.contains("active")) {
+                renderCategoryData();
+              }
+            } else {
+              showAlert("error", res ? res.pesan : "Gagal menghapus category.");
+            }
+          } catch (err) {
+            console.error(err);
+            showAlert("error", "Terjadi kesalahan sistem.");
+          } finally {
+            showLoading(false);
+          }
+        });
       }
 
       async function fetchSupplierData(keepPage = false) {
@@ -2451,13 +2723,10 @@
     })
     .join("");
   document.getElementById("paginationInfo").innerText =
-    `Showing ${startIndex + 1} to ${endIndex} of ${totalData} data`;
+    `SHOWING ${startIndex + 1} TO ${endIndex} OF ${totalData} DATA`;
  
   const totalPages = Math.ceil(totalData / itemsPerPage);
-  document.getElementById("btnPrev").disabled = currentPage === 1;
-  document.getElementById("btnNext").disabled = currentPage === totalPages;
-  document.getElementById("btnPrev").style.opacity = currentPage === 1 ? "0.3" : "1";
-  document.getElementById("btnNext").style.opacity = currentPage === totalPages ? "0.3" : "1";
+  updatePaginationButtons("supplier", currentPage, totalPages);
  
   lucide.createIcons();
  

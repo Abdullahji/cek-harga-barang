@@ -416,7 +416,7 @@
                   class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
                 >
                   <div class="dot"></div>
-                  <span class="font-bold text-xs capitalize tracking-widest">Category Brg</span>
+                  <span class="font-bold text-xs capitalize tracking-widest">Kategori Barang</span>
                 </button>
               </div>
             </div>
@@ -1283,7 +1283,12 @@
                                <i data-lucide="chevrons-up-down" class="w-3 h-3 text-slate-500 opacity-50 group-hover:opacity-100"></i>
                              </div>
                           </th>
-                          <th id="th-categoryBarang" class="px-8 py-7">Kategori Barang</th>
+                          <th id="th-categoryBarang" class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group" onclick="switchPage('category')">
+                             <div class="flex items-center gap-2">
+                               <span>Kategori Barang</span>
+                               <i data-lucide="external-link" class="w-3 h-3 text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                             </div>
+                          </th>
                           <th id="th-barcodeBall" class="px-8 py-7">Barcode Ball/Dus</th>
                           <th id="th-barcodePak" class="px-8 py-7">Barcode Pak/Bks</th>
                           <th id="th-barcodeBks" class="px-8 py-7">Barcode Pcs/Ecer</th>
@@ -1705,16 +1710,17 @@
         const titles = {
           "dashboard": "Ringkasan Sistem",
           "cek-harga": "Cek Harga Barang",
-          "supplier": "Database Supplier"
+          "supplier": "Database Supplier",
+          "category": "Kategori Barang"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         // Auto load data if needed
-        if (page === "supplier") {
+        if (page === "supplier" || page === "category") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
           fetchCategoryData();
-          fetchSupplierData();
+          if (page === "supplier") fetchSupplierData();
         }
 
         if (window.innerWidth < 1024) {
@@ -1909,6 +1915,12 @@
             // If data is returned (even empty array), use it
             rawCategoryData = res.data;
             isMasterCategoryLoaded = true;
+            
+            // Re-render if currently on category page
+            const section = document.getElementById("section-category");
+            if (section && !section.classList.contains("hidden")) {
+              renderCategoryData();
+            }
           } else {
             console.warn("Using fallback categories or supplier extraction.");
             if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
@@ -2718,7 +2730,7 @@
          <p class="font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase leading-tight">${nama}</p>
       </td>
       <td class="px-8 py-6 ${!visibleColumns.categoryBarang ? "hidden" : ""}">
-         <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap">${cat}</span>
+         <span onclick="switchPage('category')" class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-tight whitespace-nowrap cursor-pointer hover:bg-blue-100 transition-colors">${cat}</span>
       </td>
       <td class="px-8 py-6 font-mono text-slate-500 whitespace-nowrap ${!visibleColumns.barcodeBall ? "hidden" : ""}">
         ${bBall}
@@ -2803,7 +2815,7 @@
         <div class="flex items-center gap-2 mb-2 flex-wrap">
           <span class="text-[9px] font-black text-slate-300 py-1 px-2 bg-slate-100 rounded-lg ${!visibleColumns.no ? "hidden" : ""}">${rowNo}.</span>
           <p class="text-[9px] font-black text-orange-600 uppercase tracking-widest ${!visibleColumns.supplier ? "hidden" : ""}">${supp}</p>
-          <span class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg ${!visibleColumns.categoryBarang ? "hidden" : ""}">${cat}</span>
+          <span onclick="switchPage('category')" class="text-[9px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-1 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors ${!visibleColumns.categoryBarang ? "hidden" : ""}">${cat}</span>
           <span class="text-[9px] font-black text-slate-400 uppercase bg-slate-50 px-2 py-1 rounded-lg ${!visibleColumns.tglBeli ? "hidden" : ""}">${tgl}</span>
         </div>
         <h3 class="text-lg font-black text-slate-900 leading-tight uppercase ${!visibleColumns.namaBarang ? "hidden" : ""}">${nama}</h3>

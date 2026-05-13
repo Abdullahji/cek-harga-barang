@@ -270,9 +270,53 @@
         background-color: #fff7ed;
         color: #ea580c;
       }
+
+      /* Toast styles */
+      #toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        pointer-events: none;
+      }
+      .toast-item {
+        pointer-events: auto;
+        min-width: 250px;
+        max-width: 350px;
+        background: white;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: toast-slide-in 0.3s ease-out forwards;
+        border-left: 4px solid #cbd5e1;
+      }
+      .dark .toast-item { background-color: #0f172a; color: white; border-color: #1e293b; }
+      .toast-item.success { border-left-color: #10b981; }
+      .toast-item.error { border-left-color: #ef4444; }
+      .toast-item.info { border-left-color: #3b82f6; }
+      .toast-item.warning { border-left-color: #f59e0b; }
+      
+      @keyframes toast-slide-in {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      .toast-fade-out {
+        animation: toast-slide-out 0.3s ease-in forwards;
+      }
+      @keyframes toast-slide-out {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
     </style>
   </head>
   <body class="overflow-x-hidden" style="overscroll-behavior-y: contain;">
+    <div id="toast-container"></div>
     <!-- Sidebar Backdrop -->
     <div id="sidebarBackdrop" onclick="toggleSidebar()"></div>
 
@@ -1548,6 +1592,7 @@
         }
 
         lucide.createIcons();
+        showToast("Menghubungkan ke database...", "info");
 
         // Optimized Initial Fetch: Combined Call
         try {
@@ -1558,8 +1603,10 @@
             rawCategoryData = res.category || [];
             if (rawCategoryData.length === 0) extractCategoriesFromSuppliers();
             isMasterCategoryLoaded = true;
+            console.info("Database Loaded successfully.", res.debug);
+            showToast("Sinkronisasi data berhasil", "success");
           } else {
-            // Fallback if combined call fails
+            console.warn("Failed to load combined data. Trying separate calls...");
             await Promise.all([
               fetchCekHargaData(),
               fetchCategoryData(),
@@ -1567,6 +1614,8 @@
             ]);
           }
         } catch (e) {
+          console.error("Initial load error:", e);
+          showToast("Gagal memuat data awal", "error");
           await Promise.all([
             fetchCekHargaData(),
             fetchCategoryData(),
@@ -1690,6 +1739,13 @@
         allMenus.forEach(m => m.classList.add('hidden'));
       });
 
+      function renderSupplierData() {
+        if (typeof filterSupplierTable === "function") filterSupplierTable(true);
+      }
+      function renderCekHargaData() {
+        console.log("Cek Harga page active");
+      }
+
       function switchPage(page) {
         // Reset all sections
         document.querySelectorAll(".page-section").forEach((s) => {
@@ -1706,6 +1762,10 @@
             renderDashboard();
           } else if (page === "category") {
             renderCategoryData();
+          } else if (page === "supplier") {
+            renderSupplierData();
+          } else if (page === "cek-harga") {
+            renderCekHargaData();
           }
         }
 
@@ -1816,6 +1876,42 @@
       }
     }
 
+      function showToast(message, type = "info") {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+
+        const toastEl = document.createElement("div");
+        toastEl.className = `toast-item ${type}`;
+        
+        const iconMap = {
+          success: "check-circle-2",
+          error: "x-circle",
+          warning: "alert-triangle",
+          info: "info"
+        };
+        
+        const iconName = iconMap[type] || "info";
+        
+        toastEl.innerHTML = `
+          <i data-lucide="${iconName}" class="w-5 h-5 flex-shrink-0"></i>
+          <span class="text-sm font-bold text-slate-700 dark:text-slate-200">${message}</span>
+        `;
+        
+        container.appendChild(toastEl);
+        lucide.createIcons();
+        
+        setTimeout(() => {
+          toastEl.classList.add("toast-fade-out");
+          setTimeout(() => {
+            toastEl.remove();
+          }, 300);
+        }, 3000);
+      }
+
+      function toast(type, message) {
+        showToast(message, type);
+      }
+
       // --- CUSTOM DIALOG & TOAST ---
       function showAlert(title, message, type = "info", onConfirm = null) {
         const dialog = document.getElementById("customDialog");
@@ -1880,7 +1976,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyyS9micBV4EqB7k_Z9Kuxs06UzEDJGHxYtnMrkzdSQzqO231dBD_aiShzoUZMypV-tFg/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzSpAPsmRxPFA7MILDlvfdyf3QEyx5_IiH5w53xbq8Nq1EiZZ7gr5MzJubugNzTFk4zBg/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -1902,9 +1998,9 @@
           });
         } else {
           // Fallback via Fetch (standalone / development preview)
-          if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.includes("script.google.com") === false) {
-            console.warn("GAS_WEBAPP_URL belum diatur. Menjalankan mode DEMO.");
-            return null; // Akan memicu fallback mock data
+          if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.length < 20 || GAS_WEBAPP_URL.includes("script.google.com") === false) {
+            console.warn("GAS_WEBAPP_URL belum diatur atau tidak valid. Menjalankan mode DEMO.");
+            return null; 
           }
           try {
             const resp = await fetch(GAS_WEBAPP_URL, {
@@ -1912,10 +2008,16 @@
               headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify({ action, payload }),
             });
-            return await resp.json();
+            if (!resp.ok) {
+              console.error(`HTTP Error: ${resp.status} ${resp.statusText}`);
+              return { sukses: false, pesan: `Server Error: ${resp.status}` };
+            }
+            const data = await resp.json();
+            console.log(`Fetch Response [${action}]:`, data);
+            return data;
           } catch (err) {
             console.error("Fetch Error:", err);
-            return { sukses: false, pesan: "Gagal terhubung ke Server." };
+            return { sukses: false, pesan: "Gagal terhubung ke Server. Pastikan URL benar & 'Anyone' akses telah diatur." };
           }
         }
       }
@@ -1929,20 +2031,26 @@
             rawCategoryData = res.data;
             isMasterCategoryLoaded = true;
             
-            // Re-render if currently on category page
-            const section = document.getElementById("section-category");
-            if (section && !section.classList.contains("hidden")) {
-              renderCategoryData();
+            // If empty, try fallback extraction
+            if (rawCategoryData.length === 0) {
+              extractCategoriesFromSuppliers();
             }
           } else {
             console.warn("Using fallback categories or supplier extraction.");
-            if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
+            extractCategoriesFromSuppliers();
           }
         } catch (err) {
           console.error("fetchCategoryData Error:", err);
-          if (!isMasterCategoryLoaded) extractCategoriesFromSuppliers();
+          extractCategoriesFromSuppliers();
         }
+        
         updateCategorySelects();
+        
+        // Re-render if currently on category page
+        const section = document.getElementById("section-category");
+        if (section && (!section.classList.contains("hidden") || section.classList.contains("active"))) {
+          renderCategoryData();
+        }
       }
 
       function extractCategoriesFromSuppliers() {
@@ -2015,6 +2123,8 @@
         tbody.innerHTML = "";
         cardContainer.innerHTML = "";
 
+        console.log("Rendering Category Data. Count:", rawCategoryData.length);
+
         if (!Array.isArray(rawCategoryData) || rawCategoryData.length === 0) {
           tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data category.</td></tr>`;
           cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data category.</div>`;
@@ -2030,7 +2140,7 @@
           return catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
         });
 
-        // Sort by Name (Urutan Berdasarkan Nama Category)
+        // Sort by Name
         filteredData.sort((a, b) => {
           const nameA = typeof a === 'object' ? (a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
           const nameB = typeof b === 'object' ? (b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
@@ -2038,83 +2148,80 @@
         });
 
         const totalData = filteredData.length;
-        const totalPages = Math.ceil(totalData / categoryItemsPerPage);
+        const totalPages = Math.ceil(totalData / categoryItemsPerPage) || 1;
         
-        // Ensure current page is valid
-        if (categoryCurrentPage > totalPages && totalPages > 0) categoryCurrentPage = totalPages;
+        if (categoryCurrentPage > totalPages) categoryCurrentPage = totalPages;
+        if (categoryCurrentPage < 1) categoryCurrentPage = 1;
         
         const startIndex = (categoryCurrentPage - 1) * categoryItemsPerPage;
         const endIndex = Math.min(startIndex + categoryItemsPerPage, totalData);
         const paginatedData = filteredData.slice(startIndex, endIndex);
 
-          paginatedData.forEach((cat, idx) => {
-            const catName = typeof cat === 'object' ? (cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0]) : cat;
-            const catId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0]) : "-";
-            
-            // Safe string for JS attributes
-            const safeCatName = String(catName).replace(/'/g, "\\'");
-            const safeCatId = String(catId).replace(/'/g, "\\'");
+        paginatedData.forEach((cat, idx) => {
+          let catName, catId;
+          if (typeof cat === 'object') {
+            catName = cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
+            catId = cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
+          } else {
+            catName = cat;
+            catId = "EXT-" + (startIndex + idx + 1); // Prefix for extracted categories
+          }
+          
+          if (!catName) return;
 
-            // Desktop Table View
-            const tr = document.createElement("tr");
-            tr.className = "hover:bg-slate-50 transition-colors group";
-            tr.innerHTML = `
-              <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + idx + 1}</td>
-              <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
-              <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
-              <td class="px-8 py-5">
-                <div class="flex justify-center gap-2">
-                  <button onclick="openCategoryModal('${safeCatId}', '${safeCatName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                  </button>
-                  <button onclick="handleHapusCategory('${safeCatId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                  </button>
-                </div>
-              </td>
-            `;
-            tbody.appendChild(tr);
+          const safeCatName = String(catName).replace(/'/g, "\\'");
+          const safeCatId = String(catId).replace(/'/g, "\\'");
 
-            // Mobile Card View (Updated Style per Image)
-            const mobileCard = document.createElement("div");
-            mobileCard.className = "category-card-item relative p-4 sm:p-6 border-b border-slate-50 last:border-none duration-300";
-            mobileCard.innerHTML = `
-                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative flex flex-col pt-10">
-                  <!-- Header: Number and Dropdown Action -->
-                  <div class="flex justify-between items-start mb-8 absolute top-8 left-8 right-8 z-[5]">
-                    <span class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 text-xs font-black rounded-xl border border-slate-100 shadow-inner">
-                      ${startIndex + idx + 1}.
-                    </span>
-                    
-                    <div class="relative">
-                      <button onclick="toggleCardAction(event, 'cat-action-${idx}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+          // Desktop Table View
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50 transition-colors group";
+          tr.innerHTML = `
+            <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + idx + 1}</td>
+            <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
+            <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
+            <td class="px-8 py-5">
+              <div class="flex justify-center gap-2">
+                <button onclick="openCategoryModal('${safeCatId}', '${safeCatName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button onclick="handleHapusCategory('${safeCatId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+
+          // Mobile Card View
+          const mobileCard = document.createElement("div");
+          mobileCard.className = "category-card-item relative p-4 sm:p-6 border-b border-slate-50 last:border-none duration-300";
+          mobileCard.innerHTML = `
+              <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative flex flex-col pt-10">
+                <div class="flex justify-between items-start mb-8 absolute top-8 left-8 right-8 z-[5]">
+                  <span class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 text-xs font-black rounded-xl border border-slate-100 shadow-inner">
+                    ${startIndex + idx + 1}.
+                  </span>
+                  <div class="relative">
+                    <button onclick="toggleCardAction(event, 'cat-action-${idx}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
+                      <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </button>
+                    <div id="cat-action-${idx}" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                      <button onclick="event.stopPropagation(); openCategoryModal('${safeCatId}', '${safeCatName}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                        <i data-lucide="edit-3" class="w-3 h-3"></i> Edit
                       </button>
-                      <!-- Dropdown Menu -->
-                      <div id="cat-action-${idx}" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                        <button onclick="event.stopPropagation(); openCategoryModal('${safeCatId}', '${safeCatName}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
-                          <i data-lucide="edit-3" class="w-3 h-3"></i>
-                          Edit
-                        </button>
-                        <button onclick="event.stopPropagation(); handleHapusCategory('${safeCatId}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                          <i data-lucide="trash-2" class="w-3 h-3"></i>
-                          Hapus
-                        </button>
-                      </div>
+                      <button onclick="event.stopPropagation(); handleHapusCategory('${safeCatId}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
+                      </button>
                     </div>
                   </div>
-
-                <!-- Content Area -->
+                </div>
                 <div class="space-y-6 mt-12">
-                  <!-- ID Row -->
                   <div class="flex items-center gap-4">
                     <span class="text-xs font-black text-slate-900 uppercase tracking-tight min-w-[110px]">ID Kategori :</span>
                     <div class="px-4 py-2 bg-[#fff7ed] text-[#9a3412] rounded-2xl border border-orange-100 shadow-sm">
                       <span class="text-base sm:text-lg font-black tracking-tight">${catId}</span>
                     </div>
                   </div>
-                  
-                  <!-- Name Row -->
                   <div class="flex items-center gap-4">
                     <span class="text-xs font-black text-slate-900 uppercase tracking-tight min-w-[110px]">Nama Kategori :</span>
                     <div class="px-6 py-3 bg-[#ecfdf5] text-[#065f46] rounded-2xl border border-emerald-100 shadow-sm">
@@ -2122,8 +2229,6 @@
                     </div>
                   </div>
                 </div>
-
-                <!-- Footer Decor -->
                 <div class="mt-8 pt-6 border-t border-slate-50 flex justify-end">
                    <span class="text-[8px] font-bold text-slate-200 uppercase tracking-[0.2em]">CATEGORY BARNG • MASTER</span>
                 </div>
@@ -2682,6 +2787,7 @@
 
       function renderSupplierTable() {
   const data = filteredSupplierData;
+  console.log("Rendering Supplier Table. Count:", data.length);
   const tbody = document.getElementById("supplierTableBody");
   const cardContainer = document.getElementById("supplierCardContainer");
   const totalData = data.length;

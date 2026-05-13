@@ -1658,6 +1658,38 @@
         if (icon) icon.classList.toggle("rotate-180");
       }
 
+      // Dropdown toggle for mobile cards
+      function toggleCardAction(e, menuId) {
+        e.stopPropagation();
+        const menu = document.getElementById(menuId);
+        
+        // Reset all mobile card z-indexes to avoid overlap
+        document.querySelectorAll('.category-card-item').forEach(card => {
+          card.style.zIndex = "0";
+        });
+
+        const allMenus = document.querySelectorAll('[id^="cat-action-"]');
+        allMenus.forEach(m => {
+          if (m.id !== menuId) m.classList.add('hidden');
+        });
+        
+        if (menu) {
+          const isOpening = menu.classList.contains('hidden');
+          menu.classList.toggle('hidden');
+          
+          if (isOpening) {
+            const parentCard = menu.closest('.category-card-item');
+            if (parentCard) parentCard.style.zIndex = "50";
+          }
+        }
+      }
+
+      // Close dropdowns when clicking anywhere else
+      document.addEventListener('click', () => {
+        const allMenus = document.querySelectorAll('[id^="cat-action-"]');
+        allMenus.forEach(m => m.classList.add('hidden'));
+      });
+
       function switchPage(page) {
         // Reset all sections
         document.querySelectorAll(".page-section").forEach((s) => {
@@ -1676,25 +1708,6 @@
             renderCategoryData();
           }
         }
-
-        // Dropdown toggle for mobile cards
-        function toggleCardAction(e, menuId) {
-          e.stopPropagation();
-          const menu = document.getElementById(menuId);
-          const allMenus = document.querySelectorAll('[id^="cat-action-"]');
-          
-          allMenus.forEach(m => {
-            if (m.id !== menuId) m.classList.add('hidden');
-          });
-          
-          menu.classList.toggle('hidden');
-        }
-
-        // Close dropdowns when clicking anywhere else
-        document.addEventListener('click', () => {
-          const allMenus = document.querySelectorAll('[id^="cat-action-"]');
-          allMenus.forEach(m => m.classList.add('hidden'));
-        });
 
         // Update nav buttons
         document.querySelectorAll(".nav-btn").forEach((b) => {
@@ -1867,7 +1880,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz0ry2ltv9S6cZhMJgfZCrUUvNHSEFUuA-tW-11Mw5jwGmoJ7lZNSXKfZmEEbend1cQYA/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyyS9micBV4EqB7k_Z9Kuxs06UzEDJGHxYtnMrkzdSQzqO231dBD_aiShzoUZMypV-tFg/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2034,58 +2047,62 @@
         const endIndex = Math.min(startIndex + categoryItemsPerPage, totalData);
         const paginatedData = filteredData.slice(startIndex, endIndex);
 
-        paginatedData.forEach((cat, index) => {
-          const catName = typeof cat === 'object' ? (cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0]) : cat;
-          const catId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0]) : "-";
-          
-          // Desktop Table View
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-slate-50 transition-colors group";
-          tr.innerHTML = `
-            <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + index + 1}</td>
-            <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
-            <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
-            <td class="px-8 py-5">
-              <div class="flex justify-center gap-2">
-                <button onclick="openCategoryModal('${catId}', '${catName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
-                  <i data-lucide="edit-3" class="w-4 h-4"></i>
-                </button>
-                <button onclick="handleHapusCategory('${catId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(tr);
+          paginatedData.forEach((cat, idx) => {
+            const catName = typeof cat === 'object' ? (cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0]) : cat;
+            const catId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0]) : "-";
+            
+            // Safe string for JS attributes
+            const safeCatName = String(catName).replace(/'/g, "\\'");
+            const safeCatId = String(catId).replace(/'/g, "\\'");
 
-          // Mobile Card View (Updated Style per Image)
-          const mobileCard = document.createElement("div");
-          mobileCard.className = "p-4 sm:p-6 border-b border-slate-50 last:border-none";
-          mobileCard.innerHTML = `
-              <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative flex flex-col pt-10">
-                <!-- Header: Number and Dropdown Action -->
-                <div class="flex justify-between items-start mb-8 absolute top-8 left-8 right-8 z-[5]">
-                  <span class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 text-xs font-black rounded-xl border border-slate-100 shadow-inner">
-                    ${startIndex + index + 1}.
-                  </span>
-                  
-                  <div class="relative">
-                    <button onclick="toggleCardAction(event, 'cat-action-${index}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
-                      <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div id="cat-action-${index}" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-[50] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                      <button onclick="openCategoryModal('${catId}', '${catName}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
-                        <i data-lucide="edit-3" class="w-3 h-3"></i>
-                        Edit
+            // Desktop Table View
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-slate-50 transition-colors group";
+            tr.innerHTML = `
+              <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + idx + 1}</td>
+              <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
+              <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
+              <td class="px-8 py-5">
+                <div class="flex justify-center gap-2">
+                  <button onclick="openCategoryModal('${safeCatId}', '${safeCatName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                  </button>
+                  <button onclick="handleHapusCategory('${safeCatId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Mobile Card View (Updated Style per Image)
+            const mobileCard = document.createElement("div");
+            mobileCard.className = "category-card-item relative p-4 sm:p-6 border-b border-slate-50 last:border-none duration-300";
+            mobileCard.innerHTML = `
+                <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative flex flex-col pt-10">
+                  <!-- Header: Number and Dropdown Action -->
+                  <div class="flex justify-between items-start mb-8 absolute top-8 left-8 right-8 z-[5]">
+                    <span class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 text-xs font-black rounded-xl border border-slate-100 shadow-inner">
+                      ${startIndex + idx + 1}.
+                    </span>
+                    
+                    <div class="relative">
+                      <button onclick="toggleCardAction(event, 'cat-action-${idx}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
                       </button>
-                      <button onclick="handleHapusCategory('${catId}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                        <i data-lucide="trash-2" class="w-3 h-3"></i>
-                        Hapus
-                      </button>
+                      <!-- Dropdown Menu -->
+                      <div id="cat-action-${idx}" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        <button onclick="event.stopPropagation(); openCategoryModal('${safeCatId}', '${safeCatName}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                          <i data-lucide="edit-3" class="w-3 h-3"></i>
+                          Edit
+                        </button>
+                        <button onclick="event.stopPropagation(); handleHapusCategory('${safeCatId}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                          <i data-lucide="trash-2" class="w-3 h-3"></i>
+                          Hapus
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
 
                 <!-- Content Area -->
                 <div class="space-y-6 mt-12">

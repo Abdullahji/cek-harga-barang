@@ -1218,6 +1218,18 @@
                       </div>
 
                       <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Kategori (Filter)</label>
+                        <input id="filter-cat-name-supplier" type="text" oninput="debouncedFilter()" placeholder="Cari Nama Kategori..." 
+                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all">
+                      </div>
+
+                      <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Kategori (Filter)</label>
+                        <input id="filter-cat-id-supplier" type="text" oninput="debouncedFilter()" placeholder="Cari ID Kategori..." 
+                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all">
+                      </div>
+
+                      <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Rentang Harga (Ball)</label>
                         <div class="flex gap-2">
                           <input id="filter-min-price" type="number" oninput="debouncedFilter()" placeholder="Min Harga" 
@@ -1652,9 +1664,14 @@
             rawSupplierData = res.supplier || [];
             rawCekHargaData = res.cekHarga || [];
             rawCategoryData = res.category || [];
-            if (rawCategoryData.length === 0) extractCategoriesFromSuppliers();
+            
+            console.info("Category loaded from DB:", rawCategoryData.length);
+            if (rawCategoryData.length === 0) {
+              console.warn("Category sheet empty, extracting from suppliers.");
+              extractCategoriesFromSuppliers();
+            }
+            
             isMasterCategoryLoaded = true;
-            console.info("Database Loaded successfully.", res.debug);
             showToast("Sinkronisasi data berhasil", "success");
           } else {
             console.warn("Failed to load combined data. Trying separate calls...");
@@ -1801,13 +1818,23 @@
         // Reset all sections
         document.querySelectorAll(".page-section").forEach((s) => {
           s.classList.add("hidden");
-          s.classList.remove("active", "opacity-0", "translate-y-4");
+          s.classList.remove("active");
+          // Remove transition classes to reset state
+          s.classList.remove("opacity-100", "translate-y-0");
+          s.classList.add("opacity-0", "translate-y-4");
         });
 
         const activeSection = document.getElementById("section-" + page);
         if (activeSection) {
           activeSection.classList.remove("hidden");
           activeSection.classList.add("active");
+          
+          // Trigger animation
+          setTimeout(() => {
+            activeSection.classList.remove("opacity-0", "translate-y-4");
+            activeSection.classList.add("opacity-100", "translate-y-0", "transition-all", "duration-500", "ease-out");
+            lucide.createIcons();
+          }, 50);
           
           if (page === "dashboard") {
             renderDashboard();
@@ -2183,7 +2210,7 @@
             return data;
           } catch (err) {
             console.error("Fetch Error:", err);
-            return { sukses: false, pesan: "Gagal terhubung ke Server. Pastikan URL benar & 'Anyone' akses telah diatur." };
+            return { sukses: false, pesan: `Fetch Error: ${err.message || 'Koneksi gagal'}. Periksa URL & akses 'Anyone'.` };
           }
         }
       }
@@ -2193,29 +2220,26 @@
         try {
           const res = await callGAS("ambilMasterCategory");
           if (res && res.sukses && Array.isArray(res.data)) {
-            // If data is returned (even empty array), use it
             rawCategoryData = res.data;
             isMasterCategoryLoaded = true;
-            
-            // If empty, try fallback extraction
-            if (rawCategoryData.length === 0) {
-              extractCategoriesFromSuppliers();
-            }
+            if (rawCategoryData.length === 0) extractCategoriesFromSuppliers();
           } else {
-            console.warn("Using fallback categories or supplier extraction.");
+            console.warn("Category load failed or empty, using fallbacks:", res?.pesan);
             extractCategoriesFromSuppliers();
           }
         } catch (err) {
-          console.error("fetchCategoryData Error:", err);
+          console.error("fetchCategoryData Exception:", err);
           extractCategoriesFromSuppliers();
         }
         
-        updateCategorySelects();
-        
-        // Re-render if currently on category page
-        const section = document.getElementById("section-category");
-        if (section && (!section.classList.contains("hidden") || section.classList.contains("active"))) {
-          renderCategoryData();
+        try {
+          updateCategorySelects();
+          const section = document.getElementById("section-category");
+          if (section && (!section.classList.contains("hidden") || section.classList.contains("active"))) {
+            renderCategoryData();
+          }
+        } catch (e) {
+          console.error("Post-fetch UI update failed:", e);
         }
       }
 
@@ -2247,24 +2271,25 @@
           
           select.innerHTML = isFilter ? '<option value="">Semua Kategori</option>' : '<option value="">Pilih Kategori...</option>';
           
-          if (Array.isArray(rawCategoryData)) {
-            rawCategoryData.forEach(cat => {
-              if (cat) {
-                const opt = document.createElement("option");
-                // Handle both object structure ([ID, Name]) and simple string
-                if (typeof cat === 'object') {
-                  const catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
-                  const catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
-                  opt.value = catName; // Usually we use the name as value in this app's logic
-                  opt.innerText = catName;
-                } else {
-                  opt.value = cat;
-                  opt.innerText = cat;
+            if (Array.isArray(rawCategoryData) && rawCategoryData.length > 0) {
+              rawCategoryData.forEach(cat => {
+                if (cat) {
+                  const opt = document.createElement("option");
+                  // Handle both object structure ([ID, Name]) and simple string
+                  if (typeof cat === 'object' && cat !== null) {
+                    const catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0] || "Unknown";
+                    opt.value = catName;
+                    opt.innerText = catName;
+                  } else {
+                    opt.value = String(cat);
+                    opt.innerText = String(cat);
+                  }
+                  select.appendChild(opt);
                 }
-                select.appendChild(opt);
-              }
-            });
-          }
+              });
+            } else {
+               console.warn("rawCategoryData is empty or not an array");
+            }
           select.value = currentVal;
         };
 
@@ -2282,49 +2307,64 @@
       }
 
       function renderCategoryData() {
-        const tbody = document.getElementById("categoryTableBody");
-        const cardContainer = document.getElementById("categoryCardContainer");
-        if (!tbody || !cardContainer) return;
+        try {
+          const tbody = document.getElementById("categoryTableBody");
+          const cardContainer = document.getElementById("categoryCardContainer");
+          if (!tbody || !cardContainer) return;
 
-        tbody.innerHTML = "";
-        cardContainer.innerHTML = "";
+          tbody.innerHTML = "";
+          cardContainer.innerHTML = "";
 
-        console.log("Rendering Category Data. Count:", rawCategoryData.length);
-
-        if (!Array.isArray(rawCategoryData) || rawCategoryData.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data category.</td></tr>`;
-          cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data category.</div>`;
-          document.getElementById("categoryPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
-          updatePaginationButtons("category", 0, 1);
-          return;
-        }
-
-        // Filter & Sort
-        let filteredData = rawCategoryData.filter(cat => {
-          const catName = typeof cat === 'object' ? (cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase() : String(cat).toLowerCase();
-          const catId = typeof cat === 'object' ? (cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase() : "";
-          
-          const matchSearch = categorySearchTerm === "" || catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
-          const matchId = filterCategoryId === "" || catId.includes(filterCategoryId);
-          const matchName = filterCategoryName === "" || catName.includes(filterCategoryName);
-          
-          return matchSearch && matchId && matchName;
-        });
-
-        // Sort by Name or ID
-        filteredData.sort((a, b) => {
-          let valA, valB;
-          if (categorySortBy === 'name') {
-            valA = typeof a === 'object' ? (a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
-            valB = typeof b === 'object' ? (b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
-          } else {
-            valA = typeof a === 'object' ? (a["ID Category Barang"] || a["ID Category Brg"] || a["ID"] || Object.values(a)[0] || "") : "";
-            valB = typeof b === 'object' ? (b["ID Category Barang"] || b["ID Category Brg"] || b["ID"] || Object.values(b)[0] || "") : "";
+          if (!Array.isArray(rawCategoryData) || rawCategoryData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data kategori.</td></tr>`;
+            cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data kategori.</div>`;
+            document.getElementById("categoryPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
+            updatePaginationButtons("category", 0, 1);
+            return;
           }
-          return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
-        });
 
-        const totalData = filteredData.length;
+          // Filter & Sort
+          let filteredData = rawCategoryData.filter(cat => {
+            if (cat === null || cat === undefined) return false;
+            let catName = "";
+            let catId = "";
+
+            if (typeof cat === 'object') {
+              catName = String(cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase();
+              catId = String(cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase();
+            } else {
+              catName = String(cat).toLowerCase();
+            }
+            
+            const matchSearch = categorySearchTerm === "" || catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
+            const matchId = filterCategoryId === "" || catId.includes(filterCategoryId);
+            const matchName = filterCategoryName === "" || catName.includes(filterCategoryName);
+            
+            return matchSearch && matchId && matchName;
+          });
+
+          // Sort
+          filteredData.sort((a, b) => {
+            let valA, valB;
+            if (categorySortBy === 'name') {
+              valA = typeof a === 'object' ? String(a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
+              valB = typeof b === 'object' ? String(b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
+            } else {
+              valA = typeof a === 'object' ? String(a["ID Category Barang"] || a["ID Category Brg"] || a["ID"] || Object.values(a)[0] || "") : "";
+              valB = typeof b === 'object' ? String(b["ID Category Barang"] || b["ID Category Brg"] || b["ID"] || Object.values(b)[0] || "") : "";
+            }
+            return (valA || "").localeCompare(valB || "", undefined, { numeric: true, sensitivity: 'base' });
+          });
+
+          const totalData = filteredData.length;
+
+          if (totalData === 0 && rawCategoryData.length > 0) {
+             tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada kategori yang cocok dengan filter.</td></tr>`;
+             cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada kategori yang cocok dengan filter.</div>`;
+             document.getElementById("categoryPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
+             updatePaginationButtons("category", 0, 1);
+             return;
+          }
         const totalPages = Math.ceil(totalData / categoryItemsPerPage) || 1;
         
         if (categoryCurrentPage > totalPages) categoryCurrentPage = totalPages;
@@ -2335,13 +2375,15 @@
         const paginatedData = filteredData.slice(startIndex, endIndex);
 
         paginatedData.forEach((cat, idx) => {
-          let catName, catId;
+          if (!cat) return;
+          let catName = "", catId = "";
+          
           if (typeof cat === 'object') {
-            catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
-            catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
+            catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0] || "Unknown";
+            catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || ("C-" + (startIndex + idx + 1));
           } else {
-            catName = cat;
-            catId = "EXT-" + (startIndex + idx + 1); // Prefix for extracted categories
+            catName = String(cat);
+            catId = "EXT-" + (startIndex + idx + 1);
           }
           
           if (!catName) return;
@@ -2417,7 +2459,12 @@
         document.getElementById("categoryPaginationInfo").innerText = `MENAMPILKAN ${startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
         updatePaginationButtons("category", categoryCurrentPage, totalPages);
         lucide.createIcons();
+      } catch (e) {
+        console.error("renderCategoryData Error:", e);
+        const tbody = document.getElementById("categoryTableBody");
+        if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-red-500 font-bold">Terjadi kesalahan saat menampilkan data.</td></tr>`;
       }
+    }
 
       function updatePaginationButtons(type, current, total) {
         const prevBtn = document.getElementById(`prevBtn-${type}`);
@@ -2505,7 +2552,7 @@
         try {
           const res = await callGAS("simpanMasterCategory", { id, name, oldId });
           if (res && res.sukses) {
-            toast("success", id ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!");
+            showAlert("Sukses", oldId ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!", "success");
             refreshCategoryData();
             closeCategoryModal();
             await fetchCategoryData();
@@ -2513,11 +2560,11 @@
               renderCategoryData();
             }
           } else {
-            showAlert("error", res ? res.pesan : "Gagal menyimpan category.");
+            showAlert("Error", res ? res.pesan : "Gagal menyimpan category.", "error");
           }
         } catch (err) {
           console.error(err);
-          showAlert("error", "Terjadi kesalahan sistem.");
+          showAlert("Error", "Terjadi kesalahan sistem.", "error");
         } finally {
           showLoading(false);
         }
@@ -2529,18 +2576,18 @@
           try {
             const res = await callGAS("hapusMasterCategory", { id: catId });
             if (res && res.sukses) {
-              toast("info", "Category berhasil dihapus.");
+              showAlert("Terhapus", "Category berhasil dihapus.", "success");
               refreshCategoryData();
               await fetchCategoryData();
               if (document.getElementById("section-category").classList.contains("active")) {
                 renderCategoryData();
               }
             } else {
-              showAlert("error", res ? res.pesan : "Gagal menghapus category.");
+              showAlert("Error", res ? res.pesan : "Gagal menghapus category.", "error");
             }
           } catch (err) {
             console.error(err);
-            showAlert("error", "Terjadi kesalahan sistem.");
+            showAlert("Error", "Terjadi kesalahan sistem.", "error");
           } finally {
             showLoading(false);
           }
@@ -3410,7 +3457,7 @@
       }
 
       function resetAdvancedFilters() {
-        const ids = ["filter-supplier", "filter-category", "filter-barcode", "filter-nama", "filter-expired", "filter-min-price", "filter-max-price"];
+        const ids = ["filter-supplier", "filter-category", "filter-barcode", "filter-nama", "filter-expired", "filter-min-price", "filter-max-price", "filter-cat-id-supplier", "filter-cat-name-supplier"];
         ids.forEach(id => {
           const el = document.getElementById(id);
           if (el) el.value = "";
@@ -3430,6 +3477,8 @@
           const feEl = document.getElementById("filter-expired");
           const minPEl = document.getElementById("filter-min-price");
           const maxPEl = document.getElementById("filter-max-price");
+          const fcIdEl = document.getElementById("filter-cat-id-supplier");
+          const fcNameEl = document.getElementById("filter-cat-name-supplier");
 
           const query = (qEl?.value || "").toLowerCase().trim();
           const fSupp = (fsEl?.value || "").toLowerCase().trim();
@@ -3439,6 +3488,8 @@
           const fExp = feEl?.value || "";
           const minPrice = parseFloat(minPEl?.value) || 0;
           const maxPrice = parseFloat(maxPEl?.value) || Infinity;
+          const fCatIdSupp = (fcIdEl?.value || "").toLowerCase().trim();
+          const fCatNameSupp = (fcNameEl?.value || "").toLowerCase().trim();
 
           filteredSupplierData = rawSupplierData.filter((it) => {
             if (!it) return false;
@@ -3446,6 +3497,13 @@
             const nama = String(it.namaBarang || "").toLowerCase();
             const supplier = String(it.supplier || "").toLowerCase();
             const cat = String(it.categoryBarang || "").toLowerCase();
+            // Try to find Cat ID if it exists in rawCategoryData
+            let catId = "";
+            if (it.categoryBarang && Array.isArray(rawCategoryData)) {
+               const catMatch = rawCategoryData.find(c => (typeof c === 'object' && c["Category Barang"] === it.categoryBarang));
+               if (catMatch) catId = String(catMatch["ID Category Barang"] || "").toLowerCase();
+            }
+
             const expD = it.expiredDate || "-";
             const price = parseFloat(it.hargaBall) || 0;
             
@@ -3461,6 +3519,8 @@
             if (fCat && cat !== fCat) return false;
             if (fBar && !hasBarcodeAdvancedHighlight) return false;
             if (fNama && !nama.includes(fNama)) return false;
+            if (fCatIdSupp && !catId.includes(fCatIdSupp)) return false;
+            if (fCatNameSupp && !cat.includes(fCatNameSupp)) return false;
 
             // Price Range Filter
             if (price < minPrice || price > maxPrice) return false;

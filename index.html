@@ -1179,6 +1179,12 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
                        <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Barang</label>
+                        <input id="filter-nama" type="text" oninput="debouncedFilter()" placeholder="Filter Nama Barang..." 
+                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all">
+                       </div>
+
+                       <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Kategori Barang</label>
                         <div class="relative">
                           <select id="filter-category" onchange="debouncedFilter()" 
@@ -1976,7 +1982,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzSpAPsmRxPFA7MILDlvfdyf3QEyx5_IiH5w53xbq8Nq1EiZZ7gr5MzJubugNzTFk4zBg/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzmKnoKNo4Jwpzucu4IvGJKaJ8xxyz0AH8ObITKeTxLxeHGvWxUElRLnFGqhDp8QMH8Jw/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2087,8 +2093,8 @@
                 const opt = document.createElement("option");
                 // Handle both object structure ([ID, Name]) and simple string
                 if (typeof cat === 'object') {
-                  const catName = cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
-                  const catId = cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
+                  const catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
+                  const catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
                   opt.value = catName; // Usually we use the name as value in this app's logic
                   opt.innerText = catName;
                 } else {
@@ -2135,15 +2141,15 @@
 
         // Filter & Sort
         let filteredData = rawCategoryData.filter(cat => {
-          const catName = typeof cat === 'object' ? (cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase() : String(cat).toLowerCase();
-          const catId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase() : "";
+          const catName = typeof cat === 'object' ? (cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase() : String(cat).toLowerCase();
+          const catId = typeof cat === 'object' ? (cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase() : "";
           return catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
         });
 
         // Sort by Name
         filteredData.sort((a, b) => {
-          const nameA = typeof a === 'object' ? (a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
-          const nameB = typeof b === 'object' ? (b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
+          const nameA = typeof a === 'object' ? (a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
+          const nameB = typeof b === 'object' ? (b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
           return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
         });
 
@@ -2160,8 +2166,8 @@
         paginatedData.forEach((cat, idx) => {
           let catName, catId;
           if (typeof cat === 'object') {
-            catName = cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
-            catId = cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
+            catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0];
+            catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0];
           } else {
             catName = cat;
             catId = "EXT-" + (startIndex + idx + 1); // Prefix for extracted categories
@@ -2287,7 +2293,7 @@
           let lastIdNum = 0;
           if (Array.isArray(rawCategoryData)) {
             rawCategoryData.forEach(cat => {
-              const currentId = typeof cat === 'object' ? (cat["ID Category Brg"] || cat["ID"] || Object.values(cat)[0]) : cat;
+              const currentId = typeof cat === 'object' ? (cat["ID Category Barang"] || cat["ID Category Brg"] || cat["ID"] || Object.values(cat)[0]) : cat;
               const numMatch = String(currentId).match(/\d+/);
               if (numMatch) {
                 const num = parseInt(numMatch[0]);
@@ -2295,7 +2301,7 @@
               }
             });
           }
-          inputId.value = (lastIdNum + 1).toString().padStart(3, '0');
+          inputId.value = "CB-" + (lastIdNum + 1).toString().padStart(3, '0');
         } else {
           // EDIT MODE
           title.innerText = "Edit Category";
@@ -2440,7 +2446,7 @@
       async function refreshAllData() {
        isRefreshing = true;
        applyRefreshSpin();
-       await Promise.all([fetchSupplierData(), fetchCekHargaData()]);
+       await Promise.all([fetchSupplierData(), fetchCekHargaData(), fetchCategoryData()]);
        if (document.getElementById("section-dashboard")?.classList.contains("active")) {
           renderDashboard();
        }

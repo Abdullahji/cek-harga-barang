@@ -1142,6 +1142,7 @@
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                     <!-- Advanced Filter Trigger -->
                     <button
+                      id="btn-filter-toggle"
                       onclick="toggleAdvancedFilters()"
                       class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
                       title="Filter Lanjutan"
@@ -1151,6 +1152,7 @@
 
                     <!-- Sort Trigger -->
                     <button
+                      id="btn-sort-toggle"
                       onclick="toggleSortPanel()"
                       class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
                       title="Urutan"
@@ -1160,11 +1162,12 @@
 
                     <!-- Refresh Trigger -->
                     <button
+                      id="btn-refresh-all"
                       onclick="refreshAllData()"
                       class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-orange-600 hover:border-orange-100 transition-all active:scale-95 flex items-center justify-center shrink-0"
                       title="Refresh All"
                     >
-                      <i data-lucide="rotate-cw" id="refreshIconSync" class="w-4 h-4 md:w-5 md:h-5"></i>
+                      <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
                   </div>
                 </div>
@@ -1432,30 +1435,72 @@
                 </div>
               </div>
 
-              <!-- Search & Filter Category -->
-              <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
-                <div class="flex-1 relative group min-w-0">
-                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
-                  <input
-                    type="text"
-                    id="searchCategory"
-                    onkeyup="handleSearchCategory()"
-                    placeholder="Cari..."
-                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                  />
+                <!-- SEARCH & FILTER CATEGORY -->
+                <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
+                  <div class="flex-1 relative group min-w-0">
+                    <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
+                    <input
+                      type="text"
+                      id="searchCategory"
+                      oninput="debouncedSearchCategory()"
+                      placeholder="Cari Kategori..."
+                      class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
+                    />
+                  </div>
+                  <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <!-- Category Filter Trigger -->
+                    <button id="btn-filter-category" onclick="toggleAdvancedFiltersCategory()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Filter Lanjutan">
+                      <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <!-- Category Sort Trigger -->
+                    <button id="btn-sort-category" onclick="toggleSortPanelCategory()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Urutan Kategori">
+                      <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <!-- Category Refresh Trigger -->
+                    <button id="btn-refresh-category" onclick="refreshCategoryData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Kategori">
+                      <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                  </div>
                 </div>
-                <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                  <button class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0">
-                    <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
-                  </button>
-                  <button class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0">
-                    <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
-                  </button>
-                  <button onclick="fetchCategoryData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0">
-                    <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
-                  </button>
+
+                <!-- CATEGORY FILTER PANEL -->
+                <div id="filterExpandedCategory" class="hidden bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden mb-6 transition-all duration-300">
+                  <div class="p-6 md:p-8 space-y-6">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="filter" class="w-4 h-4 text-emerald-500"></i>
+                        Filter Lanjutan Kategori
+                      </h4>
+                      <button onclick="resetAdvancedFiltersCategory()" class="text-[10px] font-black text-slate-400 hover:text-red-500 uppercase tracking-widest transition-colors flex items-center gap-1.5">
+                        <i data-lucide="refresh-ccw" class="w-3 h-3"></i>
+                        Reset Filter
+                      </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
+                       <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Category</label>
+                        <input id="filter-cat-id" type="text" oninput="debouncedSearchCategory()" placeholder="Filter ID..." 
+                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all">
+                       </div>
+
+                       <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Kategori</label>
+                        <input id="filter-cat-name" type="text" oninput="debouncedSearchCategory()" placeholder="Filter Nama..." 
+                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all">
+                       </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+
+                <!-- CATEGORY SORT PANEL -->
+                <div id="sortExpandedCategory" class="hidden bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden mb-6">
+                  <div class="p-4 md:p-6 flex flex-wrap items-center gap-4">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Urutan:</span>
+                    <button onclick="setCategorySort('name')" class="px-4 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all">A-Z Nama</button>
+                    <button onclick="setCategorySort('id')" class="px-4 py-2 rounded-lg text-xs font-bold bg-slate-50 text-slate-600 hover:bg-emerald-50 transition-all">ID Kategori</button>
+                  </div>
+                </div>
 
               <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
                 <div class="hidden md:block overflow-x-auto custom-scrollbar">
@@ -1874,13 +1919,128 @@
 
       // Karena lucide.createIcons() mengganti elemen <i> dengan <svg> baru,
       // referensi lama bisa stale. Fungsi ini selalu re-query elemen terbaru.
-      function applyRefreshSpin() {  
-         const el = document.getElementById("refreshIconSync");
-         if (!el) return;
-         if (isRefreshing) {el.classList.add("animate-spin");
-         } else {el.classList.remove("animate-spin");
+      let isRefreshingCategory = false;
+      async function refreshCategoryData() {
+        if (isRefreshingCategory) return;
+        isRefreshingCategory = true;
+        applyRefreshSpinCategory();
+        
+        showToast("Menyinkronkan data kategori...", "info");
+        
+        try {
+          await fetchCategoryData();
+          showToast("Data kategori diperbarui", "success");
+        } catch (err) {
+          showToast("Gagal memuat kategori", "error");
+        } finally {
+          isRefreshingCategory = false;
+          applyRefreshSpinCategory();
+        }
       }
-    }
+
+      function applyRefreshSpinCategory() {
+        const btn = document.getElementById("btn-refresh-category");
+        if (!btn) return;
+        if (isRefreshingCategory) {
+          btn.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+          const icon = btn.querySelector("i") || btn.querySelector("svg");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
+          const icon = btn.querySelector("i") || btn.querySelector("svg");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
+      let categorySortBy = 'name';
+      let filterCategoryName = "";
+      let filterCategoryId = "";
+
+      function toggleSortPanelCategory() {
+        const panel = document.getElementById("sortExpandedCategory");
+        const btn = document.getElementById("btn-sort-category");
+        const filterPanel = document.getElementById("filterExpandedCategory");
+        if (!panel) return;
+        
+        if (filterPanel) filterPanel.classList.add("hidden");
+        document.getElementById("btn-filter-category")?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+
+        if (panel.classList.contains("hidden")) {
+          panel.classList.remove("hidden");
+          btn?.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
+        } else {
+          panel.classList.add("hidden");
+          btn?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+        }
+      }
+
+      function setCategorySort(mode) {
+        categorySortBy = mode;
+        renderCategoryData();
+        showToast(`Urutkan berdasarkan ${mode === 'name' ? 'Nama' : 'ID'}`, "success");
+      }
+
+      let categorySearchTimer;
+      function debouncedSearchCategory() {
+        clearTimeout(categorySearchTimer);
+        categorySearchTimer = setTimeout(() => {
+          categorySearchTerm = (document.getElementById("searchCategory")?.value || "").toLowerCase();
+          filterCategoryId = (document.getElementById("filter-cat-id")?.value || "").toLowerCase();
+          filterCategoryName = (document.getElementById("filter-cat-name")?.value || "").toLowerCase();
+          
+          categoryCurrentPage = 1;
+          renderCategoryData();
+        }, 300);
+      }
+
+      function toggleAdvancedFiltersCategory() {
+        const panel = document.getElementById("filterExpandedCategory");
+        const sortPanel = document.getElementById("sortExpandedCategory");
+        const btn = document.getElementById("btn-filter-category");
+        if (!panel) return;
+
+        if (sortPanel) sortPanel.classList.add("hidden");
+        document.getElementById("btn-sort-category")?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+
+        if (panel.classList.contains("hidden")) {
+          panel.classList.remove("hidden");
+          btn?.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
+        } else {
+          panel.classList.add("hidden");
+          btn?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
+        }
+      }
+
+      function resetAdvancedFiltersCategory() {
+        if (document.getElementById("filter-cat-id")) document.getElementById("filter-cat-id").value = "";
+        if (document.getElementById("filter-cat-name")) document.getElementById("filter-cat-name").value = "";
+        if (document.getElementById("searchCategory")) document.getElementById("searchCategory").value = "";
+        
+        filterCategoryId = "";
+        filterCategoryName = "";
+        categorySearchTerm = "";
+        
+        categoryCurrentPage = 1;
+        renderCategoryData();
+        showToast("Filter kategori telah direset", "info");
+      }
+
+      function applyRefreshSpin() {
+        const btn = document.getElementById("btn-refresh-all");
+        if (!btn) return;
+        
+        if (isRefreshing) {
+          btn.classList.add("bg-orange-50", "text-orange-600", "border-orange-200");
+          const icon = btn.querySelector("i") || btn.querySelector("svg");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-orange-50", "text-orange-600", "border-orange-200");
+          const icon = btn.querySelector("i") || btn.querySelector("svg");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
 
       function showToast(message, type = "info") {
         const container = document.getElementById("toast-container");
@@ -1982,7 +2142,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzmKnoKNo4Jwpzucu4IvGJKaJ8xxyz0AH8ObITKeTxLxeHGvWxUElRLnFGqhDp8QMH8Jw/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw0wHDYsPZShwtnHgTCjguNErhjVyNPleZE3ccDMpae7F9aANY_l_kJsvCYvLU3eAGZHQ/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2143,14 +2303,25 @@
         let filteredData = rawCategoryData.filter(cat => {
           const catName = typeof cat === 'object' ? (cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase() : String(cat).toLowerCase();
           const catId = typeof cat === 'object' ? (cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase() : "";
-          return catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
+          
+          const matchSearch = categorySearchTerm === "" || catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
+          const matchId = filterCategoryId === "" || catId.includes(filterCategoryId);
+          const matchName = filterCategoryName === "" || catName.includes(filterCategoryName);
+          
+          return matchSearch && matchId && matchName;
         });
 
-        // Sort by Name
+        // Sort by Name or ID
         filteredData.sort((a, b) => {
-          const nameA = typeof a === 'object' ? (a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
-          const nameB = typeof b === 'object' ? (b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
-          return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+          let valA, valB;
+          if (categorySortBy === 'name') {
+            valA = typeof a === 'object' ? (a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
+            valB = typeof b === 'object' ? (b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
+          } else {
+            valA = typeof a === 'object' ? (a["ID Category Barang"] || a["ID Category Brg"] || a["ID"] || Object.values(a)[0] || "") : "";
+            valB = typeof b === 'object' ? (b["ID Category Barang"] || b["ID Category Brg"] || b["ID"] || Object.values(b)[0] || "") : "";
+          }
+          return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
         });
 
         const totalData = filteredData.length;
@@ -2335,6 +2506,7 @@
           const res = await callGAS("simpanMasterCategory", { id, name, oldId });
           if (res && res.sukses) {
             toast("success", id ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!");
+            refreshCategoryData();
             closeCategoryModal();
             await fetchCategoryData();
             if (document.getElementById("section-category").classList.contains("active")) {
@@ -2358,6 +2530,7 @@
             const res = await callGAS("hapusMasterCategory", { id: catId });
             if (res && res.sukses) {
               toast("info", "Category berhasil dihapus.");
+              refreshCategoryData();
               await fetchCategoryData();
               if (document.getElementById("section-category").classList.contains("active")) {
                 renderCategoryData();
@@ -2444,15 +2617,31 @@
       }
 
       async function refreshAllData() {
-       isRefreshing = true;
-       applyRefreshSpin();
-       await Promise.all([fetchSupplierData(), fetchCekHargaData(), fetchCategoryData()]);
-       if (document.getElementById("section-dashboard")?.classList.contains("active")) {
-          renderDashboard();
-       }
-       isRefreshing = false;
-       applyRefreshSpin();
-       showAlert("Berhasil", "Semua data telah diperbarui!", "success");
+        if (isRefreshing) return;
+        isRefreshing = true;
+        applyRefreshSpin();
+        
+        showToast("Menyinkronkan semua data...", "info");
+        
+        try {
+          await Promise.all([
+            fetchSupplierData(), 
+            fetchCekHargaData(), 
+            fetchCategoryData()
+          ]);
+          
+          if (document.getElementById("section-dashboard")?.classList.contains("active")) {
+             renderDashboard();
+          }
+          
+          showToast("Semua data berhasil diperbarui!", "success");
+        } catch (err) {
+          console.error("Refresh failed:", err);
+          showToast("Gagal memperbarui data", "error");
+        } finally {
+          isRefreshing = false;
+          applyRefreshSpin();
+        }
       }
 
       async function fetchCekHargaData() {
@@ -2567,27 +2756,37 @@
       function toggleAdvancedFilters() {
         const panel = document.getElementById("filterExpanded");
         const sortPanel = document.getElementById("sortExpanded");
-        if (sortPanel) sortPanel.classList.add("hidden"); // Close sort if filter is opened
+        const btn = document.getElementById("btn-filter-toggle");
+
+        if (sortPanel) sortPanel.classList.add("hidden");
+        document.getElementById("btn-sort-toggle")?.classList.remove("bg-orange-50", "text-orange-600", "border-orange-200");
 
         if (panel.classList.contains("hidden")) {
           panel.classList.remove("hidden");
-          panel.classList.add("animate-in", "slide-in-from-top-4", "duration-500");
+          btn?.classList.add("bg-orange-50", "text-orange-600", "border-orange-200");
+          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
         } else {
           panel.classList.add("hidden");
+          btn?.classList.remove("bg-orange-50", "text-orange-600", "border-orange-200");
         }
       }
 
       function toggleSortPanel() {
         const panel = document.getElementById("sortExpanded");
         const filterPanel = document.getElementById("filterExpanded");
-        if (filterPanel) filterPanel.classList.add("hidden"); // Close filter if sort is opened
+        const btn = document.getElementById("btn-sort-toggle");
+
+        if (filterPanel) filterPanel.classList.add("hidden");
+        document.getElementById("btn-filter-toggle")?.classList.remove("bg-orange-50", "text-orange-600", "border-orange-200");
 
         if (panel.classList.contains("hidden")) {
           panel.classList.remove("hidden");
-          panel.classList.add("animate-in", "slide-in-from-top-4", "duration-500");
+          btn?.classList.add("bg-orange-50", "text-orange-600", "border-orange-200");
+          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
           updateSortButtonStates();
         } else {
           panel.classList.add("hidden");
+          btn?.classList.remove("bg-orange-50", "text-orange-600", "border-orange-200");
         }
       }
 

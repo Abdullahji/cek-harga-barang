@@ -463,6 +463,22 @@
                   <span class="font-bold text-xs capitalize tracking-widest">Kategori Barang</span>
                 </button>
                 <button
+                  onclick="switchPage('barang')"
+                  id="nav-barang"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Data Barang</span>
+                </button>
+                <button
+                  onclick="switchPage('satuan-barang')"
+                  id="nav-satuan-barang"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Satuan Barang</span>
+                </button>
+                <button
                   onclick="switchPage('referensi')"
                   id="nav-referensi"
                   class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
@@ -1600,20 +1616,44 @@
               class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
             >
               <div
-                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-6 relative overflow-hidden"
               >
                 <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
-                <div class="flex-1 text-center lg:text-left">
-                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Data Referensi</h2>
-                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Manajemen Satuan, Kategori & Status</p>
+                <div class="w-full flex flex-col lg:flex-row justify-between items-center gap-6">
+                  <div class="flex-1 text-center lg:text-left">
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Data Referensi</h2>
+                    <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Manajemen Satuan, Kategori & Status</p>
+                  </div>
+                  <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                    <button
+                      onclick="openReferensiModal()"
+                      class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                      <span>TAMBAH DATA</span>
+                    </button>
+                  </div>
                 </div>
-                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
-                  <button
-                    onclick="openReferensiModal()"
-                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
-                  >
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    <span>TAMBAH DATA</span>
+
+                <!-- TABS REFERENSI -->
+                <div class="w-full flex p-1.5 bg-slate-100 rounded-2xl">
+                  <button 
+                    onclick="switchReferensiTab('satuan')" 
+                    id="tab-ref-satuan"
+                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    Satuan <span id="count-ref-satuan"></span>
+                  </button>
+                  <button 
+                    onclick="switchReferensiTab('kategori')" 
+                    id="tab-ref-kategori"
+                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    Kategori Barang <span id="count-ref-kategori"></span>
+                  </button>
+                  <button 
+                    onclick="switchReferensiTab('status')" 
+                    id="tab-ref-status"
+                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    Status Order <span id="count-ref-status"></span>
                   </button>
                 </div>
               </div>
@@ -1626,7 +1666,7 @@
                       type="text"
                       id="searchReferensi"
                       oninput="debouncedSearchReferensi()"
-                      placeholder="Cari Referensi..."
+                      placeholder="Cari..."
                       class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
                     />
                   </div>
@@ -1643,9 +1683,7 @@
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
                         <th class="px-8 py-7 w-20 text-center">No.</th>
-                        <th class="px-8 py-7">Satuan</th>
-                        <th class="px-8 py-7">Kategori Barang</th>
-                        <th class="px-8 py-7">Status Order</th>
+                        <th id="th-referensi-label" class="px-8 py-7">Satuan</th>
                         <th class="px-8 py-7 w-40 text-center">Aksi</th>
                       </tr>
                     </thead>
@@ -1689,21 +1727,448 @@
                 </div>
                 <form id="referensiForm" onsubmit="handleSimpanReferensi(event)" class="space-y-6">
                   <input type="hidden" id="form-referensiId" />
-                  <div class="space-y-2">
+                  <div id="modal-ref-satuan-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
                     <input type="text" id="form-ref-satuan" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
                   </div>
-                  <div class="space-y-2">
+                  <div id="modal-ref-kategori-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori Barang</label>
                     <input type="text" id="form-ref-kategori" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: SNACK" />
                   </div>
-                  <div class="space-y-2">
+                  <div id="modal-ref-status-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
                     <input type="text" id="form-ref-status" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
                   </div>
                   <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-5 h-5"></i>
                     <span>SIMPAN REFERENSI</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- SECTION: DATA BARANG -->
+            <section
+              id="section-barang"
+              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-orange-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800">Master Data</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Database Produk & Kategori</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openBarangModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-orange-600 text-white shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH BARANG</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- FILTER & SORT PANELS -->
+              <div id="barang-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Kategori</label>
+                    <select id="filter-barang-kategori" onchange="applyBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                      <option value="all">Semua Kategori</option>
+                    </select>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Status</label>
+                    <div class="flex gap-2">
+                       <button onclick="setBarangFilterStatus('all')" class="barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="all">SEMUA</button>
+                       <button onclick="setBarangFilterStatus('Aktif')" class="barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Aktif">AKTIF</button>
+                       <button onclick="setBarangFilterStatus('Nonaktif')" class="barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Nonaktif">NONAKTIF</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
+                   <button onclick="setBarangSort('idBarang')" class="barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="idBarang">
+                     <span>URUTKAN ID</span>
+                   </button>
+                   <button onclick="setBarangSort('namaBarang')" class="barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="namaBarang">
+                     <span>NAMA BARANG</span>
+                   </button>
+                   <button onclick="setBarangSort('merk')" class="barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="merk">
+                     <span>URUTKAN MERK</span>
+                   </button>
+                   <button onclick="toggleBarangSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95">
+                     <i id="icon-barang-order" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
+                     <span id="text-barang-order">A - Z</span>
+                   </button>
+                </div>
+              </div>
+
+              <!-- SEARCH & ACTIONS BAR -->
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex-1 relative group w-full min-w-0">
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-orange-500 transition-colors"></i>
+                  <input
+                    type="text"
+                    id="searchBarang"
+                    oninput="debouncedSearchBarang()"
+                    placeholder="Cari..."
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-orange-500/10 transition-all"
+                  />
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <button
+                        onclick="toggleBarangFilters()"
+                        id="btn-barang-filter"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Filter Data"
+                    >
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        onclick="toggleBarangSort()"
+                        id="btn-barang-sort"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Urutkan Data"
+                    >
+                        <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        id="btn-barang-refresh"
+                        onclick="fetchBarangData(true)"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Refresh Data"
+                    >
+                        <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[1000px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-8 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7 w-32">ID Barang</th>
+                        <th class="px-8 py-7">Nama Barang</th>
+                        <th class="px-8 py-7">Kategori</th>
+                        <th class="px-8 py-7">Merk</th>
+                        <th class="px-8 py-7 w-32 text-center">Status</th>
+                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="barangTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="barangCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Pagination Barang -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="barangPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('barang')" id="prevBtn-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('barang')" id="nextBtn-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- MODAL BARANG -->
+            <div id="barangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeBarangModal()"></div>
+              <div class="relative bg-white w-full max-w-xl rounded-[2.5rem] p-8 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200">
+                <div class="flex justify-between items-center mb-8">
+                  <h3 id="barangFormTitle" class="text-xl font-black text-slate-900">Tambah Barang</h3>
+                  <button onclick="closeBarangModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <form id="barangForm" onsubmit="handleSimpanBarang(event)" class="space-y-6">
+                  <input type="hidden" id="form-barangRow" />
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">ID Barang (Auto)</label>
+                        <input type="text" id="form-barangId" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none cursor-not-allowed shadow-inner" placeholder="Generated..." readonly />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
+                        <select id="form-barangStatus" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                        </select>
+                    </div>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
+                    <input type="text" id="form-barangNama" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori</label>
+                        <select id="form-barangKategori" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all" required>
+                            <option value="">Pilih Kategori...</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk</label>
+                        <input type="text" id="form-barangMerk" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
+                    </div>
+                  </div>
+                  <button type="submit" class="w-full py-4 bg-orange-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:bg-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>SIMPAN DATA BARANG</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- SECTION: SATUAN BARANG -->
+            <section
+              id="section-satuan-barang"
+              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800">Satuan Barang</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Multi-Satuan & Konversi Harga Jual</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openSatuanBarangModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH SATUAN</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- FILTER & SORT PANELS -->
+              <div id="satuan-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Satuan</label>
+                    <select id="filter-satuan-dropdown" onchange="applySatuanBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all">
+                      <option value="all">Semua Satuan</option>
+                    </select>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Status</label>
+                    <div class="flex gap-2">
+                       <button onclick="setSatuanBarangFilterStatus('all')" class="satuan-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="all">SEMUA</button>
+                       <button onclick="setSatuanBarangFilterStatus('Aktif')" class="satuan-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Aktif">AKTIF</button>
+                       <button onclick="setSatuanBarangFilterStatus('Nonaktif')" class="satuan-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Nonaktif">NONAKTIF</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="satuan-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
+                   <button onclick="setSatuanBarangSort('barcode')" class="satuan-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="barcode">
+                     <span>BARCODE</span>
+                   </button>
+                   <button onclick="setSatuanBarangSort('namaBarang')" class="satuan-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="namaBarang">
+                     <span>NAMA BARANG</span>
+                   </button>
+                   <button onclick="setSatuanBarangSort('hargaJual')" class="satuan-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="hargaJual">
+                     <span>HARGA JUAL</span>
+                   </button>
+                   <button onclick="toggleSatuanBarangSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95">
+                     <i id="icon-satuan-order" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
+                     <span id="text-satuan-order">A - Z</span>
+                   </button>
+                </div>
+              </div>
+
+              <!-- SEARCH & ACTIONS BAR -->
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex-1 relative group w-full min-w-0">
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                  <input
+                    type="text"
+                    id="searchSatuanBarang"
+                    oninput="debouncedSearchSatuanBarang()"
+                    placeholder="Cari..."
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  />
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <button
+                        onclick="toggleSatuanBarangFilters()"
+                        id="btn-satuan-filter"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Filter Data"
+                    >
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        onclick="toggleSatuanBarangSort()"
+                        id="btn-satuan-sort"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Urutkan Data"
+                    >
+                        <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        id="btn-satuan-refresh"
+                        onclick="fetchSatuanBarangData(true)"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Refresh Data"
+                    >
+                        <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+              </div>
+
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[1200px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-8 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7 w-40">Barcode</th>
+                        <th class="px-8 py-7">Barang</th>
+                        <th class="px-8 py-7 w-32">Satuan</th>
+                        <th class="px-8 py-7 w-32">Qty</th>
+                        <th class="px-8 py-7 w-40 text-right">Harga Jual</th>
+                        <th class="px-8 py-7 w-28 text-center">Status</th>
+                        <th class="px-8 py-7 w-32 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="satuanBarangTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="satuanBarangCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Pagination Satuan Barang -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="satuanBarangPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('satuan-barang')" id="prevBtn-satuan-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('satuan-barang')" id="nextBtn-satuan-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- MODAL SATUAN BARANG -->
+            <div id="satuanBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSatuanBarangModal()"></div>
+              <div class="relative bg-white w-full max-w-2xl rounded-[2.5rem] p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-200">
+                <div class="flex justify-between items-center mb-8">
+                  <h3 id="satuanBarangFormTitle" class="text-xl font-black text-slate-900">Tambah Satuan Barang</h3>
+                  <button onclick="closeSatuanBarangModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <form id="satuanBarangForm" onsubmit="handleSimpanSatuanBarang(event)" class="space-y-6">
+                  <input type="hidden" id="form-satuanRow" />
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
+                      <div class="relative group">
+                          <input type="text" id="form-satuanBarcode" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="..." />
+                          <button type="button" onclick="startGlobalScanner('form-satuanBarcode')" class="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600">
+                              <i data-lucide="scan-barcode" class="w-5 h-5"></i>
+                          </button>
+                      </div>
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
+                      <select id="form-satuanStatus" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all">
+                          <option value="Aktif">Aktif</option>
+                          <option value="Nonaktif">Nonaktif</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pilih Barang</label>
+                    <select id="form-satuanIdBarang" onchange="autoFillNamaBarangBySatuan(this.value)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all" required>
+                        <option value="">Pilih ID Barang...</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
+                    <input type="text" id="form-satuanNamaBarang" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none shadow-inner cursor-not-allowed" readonly placeholder="Nama barang otomatis..." />
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
+                      <select id="form-satuanSatuan" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all" required>
+                          <option value="">Pilih Satuan...</option>
+                      </select>
+                    </div>
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Satuan</label>
+                      <input type="number" id="form-satuanQty" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="1" required />
+                    </div>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
+                    <input type="number" id="form-satuanHarga" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="0" required />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Link Gambar / Upload</label>
+                    <div class="flex flex-col gap-3">
+                        <input type="text" id="form-satuanGambarLink" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Paste link gambar (optional)" />
+                        <div class="p-6 border-2 border-dashed border-slate-100 rounded-3xl bg-slate-50/50 text-center group hover:border-blue-200 transition-all">
+                            <input type="file" id="form-satuanGambarFile" class="hidden" accept="image/*" onchange="handleSatuanImageUpload(this)" />
+                            <label for="form-satuanGambarFile" class="cursor-pointer">
+                                <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-300 mx-auto mb-2 group-hover:text-blue-500 transition-colors"></i>
+                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Klik atau Drag Gambar untuk Upload</span>
+                            </label>
+                            <div id="satuan-upload-preview" class="mt-4 hidden p-2 bg-white rounded-2xl border border-slate-100 inline-block overflow-hidden max-w-xs">
+                                <img src="" alt="Preview" class="max-h-32 rounded-xl object-contain mx-auto" />
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>SIMPAN DATA SATUAN</span>
                   </button>
                 </form>
               </div>
@@ -1738,11 +2203,29 @@
       let rawSupplierData = [];
       let rawCategoryData = [];
       let rawReferensiData = [];
+      let rawBarangData = [];
+      let rawSatuanBarangData = [];
       let filteredSupplierData = []; // Track filtered data for pagination
       let rawCekHargaData = [];
       let html5QrcodeScanner = null;
       let isScanning = false;
       let isMasterCategoryLoaded = false;
+      let referensiSearchTerm = "";
+      let barangSearchTerm = "";
+      let satuanBarangSearchTerm = "";
+      let barangSortBy = "idBarang";
+      let satuanBarangSortBy = "namaBarang";
+      let barangSortOrder = "asc";
+      let satuanBarangSortOrder = "asc";
+      let barangFilterStatus = "all";
+      let satuanBarangFilterStatus = "all";
+      let barangFilterKategori = "all";
+      let satuanBarangFilterSatuan = "all";
+      let currentReferensiTab = 'satuan'; // 'satuan', 'kategori', 'status'
+      let barangCurrentPage = 1;
+      let satuanBarangCurrentPage = 1;
+      const barangItemsPerPage = 10;
+      const satuanBarangItemsPerPage = 10;
 
       // Logic Control States
       let sortOrder = "asc"; // asc (A-Z), desc (Z-A)
@@ -1792,6 +2275,7 @@
             rawCekHargaData = res.cekHarga || [];
             rawCategoryData = res.category || [];
             rawReferensiData = res.referensi || [];
+            rawBarangData = res.barang || [];
             
             console.info("Category loaded from DB:", rawCategoryData.length);
             if (rawCategoryData.length === 0) {
@@ -1807,17 +2291,19 @@
               fetchCekHargaData(),
               fetchCategoryData(),
               fetchSupplierData(),
-              fetchReferensiData()
+              fetchReferensiData(),
+              fetchBarangData()
             ]);
           }
         } catch (e) {
           console.error("Initial load error:", e);
-          showToast("Gagal memuat data awal", "error");
+          showToast("Gagal memuat data awal atau URL Web App tidak valid", "error");
           await Promise.all([
             fetchCekHargaData(),
             fetchCategoryData(),
             fetchSupplierData(),
-            fetchReferensiData()
+            fetchReferensiData(),
+            fetchBarangData()
           ]);
         }
         
@@ -1975,7 +2461,11 @@
           } else if (page === "cek-harga") {
             renderCekHargaData();
           } else if (page === "referensi") {
-            renderReferensiData();
+            switchReferensiTab('satuan');
+          } else if (page === "barang") {
+            fetchBarangData();
+          } else if (page === "satuan-barang") {
+            fetchSatuanBarangData();
           }
         }
 
@@ -1995,17 +2485,20 @@
           "cek-harga": "Cek Harga Barang",
           "supplier": "Database Supplier",
           "category": "Kategori Barang",
+          "barang": "Master Data Barang",
+          "satuan-barang": "Master Satuan Barang",
           "referensi": "Data Referensi"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         // Auto load data if needed
-        if (page === "supplier" || page === "category" || page === "referensi") {
+        if (page === "supplier" || page === "category" || page === "referensi" || page === "satuan-barang" || page === "barang") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
           fetchCategoryData();
           if (page === "supplier") fetchSupplierData();
           if (page === "referensi") fetchReferensiData();
+          if (page === "satuan-barang") fetchSatuanBarangData();
         }
 
         if (window.innerWidth < 1024) {
@@ -2270,7 +2763,7 @@
         dialog.classList.remove("hidden");
       }
 
-      function showConfirm(title, message, onConfirm) {
+      function showConfirm(title, message, onConfirm, onCancel = null) {
         const dialog = document.getElementById("customDialog");
         const t = document.getElementById("dialogTitle");
         const m = document.getElementById("dialogMessage");
@@ -2286,9 +2779,12 @@
 
         btnConfirm.onclick = () => {
           dialog.classList.add("hidden");
-          onConfirm();
+          if (onConfirm) onConfirm();
         };
-        btnCancel.onclick = () => dialog.classList.add("hidden");
+        btnCancel.onclick = () => {
+          dialog.classList.add("hidden");
+          if (onCancel) onCancel();
+        };
 
         document
           .getElementById("iconTarget")
@@ -2297,22 +2793,33 @@
         dialog.classList.remove("hidden");
       }
 
-      /* ... cari di bagian script index.html ... */
+      function showKonfirmasi(title, message) {
+        return new Promise((resolve) => {
+          showConfirm(
+            title,
+            message,
+            () => resolve(true),
+            () => resolve(false)
+          );
+        });
+      }
+
+      /* Logic Start */
 
       // --- KONFIGURASI KONEKSI DATABASE ---
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzowCxS1jGazbdorw8Vvpft00kq6h_YeFOQ36jUer_O_uaPKxM1Iu-YaReKpTxziKRJuQ/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw0wHDYsPZShwtnHgTCjguNErhjVyNPleZE3ccDMpae7F9aANY_l_kJsvCYvLU3eAGZHQ/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
         // Deteksi apakah sedang di dalam Google Apps Script Environment
-        const isGAS = typeof google !== "undefined" && google.script && google.script.run;
+        const isGAS = typeof window !== "undefined" && window.google && window.google.script && window.google.script.run;
         
         if (isGAS) {
           return new Promise((resolve, reject) => {
-            google.script.run
+            window.google.script.run
               .withSuccessHandler(res => {
                 console.log(`GAS Response [${action}]:`, res);
                 resolve(res);
@@ -2615,6 +3122,12 @@
         } else if (type === 'referensi' && referensiCurrentPage > 1) {
           referensiCurrentPage--;
           renderReferensiData();
+        } else if (type === 'barang' && barangCurrentPage > 1) {
+          barangCurrentPage--;
+          renderBarangData();
+        } else if (type === 'satuan-barang' && satuanBarangCurrentPage > 1) {
+          satuanBarangCurrentPage--;
+          renderSatuanBarangData();
         } else if (type === 'supplier') {
           changePage(-1); // existing function
         }
@@ -2628,10 +3141,41 @@
             renderCategoryData();
           }
         } else if (type === 'referensi') {
-          const totalPages = Math.ceil(rawReferensiData.length / referensiItemsPerPage);
+          let filteredData = rawReferensiData.filter(item => {
+            let val = "";
+            if (currentReferensiTab === 'satuan') val = item.satuan || "";
+            else if (currentReferensiTab === 'kategori') val = item.kategoriBarang || "";
+            else if (currentReferensiTab === 'status') val = item.statusOrder || "";
+            const matchSearch = !referensiSearchTerm || val.toLowerCase().includes(referensiSearchTerm);
+            return !!val && matchSearch;
+          });
+          const totalPages = Math.ceil(filteredData.length / referensiItemsPerPage);
           if (referensiCurrentPage < totalPages) {
             referensiCurrentPage++;
             renderReferensiData();
+          }
+        } else if (type === 'barang') {
+          const totalPages = Math.ceil(rawBarangData.length / barangItemsPerPage);
+          if (barangCurrentPage < totalPages) {
+            barangCurrentPage++;
+            renderBarangData();
+          }
+        } else if (type === 'satuan-barang') {
+          let filtered = rawSatuanBarangData.filter(item => {
+             const search = satuanBarangSearchTerm.toLowerCase();
+             const matchesSearch = (
+               (item.namaBarang || "").toLowerCase().includes(search) ||
+               (item.idBarang || "").toLowerCase().includes(search) ||
+               (item.barcode || "").toLowerCase().includes(search)
+             );
+             const matchesStatus = satuanBarangFilterStatus === 'all' || item.status === satuanBarangFilterStatus;
+             const matchesSatuan = satuanBarangFilterSatuan === 'all' || item.satuan === satuanBarangFilterSatuan;
+             return matchesSearch && matchesStatus && matchesSatuan;
+          });
+          const totalPages = Math.ceil(filtered.length / satuanBarangItemsPerPage);
+          if (satuanBarangCurrentPage < totalPages) {
+            satuanBarangCurrentPage++;
+            renderSatuanBarangData();
           }
         } else if (type === 'supplier') {
           changePage(1); // existing function
@@ -2738,7 +3282,38 @@
 
       // --- REFERENSI MANAGEMENT ---
       let isRefreshingReferensi = false;
+      
+      function switchReferensiTab(tab) {
+        currentReferensiTab = tab;
+        referensiCurrentPage = 1;
+        
+        // Update UI classes
+        const tabs = ['satuan', 'kategori', 'status'];
+        tabs.forEach(t => {
+          const btn = document.getElementById(`tab-ref-${t}`);
+          if (!btn) return;
+          if (t === tab) {
+            btn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            btn.classList.remove('text-slate-400');
+          } else {
+            btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+            btn.classList.add('text-slate-400');
+          }
+        });
+        
+        const labels = {
+          'satuan': 'Satuan',
+          'kategori': 'Kategori Barang',
+          'status': 'Status Order'
+        };
+        const th = document.getElementById('th-referensi-label');
+        if (th) th.innerText = labels[tab];
+        
+        renderReferensiData();
+      }
+
       async function fetchReferensiData() {
+        if (!rawReferensiData) rawReferensiData = [];
         try {
           const res = await callGAS("ambilReferensi");
           if (res && res.sukses && Array.isArray(res.data)) {
@@ -2749,7 +3324,7 @@
         }
         
         const section = document.getElementById("section-referensi");
-        if (section && section.classList.contains("active")) {
+        if (section && (section.classList.contains("active") || !section.classList.contains("hidden"))) {
           renderReferensiData();
         }
       }
@@ -2802,16 +3377,30 @@
         form.reset();
         document.getElementById("form-referensiId").value = "";
         
+        // Hide all groups first
+        document.getElementById("modal-ref-satuan-group").classList.add("hidden");
+        document.getElementById("modal-ref-kategori-group").classList.add("hidden");
+        document.getElementById("modal-ref-status-group").classList.add("hidden");
+
+        const tabLabels = {
+          'satuan': 'Satuan',
+          'kategori': 'Kategori Barang',
+          'status': 'Status Order'
+        };
+
         if (data) {
-          title.innerText = "Edit Data Referensi";
+          title.innerText = "Edit " + tabLabels[currentReferensiTab];
           document.getElementById("form-referensiId").value = data.id;
-          document.getElementById("form-ref-satuan").value = data.satuan;
-          document.getElementById("form-ref-kategori").value = data.kategoriBarang;
-          document.getElementById("form-ref-status").value = data.statusOrder;
+          document.getElementById("form-ref-satuan").value = data.satuan || "";
+          document.getElementById("form-ref-kategori").value = data.kategoriBarang || "";
+          document.getElementById("form-ref-status").value = data.statusOrder || "";
         } else {
-          title.innerText = "Tambah Data Referensi";
+          title.innerText = "Tambah " + tabLabels[currentReferensiTab];
         }
         
+        // Only show the group corresponding to active tab
+        document.getElementById(`modal-ref-${currentReferensiTab}-group`).classList.remove("hidden");
+
         modal.classList.remove("hidden");
         modal.classList.add("flex");
       }
@@ -2829,14 +3418,20 @@
         const kategoriBarang = document.getElementById("form-ref-kategori").value.trim().toUpperCase();
         const statusOrder = document.getElementById("form-ref-status").value.trim().toUpperCase();
 
-        if (!satuan && !kategoriBarang && !statusOrder) {
-          showAlert("Peringatan", "Minimal isi salah satu kolom.", "warning");
+        const tab = currentReferensiTab;
+        let val = "";
+        if (tab === 'satuan') val = satuan;
+        else if (tab === 'kategori') val = kategoriBarang;
+        else if (tab === 'status') val = statusOrder;
+
+        if (!val) {
+          showAlert("Peringatan", "Input tidak boleh kosong.", "warning");
           return;
         }
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder });
+          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tab });
           if (res && res.sukses) {
             showAlert("Sukses", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
             closeReferensiModal();
@@ -2853,10 +3448,11 @@
       }
 
       async function handleHapusReferensi(id) {
-        showConfirm("Hapus Referensi?", "Apakah Anda yakin ingin menghapus data referensi ini?", async () => {
+        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order' };
+        showConfirm("Hapus?", `Hapus item ${tabLabels[currentReferensiTab]} ini?`, async () => {
           showLoading(true);
           try {
-            const res = await callGAS("hapusReferensi", { id });
+            const res = await callGAS("hapusReferensi", { id, tab: currentReferensiTab });
             if (res && res.sukses) {
               showAlert("Terhapus", "Data berhasil dihapus.", "success");
               await fetchReferensiData();
@@ -2881,19 +3477,48 @@
           tbody.innerHTML = "";
           cardContainer.innerHTML = "";
 
+          // Update Counts on Tabs
+          const countSatuan = rawReferensiData.filter(item => !!item.satuan).length;
+          const countKategori = rawReferensiData.filter(item => !!item.kategoriBarang).length;
+          const countStatus = rawReferensiData.filter(item => !!item.statusOrder).length;
+          
+          const elSatuan = document.getElementById("count-ref-satuan");
+          const elKategori = document.getElementById("count-ref-kategori");
+          const elStatus = document.getElementById("count-ref-status");
+          
+          if (elSatuan) elSatuan.innerText = `(${countSatuan})`;
+          if (elKategori) elKategori.innerText = `(${countKategori})`;
+          if (elStatus) elStatus.innerText = `(${countStatus})`;
+
           if (!Array.isArray(rawReferensiData) || rawReferensiData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
             cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</div>`;
             document.getElementById("referensiPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
             updatePaginationButtons("referensi", 0, 1);
             return;
           }
 
+          // Filter data based on active tab and search
           let filteredData = rawReferensiData.filter(item => {
-            const s = (item.satuan || "").toLowerCase();
-            const k = (item.kategoriBarang || "").toLowerCase();
-            const st = (item.statusOrder || "").toLowerCase();
-            return s.includes(referensiSearchTerm) || k.includes(referensiSearchTerm) || st.includes(referensiSearchTerm);
+            let val = "";
+            if (currentReferensiTab === 'satuan') val = item.satuan || "";
+            else if (currentReferensiTab === 'kategori') val = item.kategoriBarang || "";
+            else if (currentReferensiTab === 'status') val = item.statusOrder || "";
+            
+            if (!val && !referensiSearchTerm) return false; // Hide empty rows in tabs unless searching? Actually, usually independent.
+            
+            const matchSearch = !referensiSearchTerm || val.toLowerCase().includes(referensiSearchTerm);
+            return !!val && matchSearch;
+          });
+
+          // Sort alphabetical A-Z
+          filteredData.sort((a, b) => {
+             let valA = "";
+             let valB = "";
+             if (currentReferensiTab === 'satuan') { valA = a.satuan || ""; valB = b.satuan || ""; }
+             else if (currentReferensiTab === 'kategori') { valA = a.kategoriBarang || ""; valB = b.kategoriBarang || ""; }
+             else if (currentReferensiTab === 'status') { valA = a.statusOrder || ""; valB = b.statusOrder || ""; }
+             return valA.localeCompare(valB);
           });
 
           const totalData = filteredData.length;
@@ -2906,23 +3531,34 @@
           const endIndex = Math.min(startIndex + referensiItemsPerPage, totalData);
           const paginatedData = filteredData.slice(startIndex, endIndex);
 
+          if (totalData === 0) {
+             tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada data di tab ini.</td></tr>`;
+             cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada data di tab ini.</div>`;
+             document.getElementById("referensiPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
+             updatePaginationButtons("referensi", 0, 1);
+             return;
+          }
+
           paginatedData.forEach((item, idx) => {
             const displayIdx = startIndex + idx + 1;
-            
+            let displayVal = "";
+            let fieldLabel = "";
+            if (currentReferensiTab === 'satuan') { displayVal = item.satuan; fieldLabel = "Satuan"; }
+            else if (currentReferensiTab === 'kategori') { displayVal = item.kategoriBarang; fieldLabel = "Kategori"; }
+            else if (currentReferensiTab === 'status') { displayVal = item.statusOrder; fieldLabel = "Status"; }
+
             // Desktop Row
             const tr = document.createElement("tr");
             tr.className = "hover:bg-slate-50 transition-colors group";
             tr.innerHTML = `
               <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-blue-500 transition-colors">${displayIdx}</td>
-              <td class="px-8 py-6 font-bold text-slate-700">${item.satuan || "-"}</td>
-              <td class="px-8 py-6 font-bold text-slate-700">${item.kategoriBarang || "-"}</td>
-              <td class="px-8 py-6 font-bold text-slate-700">${item.statusOrder || "-"}</td>
+              <td class="px-8 py-6 font-bold text-slate-700">${displayVal || "-"}</td>
               <td class="px-8 py-6">
                 <div class="flex items-center justify-center gap-2">
-                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all">
+                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all" title="Edit">
                     <i data-lucide="edit-3" class="w-4 h-4"></i>
                   </button>
-                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all" title="Hapus">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -2941,27 +3577,24 @@
                   <button onclick="handleHapusReferensi('${item.id}')" class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
               </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Satuan</p>
-                  <p class="text-sm font-bold text-slate-700">${item.satuan || "-"}</p>
-                </div>
-                <div>
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Kategori</p>
-                  <p class="text-sm font-bold text-slate-700">${item.kategoriBarang || "-"}</p>
-                </div>
-                <div class="col-span-2">
-                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Status</p>
-                  <p class="text-sm font-bold text-slate-700">${item.statusOrder || "-"}</p>
-                </div>
+              <div>
+                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">${fieldLabel}</p>
+                <p class="text-sm font-bold text-slate-700">${displayVal || "-"}</p>
               </div>
             `;
             cardContainer.appendChild(card);
           });
 
-          document.getElementById("referensiPaginationInfo").innerText = `MENAMPILKAN ${totalData === 0 ? 0 : startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
+          document.getElementById("referensiPaginationInfo").innerText = `MENAMPILKAN ${startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
           updatePaginationButtons("referensi", referensiCurrentPage, totalPages);
           lucide.createIcons();
+          
+          // Initial tab activation highlight
+          const activeTabBtn = document.getElementById(`tab-ref-${currentReferensiTab}`);
+          if (activeTabBtn) {
+            activeTabBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            activeTabBtn.classList.remove('text-slate-400');
+          }
         } catch (e) {
           console.error("renderReferensiData Error:", e);
         }
@@ -4343,6 +4976,839 @@
         } catch (e) {
           return "";
         }
+      }
+
+      // --- BARANG LOGIC ---
+      async function fetchBarangData(resetFilters = false) {
+        if (resetFilters) {
+          barangSearchTerm = "";
+          const searchInput = document.getElementById("searchBarang");
+          if (searchInput) searchInput.value = "";
+          barangFilterStatus = "all";
+          barangFilterKategori = "all";
+          barangCurrentPage = 1;
+          showToast("Memperbarui data barang...", "info");
+        }
+
+        const btn = document.getElementById("btn-barang-refresh");
+        const icon = btn?.querySelector("i") || btn?.querySelector("svg");
+        if (icon) icon.classList.add("animate-spin");
+        if (btn) btn.classList.add("bg-orange-50", "text-orange-600");
+
+        showLoading(true);
+        try {
+          const res = await callGAS("ambilBarang");
+          showLoading(false);
+          if (icon) icon.classList.remove("animate-spin");
+          if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
+
+          if (res && res.sukses) {
+            rawBarangData = res.data || [];
+            renderBarangData();
+            populateKategoriDropdown();
+            if (resetFilters) showToast("Data barang berhasil diperbarui", "success");
+          } else if (!res) {
+            // Mode Demo / Fallback
+            rawBarangData = [
+              {
+                no: 1,
+                idBarang: "BRG-001",
+                namaBarang: "Pocky Stick Chocolate 22g",
+                kategoriBarang: "SNACK",
+                merk: "Glico",
+                status: "Aktif",
+                row: 2
+              },
+              {
+                no: 2,
+                idBarang: "BRG-002",
+                namaBarang: "Indomie Goreng Original",
+                kategoriBarang: "SEMBAKO",
+                merk: "Indofood",
+                status: "Aktif",
+                row: 3
+              },
+              {
+                no: 3,
+                idBarang: "BRG-003",
+                namaBarang: "Coca Cola 330ml",
+                kategoriBarang: "MINUMAN",
+                merk: "Coca Cola",
+                status: "Nonaktif",
+                row: 4
+              }
+            ];
+            renderBarangData();
+            populateKategoriDropdown();
+            if (resetFilters) showToast("Data demo berhasil dimuat", "success");
+          } else {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          if (icon) icon.classList.remove("animate-spin");
+          if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
+          console.error("fetchBarangData Error:", err);
+        }
+      }
+
+      async function populateKategoriDropdown() {
+        try {
+          let list = await callGAS("getKategoriOptions");
+          if (!list || list.length === 0) {
+            // Fallback for demo mode
+            list = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
+          }
+          
+          const select = document.getElementById("form-barangKategori");
+          const filterSelect = document.getElementById("filter-barang-kategori");
+
+          if (select) {
+            select.innerHTML = '<option value="">Pilih Kategori...</option>';
+            list.forEach(cat => {
+               select.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+          }
+
+          if (filterSelect) {
+            filterSelect.innerHTML = '<option value="all">Semua Kategori</option>';
+            list.forEach(cat => {
+               filterSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+            filterSelect.value = barangFilterKategori;
+          }
+        } catch (err) {
+          console.error("populateKategoriDropdown Error:", err);
+        }
+      }
+
+      function updateBarangControlUI() {
+        // Update Sort Buttons
+        document.querySelectorAll('.barang-sort-btn').forEach(btn => {
+           if (btn.dataset.val === barangSortBy) {
+             btn.classList.add('bg-slate-900', 'text-white');
+             btn.classList.remove('border-slate-100', 'text-slate-500');
+           } else {
+             btn.classList.remove('bg-slate-900', 'text-white');
+             btn.classList.add('border-slate-100', 'text-slate-500');
+           }
+        });
+
+        // Update Status Buttons
+        document.querySelectorAll('.barang-status-btn').forEach(btn => {
+           if (btn.dataset.val === barangFilterStatus) {
+             btn.classList.add('bg-orange-600', 'text-white');
+             btn.classList.remove('border-slate-100');
+           } else {
+             btn.classList.remove('bg-orange-600', 'text-white');
+             btn.classList.add('border-slate-100');
+           }
+        });
+
+        // Update Sort Order Icon/Text
+        const icon = document.getElementById('icon-barang-order');
+        const text = document.getElementById('text-barang-order');
+        if (icon && text) {
+           if (barangSortOrder === 'asc') {
+              icon.setAttribute('data-lucide', 'arrow-up-narrow-wide');
+              text.innerText = 'A - Z';
+           } else {
+              icon.setAttribute('data-lucide', 'arrow-down-wide-narrow');
+              text.innerText = 'Z - A';
+           }
+           lucide.createIcons();
+        }
+
+        // Active state indicator for filter/sort buttons
+        const filterBtn = document.getElementById('btn-barang-filter');
+        const sortBtn = document.getElementById('btn-barang-sort');
+        
+        if (barangFilterStatus !== 'all' || barangFilterKategori !== 'all') {
+          filterBtn.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50');
+        } else {
+          filterBtn.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50');
+        }
+
+        if (barangSortBy !== 'idBarang' || barangSortOrder !== 'asc') {
+           sortBtn.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50');
+        } else {
+           sortBtn.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50');
+        }
+      }
+
+      function renderBarangData() {
+        const tbody = document.getElementById("barangTableBody");
+        const cardContainer = document.getElementById("barangCardContainer");
+        const info = document.getElementById("barangPaginationInfo");
+
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+        cardContainer.innerHTML = "";
+        
+        updateBarangControlUI();
+
+        let filtered = rawBarangData.filter(item => {
+           const search = barangSearchTerm.toLowerCase();
+           const matchesSearch = (
+             (item.namaBarang || "").toLowerCase().includes(search) ||
+             (item.merk || "").toLowerCase().includes(search) ||
+             (item.idBarang || "").toLowerCase().includes(search)
+           );
+
+           const matchesStatus = barangFilterStatus === 'all' || item.status === barangFilterStatus;
+           const matchesKategori = barangFilterKategori === 'all' || item.kategoriBarang === barangFilterKategori;
+
+           return matchesSearch && matchesStatus && matchesKategori;
+        });
+
+        // Dynamic Sort
+        filtered.sort((a, b) => {
+           let valA = a[barangSortBy] || "";
+           let valB = b[barangSortBy] || "";
+           
+           if (typeof valA === 'string') valA = valA.toLowerCase();
+           if (typeof valB === 'string') valB = valB.toLowerCase();
+
+           if (barangSortOrder === 'asc') {
+              return valA > valB ? 1 : -1;
+           } else {
+              return valA < valB ? 1 : -1;
+           }
+        });
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / barangItemsPerPage) || 1;
+        if (barangCurrentPage > totalPages) barangCurrentPage = totalPages;
+
+        const start = (barangCurrentPage - 1) * barangItemsPerPage;
+        const end = Math.min(start + barangItemsPerPage, total);
+        const paginated = filtered.slice(start, end);
+
+        if (paginated.length === 0) {
+           tbody.innerHTML = '<tr><td colspan="7" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
+           cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
+        } else {
+           paginated.forEach((item, idx) => {
+             const rowIdx = start + idx + 1;
+             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+             
+             tbody.innerHTML += `
+               <tr class="hover:bg-slate-50/80 transition-colors group">
+                 <td class="px-8 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
+                 <td class="px-8 py-6 font-black text-slate-900 text-xs">${item.idBarang}</td>
+                 <td class="px-8 py-6">
+                    <div class="flex flex-col">
+                      <span class="font-black text-slate-800 text-sm italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</span>
+                    </div>
+                 </td>
+                 <td class="px-8 py-6 font-bold text-slate-500 text-xs uppercase">${item.kategoriBarang || "-"}</td>
+                 <td class="px-8 py-6 font-bold text-slate-500 text-xs capitalize">${item.merk || "-"}</td>
+                 <td class="px-8 py-6 text-center">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="flex items-center justify-center gap-2">
+                       <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-90">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                       </button>
+                       <button onclick="handleHapusBarang(${item.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all active:scale-90">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                       </button>
+                    </div>
+                 </td>
+               </tr>
+             `;
+
+             cardContainer.innerHTML += `
+               <div class="p-6 space-y-4">
+                  <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.idBarang}</p>
+                        <h4 class="font-black text-slate-800 italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</h4>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Kategori</p>
+                        <p class="text-xs font-bold text-slate-600">${item.kategoriBarang || "-"}</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Merk</p>
+                        <p class="text-xs font-bold text-slate-600">${item.merk || "-"}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 pt-2">
+                     <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit</button>
+                     <button onclick="handleHapusBarang(${item.row})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition-all">Hapus</button>
+                  </div>
+               </div>
+             `;
+           });
+        }
+
+        info.innerText = `SHOWING ${total > 0 ? start + 1 : 0} TO ${end} OF ${total} DATA`;
+        document.getElementById("prevBtn-barang").disabled = barangCurrentPage === 1;
+        document.getElementById("nextBtn-barang").disabled = barangCurrentPage >= totalPages;
+        lucide.createIcons();
+      }
+
+      // --- BARANG ACTIONS ---
+      function toggleBarangFilters() {
+        const panel = document.getElementById('barang-filters-panel');
+        const sortPanel = document.getElementById('barang-sort-panel');
+        sortPanel.classList.add('hidden');
+        panel.classList.toggle('hidden');
+      }
+
+      function toggleBarangSort() {
+        const panel = document.getElementById('barang-sort-panel');
+        const filterPanel = document.getElementById('barang-filters-panel');
+        filterPanel.classList.add('hidden');
+        panel.classList.toggle('hidden');
+      }
+
+      function setBarangFilterStatus(val) {
+        barangFilterStatus = val;
+        barangCurrentPage = 1;
+        renderBarangData();
+      }
+
+      function applyBarangFilters() {
+        barangFilterKategori = document.getElementById('filter-barang-kategori').value;
+        barangCurrentPage = 1;
+        renderBarangData();
+      }
+
+      function setBarangSort(by) {
+        barangSortBy = by;
+        renderBarangData();
+      }
+
+      function toggleBarangSortOrder() {
+        barangSortOrder = barangSortOrder === 'asc' ? 'desc' : 'asc';
+        renderBarangData();
+      }
+
+      function openBarangModal(data = null) {
+        const modal = document.getElementById("barangModal");
+        const title = document.getElementById("barangFormTitle");
+        const form = document.getElementById("barangForm");
+        
+        form.reset();
+        populateKategoriDropdown();
+
+        if (data) {
+          title.innerText = "Edit Barang";
+          document.getElementById("form-barangRow").value = data.row;
+          document.getElementById("form-barangId").value = data.idBarang;
+          document.getElementById("form-barangNama").value = data.namaBarang;
+          document.getElementById("form-barangKategori").value = data.kategoriBarang;
+          document.getElementById("form-barangMerk").value = data.merk;
+          document.getElementById("form-barangStatus").value = data.status;
+        } else {
+          title.innerText = "Tambah Barang";
+          document.getElementById("form-barangRow").value = "";
+          document.getElementById("form-barangId").value = "Generated After Save";
+          document.getElementById("form-barangStatus").value = "Aktif";
+        }
+
+        modal.classList.replace("hidden", "flex");
+        lucide.createIcons();
+      }
+
+      function closeBarangModal() {
+        document.getElementById("barangModal").classList.replace("flex", "hidden");
+      }
+
+      async function handleSimpanBarang(e) {
+        e.preventDefault();
+        const payload = {
+          row: document.getElementById("form-barangRow").value,
+          idBarang: document.getElementById("form-barangId").value,
+          namaBarang: document.getElementById("form-barangNama").value,
+          kategoriBarang: document.getElementById("form-barangKategori").value,
+          merk: document.getElementById("form-barangMerk").value,
+          status: document.getElementById("form-barangStatus").value
+        };
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanBarang", payload);
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast("Berhasil disimpan", "success");
+            closeBarangModal();
+            fetchBarangData();
+          } else if (res) {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleSimpanBarang Error:", err);
+        }
+      }
+
+      async function handleHapusBarang(row) {
+        const konfirmasi = await showKonfirmasi("Hapus Barang?", "Data yang dihapus tidak dapat dikembalikan.");
+        if (!konfirmasi) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("hapusBarang", { row: row });
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast("Berhasil dihapus", "success");
+            fetchBarangData();
+          } else if (res) {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleHapusBarang Error:", err);
+        }
+      }
+
+      let searchBarangTimer;
+      function debouncedSearchBarang() {
+        clearTimeout(searchBarangTimer);
+        searchBarangTimer = setTimeout(() => {
+           barangSearchTerm = document.getElementById("searchBarang").value;
+           barangCurrentPage = 1;
+           renderBarangData();
+        }, 500);
+      }
+
+      // --- SATUAN BARANG LOGIC ---
+      async function fetchSatuanBarangData(resetFilters = false) {
+        if (resetFilters) {
+          satuanBarangSearchTerm = "";
+          const searchInput = document.getElementById("searchSatuanBarang");
+          if (searchInput) searchInput.value = "";
+          satuanBarangFilterStatus = "all";
+          satuanBarangFilterSatuan = "all";
+          satuanBarangCurrentPage = 1;
+          showToast("Memperbarui data satuan...", "info");
+        }
+
+        const btn = document.getElementById("btn-satuan-refresh");
+        const icon = btn?.querySelector("i") || btn?.querySelector("svg");
+        if (icon) icon.classList.add("animate-spin");
+        if (btn) btn.classList.add("bg-blue-50", "text-blue-600");
+
+        showLoading(true);
+        try {
+          const res = await callGAS("ambilSatuanBarang");
+          showLoading(false);
+          if (icon) icon.classList.remove("animate-spin");
+          if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
+
+          if (res && res.sukses) {
+            rawSatuanBarangData = res.data || [];
+            renderSatuanBarangData();
+            populateSatuanDropdowns();
+            if (resetFilters) showToast("Data satuan berhasil diperbarui", "success");
+          } else {
+             // Demo Fallback - Data Contoh Jika Belum Terkoneksi
+             if (rawBarangData.length === 0) {
+                rawBarangData = [
+                  { row: 1, idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", status: "Aktif" },
+                  { row: 2, idBarang: "BRG-002", namaBarang: "Aqua 600ml", status: "Aktif" },
+                  { row: 3, idBarang: "BRG-003", namaBarang: "Indomie Goreng", status: "Aktif" }
+                ];
+             }
+             if (rawReferensiData.length === 0) {
+               rawReferensiData = [
+                 { row: 1, satuan: "Pcs" }, { row: 2, satuan: "Box" }, 
+                 { row: 3, satuan: "Karton" }, { row: 4, satuan: "Dus" }
+               ];
+             }
+
+             rawSatuanBarangData = [
+               { row: 1, barcode: "899123456701", idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", satuan: "Pcs", qtySatuan: 1, hargaJual: 2000, status: "Aktif", gambar: "" },
+               { row: 2, barcode: "899123456702", idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", satuan: "Box", qtySatuan: 20, hargaJual: 35000, status: "Aktif", gambar: "" },
+               { row: 3, barcode: "899123456703", idBarang: "BRG-002", namaBarang: "Aqua 600ml", satuan: "Pcs", qtySatuan: 1, hargaJual: 4500, status: "Aktif", gambar: "" },
+               { row: 4, barcode: "899123456704", idBarang: "BRG-002", namaBarang: "Aqua 600ml", satuan: "Karton", qtySatuan: 24, hargaJual: 95000, status: "Aktif", gambar: "" },
+               { row: 5, barcode: "899123456705", idBarang: "BRG-003", namaBarang: "Indomie Goreng", satuan: "Pcs", qtySatuan: 1, hargaJual: 3100, status: "Aktif", gambar: "" },
+               { row: 6, barcode: "899123456706", idBarang: "BRG-003", namaBarang: "Indomie Goreng", satuan: "Dus", qtySatuan: 40, hargaJual: 115000, status: "Aktif", gambar: "" }
+             ];
+             renderSatuanBarangData();
+             populateSatuanDropdowns();
+             if (!res) {
+                if (resetFilters) showToast("Mode Demo: Data contoh dimuat", "info");
+             } else {
+                showToast(res.pesan, "error");
+             }
+          }
+        } catch (err) {
+          showLoading(false);
+          if (icon) icon.classList.remove("animate-spin");
+          if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
+          console.error("fetchSatuanBarangData Error:", err);
+        }
+      }
+
+      function updateSatuanControlUI() {
+        const panels = ['filters', 'sort'];
+        panels.forEach(p => {
+           const btnId = p === 'filters' ? 'btn-satuan-filter' : 'btn-satuan-sort';
+           const panelId = `satuan-${p}-panel`;
+           const btn = document.getElementById(btnId);
+           const panel = document.getElementById(panelId);
+           
+           if (btn && panel) {
+             const icon = btn.querySelector('i') || btn.querySelector('svg');
+             if (icon) {
+               if (!panel.classList.contains('hidden')) {
+                  icon.classList.add('text-blue-600');
+               } else {
+                  icon.classList.remove('text-blue-600');
+               }
+             }
+           }
+        });
+        
+        const filterBtn = document.getElementById('btn-satuan-filter');
+        const sortBtn = document.getElementById('btn-satuan-sort');
+        
+        if (filterBtn) {
+          if (satuanBarangFilterStatus !== 'all' || satuanBarangFilterSatuan !== 'all') {
+            filterBtn.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+          } else {
+            filterBtn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          }
+        }
+
+        if (sortBtn) {
+          if (satuanBarangSortBy !== 'namaBarang' || satuanBarangSortOrder !== 'asc') {
+             sortBtn.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+          } else {
+             sortBtn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+          }
+        }
+      }
+
+      function renderSatuanBarangData() {
+        const tbody = document.getElementById("satuanBarangTableBody");
+        const cardContainer = document.getElementById("satuanBarangCardContainer");
+        const info = document.getElementById("satuanBarangPaginationInfo");
+
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        if (cardContainer) cardContainer.innerHTML = "";
+        updateSatuanControlUI();
+
+        let filtered = rawSatuanBarangData.filter(item => {
+           const search = satuanBarangSearchTerm.toLowerCase();
+           const matchesSearch = (
+             (item.namaBarang || "").toLowerCase().includes(search) ||
+             (item.idBarang || "").toLowerCase().includes(search) ||
+             (item.barcode || "").toLowerCase().includes(search)
+           );
+           const matchesStatus = satuanBarangFilterStatus === 'all' || item.status === satuanBarangFilterStatus;
+           const matchesSatuan = satuanBarangFilterSatuan === 'all' || item.satuan === satuanBarangFilterSatuan;
+           return matchesSearch && matchesStatus && matchesSatuan;
+        });
+
+        // Sort
+        filtered.sort((a, b) => {
+           let valA = a[satuanBarangSortBy] || "";
+           let valB = b[satuanBarangSortBy] || "";
+           if (typeof valA === 'string') valA = valA.toLowerCase();
+           if (typeof valB === 'string') valB = valB.toLowerCase();
+           return satuanBarangSortOrder === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+        });
+
+        const total = filtered.length;
+        const totalPages = Math.ceil(total / satuanBarangItemsPerPage) || 1;
+        if (satuanBarangCurrentPage > totalPages) satuanBarangCurrentPage = totalPages;
+
+        const start = (satuanBarangCurrentPage - 1) * satuanBarangItemsPerPage;
+        const end = Math.min(start + satuanBarangItemsPerPage, total);
+        const paginated = filtered.slice(start, end);
+
+        if (paginated.length === 0) {
+           tbody.innerHTML = '<tr><td colspan="8" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
+           cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
+        } else {
+           paginated.forEach((item, idx) => {
+             const rowIdx = start + idx + 1;
+             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+             const imgHtml = item.gambar ? `<img src="${item.gambar}" class="w-10 h-10 rounded-lg object-cover border border-slate-100 shadow-sm" onerror="this.src='https://via.placeholder.com/40x40?text=?'"/>` : `<div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-5 h-5"></i></div>`;
+
+             tbody.innerHTML += `
+               <tr class="hover:bg-slate-50/80 transition-colors group">
+                 <td class="px-8 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
+                 <td class="px-8 py-6 font-mono text-slate-700 text-xs">${item.barcode || "-"}</td>
+                 <td class="px-8 py-6">
+                    <div class="flex items-center gap-3">
+                       ${imgHtml}
+                       <div class="flex flex-col">
+                         <span class="font-black text-slate-800 text-sm italic group-hover:text-blue-600 transition-colors">${item.namaBarang}</span>
+                         <span class="text-[10px] font-bold text-slate-400">${item.idBarang}</span>
+                       </div>
+                    </div>
+                 </td>
+                 <td class="px-8 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
+                 <td class="px-8 py-6 font-black text-slate-900 text-xs">${item.qtySatuan}</td>
+                 <td class="px-8 py-6 text-right font-black text-slate-900 text-sm">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
+                 <td class="px-8 py-6 text-center">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="flex items-center justify-center gap-2">
+                       <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-90">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                       </button>
+                       <button onclick="handleHapusSatuanBarang(${item.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all active:scale-90">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                       </button>
+                    </div>
+                 </td>
+               </tr>
+             `;
+
+             cardContainer.innerHTML += `
+               <div class="p-6 space-y-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                        ${imgHtml}
+                        <div>
+                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.barcode || item.idBarang}</p>
+                            <h4 class="font-black text-slate-800 italic group-hover:text-blue-600 transition-colors">${item.namaBarang}</h4>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 bg-white/50 p-3 rounded-2xl border border-slate-100">
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Satuan</p>
+                        <p class="text-[10px] font-black text-slate-700 uppercase">${item.satuan}</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty</p>
+                        <p class="text-[10px] font-black text-slate-700">${item.qtySatuan}</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Harga</p>
+                        <p class="text-[10px] font-black text-blue-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 pt-2">
+                     <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Edit</button>
+                     <button onclick="handleHapusSatuanBarang(${item.row})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition-all">Hapus</button>
+                  </div>
+               </div>
+             `;
+           });
+        }
+
+        info.innerText = `SHOWING ${total > 0 ? start + 1 : 0} TO ${end} OF ${total} DATA`;
+        document.getElementById("prevBtn-satuan-barang").disabled = satuanBarangCurrentPage === 1;
+        document.getElementById("nextBtn-satuan-barang").disabled = satuanBarangCurrentPage >= totalPages;
+        lucide.createIcons();
+      }
+
+      function populateSatuanDropdowns() {
+        const itemSelect = document.getElementById("form-satuanIdBarang");
+        const satuanSelect = document.getElementById("form-satuanSatuan");
+        const filterSatuan = document.getElementById("filter-satuan-dropdown");
+
+        if (!itemSelect || !satuanSelect) return;
+
+        // Barang
+        const currentItemValue = itemSelect.value;
+        itemSelect.innerHTML = '<option value="">Pilih ID Barang...</option>';
+        rawBarangData.forEach(b => {
+           if (b.status === "Aktif") {
+              itemSelect.innerHTML += `<option value="${b.idBarang}">${b.idBarang} - ${b.namaBarang}</option>`;
+           }
+        });
+        itemSelect.value = currentItemValue;
+
+        // Satuan from Referensi
+        const currentSatValue = satuanSelect.value;
+        const currentFilterSat = filterSatuan.value;
+        
+        satuanSelect.innerHTML = '<option value="">Pilih Satuan...</option>';
+        filterSatuan.innerHTML = '<option value="all">Semua Satuan</option>';
+        
+        const satuanList = rawReferensiData.filter(r => r.satuan).map(r => r.satuan);
+        [...new Set(satuanList)].forEach(s => {
+           satuanSelect.innerHTML += `<option value="${s}">${s}</option>`;
+           filterSatuan.innerHTML += `<option value="${s}">${s}</option>`;
+        });
+        
+        satuanSelect.value = currentSatValue;
+        filterSatuan.value = currentFilterSat;
+      }
+
+      function autoFillNamaBarangBySatuan(idBarang) {
+        const barang = rawBarangData.find(b => b.idBarang === idBarang);
+        document.getElementById("form-satuanNamaBarang").value = barang ? barang.namaBarang : "";
+      }
+
+      function openSatuanBarangModal(data = null) {
+        const modal = document.getElementById("satuanBarangModal");
+        const title = document.getElementById("satuanBarangFormTitle");
+        const form = document.getElementById("satuanBarangForm");
+        
+        form.reset();
+        document.getElementById("satuan-upload-preview").classList.add("hidden");
+        populateSatuanDropdowns();
+
+        if (data) {
+          title.innerText = "Edit Satuan Barang";
+          document.getElementById("form-satuanRow").value = data.row;
+          document.getElementById("form-satuanBarcode").value = data.barcode || "";
+          document.getElementById("form-satuanIdBarang").value = data.idBarang;
+          document.getElementById("form-satuanNamaBarang").value = data.namaBarang;
+          document.getElementById("form-satuanSatuan").value = data.satuan;
+          document.getElementById("form-satuanQty").value = data.qtySatuan;
+          document.getElementById("form-satuanHarga").value = data.hargaJual;
+          document.getElementById("form-satuanStatus").value = data.status;
+          document.getElementById("form-satuanGambarLink").value = data.gambar || "";
+          
+          if (data.gambar) {
+            const preview = document.getElementById("satuan-upload-preview");
+            preview.querySelector("img").src = data.gambar;
+            preview.classList.remove("hidden");
+          }
+        } else {
+          title.innerText = "Tambah Satuan Barang";
+          document.getElementById("form-satuanRow").value = "";
+          document.getElementById("form-satuanStatus").value = "Aktif";
+        }
+
+        modal.classList.replace("hidden", "flex");
+        lucide.createIcons();
+      }
+
+      function closeSatuanBarangModal() {
+        document.getElementById("satuanBarangModal").classList.replace("flex", "hidden");
+      }
+
+      function handleSatuanImageUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const preview = document.getElementById("satuan-upload-preview");
+          preview.querySelector("img").src = e.target.result;
+          preview.classList.remove("hidden");
+          // Store base64 in link field for simplicity or handle as separate payload
+          document.getElementById("form-satuanGambarLink").value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function handleSimpanSatuanBarang(e) {
+        e.preventDefault();
+        const payload = {
+          row: document.getElementById("form-satuanRow").value,
+          barcode: document.getElementById("form-satuanBarcode").value,
+          idBarang: document.getElementById("form-satuanIdBarang").value,
+          namaBarang: document.getElementById("form-satuanNamaBarang").value,
+          satuan: document.getElementById("form-satuanSatuan").value,
+          qtySatuan: document.getElementById("form-satuanQty").value,
+          hargaJual: document.getElementById("form-satuanHarga").value,
+          status: document.getElementById("form-satuanStatus").value,
+          gambar: document.getElementById("form-satuanGambarLink").value
+        };
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanSatuanBarang", payload);
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast("Satuan berhasil disimpan", "success");
+            closeSatuanBarangModal();
+            fetchSatuanBarangData();
+          } else if (res) {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleSimpanSatuanBarang Error:", err);
+        }
+      }
+
+      async function handleHapusSatuanBarang(row) {
+        const konfirmasi = await showKonfirmasi("Hapus Satuan?", "Status akan diubah menjadi Nonaktif.");
+        if (!konfirmasi) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("hapusSatuanBarang", { row: row });
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast("Berhasil dinonaktifkan", "success");
+            fetchSatuanBarangData();
+          } else if (res) {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleHapusSatuanBarang Error:", err);
+        }
+      }
+
+      let searchSatuanTimer;
+      function debouncedSearchSatuanBarang() {
+        clearTimeout(searchSatuanTimer);
+        searchSatuanTimer = setTimeout(() => {
+           satuanBarangSearchTerm = document.getElementById("searchSatuanBarang").value;
+           satuanBarangCurrentPage = 1;
+           renderSatuanBarangData();
+        }, 500);
+      }
+
+      function toggleSatuanBarangFilters() {
+        const panel = document.getElementById('satuan-filters-panel');
+        const sortPanel = document.getElementById('satuan-sort-panel');
+        sortPanel.classList.add('hidden');
+        panel.classList.toggle('hidden');
+        updateSatuanControlUI();
+      }
+
+      function toggleSatuanBarangSort() {
+        const panel = document.getElementById('satuan-sort-panel');
+        const filterPanel = document.getElementById('satuan-filters-panel');
+        filterPanel.classList.add('hidden');
+        panel.classList.toggle('hidden');
+        updateSatuanControlUI();
+      }
+
+      function setSatuanBarangFilterStatus(val) {
+        satuanBarangFilterStatus = val;
+        satuanBarangCurrentPage = 1;
+        renderSatuanBarangData();
+      }
+
+      function applySatuanBarangFilters() {
+        satuanBarangFilterSatuan = document.getElementById('filter-satuan-dropdown').value;
+        satuanBarangCurrentPage = 1;
+        renderSatuanBarangData();
+      }
+
+      function setSatuanBarangSort(by) {
+        satuanBarangSortBy = by;
+        renderSatuanBarangData();
+      }
+
+      function toggleSatuanBarangSortOrder() {
+        satuanBarangSortOrder = satuanBarangSortOrder === 'asc' ? 'desc' : 'asc';
+        const icon = document.getElementById("icon-satuan-order");
+        const text = document.getElementById("text-satuan-order");
+        if (satuanBarangSortOrder === 'asc') {
+           icon.setAttribute('data-lucide', 'arrow-up-narrow-wide');
+           text.innerText = "A - Z";
+        } else {
+           icon.setAttribute('data-lucide', 'arrow-down-wide-narrow');
+           text.innerText = "Z - A";
+        }
+        renderSatuanBarangData();
       }
     </script>
   </body>

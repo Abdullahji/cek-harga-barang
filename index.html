@@ -2303,7 +2303,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx_YejrkoMklYe3Q1ecejwfOId90rWj_BUJfEv0IZ1UZ0X5Q-ql0JZnE3qM17ATgN_2sQ/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzowCxS1jGazbdorw8Vvpft00kq6h_YeFOQ36jUer_O_uaPKxM1Iu-YaReKpTxziKRJuQ/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2349,7 +2349,6 @@
         }
       }
 
-      let isMasterCategoryLoaded = false;
       async function fetchCategoryData() {
         try {
           const res = await callGAS("ambilMasterCategory");

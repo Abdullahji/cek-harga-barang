@@ -462,6 +462,14 @@
                   <div class="dot"></div>
                   <span class="font-bold text-xs capitalize tracking-widest">Kategori Barang</span>
                 </button>
+                <button
+                  onclick="switchPage('referensi')"
+                  id="nav-referensi"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Referensi</span>
+                </button>
               </div>
             </div>
 
@@ -1586,6 +1594,121 @@
               </div>
             </div>
 
+            <!-- SECTION: REFERENSI -->
+            <section
+              id="section-referensi"
+              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Data Referensi</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Manajemen Satuan, Kategori & Status</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openReferensiModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH DATA</span>
+                  </button>
+                </div>
+              </div>
+
+                <!-- SEARCH & FILTER REFERENSI -->
+                <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
+                  <div class="flex-1 relative group min-w-0">
+                    <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                    <input
+                      type="text"
+                      id="searchReferensi"
+                      oninput="debouncedSearchReferensi()"
+                      placeholder="Cari Referensi..."
+                      class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    />
+                  </div>
+                  <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <button id="btn-refresh-referensi" onclick="refreshReferensiData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-blue-600 hover:border-blue-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Referensi">
+                      <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                  </div>
+                </div>
+
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[600px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-8 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7">Satuan</th>
+                        <th class="px-8 py-7">Kategori Barang</th>
+                        <th class="px-8 py-7">Status Order</th>
+                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="referensiTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="referensiCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Pagination Referensi -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="referensiPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('referensi')" id="prevBtn-referensi" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('referensi')" id="nextBtn-referensi" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- MODAL REFERENSI -->
+            <div id="referensiModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeReferensiModal()"></div>
+              <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200">
+                <div class="flex justify-between items-center mb-8">
+                  <h3 id="referensiFormTitle" class="text-xl font-black text-slate-900">Tambah Data Referensi</h3>
+                  <button onclick="closeReferensiModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                <form id="referensiForm" onsubmit="handleSimpanReferensi(event)" class="space-y-6">
+                  <input type="hidden" id="form-referensiId" />
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
+                    <input type="text" id="form-ref-satuan" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori Barang</label>
+                    <input type="text" id="form-ref-kategori" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: SNACK" />
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
+                    <input type="text" id="form-ref-status" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
+                  </div>
+                  <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>SIMPAN REFERENSI</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
           <!-- Footer -->
           <footer class="mt-auto py-10 bg-white border-t border-slate-100">
             <div class="flex flex-col items-center justify-center gap-4 px-6">
@@ -1614,10 +1737,12 @@
       let isRefreshing = false;
       let rawSupplierData = [];
       let rawCategoryData = [];
+      let rawReferensiData = [];
       let filteredSupplierData = []; // Track filtered data for pagination
       let rawCekHargaData = [];
       let html5QrcodeScanner = null;
       let isScanning = false;
+      let isMasterCategoryLoaded = false;
 
       // Logic Control States
       let sortOrder = "asc"; // asc (A-Z), desc (Z-A)
@@ -1646,6 +1771,8 @@
       let itemsPerPage = 10;
       let categoryCurrentPage = 1;
       let categoryItemsPerPage = 10;
+      let referensiCurrentPage = 1;
+      let referensiItemsPerPage = 10;
 
       window.onload = async () => {
         // Load Dark Mode Preference
@@ -1664,6 +1791,7 @@
             rawSupplierData = res.supplier || [];
             rawCekHargaData = res.cekHarga || [];
             rawCategoryData = res.category || [];
+            rawReferensiData = res.referensi || [];
             
             console.info("Category loaded from DB:", rawCategoryData.length);
             if (rawCategoryData.length === 0) {
@@ -1678,7 +1806,8 @@
             await Promise.all([
               fetchCekHargaData(),
               fetchCategoryData(),
-              fetchSupplierData()
+              fetchSupplierData(),
+              fetchReferensiData()
             ]);
           }
         } catch (e) {
@@ -1687,7 +1816,8 @@
           await Promise.all([
             fetchCekHargaData(),
             fetchCategoryData(),
-            fetchSupplierData()
+            fetchSupplierData(),
+            fetchReferensiData()
           ]);
         }
         
@@ -1844,6 +1974,8 @@
             renderSupplierData();
           } else if (page === "cek-harga") {
             renderCekHargaData();
+          } else if (page === "referensi") {
+            renderReferensiData();
           }
         }
 
@@ -1862,16 +1994,18 @@
           "dashboard": "Ringkasan Sistem",
           "cek-harga": "Cek Harga Barang",
           "supplier": "Database Supplier",
-          "category": "Kategori Barang"
+          "category": "Kategori Barang",
+          "referensi": "Data Referensi"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         // Auto load data if needed
-        if (page === "supplier" || page === "category") {
+        if (page === "supplier" || page === "category" || page === "referensi") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
           fetchCategoryData();
           if (page === "supplier") fetchSupplierData();
+          if (page === "referensi") fetchReferensiData();
         }
 
         if (window.innerWidth < 1024) {
@@ -2169,7 +2303,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw0wHDYsPZShwtnHgTCjguNErhjVyNPleZE3ccDMpae7F9aANY_l_kJsvCYvLU3eAGZHQ/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx_YejrkoMklYe3Q1ecejwfOId90rWj_BUJfEv0IZ1UZ0X5Q-ql0JZnE3qM17ATgN_2sQ/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -2479,6 +2613,9 @@
         if (type === 'category' && categoryCurrentPage > 1) {
           categoryCurrentPage--;
           renderCategoryData();
+        } else if (type === 'referensi' && referensiCurrentPage > 1) {
+          referensiCurrentPage--;
+          renderReferensiData();
         } else if (type === 'supplier') {
           changePage(-1); // existing function
         }
@@ -2490,6 +2627,12 @@
           if (categoryCurrentPage < totalPages) {
             categoryCurrentPage++;
             renderCategoryData();
+          }
+        } else if (type === 'referensi') {
+          const totalPages = Math.ceil(rawReferensiData.length / referensiItemsPerPage);
+          if (referensiCurrentPage < totalPages) {
+            referensiCurrentPage++;
+            renderReferensiData();
           }
         } else if (type === 'supplier') {
           changePage(1); // existing function
@@ -2592,6 +2735,237 @@
             showLoading(false);
           }
         });
+      }
+
+      // --- REFERENSI MANAGEMENT ---
+      let isRefreshingReferensi = false;
+      async function fetchReferensiData() {
+        try {
+          const res = await callGAS("ambilReferensi");
+          if (res && res.sukses && Array.isArray(res.data)) {
+            rawReferensiData = res.data;
+          }
+        } catch (err) {
+          console.error("fetchReferensiData Error:", err);
+        }
+        
+        const section = document.getElementById("section-referensi");
+        if (section && section.classList.contains("active")) {
+          renderReferensiData();
+        }
+      }
+
+      async function refreshReferensiData() {
+        if (isRefreshingReferensi) return;
+        isRefreshingReferensi = true;
+        applyRefreshSpinReferensi();
+        
+        showToast("Menyinkronkan data referensi...", "info");
+        try {
+          await fetchReferensiData();
+          showToast("Data referensi diperbarui", "success");
+        } catch (err) {
+          showToast("Gagal memuat referensi", "error");
+        } finally {
+          isRefreshingReferensi = false;
+          applyRefreshSpinReferensi();
+        }
+      }
+
+      function applyRefreshSpinReferensi() {
+        const btn = document.getElementById("btn-refresh-referensi");
+        if (!btn) return;
+        const icon = btn.querySelector("i") || btn.querySelector("svg");
+        if (isRefreshingReferensi) {
+          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-200");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-200");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
+      let referensiSearchTimer;
+      function debouncedSearchReferensi() {
+        clearTimeout(referensiSearchTimer);
+        referensiSearchTimer = setTimeout(() => {
+          referensiSearchTerm = (document.getElementById("searchReferensi")?.value || "").toLowerCase();
+          referensiCurrentPage = 1;
+          renderReferensiData();
+        }, 300);
+      }
+
+      function openReferensiModal(data = null) {
+        const modal = document.getElementById("referensiModal");
+        const title = document.getElementById("referensiFormTitle");
+        const form = document.getElementById("referensiForm");
+        
+        form.reset();
+        document.getElementById("form-referensiId").value = "";
+        
+        if (data) {
+          title.innerText = "Edit Data Referensi";
+          document.getElementById("form-referensiId").value = data.id;
+          document.getElementById("form-ref-satuan").value = data.satuan;
+          document.getElementById("form-ref-kategori").value = data.kategoriBarang;
+          document.getElementById("form-ref-status").value = data.statusOrder;
+        } else {
+          title.innerText = "Tambah Data Referensi";
+        }
+        
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function closeReferensiModal() {
+        const modal = document.getElementById("referensiModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      async function handleSimpanReferensi(e) {
+        e.preventDefault();
+        const id = document.getElementById("form-referensiId").value;
+        const satuan = document.getElementById("form-ref-satuan").value.trim().toUpperCase();
+        const kategoriBarang = document.getElementById("form-ref-kategori").value.trim().toUpperCase();
+        const statusOrder = document.getElementById("form-ref-status").value.trim().toUpperCase();
+
+        if (!satuan && !kategoriBarang && !statusOrder) {
+          showAlert("Peringatan", "Minimal isi salah satu kolom.", "warning");
+          return;
+        }
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder });
+          if (res && res.sukses) {
+            showAlert("Sukses", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
+            closeReferensiModal();
+            await fetchReferensiData();
+          } else {
+            showAlert("Error", res ? res.pesan : "Gagal menyimpan data.", "error");
+          }
+        } catch (err) {
+          console.error(err);
+          showAlert("Error", "Terjadi kesalahan sistem.", "error");
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      async function handleHapusReferensi(id) {
+        showConfirm("Hapus Referensi?", "Apakah Anda yakin ingin menghapus data referensi ini?", async () => {
+          showLoading(true);
+          try {
+            const res = await callGAS("hapusReferensi", { id });
+            if (res && res.sukses) {
+              showAlert("Terhapus", "Data berhasil dihapus.", "success");
+              await fetchReferensiData();
+            } else {
+              showAlert("Error", res ? res.pesan : "Gagal menghapus data.", "error");
+            }
+          } catch (err) {
+            console.error(err);
+            showAlert("Error", "Terjadi kesalahan sistem.", "error");
+          } finally {
+            showLoading(false);
+          }
+        });
+      }
+
+      function renderReferensiData() {
+        try {
+          const tbody = document.getElementById("referensiTableBody");
+          const cardContainer = document.getElementById("referensiCardContainer");
+          if (!tbody || !cardContainer) return;
+
+          tbody.innerHTML = "";
+          cardContainer.innerHTML = "";
+
+          if (!Array.isArray(rawReferensiData) || rawReferensiData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
+            cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</div>`;
+            document.getElementById("referensiPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
+            updatePaginationButtons("referensi", 0, 1);
+            return;
+          }
+
+          let filteredData = rawReferensiData.filter(item => {
+            const s = (item.satuan || "").toLowerCase();
+            const k = (item.kategoriBarang || "").toLowerCase();
+            const st = (item.statusOrder || "").toLowerCase();
+            return s.includes(referensiSearchTerm) || k.includes(referensiSearchTerm) || st.includes(referensiSearchTerm);
+          });
+
+          const totalData = filteredData.length;
+          const totalPages = Math.ceil(totalData / referensiItemsPerPage) || 1;
+          
+          if (referensiCurrentPage > totalPages) referensiCurrentPage = totalPages;
+          if (referensiCurrentPage < 1) referensiCurrentPage = 1;
+          
+          const startIndex = (referensiCurrentPage - 1) * referensiItemsPerPage;
+          const endIndex = Math.min(startIndex + referensiItemsPerPage, totalData);
+          const paginatedData = filteredData.slice(startIndex, endIndex);
+
+          paginatedData.forEach((item, idx) => {
+            const displayIdx = startIndex + idx + 1;
+            
+            // Desktop Row
+            const tr = document.createElement("tr");
+            tr.className = "hover:bg-slate-50 transition-colors group";
+            tr.innerHTML = `
+              <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-blue-500 transition-colors">${displayIdx}</td>
+              <td class="px-8 py-6 font-bold text-slate-700">${item.satuan || "-"}</td>
+              <td class="px-8 py-6 font-bold text-slate-700">${item.kategoriBarang || "-"}</td>
+              <td class="px-8 py-6 font-bold text-slate-700">${item.statusOrder || "-"}</td>
+              <td class="px-8 py-6">
+                <div class="flex items-center justify-center gap-2">
+                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all">
+                    <i data-lucide="edit-3" class="w-4 h-4"></i>
+                  </button>
+                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Mobile Card
+            const card = document.createElement("div");
+            card.className = "p-6 space-y-4";
+            card.innerHTML = `
+              <div class="flex justify-between items-start">
+                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">#${displayIdx}</div>
+                <div class="flex gap-2">
+                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Satuan</p>
+                  <p class="text-sm font-bold text-slate-700">${item.satuan || "-"}</p>
+                </div>
+                <div>
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Kategori</p>
+                  <p class="text-sm font-bold text-slate-700">${item.kategoriBarang || "-"}</p>
+                </div>
+                <div class="col-span-2">
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                  <p class="text-sm font-bold text-slate-700">${item.statusOrder || "-"}</p>
+                </div>
+              </div>
+            `;
+            cardContainer.appendChild(card);
+          });
+
+          document.getElementById("referensiPaginationInfo").innerText = `MENAMPILKAN ${totalData === 0 ? 0 : startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
+          updatePaginationButtons("referensi", referensiCurrentPage, totalPages);
+          lucide.createIcons();
+        } catch (e) {
+          console.error("renderReferensiData Error:", e);
+        }
       }
 
       async function fetchSupplierData(keepPage = false) {

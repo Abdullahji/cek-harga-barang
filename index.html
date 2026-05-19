@@ -443,6 +443,14 @@
               <div id="submenu-master" class="pl-10 space-y-1 hidden">
                 <div class="submenu-header-popup">Master Data</div>
                 <button
+                  onclick="switchPage('data-supplier')"
+                  id="nav-data-supplier"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Supplier</span>
+                </button>
+                <button
                   onclick="switchPage('supplier')"
                   id="nav-supplier"
                   class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
@@ -451,7 +459,7 @@
                     class="dot"
                   ></div>
                   <span class="font-bold text-xs capitalize tracking-widest"
-                    >Supplier</span
+                    >Supplier Cotoh Awal</span
                   >
                 </button>
                 <button
@@ -544,7 +552,7 @@
             id="headerTitle"
             class="text-xl font-black text-white tracking-tight leading-none"
           >
-            Database Supplier
+            Database Supplier Cotoh Awal
           </h2>
           <div class="flex items-center gap-2 mt-2">
             <div
@@ -580,7 +588,161 @@
           class="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar flex flex-col"
         >
           <div class="flex-1">
-            <!-- SECTION: DASHBOARD -->
+            <!-- SECTION: DATA SUPPLIER NEW -->
+            <section
+              id="section-data-supplier"
+              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <!-- Header Section -->
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-orange-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800">Master Data</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">DATABASE KONTAK & ALAMAT SUPPLIER</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button 
+                    onclick="openDataSupplierModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-orange-600 text-white shadow-xl shadow-orange-100 hover:bg-orange-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH SUPPLIER</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- SEARCH & ACTIONS BAR -->
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex-1 relative group w-full min-w-0">
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-orange-500 transition-colors"></i>
+                  <input
+                    type="text"
+                    id="searchDataSupplier"
+                    oninput="debouncedSearchDataSupplier()"
+                    placeholder="Cari ID, Nama, atau Alamat..."
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-orange-500/10 transition-all"
+                  />
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                       <select onchange="changeItemsPerPage('data-supplier', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+                         <option value="10">10</option>
+                         <option value="25">25</option>
+                         <option value="50">50</option>
+                       </select>
+                    </div>
+
+                    <button
+                        onclick="toggleDataSupplierFilters()"
+                        id="btn-data-supplier-filter"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Filter Data"
+                    >
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+
+                    <button
+                        onclick="toggleDataSupplierSort()"
+                        id="btn-data-supplier-sort"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Urutkan Data"
+                    >
+                        <i id="data-supplier-sort-icon" data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+
+                    <button
+                        onclick="fetchDataSupplierData(true)"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Refresh Data"
+                    >
+                        <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+              </div>
+
+              <!-- FILTER PANEL -->
+              <div id="data-supplier-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Status</label>
+                    <div class="flex gap-2">
+                       <button onclick="setDataSupplierFilterStatus('all')" class="supplier-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="all">SEMUA</button>
+                       <button onclick="setDataSupplierFilterStatus('Aktif')" class="supplier-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Aktif">AKTIF</button>
+                       <button onclick="setDataSupplierFilterStatus('Nonaktif')" class="supplier-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95" data-val="Nonaktif">NONAKTIF</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SORT PANEL -->
+              <div id="data-supplier-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
+                   <button onclick="setDataSupplierSort('idSupplier')" class="supplier-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="idSupplier">
+                     <span>URUTKAN ID</span>
+                   </button>
+                   <button onclick="setDataSupplierSort('namaSupplier')" class="supplier-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="namaSupplier">
+                     <span>NAMA SUPPLIER</span>
+                   </button>
+                   <button onclick="setDataSupplierSort('status')" class="supplier-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2" data-val="status">
+                     <span>URUTKAN STATUS</span>
+                   </button>
+                   <button onclick="toggleDataSupplierSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95">
+                     <i id="btn-data-supplier-sort-order-icon" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
+                     <span id="btn-data-supplier-sort-order-text">A - Z</span>
+                   </button>
+                </div>
+              </div>
+
+              <!-- Table Container -->
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[1000px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-6 py-7 w-14 text-center">No.</th>
+                        <th class="px-8 py-7 w-32">ID Supplier</th>
+                        <th class="px-8 py-7">Nama Supplier</th>
+                        <th class="px-8 py-7">Kontak / HP</th>
+                        <th class="px-8 py-7">Alamat</th>
+                        <th class="px-8 py-7 w-28 text-center">Status</th>
+                        <th class="px-8 py-7 w-32 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dataSupplierTableBody" class="divide-y divide-slate-50 text-slate-600">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="dataSupplierCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
+                  <!-- Rendered by JS -->
+                </div>
+                
+                <!-- Empty State -->
+                <div id="data-supplier-empty" class="hidden p-12 lg:p-20 text-center bg-white border-t border-slate-100">
+                    <div class="w-20 h-20 bg-slate-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-slate-200">
+                      <i data-lucide="package-search" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-slate-800 mb-2">Data Tidak Ditemukan</h3>
+                    <p class="text-slate-400 font-medium tracking-tight">Gunakan kata kunci pencarian atau filter status yang berbeda.</p>
+                </div>
+
+                <!-- Footer Pagination -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-600">
+                  <p id="data-supplier-pagination-info" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div id="data-supplier-pagination-btns" class="flex gap-2 text-slate-600">
+                    <!-- Handled by JS -->
+                  </div>
+                </div>
+              </div>
+            </section>
             <section
               id="section-dashboard"
               class="page-section active max-w-[1400px] mx-auto space-y-10 py-4 px-2"
@@ -602,7 +764,7 @@
                   <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500 text-orange-600">
                     <i data-lucide="truck" class="w-20 h-20"></i>
                   </div>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Supplier</p>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Supplier Cotoh Awal</p>
                   <h3 id="stat-total-supplier" class="text-4xl font-black text-slate-900 mb-2">0</h3>
                   <div class="flex items-center gap-2">
                     <span class="px-2 py-0.5 rounded-md bg-orange-50 text-[10px] font-black text-orange-600 uppercase tracking-wider">Verified</span>
@@ -745,12 +907,12 @@
                   <h2
                     class="text-2xl sm:text-3xl font-black tracking-tight mb-1"
                   >
-                    Master Data
+                    Master Data Supplier Cotoh Awal
                   </h2>
                   <p
                     class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest"
                   >
-                    Database Supplier & Harga Modal
+                    Database Supplier Cotoh Awal & Harga Modal
                   </p>
                 </div>
                 <div
@@ -801,7 +963,7 @@
                         <p
                           class="text-[10px] font-black text-slate-400 uppercase tracking-widest"
                         >
-                          Detail Produk & Supplier
+                          Detail Produk & Supplier Cotoh Awal
                         </p>
                       </div>
 
@@ -817,7 +979,7 @@
                             </div>
                           </div>
                           <div class="space-y-2 relative">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Supplier</label>
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Supplier Cotoh Awal</label>
                             <div class="relative group">
                               <input type="text" name="supplier" id="form-supplier" required autocomplete="off" oninput="handleFormAutocomplete(this, 'supplier'); toggleClearBtn('form-supplier', 'clear-supplier')" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." />
                               <button type="button" id="clear-supplier" onclick="clearField('form-supplier'); toggleClearBtn('form-supplier', 'clear-supplier')" class="hidden absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-slate-100 rounded-full transition-all">
@@ -1164,6 +1326,15 @@
                   </div>
 
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                      <select onchange="changeItemsPerPage('supplier', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </div>
                     <!-- Advanced Filter Trigger -->
                     <button
                       id="btn-filter-toggle"
@@ -1223,11 +1394,11 @@
                       </div>
                       
                       <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Supplier</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Supplier Cotoh Awal</label>
                         <div class="relative">
                           <select id="filter-supplier" onchange="debouncedFilter()" 
                             class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-orange-500/10 focus:border-orange-200 transition-all appearance-none cursor-pointer">
-                            <option value="">Semua Supplier</option>
+                            <option value="">Semua Supplier Cotoh Awal</option>
                           </select>
                           <i data-lucide="chevron-down" class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none"></i>
                         </div>
@@ -1353,7 +1524,7 @@
                         <tr
                           class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700"
                         >
-                          <th id="th-no" class="px-8 py-7 w-20 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No.</th>
+                          <th id="th-no" class="px-6 py-7 w-14 text-center sticky left-0 bg-slate-900 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.1)]">No.</th>
                           <th id="th-tglBeli" class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group whitespace-nowrap" onclick="sortByHeader('tglBeli')">
                              <div class="flex items-center gap-2 justify-center">
                                <span>Tanggal Pembelian</span>
@@ -1362,7 +1533,7 @@
                           </th>
                           <th id="th-supplier" class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group" onclick="sortByHeader('supplier')">
                              <div class="flex items-center gap-2">
-                               <span>Supplier</span>
+                               <span>Supplier Cotoh Awal</span>
                                <i data-lucide="chevrons-up-down" class="w-3 h-3 text-slate-500 opacity-50 group-hover:opacity-100"></i>
                              </div>
                           </th>
@@ -1423,7 +1594,7 @@
                   <!-- Mobile Card View -->
                   <div
                     id="supplierCardContainer"
-                    class="block lg:hidden divide-y divide-slate-100 bg-slate-50/50"
+                    class="block lg:hidden space-y-3 p-3 bg-slate-100/30"
                   >
                     <!-- Cards appear here on mobile -->
                   </div>
@@ -1485,6 +1656,16 @@
                   </div>
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                     <!-- Category Filter Trigger -->
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-3">
+                      <select onchange="changeItemsPerPage('category', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </div>
+
                     <button id="btn-filter-category" onclick="toggleAdvancedFiltersCategory()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Filter Lanjutan">
                       <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
@@ -1543,7 +1724,7 @@
                   <table class="w-full text-left min-w-[600px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-8 py-7 w-24 text-center">No.</th>
+                        <th class="px-6 py-7 w-16 text-center">No.</th>
                         <th class="px-8 py-7 w-40">ID Kategori</th>
                         <th class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group" onclick="renderCategoryData()">
                            <div class="flex items-center gap-2">
@@ -1671,6 +1852,16 @@
                     />
                   </div>
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-3">
+                      <select onchange="changeItemsPerPage('referensi', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </div>
+
                     <button id="btn-refresh-referensi" onclick="refreshReferensiData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-blue-600 hover:border-blue-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Referensi">
                       <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
@@ -1679,12 +1870,12 @@
 
               <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
                 <div class="hidden md:block overflow-x-auto custom-scrollbar">
-                  <table class="w-full text-left min-w-[600px]">
+                  <table class="w-full text-left min-w-[500px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-8 py-7 w-20 text-center">No.</th>
-                        <th id="th-referensi-label" class="px-8 py-7">Satuan</th>
-                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                        <th class="px-6 py-7 w-14 text-center">No.</th>
+                        <th id="th-referensi-label" class="px-6 py-7">Satuan</th>
+                        <th class="px-6 py-7 w-32 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="referensiTableBody" class="divide-y divide-slate-50">
@@ -1823,6 +2014,15 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                       <select onchange="changeItemsPerPage('barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-orange-500/20">
+                         <option value="10">10</option>
+                         <option value="25">25</option>
+                         <option value="50">50</option>
+                         <option value="100">100</option>
+                       </select>
+                    </div>
                     <button
                         onclick="toggleBarangFilters()"
                         id="btn-barang-filter"
@@ -1855,7 +2055,7 @@
                   <table class="w-full text-left min-w-[1000px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-8 py-7 w-20 text-center">No.</th>
+                        <th class="px-6 py-7 w-14 text-center">No.</th>
                         <th class="px-8 py-7 w-32">ID Barang</th>
                         <th class="px-8 py-7">Nama Barang</th>
                         <th class="px-8 py-7">Kategori</th>
@@ -1871,7 +2071,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="barangCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                <div id="barangCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
 
@@ -2017,6 +2217,15 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                      <select onchange="changeItemsPerPage('satuan-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </div>
                     <button
                         onclick="toggleSatuanBarangFilters()"
                         id="btn-satuan-filter"
@@ -2049,11 +2258,11 @@
                   <table class="w-full text-left min-w-[1200px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-8 py-7 w-20 text-center">No.</th>
+                        <th class="px-6 py-7 w-14 text-center">No.</th>
                         <th class="px-8 py-7 w-40">Barcode</th>
                         <th class="px-8 py-7">Barang</th>
-                        <th class="px-8 py-7 w-32">Satuan</th>
-                        <th class="px-8 py-7 w-32">Qty</th>
+                        <th class="px-8 py-7 w-24">Satuan</th>
+                        <th class="px-8 py-7 w-20">Qty</th>
                         <th class="px-8 py-7 w-40 text-right">Harga Jual</th>
                         <th class="px-8 py-7 w-28 text-center">Status</th>
                         <th class="px-8 py-7 w-32 text-center">Aksi</th>
@@ -2066,7 +2275,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="satuanBarangCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                <div id="satuanBarangCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
 
@@ -2086,6 +2295,81 @@
                 </div>
               </div>
             </section>
+
+    <!-- SECTION: DATA SUPPLIER MODAL -->
+    <div id="dataSupplierModal" class="fixed inset-0 z-[5000] hidden items-center justify-center p-4 sm:p-6">
+      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDataSupplierModal()"></div>
+      <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+        <!-- Close Button -->
+        <button onclick="closeDataSupplierModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+
+        <div class="p-10 sm:p-12">
+            <div class="mb-10">
+              <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-orange-50 border border-orange-100 mb-4">
+                <i data-lucide="truck" class="w-4 h-4 text-orange-600"></i>
+                <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Supplier Entry</span>
+              </div>
+              <h3 id="dataSupplierFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Supplier</h3>
+            </div>
+
+            <form id="dataSupplierForm" onsubmit="handleSimpanDataSupplier(event)" class="space-y-8">
+              <input type="hidden" id="form-dataSupplierRow" />
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- ID Supplier (Disabled/Readonly because auto-gen) -->
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Supplier (Otomatis)</label>
+                  <input type="text" id="form-dataSupplierId" class="w-full px-6 py-5 rounded-2xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed" placeholder="Otomatis..." readonly />
+                </div>
+                <!-- Nama Supplier -->
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Supplier</label>
+                  <input type="text" id="form-dataSupplierNama" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." required />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Kontak -->
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kontak / No. HP</label>
+                  <input type="text" id="form-dataSupplierKontak" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="08xx..." required />
+                </div>
+                <!-- Status -->
+                <div class="space-y-3">
+                  <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Keaktifan</label>
+                  <select id="form-dataSupplierStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                    <option value="Aktif">AKTIF</option>
+                    <option value="Nonaktif">NONAKTIF</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Alamat -->
+              <div class="space-y-3">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Alamat Lengkap</label>
+                <textarea id="form-dataSupplierAlamat" rows="3" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Jl. ..."></textarea>
+              </div>
+
+              <!-- Keterangan -->
+              <div class="space-y-3">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan Tambahan</label>
+                <input type="text" id="form-dataSupplierKeterangan" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Catatan khusus..." />
+              </div>
+
+              <div class="pt-6 flex gap-4">
+                <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-orange-600 transition-all active:scale-95">
+                  Simpan Data
+                </button>
+                <button type="button" onclick="closeDataSupplierModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                  Batal
+                </button>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
 
             <!-- MODAL SATUAN BARANG -->
             <div id="satuanBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
@@ -2224,8 +2508,8 @@
       let currentReferensiTab = 'satuan'; // 'satuan', 'kategori', 'status'
       let barangCurrentPage = 1;
       let satuanBarangCurrentPage = 1;
-      const barangItemsPerPage = 10;
-      const satuanBarangItemsPerPage = 10;
+      let barangItemsPerPage = 10;
+      let satuanBarangItemsPerPage = 10;
 
       // Logic Control States
       let sortOrder = "asc"; // asc (A-Z), desc (Z-A)
@@ -2257,6 +2541,58 @@
       let referensiCurrentPage = 1;
       let referensiItemsPerPage = 10;
 
+      // Fetching States
+      let isFetchingBarang = false;
+      let isFetchingSatuan = false;
+
+      let isFetchingDataSupplier = false;
+      let rawDataSupplierData = [];
+      let dataSupplierSearchTerm = "";
+      let dataSupplierFilterStatus = "all";
+      let dataSupplierSortBy = "idSupplier";
+      let dataSupplierSortOrder = "asc";
+      let dataSupplierCurrentPage = 1;
+      let dataSupplierItemsPerPage = 10;
+
+      // ==========================================
+      // DEMO DATA (Fallback when not connected)
+      // ==========================================
+      const DEMO_DATA_SUPPLIER = [
+        { row: 2, no: 1, idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", kontak: "08123456789", alamat: "Jl. Industri No. 45, Jakarta", keterangan: "Supplier Utama", status: "Aktif" },
+        { row: 3, no: 2, idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", kontak: "08998877665", alamat: "Kawasan Maspion Blok C, Surabaya", keterangan: "Elektronik", status: "Aktif" },
+        { row: 4, no: 3, idSupplier: "SUP-003", namaSupplier: "CV. ATK Sejahtera (Demo)", kontak: "08554433221", alamat: "Ruko Harmony No. 12, Bandung", keterangan: "Alat Tulis Kantor", status: "Nonaktif" }
+      ];
+
+      const DEMO_DATA_BARANG = [
+        { row: 2, idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", kategori: "Aksesori", merk: "Logitech", tglBeli: "2024-05-10", supplier: "Global Tech Jaya (Demo)", status: "Aktif" },
+        { row: 3, idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", kategori: "ATK", merk: "Sinar Dunia", tglBeli: "2024-05-12", supplier: "CV. ATK Sejahtera (Demo)", status: "Aktif" }
+      ];
+
+      const DEMO_DATA_SATUAN = [
+        { row: 2, barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtySatuan: 1, hargaJual: 150000, status: "Aktif" },
+        { row: 3, barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", satuan: "Rim", qtySatuan: 1, hargaJual: 55000, status: "Aktif" }
+      ];
+
+      const DEMO_DATA_REFERENSI = [
+        { row: 2, satuan: "Pcs", kategori: "Aksesori" },
+        { row: 3, satuan: "Rim", kategori: "ATK" },
+        { row: 4, satuan: "Box", kategori: "Elektronik" }
+      ];
+
+      function useFallbackDemoData() {
+        rawDataSupplierData = DEMO_DATA_SUPPLIER;
+        rawBarangData = DEMO_DATA_BARANG;
+        rawSatuanBarangData = DEMO_DATA_SATUAN;
+        rawReferensiData = DEMO_DATA_REFERENSI;
+        
+        populateSatuanDropdowns();
+        renderDashboard();
+        // updateStatusCounts(); // Removed as it is not defined
+        updateCategorySelects();
+        
+        showToast("Mode Demo: Menggunakan data contoh (Offline)", "warning");
+      }
+
       window.onload = async () => {
         // Load Dark Mode Preference
         if (localStorage.getItem('theme') === 'dark' || 
@@ -2267,53 +2603,51 @@
         lucide.createIcons();
         showToast("Menghubungkan ke database...", "info");
 
+        // Set current year
+        document.querySelectorAll(".current-year").forEach((el) => {
+          el.textContent = new Date().getFullYear();
+        });
+
         // Optimized Initial Fetch: Combined Call
         try {
-          const res = await callGAS("ambilInisialisasiData");
+          const res = await callGAS("ambilInisialisasiData", {
+            sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier"]
+          });
+          
           if (res && res.sukses) {
             rawSupplierData = res.supplier || [];
             rawCekHargaData = res.cekHarga || [];
             rawCategoryData = res.category || [];
             rawReferensiData = res.referensi || [];
             rawBarangData = res.barang || [];
+            rawSatuanBarangData = res.satuanBarang || [];
+            rawDataSupplierData = res.masterSupplier || [];
             
-            console.info("Category loaded from DB:", rawCategoryData.length);
-            if (rawCategoryData.length === 0) {
-              console.warn("Category sheet empty, extracting from suppliers.");
-              extractCategoriesFromSuppliers();
+            // Check if database is truly empty
+            if (rawDataSupplierData.length === 0 && rawBarangData.length === 0) {
+              console.info("Database empty, using demo data.");
+              useFallbackDemoData();
+            } else {
+              console.info("Data loaded successfully from GAS.");
+              if (rawCategoryData.length === 0) extractCategoriesFromSuppliers();
+              isMasterCategoryLoaded = true;
+              
+              renderDashboard();
+              populateSatuanDropdowns();
+              updateCategorySelects();
+              showToast("Sinkronisasi data berhasil", "success");
             }
-            
-            isMasterCategoryLoaded = true;
-            showToast("Sinkronisasi data berhasil", "success");
           } else {
-            console.warn("Failed to load combined data. Trying separate calls...");
-            await Promise.all([
-              fetchCekHargaData(),
-              fetchCategoryData(),
-              fetchSupplierData(),
-              fetchReferensiData(),
-              fetchBarangData()
-            ]);
+            console.warn("GAS connection failed. Using demo data.");
+            useFallbackDemoData();
           }
-        } catch (e) {
-          console.error("Initial load error:", e);
-          showToast("Gagal memuat data awal atau URL Web App tidak valid", "error");
-          await Promise.all([
-            fetchCekHargaData(),
-            fetchCategoryData(),
-            fetchSupplierData(),
-            fetchReferensiData(),
-            fetchBarangData()
-          ]);
+        } catch (err) {
+          console.error("Critical error connecting to GAS, falling back to demo data:", err);
+          useFallbackDemoData();
+        } finally {
+          switchPage("dashboard");
+          // updateStatusCounts(); // Removed as it is not defined
         }
-        
-        updateCategorySelects();
-        switchPage("dashboard");
-
-        // Set current year
-        document.querySelectorAll(".current-year").forEach((el) => {
-          el.textContent = new Date().getFullYear();
-        });
       };
 
       function toggleDarkMode(init = false) {
@@ -2463,9 +2797,14 @@
           } else if (page === "referensi") {
             switchReferensiTab('satuan');
           } else if (page === "barang") {
-            fetchBarangData();
+            renderBarangData();
+            if (rawBarangData.length === 0) fetchBarangData();
           } else if (page === "satuan-barang") {
-            fetchSatuanBarangData();
+            renderSatuanBarangData();
+            if (rawSatuanBarangData.length === 0) fetchSatuanBarangData();
+          } else if (page === "data-supplier") {
+            renderDataSupplierData();
+            if (rawDataSupplierData.length === 0) fetchDataSupplierData();
           }
         }
 
@@ -2483,7 +2822,8 @@
         const titles = {
           "dashboard": "Ringkasan Sistem",
           "cek-harga": "Cek Harga Barang",
-          "supplier": "Database Supplier",
+          "supplier": "Database Supplier Cotoh Awal",
+          "data-supplier": "Master Data Supplier",
           "category": "Kategori Barang",
           "barang": "Master Data Barang",
           "satuan-barang": "Master Satuan Barang",
@@ -2491,19 +2831,50 @@
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
-        // Auto load data if needed
-        if (page === "supplier" || page === "category" || page === "referensi" || page === "satuan-barang" || page === "barang") {
+        // Auto transition logic for submenu
+        if (page === "supplier" || page === "category" || page === "referensi" || page === "satuan-barang" || page === "barang" || page === "data-supplier") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
-          fetchCategoryData();
-          if (page === "supplier") fetchSupplierData();
-          if (page === "referensi") fetchReferensiData();
-          if (page === "satuan-barang") fetchSatuanBarangData();
+          
+          // Background Refresh: Only if data is empty or explicitly requested
+          if (rawCategoryData.length === 0) fetchCategoryData();
+          if (page === "supplier" && rawSupplierData.length === 0) fetchSupplierData();
+          if (page === "referensi" && rawReferensiData.length === 0) fetchReferensiData();
+          if (page === "data-supplier" && rawDataSupplierData.length === 0) fetchDataSupplierData();
         }
 
         if (window.innerWidth < 1024) {
           const sidebar = document.getElementById("sidebar");
           if (!sidebar.classList.contains("-translate-x-full")) toggleSidebar();
+        }
+      }
+
+      function changeItemsPerPage(type, value) {
+        const val = parseInt(value) || 10;
+        if (type === 'supplier') {
+          itemsPerPage = val;
+          currentPage = 1;
+          renderSupplierTable();
+        } else if (type === 'category') {
+          categoryItemsPerPage = val;
+          categoryCurrentPage = 1;
+          renderCategoryData();
+        } else if (type === 'referensi') {
+          referensiItemsPerPage = val;
+          referensiCurrentPage = 1;
+          renderReferensiData();
+        } else if (type === 'barang') {
+          barangItemsPerPage = val;
+          barangCurrentPage = 1;
+          renderBarangData();
+        } else if (type === 'satuan-barang') {
+          satuanBarangItemsPerPage = val;
+          satuanBarangCurrentPage = 1;
+          renderSatuanBarangData();
+        } else if (type === 'data-supplier') {
+          dataSupplierItemsPerPage = val;
+          dataSupplierCurrentPage = 1;
+          renderDataSupplierData();
         }
       }
 
@@ -2810,7 +3181,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbw0wHDYsPZShwtnHgTCjguNErhjVyNPleZE3ccDMpae7F9aANY_l_kJsvCYvLU3eAGZHQ/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzh1fQOnYWDaOEJu9Nis9tKKOYI7AdRAjsZYn8nZ5sqyzIzDXBAEF_5oEw3VIsZbL61hw/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null) {
@@ -4190,7 +4561,7 @@
       const bBks = it.barcodeBks || "-";
 
       return `
-  <div class="mb-6 bg-white p-6 space-y-5 rounded-3xl mx-4 shadow-md border border-slate-100 first:mt-6">
+  <div class="p-6 bg-white space-y-5 rounded-[1.5rem] shadow-sm border border-slate-100 group transition-all active:scale-[0.98]">
     <div class="flex justify-between items-start gap-4">
       <div class="flex-1">
         <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -4447,11 +4818,7 @@
         }
       }
 
-      function changeItemsPerPage(val) {
-        itemsPerPage = parseInt(val) || 10;
-        currentPage = 1;
-        renderSupplierTable();
-      }
+
 
       // Debounce Logic for Filtering Performance
       let filterTimeout;
@@ -4980,6 +5347,8 @@
 
       // --- BARANG LOGIC ---
       async function fetchBarangData(resetFilters = false) {
+        if (isFetchingBarang) return;
+        
         if (resetFilters) {
           barangSearchTerm = "";
           const searchInput = document.getElementById("searchBarang");
@@ -4995,12 +5364,16 @@
         if (icon) icon.classList.add("animate-spin");
         if (btn) btn.classList.add("bg-orange-50", "text-orange-600");
 
+        isFetchingBarang = true;
         showLoading(true);
         try {
-          const res = await callGAS("ambilBarang");
+          const res = await callGAS("ambilBarang", { sheetName: "Data_Barang" });
+          
+          // Cleanup UI
           showLoading(false);
           if (icon) icon.classList.remove("animate-spin");
           if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
+          isFetchingBarang = false;
 
           if (res && res.sukses) {
             rawBarangData = res.data || [];
@@ -5018,45 +5391,35 @@
                 merk: "Glico",
                 status: "Aktif",
                 row: 2
-              },
-              {
-                no: 2,
-                idBarang: "BRG-002",
-                namaBarang: "Indomie Goreng Original",
-                kategoriBarang: "SEMBAKO",
-                merk: "Indofood",
-                status: "Aktif",
-                row: 3
-              },
-              {
-                no: 3,
-                idBarang: "BRG-003",
-                namaBarang: "Coca Cola 330ml",
-                kategoriBarang: "MINUMAN",
-                merk: "Coca Cola",
-                status: "Nonaktif",
-                row: 4
               }
             ];
             renderBarangData();
             populateKategoriDropdown();
-            if (resetFilters) showToast("Data demo berhasil dimuat", "success");
           } else {
-            showToast(res.pesan, "error");
+            showToast(res.pesan || "Gagal mengambil data", "error");
           }
         } catch (err) {
           showLoading(false);
           if (icon) icon.classList.remove("animate-spin");
           if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
+          isFetchingBarang = false;
           console.error("fetchBarangData Error:", err);
+          showToast("Koneksi gagal", "error");
         }
       }
 
       async function populateKategoriDropdown() {
         try {
-          let list = await callGAS("getKategoriOptions");
-          if (!list || list.length === 0) {
-            // Fallback for demo mode
+          // Use cached data instead of making a new network call
+          let list = rawCategoryData.map(c => c["Category Barang"] || c.namaKategori || "");
+          
+          if (list.length === 0) {
+            // Fallback to extraction from items if category sheet is empty
+            const fromItems = [...new Set(rawBarangData.map(b => b.kategoriBarang).filter(Boolean))];
+            if (fromItems.length > 0) list = fromItems;
+          }
+
+          if (list.length === 0) {
             list = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
           }
           
@@ -5212,16 +5575,21 @@
                        <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-90">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
                        </button>
-                       <button onclick="handleHapusBarang(${item.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all active:scale-90">
-                          <i data-lucide="trash-2" class="w-4 h-4"></i>
-                       </button>
+                        <!-- Toggle Status Switch -->
+                        <button onclick="handleToggleStatusBarang(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
+                          title="Ubah Status: ${item.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
                     </div>
                  </td>
                </tr>
              `;
 
              cardContainer.innerHTML += `
-               <div class="p-6 space-y-4">
+               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
                   <div class="flex justify-between items-start">
                     <div>
                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.idBarang}</p>
@@ -5239,9 +5607,17 @@
                         <p class="text-xs font-bold text-slate-600">${item.merk || "-"}</p>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2 pt-2">
-                     <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit</button>
-                     <button onclick="handleHapusBarang(${item.row})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition-all">Hapus</button>
+                  <div class="flex items-center gap-3 pt-2">
+                     <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Data</button>
+                     
+                     <div class="flex-1 flex justify-center">
+                        <button onclick="handleToggleStatusBarang(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
+                     </div>
                   </div>
                </div>
              `;
@@ -5335,7 +5711,7 @@
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanBarang", payload);
+          const res = await callGAS("simpanBarang", { ...payload, sheetName: "Data_Barang" });
           showLoading(false);
           if (res && res.sukses) {
             showToast("Berhasil disimpan", "success");
@@ -5350,23 +5726,27 @@
         }
       }
 
-      async function handleHapusBarang(row) {
-        const konfirmasi = await showKonfirmasi("Hapus Barang?", "Data yang dihapus tidak dapat dikembalikan.");
+      async function handleToggleStatusBarang(row, currentStatus) {
+        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        const msg = newStatus === "Aktif" ? "Aktifkan barang ini?" : "Nonaktifkan barang ini?";
+        
+        const konfirmasi = await showKonfirmasi(msg, `Status barang akan diubah menjadi ${newStatus}.`);
         if (!konfirmasi) return;
 
         showLoading(true);
         try {
-          const res = await callGAS("hapusBarang", { row: row });
+          const res = await callGAS("ubahStatusBarang", { row: row, status: newStatus });
           showLoading(false);
           if (res && res.sukses) {
-            showToast("Berhasil dihapus", "success");
-            fetchBarangData();
+            showToast(`Status berhasil diubah ke ${newStatus}`, "success");
+            fetchBarangData(); // Refresh UI
           } else if (res) {
             showToast(res.pesan, "error");
           }
         } catch (err) {
           showLoading(false);
-          console.error("handleHapusBarang Error:", err);
+          console.error("handleToggleStatusBarang Error:", err);
+          showToast("Gagal mengubah status", "error");
         }
       }
 
@@ -5382,6 +5762,8 @@
 
       // --- SATUAN BARANG LOGIC ---
       async function fetchSatuanBarangData(resetFilters = false) {
+        if (isFetchingSatuan) return;
+
         if (resetFilters) {
           satuanBarangSearchTerm = "";
           const searchInput = document.getElementById("searchSatuanBarang");
@@ -5397,12 +5779,16 @@
         if (icon) icon.classList.add("animate-spin");
         if (btn) btn.classList.add("bg-blue-50", "text-blue-600");
 
+        isFetchingSatuan = true;
         showLoading(true);
         try {
-          const res = await callGAS("ambilSatuanBarang");
+          const res = await callGAS("ambilSatuanBarang", { sheetName: "Satuan_Barang" });
+          
+          // Cleanup UI
           showLoading(false);
           if (icon) icon.classList.remove("animate-spin");
           if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
+          isFetchingSatuan = false;
 
           if (res && res.sukses) {
             rawSatuanBarangData = res.data || [];
@@ -5410,44 +5796,25 @@
             populateSatuanDropdowns();
             if (resetFilters) showToast("Data satuan berhasil diperbarui", "success");
           } else {
-             // Demo Fallback - Data Contoh Jika Belum Terkoneksi
+             // Demo Fallback
              if (rawBarangData.length === 0) {
                 rawBarangData = [
-                  { row: 1, idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", status: "Aktif" },
-                  { row: 2, idBarang: "BRG-002", namaBarang: "Aqua 600ml", status: "Aktif" },
-                  { row: 3, idBarang: "BRG-003", namaBarang: "Indomie Goreng", status: "Aktif" }
+                  { row: 1, idBarang: "BRG-001", namaBarang: "Data Contoh", status: "Aktif" }
                 ];
              }
-             if (rawReferensiData.length === 0) {
-               rawReferensiData = [
-                 { row: 1, satuan: "Pcs" }, { row: 2, satuan: "Box" }, 
-                 { row: 3, satuan: "Karton" }, { row: 4, satuan: "Dus" }
-               ];
-             }
-
-             rawSatuanBarangData = [
-               { row: 1, barcode: "899123456701", idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", satuan: "Pcs", qtySatuan: 1, hargaJual: 2000, status: "Aktif", gambar: "" },
-               { row: 2, barcode: "899123456702", idBarang: "BRG-001", namaBarang: "Tango Wafer Cokelat", satuan: "Box", qtySatuan: 20, hargaJual: 35000, status: "Aktif", gambar: "" },
-               { row: 3, barcode: "899123456703", idBarang: "BRG-002", namaBarang: "Aqua 600ml", satuan: "Pcs", qtySatuan: 1, hargaJual: 4500, status: "Aktif", gambar: "" },
-               { row: 4, barcode: "899123456704", idBarang: "BRG-002", namaBarang: "Aqua 600ml", satuan: "Karton", qtySatuan: 24, hargaJual: 95000, status: "Aktif", gambar: "" },
-               { row: 5, barcode: "899123456705", idBarang: "BRG-003", namaBarang: "Indomie Goreng", satuan: "Pcs", qtySatuan: 1, hargaJual: 3100, status: "Aktif", gambar: "" },
-               { row: 6, barcode: "899123456706", idBarang: "BRG-003", namaBarang: "Indomie Goreng", satuan: "Dus", qtySatuan: 40, hargaJual: 115000, status: "Aktif", gambar: "" }
-             ];
              renderSatuanBarangData();
-             populateSatuanDropdowns();
-             if (!res) {
-                if (resetFilters) showToast("Mode Demo: Data contoh dimuat", "info");
-             } else {
-                showToast(res.pesan, "error");
-             }
+             if (res && res.pesan) showToast(res.pesan, "error");
           }
         } catch (err) {
           showLoading(false);
           if (icon) icon.classList.remove("animate-spin");
           if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
+          isFetchingSatuan = false;
           console.error("fetchSatuanBarangData Error:", err);
+          showToast("Koneksi gagal", "error");
         }
       }
+
 
       function updateSatuanControlUI() {
         const panels = ['filters', 'sort'];
@@ -5533,9 +5900,21 @@
            cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
         } else {
            paginated.forEach((item, idx) => {
-             const rowIdx = start + idx + 1;
-             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
-             const imgHtml = item.gambar ? `<img src="${item.gambar}" class="w-10 h-10 rounded-lg object-cover border border-slate-100 shadow-sm" onerror="this.src='https://via.placeholder.com/40x40?text=?'"/>` : `<div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-5 h-5"></i></div>`;
+              const rowIdx = start + idx + 1;
+              const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+              
+              // Google Drive Image URL Fix
+              let displayImgUrl = item.gambar || "";
+              if (displayImgUrl && displayImgUrl.includes("drive.google.com")) {
+                const fileIdMatch = displayImgUrl.match(/[-\w]{25,}/);
+                if (fileIdMatch) {
+                  displayImgUrl = `https://lh3.googleusercontent.com/u/0/d/${fileIdMatch[0]}=w200-h200`;
+                }
+              }
+
+              const imgHtml = displayImgUrl 
+                ? `<img src="${displayImgUrl}" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=100'"/>` 
+                : `<div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
@@ -5552,7 +5931,7 @@
                  </td>
                  <td class="px-8 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
                  <td class="px-8 py-6 font-black text-slate-900 text-xs">${item.qtySatuan}</td>
-                 <td class="px-8 py-6 text-right font-black text-slate-900 text-sm">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
+                 <td class="px-8 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
                  <td class="px-8 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                  </td>
@@ -5561,18 +5940,23 @@
                        <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-90">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
                        </button>
-                       <button onclick="handleHapusSatuanBarang(${item.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-600 transition-all active:scale-90">
-                          <i data-lucide="trash-2" class="w-4 h-4"></i>
-                       </button>
+                        <!-- Toggle Status Switch -->
+                        <button onclick="handleToggleStatusSatuanBarang(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
+                          title="Ubah Status: ${item.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
                     </div>
                  </td>
                </tr>
              `;
 
-             cardContainer.innerHTML += `
-               <div class="p-6 space-y-4">
+              cardContainer.innerHTML += `
+               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
                   <div class="flex justify-between items-start">
-                    <div class="flex gap-3">
+                    <div class="flex gap-4">
                         ${imgHtml}
                         <div>
                             <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.barcode || item.idBarang}</p>
@@ -5581,23 +5965,31 @@
                     </div>
                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                   </div>
-                  <div class="grid grid-cols-3 gap-2 bg-white/50 p-3 rounded-2xl border border-slate-100">
-                    <div>
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Satuan</p>
-                        <p class="text-[10px] font-black text-slate-700 uppercase">${item.satuan}</p>
+                  <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                    <div class="text-center border-r border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Satuan</p>
+                        <p class="text-[10px] font-bold text-slate-700 uppercase">${item.satuan}</p>
                     </div>
-                    <div>
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty</p>
-                        <p class="text-[10px] font-black text-slate-700">${item.qtySatuan}</p>
+                    <div class="text-center border-r border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Qty</p>
+                        <p class="text-[10px] font-bold text-slate-700">${item.qtySatuan}</p>
                     </div>
-                    <div>
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Harga</p>
+                    <div class="text-center">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga</p>
                         <p class="text-[10px] font-black text-blue-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</p>
                     </div>
                   </div>
-                  <div class="flex items-center gap-2 pt-2">
-                     <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Edit</button>
-                     <button onclick="handleHapusSatuanBarang(${item.row})" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-red-50 hover:text-red-600 transition-all">Hapus</button>
+                  <div class="flex items-center gap-3 pt-2">
+                     <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Edit Data</button>
+                     
+                     <div class="flex-1 flex justify-center">
+                        <button onclick="handleToggleStatusSatuanBarang(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
+                     </div>
                   </div>
                </div>
              `;
@@ -5719,7 +6111,7 @@
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanSatuanBarang", payload);
+          const res = await callGAS("simpanSatuanBarang", { ...payload, sheetName: "Satuan_Barang" });
           showLoading(false);
           if (res && res.sukses) {
             showToast("Satuan berhasil disimpan", "success");
@@ -5734,23 +6126,400 @@
         }
       }
 
-      async function handleHapusSatuanBarang(row) {
-        const konfirmasi = await showKonfirmasi("Hapus Satuan?", "Status akan diubah menjadi Nonaktif.");
-        if (!konfirmasi) return;
+      // ==========================================
+      // FEATURE: DATA SUPPLIER NEW
+      // ==========================================
+
+      async function fetchDataSupplierData(resetFilters = false) {
+        if (isFetchingDataSupplier) return;
+        
+        if (resetFilters) {
+          dataSupplierSearchTerm = "";
+          document.getElementById("searchDataSupplier").value = "";
+          dataSupplierFilterStatus = "all";
+        }
+        
+        isFetchingDataSupplier = true;
+        try {
+          const res = await callGAS("ambilMasterSupplier");
+          isFetchingDataSupplier = false;
+          if (res && res.sukses) {
+            rawDataSupplierData = res.data || [];
+            // If response is success but data is zero, and we were using demo, keep using demo
+            if (rawDataSupplierData.length === 0 && rawBarangData.length > 0 && rawBarangData[0].namaBarang.includes("(Demo)")) {
+                rawDataSupplierData = DEMO_DATA_SUPPLIER;
+            }
+            renderDataSupplierData();
+          } else {
+            // Fallback to demo if fetch fails
+            if (rawDataSupplierData.length === 0) {
+                rawDataSupplierData = DEMO_DATA_SUPPLIER;
+                renderDataSupplierData();
+            }
+          }
+        } catch (err) {
+          isFetchingDataSupplier = false;
+          console.error("fetchDataSupplierData Error:", err);
+          if (rawDataSupplierData.length === 0) {
+              rawDataSupplierData = DEMO_DATA_SUPPLIER;
+              renderDataSupplierData();
+          }
+          showToast("Gagal memuat data supplier (Menggunakan Demo)", "warning");
+        }
+      }
+
+      function updateDataSupplierControlUI() {
+        // Status Buttons
+        const btns = document.querySelectorAll('.supplier-status-btn');
+        btns.forEach(btn => {
+          if (btn.getAttribute('data-val') === dataSupplierFilterStatus) {
+            btn.classList.add('bg-slate-900', 'text-white', 'shadow-lg');
+            btn.classList.remove('text-slate-400');
+          } else {
+            btn.classList.remove('bg-slate-900', 'text-white', 'shadow-lg');
+            btn.classList.add('text-slate-400');
+          }
+        });
+
+        // Sort Field Buttons
+        document.querySelectorAll('.supplier-sort-btn').forEach(btn => {
+           if (btn.getAttribute('data-val') === dataSupplierSortBy) {
+              btn.classList.add('bg-slate-900', 'text-white', 'shadow-lg');
+              btn.classList.remove('border-slate-100', 'text-slate-600');
+           } else {
+              btn.classList.remove('bg-slate-900', 'text-white', 'shadow-lg');
+              btn.classList.add('border-slate-100', 'text-slate-600');
+           }
+        });
+        
+        // Main Sort Icon
+        const sortIcon = document.getElementById("data-supplier-sort-icon");
+        if (sortIcon) {
+            sortIcon.setAttribute('data-lucide', dataSupplierSortOrder === 'asc' ? 'arrow-up-narrow-wide' : 'arrow-down-narrow-wide');
+        }
+
+        // Panel Sort Icon & Text
+        const panelIcon = document.getElementById("btn-data-supplier-sort-order-icon");
+        const panelText = document.getElementById("btn-data-supplier-sort-order-text");
+        if (panelIcon && panelText) {
+            if (dataSupplierSortOrder === 'asc') {
+               panelIcon.setAttribute('data-lucide', 'arrow-up-narrow-wide');
+               panelText.innerText = "A - Z";
+            } else {
+               panelIcon.setAttribute('data-lucide', 'arrow-down-wide-narrow');
+               panelText.innerText = "Z - A";
+            }
+        }
+
+        lucide.createIcons();
+      }
+
+      function renderDataSupplierData() {
+        updateDataSupplierControlUI();
+        const tbody = document.getElementById("dataSupplierTableBody");
+        const cardContainer = document.getElementById("dataSupplierCardContainer");
+        const emptyState = document.getElementById("data-supplier-empty");
+        const info = document.getElementById("data-supplier-pagination-info");
+        const pagBtns = document.getElementById("data-supplier-pagination-btns");
+
+        if (!tbody || !cardContainer) return;
+
+        let filtered = rawDataSupplierData.filter(item => {
+           const matchesSearch = !dataSupplierSearchTerm || 
+                                item.idSupplier.toLowerCase().includes(dataSupplierSearchTerm.toLowerCase()) ||
+                                item.namaSupplier.toLowerCase().includes(dataSupplierSearchTerm.toLowerCase()) ||
+                                item.alamat.toLowerCase().includes(dataSupplierSearchTerm.toLowerCase());
+           const matchesStatus = dataSupplierFilterStatus === 'all' || item.status === dataSupplierFilterStatus;
+           return matchesSearch && matchesStatus;
+        });
+
+        filtered.sort((a, b) => {
+          const valA = String(a[dataSupplierSortBy] || "");
+          const valB = String(b[dataSupplierSortBy] || "");
+          return dataSupplierSortOrder === 'asc' ? valA.localeCompare(valB, undefined, {numeric: true, sensitivity: 'base'}) : valB.localeCompare(valA, undefined, {numeric: true, sensitivity: 'base'});
+        });
+
+        const total = filtered.length;
+        if (total === 0) {
+          tbody.innerHTML = "";
+          cardContainer.innerHTML = '<div class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</div>';
+          emptyState.classList.remove("hidden");
+          info.innerText = "SHOWING 0 TO 0 OF 0 DATA";
+          pagBtns.innerHTML = "";
+        } else {
+          emptyState.classList.add("hidden");
+          
+          const totalPages = Math.ceil(total / dataSupplierItemsPerPage);
+          if (dataSupplierCurrentPage > totalPages) dataSupplierCurrentPage = totalPages || 1;
+
+          const start = (dataSupplierCurrentPage - 1) * dataSupplierItemsPerPage;
+          const end = Math.min(start + dataSupplierItemsPerPage, total);
+          const paginated = filtered.slice(start, end);
+
+          tbody.innerHTML = paginated.map((item) => {
+             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+             
+             return `
+               <tr class="hover:bg-slate-50/50 transition-colors group">
+                 <td class="px-6 py-6 text-center font-bold text-slate-400 text-xs">${item.no}</td>
+                 <td class="px-8 py-6 font-black text-slate-800 text-sm whitespace-nowrap">${item.idSupplier}</td>
+                 <td class="px-8 py-6 font-black text-slate-800 text-sm">${item.namaSupplier}</td>
+                 <td class="px-8 py-6 text-xs font-bold text-slate-500">${item.kontak || "-"}</td>
+                 <td class="px-8 py-6 max-w-xs truncate text-[10px] font-bold text-slate-500">${item.alamat || "-"}</td>
+                 <td class="px-8 py-6 text-center">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="flex items-center justify-center gap-4">
+                       <button onclick='openDataSupplierModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-90">
+                          <i data-lucide="edit-3" class="w-4 h-4"></i>
+                       </button>
+                       
+                        <!-- Toggle Status Switch -->
+                        <button onclick="handleToggleStatusDataSupplier(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500' : 'bg-rose-500'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
+                    </div>
+                 </td>
+               </tr>
+             `;
+          }).join("");
+
+          cardContainer.innerHTML = paginated.map((item) => {
+             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+             return `
+               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
+                  <div class="flex justify-between items-start">
+                    <div>
+                       <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.idSupplier}</p>
+                       <h4 class="font-black text-slate-800 group-hover:text-orange-600 transition-colors">${item.namaSupplier}</h4>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                  </div>
+                  <div class="space-y-2">
+                    <div>
+                       <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Kontak</p>
+                       <p class="text-xs font-bold text-slate-600">${item.kontak || "-"}</p>
+                    </div>
+                    <div>
+                       <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Alamat</p>
+                       <p class="text-[10px] font-bold text-slate-500 leading-relaxed">${item.alamat || "-"}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3 pt-2">
+                     <button onclick='openDataSupplierModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Data</button>
+                     
+                     <div class="flex-1 flex justify-center">
+                        <button onclick="handleToggleStatusDataSupplier(${item.row}, '${item.status}')" 
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500' : 'bg-rose-500'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          </span>
+                        </button>
+                     </div>
+                  </div>
+               </div>
+             `;
+          }).join("");
+
+          info.innerText = `SHOWING ${start + 1} TO ${end} OF ${total} DATA`;
+          
+          pagBtns.innerHTML = `
+            <button onclick="changeDataSupplierPage(${dataSupplierCurrentPage - 1})" ${dataSupplierCurrentPage === 1 ? 'disabled' : ''} class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+              <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+            <button onclick="changeDataSupplierPage(${dataSupplierCurrentPage + 1})" ${dataSupplierCurrentPage >= totalPages ? 'disabled' : ''} class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          `;
+          lucide.createIcons();
+        }
+      }
+
+      function changeDataSupplierPage(p) {
+        dataSupplierCurrentPage = p;
+        renderDataSupplierData();
+      }
+
+      function openDataSupplierModal(data = null) {
+        const modal = document.getElementById("dataSupplierModal");
+        const title = document.getElementById("dataSupplierFormTitle");
+        const form = document.getElementById("dataSupplierForm");
+        
+        form.reset();
+        
+        if (data) {
+          title.innerText = "Edit Data Supplier";
+          document.getElementById("form-dataSupplierRow").value = data.row;
+          document.getElementById("form-dataSupplierId").value = data.idSupplier;
+          document.getElementById("form-dataSupplierNama").value = data.namaSupplier;
+          document.getElementById("form-dataSupplierKontak").value = data.kontak;
+          document.getElementById("form-dataSupplierAlamat").value = data.alamat;
+          document.getElementById("form-dataSupplierKeterangan").value = data.keterangan;
+          document.getElementById("form-dataSupplierStatus").value = data.status;
+        } else {
+          title.innerText = "Tambah Supplier Baru";
+          document.getElementById("form-dataSupplierRow").value = "";
+          document.getElementById("form-dataSupplierId").value = "Otomatis...";
+          document.getElementById("form-dataSupplierStatus").value = "Aktif";
+        }
+        
+        modal.classList.replace("hidden", "flex");
+      }
+
+      function closeDataSupplierModal() {
+        document.getElementById("dataSupplierModal").classList.replace("flex", "hidden");
+      }
+
+      async function handleSimpanDataSupplier(e) {
+        e.preventDefault();
+        
+        const payload = {
+          row: document.getElementById("form-dataSupplierRow").value,
+          idSupplier: document.getElementById("form-dataSupplierId").value,
+          namaSupplier: document.getElementById("form-dataSupplierNama").value,
+          kontak: document.getElementById("form-dataSupplierKontak").value,
+          alamat: document.getElementById("form-dataSupplierAlamat").value,
+          keterangan: document.getElementById("form-dataSupplierKeterangan").value,
+          status: document.getElementById("form-dataSupplierStatus").value
+        };
 
         showLoading(true);
         try {
-          const res = await callGAS("hapusSatuanBarang", { row: row });
+          const res = await callGAS("simpanDataSupplier", payload);
           showLoading(false);
           if (res && res.sukses) {
-            showToast("Berhasil dinonaktifkan", "success");
-            fetchSatuanBarangData();
+            showToast(res.mode === 'create' ? "Supplier berhasil ditambahkan" : "Data supplier diperbarui", "success");
+            closeDataSupplierModal();
+            fetchDataSupplierData();
           } else if (res) {
             showToast(res.pesan, "error");
           }
         } catch (err) {
           showLoading(false);
-          console.error("handleHapusSatuanBarang Error:", err);
+          console.error("handleSimpanDataSupplier Error:", err);
+          showToast("Gagal menyimpan data", "error");
+        }
+      }
+
+      async function handleToggleStatusDataSupplier(row, currentStatus) {
+        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        const msg = newStatus === "Aktif" ? "Aktifkan supplier ini?" : "Nonaktifkan supplier ini?";
+        
+        const konfirmasi = await showKonfirmasi(msg, `Status supplier akan diubah menjadi ${newStatus}.`);
+        if (!konfirmasi) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("ubahStatusDataSupplier", { row: row, status: newStatus });
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast(`Status berhasil diubah ke ${newStatus}`, "success");
+            fetchDataSupplierData();
+          } else {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleToggleStatusDataSupplier Error:", err);
+          showToast("Gagal mengubah status", "error");
+        }
+      }
+
+      let searchDataSupplierTimer;
+      function debouncedSearchDataSupplier() {
+        clearTimeout(searchDataSupplierTimer);
+        searchDataSupplierTimer = setTimeout(() => {
+           dataSupplierSearchTerm = document.getElementById("searchDataSupplier").value;
+           dataSupplierCurrentPage = 1;
+           renderDataSupplierData();
+        }, 300);
+      }
+
+      function setDataSupplierFilterStatus(val) {
+        dataSupplierFilterStatus = val;
+        dataSupplierCurrentPage = 1;
+        renderDataSupplierData();
+      }
+
+      function toggleDataSupplierSortOrder() {
+        dataSupplierSortOrder = dataSupplierSortOrder === 'asc' ? 'desc' : 'asc';
+        renderDataSupplierData();
+      }
+
+      function toggleDataSupplierSort() {
+        const panel = document.getElementById('data-supplier-sort-panel');
+        const filterPanel = document.getElementById('data-supplier-filters-panel');
+        filterPanel.classList.add('hidden');
+        panel.classList.toggle('hidden');
+        
+        const sortBtn = document.getElementById('btn-data-supplier-sort');
+        if (sortBtn) {
+            if (!panel.classList.contains('hidden')) {
+                sortBtn.classList.add('bg-slate-900', 'text-white');
+            } else {
+                sortBtn.classList.remove('bg-slate-900', 'text-white');
+            }
+        }
+        
+        const filterBtn = document.getElementById('btn-data-supplier-filter');
+        if (filterBtn) {
+            filterBtn.classList.remove('bg-slate-900', 'text-white');
+        }
+        updateDataSupplierControlUI();
+      }
+
+      function setDataSupplierSort(by) {
+        dataSupplierSortBy = by;
+        renderDataSupplierData();
+      }
+
+      function toggleDataSupplierFilters() {
+        const panel = document.getElementById("data-supplier-filters-panel");
+        const sortPanel = document.getElementById("data-supplier-sort-panel");
+        sortPanel.classList.add("hidden");
+        panel.classList.toggle("hidden");
+        
+        const filterBtn = document.getElementById("btn-data-supplier-filter");
+        if (filterBtn) {
+            if (!panel.classList.contains("hidden")) {
+                filterBtn.classList.add("bg-slate-900", "text-white");
+            } else {
+                filterBtn.classList.remove("bg-slate-900", "text-white");
+            }
+        }
+        
+        const sortBtn = document.getElementById("btn-data-supplier-sort");
+        if (sortBtn) {
+            sortBtn.classList.remove("bg-slate-900", "text-white");
+        }
+        updateDataSupplierControlUI();
+      }
+
+      async function handleToggleStatusSatuanBarang(row, currentStatus) {
+        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        const msg = newStatus === "Aktif" ? "Aktifkan satuan barang ini?" : "Nonaktifkan satuan barang ini?";
+        
+        const konfirmasi = await showKonfirmasi(msg, `Status satuan akan diubah menjadi ${newStatus}.`);
+        if (!konfirmasi) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("ubahStatusSatuanBarang", { row: row, status: newStatus });
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast(`Status berhasil diubah ke ${newStatus}`, "success");
+            fetchSatuanBarangData(); // Refresh UI
+          } else if (res) {
+            showToast(res.pesan, "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleToggleStatusSatuanBarang Error:", err);
+          showToast("Gagal mengubah status", "error");
         }
       }
 

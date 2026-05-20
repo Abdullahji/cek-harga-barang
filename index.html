@@ -517,6 +517,14 @@
                   <div class="dot"></div>
                   <span class="font-bold text-xs capitalize tracking-widest">Pembelian Barang</span>
                 </button>
+                <button
+                  onclick="switchPage('order-barang')"
+                  id="nav-order-barang"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Order Barang</span>
+                </button>
               </div>
             </div>
 
@@ -1131,11 +1139,11 @@
                   </div>
 
                   <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="handleUjiKoneksi(event)" class="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                    <button type="button" onclick="handleUjiKoneksi(event)" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                       <i data-lucide="activity" class="w-4 h-4 text-orange-600"></i>
                       <span>UJI KONEKSI</span>
                     </button>
-                    <button type="button" onclick="handleResetDefaultDatabaseUrl()" class="px-5 py-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2" title="Gunakan URL Bawaan / Demo">
+                    <button type="button" onclick="handleResetDefaultDatabaseUrl()" class="px-4 py-3 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer" title="Gunakan URL Bawaan / Demo">
                       <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
                       <span>RESET</span>
                     </button>
@@ -1143,9 +1151,9 @@
 
                   <hr class="border-slate-100 my-4" />
 
-                  <button type="submit" class="w-full py-4 bg-orange-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:bg-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    <span>SIMPAN KONEKSI</span>
+                  <button type="submit" class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-orange-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>SIMPAN</span>
                   </button>
                 </form>
               </div>
@@ -1176,9 +1184,9 @@
                       </button>
                     </div>
                   </div>
-                  <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    <span>SIMPAN KATEGORI</span>
+                  <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>SIMPAN</span>
                   </button>
                 </form>
               </div>
@@ -1341,9 +1349,9 @@
                       </button>
                     </div>
                   </div>
-                  <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    <span>SIMPAN REFERENSI</span>
+                  <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i data-lucide="save" class="w-4 h-4"></i>
+                    <span>SIMPAN</span>
                   </button>
                 </form>
               </div>
@@ -1532,7 +1540,7 @@
 
               <!-- FILTER & SORT PANELS -->
               <div id="pembelian-barang-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Supplier</label>
                     <div class="relative">
@@ -1545,9 +1553,18 @@
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Status</label>
                     <div class="flex gap-2">
-                       <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="all">SEMUA</button>
-                       <button onclick="setPembelianBarangFilterStatus('Aktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="Aktif">AKTIF</button>
-                       <button onclick="setPembelianBarangFilterStatus('Nonaktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="Nonaktif">NONAKTIF</button>
+                       <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition-all active:scale-95" data-val="all">SEMUA</button>
+                       <button onclick="setPembelianBarangFilterStatus('Aktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Aktif">AKTIF</button>
+                       <button onclick="setPembelianBarangFilterStatus('Nonaktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Nonaktif">NONAKTIF</button>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Monitoring Expired</label>
+                    <div class="flex gap-2">
+                       <button onclick="setPembelianBarangFilterExpired('all')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition-all active:scale-95 cursor-pointer" data-val="all">SEMUA</button>
+                       <button onclick="setPembelianBarangFilterExpired('Aman')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Aman">AMAN</button>
+                       <button onclick="setPembelianBarangFilterExpired('Mendekati Expired')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Mendekati Expired">DEKAT EXP</button>
+                       <button onclick="setPembelianBarangFilterExpired('Expired')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Expired">EXPIRED</button>
                     </div>
                   </div>
                 </div>
@@ -1566,6 +1583,12 @@
                    </button>
                    <button onclick="setPembelianBarangSort('profit')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="profit">
                      <span>PROFIT</span>
+                   </button>
+                   <button onclick="setPembelianBarangSort('tanggalExpired')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="tanggalExpired">
+                     <span>TANGGAL EXPIRED</span>
+                   </button>
+                   <button onclick="setPembelianBarangSort('sisaHari')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="sisaHari">
+                     <span>SISA HARI</span>
                    </button>
                    <button onclick="togglePembelianBarangSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95">
                      <i id="icon-pembelian-barang-order" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
@@ -1640,6 +1663,8 @@
                         <th class="px-8 py-7 w-[450px]">Barang</th>
                         <th class="px-8 py-7 w-[420px]">Qty & Keuangan</th>
                         <th class="px-8 py-7 w-[320px]">Expired & Keterangan</th>
+                        <th class="px-8 py-7 w-36 text-center">Sisa Hari</th>
+                        <th class="px-8 py-7 w-48 text-center">Status Expired</th>
                         <th class="px-8 py-7 w-36 text-center">Status</th>
                         <th class="px-8 py-7 w-40 text-center">Aksi</th>
                       </tr>
@@ -1671,6 +1696,370 @@
                 </div>
               </div>
             </section>
+
+            <!-- SECTION: ORDER BARANG -->
+            <section
+              id="section-order-barang"
+              class="page-section max-w-none px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800 italic">Order Barang</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">PENCATATAN PESANAN BARANG KE SUPPLIER</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openOrderBarangModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH DATA</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- FILTER & SORT PANELS -->
+              <div id="order-barang-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Supplier</label>
+                    <div class="relative">
+                      <select id="filter-order-barang-supplier" onchange="applyOrderBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all cursor-pointer">
+                        <option value="all">Semua Supplier</option>
+                      </select>
+                      <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Status</label>
+                    <div class="flex gap-2">
+                       <button onclick="setOrderBarangFilterStatus('all')" class="order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 cursor-pointer text-center" data-val="all">SEMUA</button>
+                       <button onclick="setOrderBarangFilterStatus('Pending')" class="order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 cursor-pointer text-center" data-val="Pending">PENDING</button>
+                       <button onclick="setOrderBarangFilterStatus('Diproses')" class="order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 cursor-pointer text-center" data-val="Diproses">DIPROSES</button>
+                       <button onclick="setOrderBarangFilterStatus('Selesai')" class="order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 cursor-pointer text-center" data-val="Selesai">SELESAI</button>
+                       <button onclick="setOrderBarangFilterStatus('Batal')" class="order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 cursor-pointer text-center" data-val="Batal">BATAL</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="order-barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
+                   <button onclick="setOrderBarangSort('idOrder')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600 cursor-pointer" data-val="idOrder">
+                     <span>ID ORDER</span>
+                   </button>
+                   <button onclick="setOrderBarangSort('tanggalOrder')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-blue-600 border-blue-200 cursor-pointer" data-val="tanggalOrder">
+                     <span>TANGGAL ORDER</span>
+                   </button>
+                   <button onclick="setOrderBarangSort('totalItem')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600 cursor-pointer" data-val="totalItem">
+                     <span>TOTAL ITEM</span>
+                   </button>
+                   <button onclick="setOrderBarangSort('totalQty')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600 cursor-pointer" data-val="totalQty">
+                     <span>TOTAL QUANTITY</span>
+                   </button>
+                   <button onclick="toggleOrderBarangSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95 cursor-pointer">
+                     <i id="icon-order-barang-order" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
+                     <span id="text-order-barang-order">Descending</span>
+                   </button>
+                </div>
+              </div>
+
+              <!-- SEARCH & ACTIONS BAR -->
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex-1 relative group w-full min-w-0">
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                  <input
+                    type="text"
+                    id="searchOrderBarang"
+                    oninput="debouncedSearchOrderBarang()"
+                    placeholder="Cari order berdasarkan ID Order, Supplier, Catatan..."
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                       <select onchange="changeItemsPerPage('order-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                       </select>
+                    </div>
+                    <button
+                        onclick="toggleOrderBarangFilters()"
+                        id="btn-order-barang-filter"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        title="Filter Data"
+                    >
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        onclick="toggleOrderBarangSort()"
+                        id="btn-order-barang-sort"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        title="Urutkan Data"
+                    >
+                        <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        id="btn-order-barang-refresh"
+                        onclick="fetchOrderBarangData(true)"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        title="Refresh Data"
+                    >
+                        <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+              </div>
+
+              <!-- Data Table & Mobile List Container -->
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <!-- Desktop View -->
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[1000px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-6 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7 w-40">ID Order</th>
+                        <th class="px-8 py-7 w-44">Tanggal Order</th>
+                        <th class="px-8 py-7">Nama Supplier</th>
+                        <th class="px-8 py-7 w-32 text-center">Total Item</th>
+                        <th class="px-8 py-7 w-32 text-center">Total Qty</th>
+                        <th class="px-8 py-7 w-36 text-center">Status</th>
+                        <th class="px-8 py-7 w-48 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="orderBarangTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="orderBarangCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Pagination Order -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="orderBarangPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('order-barang')" id="prevBtn-order-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('order-barang')" id="nextBtn-order-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION_MODAL_ORDER_BARANG -->
+            <div id="orderBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeOrderBarangModal()"></div>
+              <div class="relative bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closeOrderBarangModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-8 sm:p-10">
+                    <div class="mb-10">
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100 mb-4">
+                        <i data-lucide="shopping-basket" class="w-4 h-4 text-blue-600"></i>
+                        <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">TRANSAKSI ORDER</span>
+                      </div>
+                      <h3 id="orderBarangFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Order Barang</h3>
+                    </div>
+
+                    <form id="orderBarangForm" onsubmit="handleSimpanOrderBarang(event)" class="space-y-8">
+                      <input type="hidden" id="form-orderRow" />
+                      
+                      <!-- Row ID & Tanggal Order & Status -->
+                      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Order (Otomatis)</label>
+                          <input type="text" id="form-orderId" class="w-full px-6 py-4 rounded-xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed text-xs sm:text-sm" placeholder="ORD-XXX" readonly />
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 md:text-left text-center block">Tanggal Order</label>
+                          <input type="date" id="form-orderTanggal" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" required />
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 md:text-left text-center block">Status Order</label>
+                          <div class="relative">
+                            <select id="form-orderStatus" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none cursor-pointer text-xs sm:text-sm">
+                              <option value="Pending">Pending</option>
+                              <option value="Diproses">Diproses</option>
+                              <option value="Selesai">Selesai</option>
+                              <option value="Batal">Batal</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- SUPPLIER SECTION -->
+                      <div class="bg-blue-50/40 p-6 rounded-[2rem] border border-blue-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <i data-lucide="truck" class="w-4 h-4"></i> Data Supplier
+                        </h4>
+                        
+                        <!-- Smart Search Supplier -->
+                        <div class="space-y-3 relative">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier (ID / Nama)</label>
+                          <div class="relative flex items-center w-full">
+                            <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                            <input type="text" id="form-orderSearchSupplier" oninput="autocompleteOrderSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" placeholder="Ketik Nama / ID Supplier..." required />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                          </div>
+                          <!-- Autocomplete Container -->
+                          <div id="form-orderSupplierSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                            <!--Suggestions-->
+                          </div>
+                        </div>
+
+                        <!-- ReadOnly Supplier IDs/Nama -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Supplier</label>
+                             <input type="text" id="form-orderIdSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="ID..." readonly required />
+                          </div>
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Supplier</label>
+                             <input type="text" id="form-orderNamaSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="Nama..." readonly required />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- DAFTAR BARANG SECTION -->
+                      <div class="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100/80 space-y-6">
+                        <div class="flex justify-between items-center mb-2">
+                          <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
+                            <i data-lucide="box" class="w-4 h-4 text-blue-500"></i> Daftar Barang
+                          </h4>
+                          <button type="button" onclick="addOrderItemRow()" class="px-4 py-2 bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1 active:scale-95 transition-all cursor-pointer">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            Tambah Barang
+                          </button>
+                        </div>
+                        
+                        <!-- List Container -->
+                        <div id="order-items-lines-container" class="space-y-4">
+                          <!-- Dynamic rows go here -->
+                        </div>
+                      </div>
+
+                      <!-- CATATAN -->
+                      <div class="space-y-3">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Catatan Tambahan</label>
+                        <textarea id="form-orderCatatan" rows="3" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner resize-none text-sm placeholder:text-slate-300" placeholder="Keterangan tambahan untuk pesanan..."></textarea>
+                      </div>
+
+                      <!-- ACTIONS -->
+                      <div class="pt-6 flex gap-3">
+                        <button type="submit" class="flex-1 py-3 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                          <i data-lucide="save" class="w-4 h-4"></i>
+                          <span>SIMPAN</span>
+                        </button>
+                        <button type="button" onclick="closeOrderBarangModal()" class="px-8 py-3 bg-slate-100 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98] cursor-pointer">
+                          BATAL
+                        </button>
+                      </div>
+                    </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- DETAIL ORDER BARANG MODAL -->
+            <div id="orderBarangDetailModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeOrderBarangDetailModal()"></div>
+              <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closeOrderBarangDetailModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-8 sm:p-10">
+                    <div class="mb-8 border-b border-slate-100 pb-6">
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-cyan-50 border border-cyan-100 mb-4">
+                        <i data-lucide="info" class="w-4 h-4 text-cyan-600"></i>
+                        <span class="text-[10px] font-black text-cyan-600 uppercase tracking-widest">DETAIL PESANAN</span>
+                      </div>
+                      <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="detail-order-id">ORD-XXX</h3>
+                    </div>
+
+                    <div class="space-y-6">
+                      <!-- Grid Detail -->
+                      <div class="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 text-sm">
+                        <div>
+                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Tanggal Order</p>
+                          <p class="font-bold text-slate-800" id="detail-order-tanggal">-</p>
+                        </div>
+                        <div>
+                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status Order</p>
+                          <div id="detail-order-status-badge" class="inline-block mt-0.5">
+                            <!-- Badge -->
+                          </div>
+                        </div>
+                        <div class="col-span-2">
+                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Nama Supplier</p>
+                          <p class="font-extrabold text-slate-900" id="detail-order-supplier">-</p>
+                        </div>
+                        <div class="col-span-2">
+                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Catatan</p>
+                          <p class="font-semibold text-slate-600" id="detail-order-catatan">-</p>
+                        </div>
+                      </div>
+
+                      <!-- Tabel Barang -->
+                      <div class="space-y-3">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">Daftar Barang Pesanan</h4>
+                        <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-sm">
+                          <table class="w-full text-left">
+                            <thead>
+                              <tr class="bg-slate-900 text-[9px] font-black uppercase text-white tracking-widest border-b border-slate-100">
+                                <th class="px-6 py-4 w-12 text-center">No.</th>
+                                <th class="px-6 py-4">Nama Barang</th>
+                                <th class="px-6 py-4 w-28 text-center">Satuan</th>
+                                <th class="px-6 py-4 w-28 text-center">Qty</th>
+                              </tr>
+                            </thead>
+                            <tbody id="detailOrderItemsTableBody" class="divide-y divide-slate-50 text-xs font-bold text-slate-700">
+                              <!-- Items go here -->
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <!-- Share / Copy Actions -->
+                      <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                        <button onclick="handleCopyOrderText()" class="flex-1 py-3 bg-slate-950 hover:bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-slate-900/10">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                          <span>Copy Pesanan</span>
+                        </button>
+                        <button onclick="handleKirimWhatsApp()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-600/10">
+                          <i data-lucide="message-square" class="w-4 h-4"></i>
+                          <span>Kirim ke WhatsApp</span>
+                        </button>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
 
             <!-- SECTION_MODAL_PEMBELIAN_BARANG -->
             <div id="pembelianBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
@@ -1858,12 +2247,12 @@
                         </div>
                       </div>
 
-                      <div class="pt-6 flex gap-4">
-                        <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all active:scale-95">
-                          Simpan Data
+                      <div class="pt-6 flex gap-3">
+                        <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100/50 transition-all active:scale-95 cursor-pointer">
+                          SIMPAN
                         </button>
-                        <button type="button" onclick="closePembelianBarangModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
-                          Batal
+                        <button type="button" onclick="closePembelianBarangModal()" class="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 cursor-pointer">
+                          BATAL
                         </button>
                       </div>
                     </form>
@@ -1950,12 +2339,12 @@
                       </div>
 
                       <div class="pt-6 flex gap-3">
-                        <button type="submit" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 hover:bg-orange-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-orange-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                           <i data-lucide="save" class="w-4 h-4"></i>
-                          <span>Simpan Data</span>
+                          <span>SIMPAN</span>
                         </button>
-                        <button type="button" onclick="closeBarangModal()" class="px-8 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98]">
-                          Batal
+                        <button type="button" onclick="closeBarangModal()" class="px-8 py-3.5 bg-slate-100 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98] cursor-pointer">
+                          BATAL
                         </button>
                       </div>
                     </form>
@@ -2198,12 +2587,12 @@
                 </div>
               </div>
 
-              <div class="pt-6 flex gap-4">
-                <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-orange-600 transition-all active:scale-95">
-                  Simpan Data
+              <div class="pt-6 flex gap-3">
+                <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-orange-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-200 transition-all active:scale-95 cursor-pointer">
+                  SIMPAN
                 </button>
-                <button type="button" onclick="closeDataSupplierModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
-                  Batal
+                <button type="button" onclick="closeDataSupplierModal()" class="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 cursor-pointer">
+                  BATAL
                 </button>
               </div>
             </form>
@@ -2276,12 +2665,12 @@
                     </div>
                   </div>
 
-                  <div class="pt-4 flex gap-4">
-                    <button type="submit" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                  <div class="pt-4 flex gap-3">
+                    <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                       <i data-lucide="save" class="w-4 h-4"></i>
-                      <span>SIMPAN SEMUA DATA SATUAN</span>
+                      <span>SIMPAN</span>
                     </button>
-                    <button type="button" onclick="closeSatuanBarangModal()" class="px-8 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98]">
+                    <button type="button" onclick="closeSatuanBarangModal()" class="px-8 py-3.5 bg-slate-100 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98] cursor-pointer">
                       BATAL
                     </button>
                   </div>
@@ -2323,6 +2712,7 @@
       let pembelianBarangSearchTerm = "";
       let pembelianBarangFilterStatus = "all";
       let pembelianBarangFilterSupplier = "all";
+      let pembelianBarangFilterExpired = "all";
       let pembelianBarangSortBy = "tanggalPembelian";
       let pembelianBarangSortOrder = "desc";
       let pembelianBarangCurrentPage = 1;
@@ -2392,6 +2782,18 @@
       let dataSupplierCurrentPage = 1;
       let dataSupplierItemsPerPage = 10;
 
+      // Order Barang State
+      let isFetchingOrder = false;
+      let rawOrderHeaders = [];
+      let rawOrderDetails = [];
+      let orderBarangSearchTerm = "";
+      let orderBarangFilterStatus = "all";
+      let orderBarangFilterSupplier = "all";
+      let orderBarangSortBy = "tanggalOrder";
+      let orderBarangSortOrder = "desc";
+      let orderBarangCurrentPage = 1;
+      let orderBarangItemsPerPage = 10;
+
       // ==========================================
       // DEMO DATA (Fallback when not connected)
       // ==========================================
@@ -2418,12 +2820,27 @@
       ];
 
       const DEMO_DATA_PEMBELIAN = [
-        { row: 2, no: 1, idPembelianBrg: "PB-001", tanggalPembelian: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyPembelian: 50, hargaModal: 120000, hargaJual: 150000, profit: 30000, tanggalExpired: "2029-12-31", keterangan: "First Batch restock", status: "Aktif" },
-        { row: 3, no: 2, idPembelianBrg: "PB-002", tanggalPembelian: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 80gr (Demo)", satuan: "Rim", qtyPembelian: 120, hargaModal: 45000, hargaJual: 55000, profit: 10000, tanggalExpired: "", keterangan: "Monthly Restock ATK", status: "Aktif" },
-        { row: 4, no: 3, idPembelianBrg: "PB-003", tanggalPembelian: "2026-05-20", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456703", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyPembelian: 20, hargaModal: 350000, hargaJual: 450000, profit: 100000, tanggalExpired: "", keterangan: "Gaming supplies check", status: "Aktif" },
-        { row: 5, no: 4, idPembelianBrg: "PB-004", tanggalPembelian: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. Abadi Jaya (Demo)", barcode: "899223344556", idBarang: "ID-0004", namaBarang: "Kabel HDMI 4K Gold 2M (Demo)", satuan: "Pcs", qtyPembelian: 75, hargaModal: 25000, hargaJual: 40000, profit: 15000, tanggalExpired: "", keterangan: "Cable stock refill", status: "Aktif" },
-        { row: 6, no: 5, idPembelianBrg: "PB-005", tanggalPembelian: "2026-05-21", idSupplier: "SUP-004", namaSupplier: "Sinar Terang Distribusi (Demo)", barcode: "899888877777", idBarang: "ID-0005", namaBarang: "Susu UHT Cokelat 1L (Demo)", satuan: "Box", qtyPembelian: 45, hargaModal: 18000, hargaJual: 22000, profit: 4000, tanggalExpired: "2026-11-20", keterangan: "Susu expired checked", status: "Aktif" },
-        { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, profit: 20000, tanggalExpired: "", keterangan: "Restok tinta hitam terlaris", status: "Nonaktif" }
+        { row: 2, no: 1, idPembelianBrg: "PB-001", tanggalPembelian: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyPembelian: 50, hargaModal: 120000, hargaJual: 150000, profit: 30000, tanggalExpired: "2029-12-31", sisaHari: 1320, statusExpired: "🟢 Aman", keterangan: "First Batch restock", status: "Aktif" },
+        { row: 3, no: 2, idPembelianBrg: "PB-002", tanggalPembelian: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 80gr (Demo)", satuan: "Rim", qtyPembelian: 120, hargaModal: 45000, hargaJual: 55000, profit: 10000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Monthly Restock ATK", status: "Aktif" },
+        { row: 4, no: 3, idPembelianBrg: "PB-003", tanggalPembelian: "2026-05-20", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456703", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyPembelian: 20, hargaModal: 350000, hargaJual: 450000, profit: 100000, tanggalExpired: "2026-06-15", sisaHari: 26, statusExpired: "🟡 <=30 Hari", keterangan: "Gaming supplies check", status: "Aktif" },
+        { row: 5, no: 4, idPembelianBrg: "PB-004", tanggalPembelian: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. Abadi Jaya (Demo)", barcode: "899223344556", idBarang: "ID-0004", namaBarang: "Kabel HDMI 4K Gold 2M (Demo)", satuan: "Pcs", qtyPembelian: 75, hargaModal: 25000, hargaJual: 40000, profit: 15000, tanggalExpired: "2026-06-01", sisaHari: 12, statusExpired: "🟠 <=15 Hari", keterangan: "Cable stock refill", status: "Aktif" },
+        { row: 6, no: 5, idPembelianBrg: "PB-005", tanggalPembelian: "2026-05-21", idSupplier: "SUP-004", namaSupplier: "Sinar Terang Distribusi (Demo)", barcode: "899888877777", idBarang: "ID-0005", namaBarang: "Susu UHT Cokelat 1L (Demo)", satuan: "Box", qtyPembelian: 45, hargaModal: 18000, hargaJual: 22000, profit: 4000, tanggalExpired: "2026-05-15", sisaHari: -5, statusExpired: "🔴 Expired", keterangan: "Susu expired checked", status: "Aktif" },
+        { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, profit: 20000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Restok tinta hitam terlaris", status: "Nonaktif" }
+      ];
+
+      const DEMO_DATA_ORDER_HEADER = [
+        { row: 2, no: 1, idOrder: "ORD-001", tanggalOrder: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", totalItem: 2, totalQty: 10, catatan: "Kirim pagi hari", statusOrder: "Pending" },
+        { row: 3, no: 2, idOrder: "ORD-002", tanggalOrder: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", totalItem: 1, totalQty: 50, catatan: "Gunakan ekspedisi langganan", statusOrder: "Diproses" },
+        { row: 4, no: 3, idOrder: "ORD-003", tanggalOrder: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. ATK Sejahtera (Demo)", totalItem: 3, totalQty: 12, catatan: "", statusOrder: "Selesai" }
+      ];
+
+      const DEMO_DATA_ORDER_DETAIL = [
+        { row: 2, no: 1, idOrder: "ORD-001", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyOrder: 5 },
+        { row: 3, no: 2, idOrder: "ORD-001", idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", satuan: "Rim", qtyOrder: 5 },
+        { row: 4, no: 3, idOrder: "ORD-002", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyOrder: 50 },
+        { row: 5, no: 4, idOrder: "ORD-003", idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", satuan: "Rim", qtyOrder: 10 },
+        { row: 6, no: 5, idOrder: "ORD-003", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyOrder: 1 },
+        { row: 7, no: 6, idOrder: "ORD-003", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyOrder: 1 }
       ];
 
       function updateDatabaseStatusIndicator(status) {
@@ -2688,6 +3105,10 @@
           } else if (page === "pembelian-barang") {
             renderPembelianBarangData();
             if (rawPembelianBarangData.length === 0) fetchPembelianBarangData();
+          } else if (page === "order-barang") {
+            renderOrderBarangData();
+            if (rawOrderHeaders.length === 0) fetchOrderBarangData();
+            if (rawDataSupplierData.length === 0) fetchDataSupplierData();
           }
         }
 
@@ -2698,7 +3119,7 @@
         
         const activeNav = document.getElementById("nav-" + page);
         if (activeNav) {
-          if (page === "pembelian-barang") {
+          if (page === "pembelian-barang" || page === "order-barang") {
             activeNav.classList.add("active", "text-indigo-600", "bg-slate-50");
           } else {
             activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
@@ -2714,7 +3135,8 @@
           "barang": "Master Data Barang",
           "satuan-barang": "Master Satuan Barang",
           "referensi": "Data Referensi",
-          "pembelian-barang": "Transaksi Pembelian Barang"
+          "pembelian-barang": "Transaksi Pembelian Barang",
+          "order-barang": "Transaksi Order Barang"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
@@ -2729,7 +3151,7 @@
           if (page === "supplier" && rawDataSupplierData.length === 0) fetchDataSupplierData();
         }
 
-        if (page === "pembelian-barang") {
+        if (page === "pembelian-barang" || page === "order-barang") {
           const submenu = document.getElementById("submenu-transaksi");
           if (submenu) submenu.classList.remove("hidden");
         }
@@ -2766,6 +3188,10 @@
           pembelianBarangItemsPerPage = val;
           pembelianBarangCurrentPage = 1;
           renderPembelianBarangData();
+        } else if (type === 'order-barang') {
+          orderBarangItemsPerPage = val;
+          orderBarangCurrentPage = 1;
+          renderOrderBarangData();
         }
       }
 
@@ -3421,6 +3847,9 @@
         } else if (type === 'pembelian-barang' && pembelianBarangCurrentPage > 1) {
           pembelianBarangCurrentPage--;
           renderPembelianBarangData();
+        } else if (type === 'order-barang' && orderBarangCurrentPage > 1) {
+          orderBarangCurrentPage--;
+          renderOrderBarangData();
         }
       }
 
@@ -3476,6 +3905,13 @@
           if (pembelianBarangCurrentPage < totalPages) {
             pembelianBarangCurrentPage++;
             renderPembelianBarangData();
+          }
+        } else if (type === 'order-barang') {
+          const filteredLen = getFilteredOrderBarang().length;
+          const totalPages = Math.ceil(filteredLen / orderBarangItemsPerPage);
+          if (orderBarangCurrentPage < totalPages) {
+            orderBarangCurrentPage++;
+            renderOrderBarangData();
           }
         }
       }
@@ -6474,9 +6910,31 @@
           if (searchInput) searchInput.value = "";
           pembelianBarangFilterStatus = "all";
           pembelianBarangFilterSupplier = "all";
+          pembelianBarangFilterExpired = "all";
           const supSelect = document.getElementById("filter-pembelian-barang-supplier");
           if (supSelect) supSelect.value = "all";
           pembelianBarangCurrentPage = 1;
+          
+          // Reset UI filter styles
+          document.querySelectorAll(".pembelian-barang-status-btn").forEach(btn => {
+            if (btn.getAttribute("data-val") === "all") {
+              btn.classList.add("bg-indigo-600", "text-white", "font-black");
+              btn.classList.remove("text-slate-600", "border-slate-100");
+            } else {
+              btn.classList.remove("bg-indigo-600", "text-white", "font-black");
+              btn.classList.add("text-slate-600", "border-slate-100");
+            }
+          });
+          document.querySelectorAll(".pembelian-barang-expired-btn").forEach(btn => {
+            if (btn.getAttribute("data-val") === "all") {
+              btn.classList.add("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+              btn.classList.remove("text-slate-600", "border-slate-100");
+            } else {
+              btn.classList.remove("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+              btn.classList.add("text-slate-600", "border-slate-100");
+            }
+          });
+          
           showToast("Memperbarui data pembelian...", "info");
         }
 
@@ -6597,6 +7055,24 @@
         renderPembelianBarangData();
       }
 
+      function setPembelianBarangFilterExpired(val) {
+        pembelianBarangFilterExpired = val;
+        pembelianBarangCurrentPage = 1;
+        
+        // Update Filter Buttons Active style
+        document.querySelectorAll(".pembelian-barang-expired-btn").forEach(btn => {
+          if (btn.getAttribute("data-val") === val) {
+            btn.classList.add("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+            btn.classList.remove("text-slate-600", "border-slate-100");
+          } else {
+            btn.classList.remove("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+            btn.classList.add("text-slate-600", "border-slate-100");
+          }
+        });
+        
+        renderPembelianBarangData();
+      }
+
       function setPembelianBarangSort(by) {
         pembelianBarangSortBy = by;
         
@@ -6688,6 +7164,53 @@
         }, 300);
       }
 
+      function getRowHighlightClass(statusStr) {
+        const normalized = String(statusStr || "").trim();
+        if (normalized.toLowerCase() === "expired" || normalized === "🔴 Expired") {
+          return "bg-rose-50/30 hover:bg-rose-100/40 border-rose-100/50";
+        } else if (normalized.includes("15") || normalized === "🟠 <=15 Hari") {
+          return "bg-orange-50/30 hover:bg-orange-100/40 border-orange-100/50";
+        } else if (normalized.includes("30") || normalized === "🟡 <=30 Hari") {
+          return "bg-amber-50/30 hover:bg-amber-100/40 border-amber-100/50";
+        }
+        return "hover:bg-slate-50/50";
+      }
+
+      function getExpiredStatusBadgeHtml(statusStr) {
+        const normalized = String(statusStr || "").trim();
+        if (normalized.toLowerCase() === "expired" || normalized === "🔴 Expired") {
+          return `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100 shadow-sm shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+              <span>Barang Expired</span>
+            </span>
+          `;
+        } else if (normalized.includes("15") || normalized === "🟠 <=15 Hari") {
+          return `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-600 border border-orange-100 shadow-sm shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+              <span>Segera Expired</span>
+            </span>
+          `;
+        } else if (normalized.includes("30") || normalized === "🟡 <=30 Hari") {
+          return `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 shadow-sm shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+              <span><=30 Hari</span>
+            </span>
+          `;
+        } else if (normalized.toLowerCase() === "aman" || normalized === "🟢 Aman") {
+          return `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Aman</span>
+            </span>
+          `;
+        } else {
+          return `<span class="text-xs text-slate-400 font-bold">-</span>`;
+        }
+      }
+
       function renderPembelianBarangData() {
         const tbody = document.getElementById("pembelianBarangTableBody");
         const cardContainer = document.getElementById("pembelianBarangCardContainer");
@@ -6714,11 +7237,32 @@
         }
         
         if (pembelianBarangFilterStatus !== "all") {
-          filtered = filtered.filter(item => item.status === pembelianBarangFilterStatus);
+          filtered = filtered.filter(item => {
+            // Data expired tetap tampil walaupun status barang Nonaktif
+            const norm = String(item.statusExpired || "").trim().toLowerCase();
+            const isExpired = norm === "expired" || norm === "🔴 expired";
+            if (isExpired) return true;
+            return item.status === pembelianBarangFilterStatus;
+          });
         }
         
         if (pembelianBarangFilterSupplier !== "all") {
           filtered = filtered.filter(item => item.namaSupplier === pembelianBarangFilterSupplier);
+        }
+
+        // Apply Expired Filter
+        if (pembelianBarangFilterExpired !== "all") {
+          filtered = filtered.filter(item => {
+            const norm = String(item.statusExpired || "").trim().toLowerCase();
+            if (pembelianBarangFilterExpired === "Aman") {
+              return norm === "aman" || norm === "🟢 aman" || norm === "";
+            } else if (pembelianBarangFilterExpired === "Mendekati Expired") {
+              return norm.includes("15") || norm.includes("30") || norm === "🟠 <=15 hari" || norm === "🟡 <=30 hari";
+            } else if (pembelianBarangFilterExpired === "Expired") {
+              return norm === "expired" || norm === "🔴 expired";
+            }
+            return true;
+          });
         }
 
         // Apply Sorting
@@ -6726,14 +7270,32 @@
           let valA = a[pembelianBarangSortBy];
           let valB = b[pembelianBarangSortBy];
           
-          if (typeof valA === 'string') valA = valA.toLowerCase();
-          if (typeof valB === 'string') valB = valB.toLowerCase();
-          
-          if (pembelianBarangSortBy === "qtyPembelian" || pembelianBarangSortBy === "profit" || pembelianBarangSortBy === "hargaModal") {
-            valA = Number(valA) || 0;
-            valB = Number(valB) || 0;
+          if (pembelianBarangSortBy === "qtyPembelian" || pembelianBarangSortBy === "profit" || pembelianBarangSortBy === "hargaModal" || pembelianBarangSortBy === "sisaHari") {
+            if (pembelianBarangSortBy === "sisaHari") {
+              const aEmpty = a.sisaHari === undefined || a.sisaHari === null || a.sisaHari === "";
+              const bEmpty = b.sisaHari === undefined || b.sisaHari === null || b.sisaHari === "";
+              if (aEmpty && !bEmpty) return 1; // puts empty at bottom
+              if (!aEmpty && bEmpty) return -1;
+              if (aEmpty && bEmpty) return 0;
+              valA = Number(a.sisaHari);
+              valB = Number(b.sisaHari);
+            } else {
+              valA = Number(valA) || 0;
+              valB = Number(valB) || 0;
+            }
             return pembelianBarangSortOrder === 'asc' ? valA - valB : valB - valA;
           }
+
+          if (pembelianBarangSortBy === "tanggalExpired") {
+            const aEmpty = !a.tanggalExpired;
+            const bEmpty = !b.tanggalExpired;
+            if (aEmpty && !bEmpty) return 1;
+            if (!aEmpty && bEmpty) return -1;
+            if (aEmpty && bEmpty) return 0;
+          }
+          
+          if (typeof valA === 'string') valA = valA.toLowerCase();
+          if (typeof valB === 'string') valB = valB.toLowerCase();
           
           if (valA < valB) return pembelianBarangSortOrder === 'asc' ? -1 : 1;
           if (valA > valB) return pembelianBarangSortOrder === 'asc' ? 1 : -1;
@@ -6742,7 +7304,7 @@
 
         const total = filtered.length;
         if (total === 0) {
-          tbody.innerHTML = `<tr><td colspan="8" class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</td></tr>`;
           cardContainer.innerHTML = '<div class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</div>';
           if (info) info.innerText = "SHOWING 0 TO 0 OF 0 DATA";
           if (prevBtn) prevBtn.disabled = true;
@@ -6757,9 +7319,10 @@
 
           tbody.innerHTML = paginated.map((item, idx) => {
              const rowIdx = start + idx + 1;
+             const rowHighlight = getRowHighlightClass(item.statusExpired);
              
              return `
-               <tr class="hover:bg-slate-50/50 transition-colors group">
+               <tr class="${rowHighlight} transition-colors group">
                  <td class="px-6 py-6 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
                  <td class="px-8 py-6">
                     <div class="font-black text-slate-800 text-sm">${item.idPembelianBrg}</div>
@@ -6793,6 +7356,12 @@
                     <div class="max-w-[180px] break-words italic font-bold text-slate-500 mb-1">${item.keterangan || "-"}</div>
                     ${item.tanggalExpired ? `<div class="text-[10px] font-bold text-rose-500 inline-flex items-center gap-1 bg-rose-50 px-2 py-0.5 rounded-full"><i data-lucide="calendar" class="w-3 h-3"></i> Exp: ${item.tanggalExpired}</div>` : ''}
                  </td>
+                 <td class="px-8 py-6 text-center text-xs font-bold text-slate-700">
+                    ${item.sisaHari !== undefined && item.sisaHari !== "" ? `<span class="font-mono bg-slate-100/60 px-2.5 py-1 rounded-md font-bold text-slate-800">${item.sisaHari} Hari</span>` : '-'}
+                 </td>
+                 <td class="px-8 py-6 text-center">
+                    ${getExpiredStatusBadgeHtml(item.statusExpired)}
+                 </td>
                  <td class="px-8 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${item.status}</span>
                  </td>
@@ -6817,14 +7386,14 @@
 
           cardContainer.innerHTML = paginated.map((item, idx) => {
              const rowIdx = start + idx + 1;
-             const statusColorClass = item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]';
+             const cardHighlight = getRowHighlightClass(item.statusExpired);
              
              return `
-               <div class="pembelian-card-item relative bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+               <div class="pembelian-card-item relative p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4 ${item.statusExpired && item.statusExpired !== '🟢 Aman' ? cardHighlight : 'bg-white hover:bg-slate-50'}">
                   <div class="flex justify-between items-start">
                     <div>
                       <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
-                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100 px-2 py-1 rounded-lg">${item.idPembelianBrg}</span>
+                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100/60 px-2 py-1 rounded-lg">${item.idPembelianBrg}</span>
                     </div>
                     <div class="flex items-center gap-2">
                        <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${item.status}</span>
@@ -6860,7 +7429,7 @@
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 text-[10px] font-sans">
+                  <div class="grid grid-cols-2 gap-3 bg-slate-50/80 p-3 rounded-2xl border border-slate-100/50 text-[10px] font-sans">
                      <div>
                        <span class="text-slate-400 font-bold block">Harga Modal / Jual</span>
                        <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-indigo-500">${formatIDR(item.hargaJual)}</span>
@@ -6871,12 +7440,15 @@
                      </div>
                   </div>
 
-                  <div class="flex justify-between items-center border-t border-slate-50 pt-3">
+                  <div class="flex justify-between items-center border-t border-slate-50 pt-3 flex-wrap gap-2">
                     <div class="text-[10px] text-slate-500 font-bold pr-4 truncate">
                       ${item.keterangan ? `<span>Ket: <i>${item.keterangan}</i></span>` : ''}
-                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5">Exp: ${item.tanggalExpired}</div>` : ''}
+                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5 font-black">Exp: ${item.tanggalExpired}</div>` : ''}
                     </div>
-
+                    ${item.sisaHari !== undefined && item.sisaHari !== "" ? `<div class="text-[10px] text-slate-600 font-black">Sisa Hari: <span class="font-mono bg-slate-100 p-1.5 rounded">${item.sisaHari} Hari</span></div>` : ''}
+                    <div>
+                      ${getExpiredStatusBadgeHtml(item.statusExpired)}
+                    </div>
                   </div>
                </div>
              `;
@@ -7181,6 +7753,945 @@
           console.error("handleToggleStatusPembelianBarang Error:", err);
           showToast("Gagal mengubah status", "error");
         }
+      }
+
+      // ===================================
+      // ORDER BARANG (Goods Order) FEATURES
+      // ===================================
+
+      function applyRefreshSpinOrderBarang() {
+        const btn = document.getElementById("btn-order-barang-refresh");
+        if (!btn) return;
+        const icon = btn.querySelector("i");
+        if (isFetchingOrder) {
+          btn.classList.add("bg-blue-50", "text-blue-600");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-blue-50", "text-blue-600");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
+      async function fetchOrderBarangData(resetFilters = false) {
+        if (isFetchingOrder) return;
+
+        if (resetFilters) {
+          orderBarangSearchTerm = "";
+          const searchInput = document.getElementById("searchOrderBarang");
+          if (searchInput) searchInput.value = "";
+          orderBarangFilterStatus = "all";
+          orderBarangFilterSupplier = "all";
+          const supSelect = document.getElementById("filter-order-barang-supplier");
+          if (supSelect) supSelect.value = "all";
+          orderBarangCurrentPage = 1;
+          showToast("Memperbarui data order...", "info");
+        }
+
+        isFetchingOrder = true;
+        applyRefreshSpinOrderBarang();
+        showLoading(true);
+
+        try {
+          // If in Demo Mode manually, throw to direct fallback
+          if (window.FALLBACK_DEMO_MODE) {
+            throw new Error("Demo Mode Active");
+          }
+
+          const res = await callGAS("ambilOrderBarang", {});
+          showLoading(false);
+          isFetchingOrder = false;
+          applyRefreshSpinOrderBarang();
+
+          if (res && res.sukses) {
+            rawOrderHeaders = res.headers || [];
+            rawOrderDetails = res.details || [];
+            renderOrderBarangData();
+            populateOrderSupplierFilter();
+            if (resetFilters) showToast("Data order berhasil diperbarui", "success");
+          } else {
+            rawOrderHeaders = DEMO_DATA_ORDER_HEADER;
+            rawOrderDetails = DEMO_DATA_ORDER_DETAIL;
+            renderOrderBarangData();
+            populateOrderSupplierFilter();
+            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
+          }
+        } catch (err) {
+          showLoading(false);
+          isFetchingOrder = false;
+          applyRefreshSpinOrderBarang();
+          console.error("fetchOrderBarangData Error:", err);
+
+          rawOrderHeaders = DEMO_DATA_ORDER_HEADER;
+          rawOrderDetails = DEMO_DATA_ORDER_DETAIL;
+          renderOrderBarangData();
+          populateOrderSupplierFilter();
+          showToast("Koneksi gagal. Menggunakan Data Demo", "warning");
+        }
+      }
+
+      // Populate filter dropdown with unique suppliers
+      function populateOrderSupplierFilter() {
+        const select = document.getElementById("filter-order-barang-supplier");
+        if (!select) return;
+
+        const suppliers = new Set();
+        rawDataSupplierData.forEach(s => {
+          if (s.namaSupplier) suppliers.add(s.namaSupplier);
+        });
+        rawOrderHeaders.forEach(o => {
+          if (o.namaSupplier) suppliers.add(o.namaSupplier);
+        });
+
+        const sortedSuppliers = Array.from(suppliers).sort();
+        const currentVal = select.value || "all";
+        select.innerHTML = `<option value="all">Semua Supplier</option>` +
+          sortedSuppliers.map(s => `<option value="${s}">${s}</option>`).join("");
+        
+        select.value = currentVal;
+      }
+
+      function getFilteredOrderBarang() {
+        let filtered = rawOrderHeaders.slice();
+
+        // Filter: Search Term (ID Order, Supplier name, Catatan)
+        if (orderBarangSearchTerm) {
+          const q = orderBarangSearchTerm.toLowerCase();
+          filtered = filtered.filter(o => 
+            (o.idOrder || "").toLowerCase().includes(q) ||
+            (o.namaSupplier || "").toLowerCase().includes(q) ||
+            (o.catatan || "").toLowerCase().includes(q)
+          );
+        }
+
+        // Filter: Supplier
+        if (orderBarangFilterSupplier !== "all") {
+          filtered = filtered.filter(o => o.namaSupplier === orderBarangFilterSupplier);
+        }
+
+        // Filter: Status
+        if (orderBarangFilterStatus !== "all") {
+          filtered = filtered.filter(o => (o.statusOrder || "Pending") === orderBarangFilterStatus);
+        }
+
+        // Sort
+        filtered.sort((a, b) => {
+          let valA = a[orderBarangSortBy];
+          let valB = b[orderBarangSortBy];
+
+          if (typeof valA === "string") valA = valA.toLowerCase();
+          if (typeof valB === "string") valB = valB.toLowerCase();
+
+          if (valA < valB) return orderBarangSortOrder === "asc" ? -1 : 1;
+          if (valA > valB) return orderBarangSortOrder === "asc" ? 1 : -1;
+          return 0;
+        });
+
+        return filtered;
+      }
+
+      function renderOrderBarangData() {
+        const tbody = document.getElementById("orderBarangTableBody");
+        const cardContainer = document.getElementById("orderBarangCardContainer");
+        if (!tbody || !cardContainer) return;
+
+        const filtered = getFilteredOrderBarang();
+        const total = filtered.length;
+
+        // Pagination calculations
+        const totalPages = Math.ceil(total / orderBarangItemsPerPage);
+        if (orderBarangCurrentPage > totalPages) orderBarangCurrentPage = totalPages || 1;
+
+        const start = (orderBarangCurrentPage - 1) * orderBarangItemsPerPage;
+        const end = Math.min(start + orderBarangItemsPerPage, total);
+        const paginated = filtered.slice(start, end);
+
+        // Render Desktop Table
+        if (paginated.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="text-center py-10 font-bold text-slate-400 text-xs">
+                Tidak ada data order barang yang sesuai
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = paginated.map((o, idx) => {
+            const rowIdx = start + idx + 1;
+            
+            // Status Badges
+            let badgeClass = "bg-slate-50 text-slate-500 border border-slate-100";
+            if (o.statusOrder === "Pending") badgeClass = "bg-amber-50 text-amber-600 border border-amber-100";
+            else if (o.statusOrder === "Diproses") badgeClass = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+            else if (o.statusOrder === "Selesai") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
+            else if (o.statusOrder === "Batal") badgeClass = "bg-rose-50 text-rose-500 border border-rose-100";
+
+            return `
+              <tr class="hover:bg-slate-50/50 transition-colors group">
+                <td class="px-6 py-5 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
+                <td class="px-8 py-5">
+                  <div class="font-black text-slate-800 text-sm cursor-pointer" onclick="openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})">${o.idOrder}</div>
+                </td>
+                <td class="px-8 py-5 text-xs font-bold text-slate-500">${o.tanggalOrder}</td>
+                <td class="px-8 py-5">
+                  <div class="font-black text-slate-800 text-sm">${o.namaSupplier}</div>
+                  <div class="text-[10px] font-mono font-bold text-blue-500 mt-0.5">${o.idSupplier}</div>
+                </td>
+                <td class="px-8 py-5 text-center text-xs font-black text-slate-700">${o.totalItem} Item</td>
+                <td class="px-8 py-5 text-center text-xs font-black text-slate-700">${o.totalQty} Qty</td>
+                <td class="px-8 py-5 text-center">
+                  <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${badgeClass}">${o.statusOrder || "Pending"}</span>
+                </td>
+                <td class="px-8 py-5 text-center">
+                  <div class="flex items-center justify-center gap-2">
+                    <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-slate-50 text-slate-600 hover:bg-slate-100/80 rounded-xl transition-all border border-slate-100 cursor-pointer" title="Detail Order">
+                      <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100/85 rounded-xl transition-all border border-blue-50 cursor-pointer" title="Edit Order">
+                      <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button onclick="handleUbahStatusOrderClick(${o.row}, '${o.statusOrder || 'Pending'}')" class="p-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 cursor-pointer" title="Ubah Status">
+                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join("");
+        }
+
+        // Render Mobile Cards
+        if (paginated.length === 0) {
+          cardContainer.innerHTML = `
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 text-center font-bold text-slate-400 text-xs">
+              Tidak ada data order barang yang sesuai
+            </div>
+          `;
+        } else {
+          cardContainer.innerHTML = paginated.map((o, idx) => {
+            const rowIdx = start + idx + 1;
+            
+            let statusColor = "bg-amber-500";
+            if (o.statusOrder === "Diproses") statusColor = "bg-indigo-500";
+            else if (o.statusOrder === "Selesai") statusColor = "bg-emerald-500";
+            else if (o.statusOrder === "Batal") statusColor = "bg-rose-500";
+
+            return `
+              <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
+                    <span class="font-black text-slate-800 text-sm font-mono bg-slate-100 px-2.5 py-1 rounded-lg cursor-pointer" onclick="openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})">${o.idOrder}</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full ${statusColor}"></span>
+                    <span class="text-[10px] font-black uppercase text-slate-500 tracking-wider">${o.statusOrder || "Pending"}</span>
+                  </div>
+                </div>
+
+                <div class="space-y-1.5 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-slate-400 font-bold">Tanggal Order:</span>
+                    <span class="text-slate-800 font-extrabold">${o.tanggalOrder}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400 font-bold">Supplier:</span>
+                    <span class="text-slate-800 font-extrabold text-right">${o.namaSupplier}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400 font-bold">Total item / qty:</span>
+                    <span class="text-slate-800 font-extrabold">${o.totalItem} item (${o.totalQty} qty)</span>
+                  </div>
+                  ${o.catatan ? `
+                  <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 text-[11px] text-slate-500 font-medium">
+                    Catatan: ${o.catatan}
+                  </div>
+                  ` : ''}
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-50">
+                  <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> DETAIL
+                  </button>
+                  <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-blue-50 border border-blue-50 flex items-center justify-center gap-1 text-[10px] text-blue-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> EDIT
+                  </button>
+                  <button onclick="handleUbahStatusOrderClick(${o.row}, '${o.statusOrder || 'Pending'}')" class="py-2.5 rounded-xl bg-slate-100 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-500 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                    STATUS
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join("");
+        }
+
+        // Render Pagination Text and state
+        const info = document.getElementById("orderBarangPaginationInfo");
+        if (info) {
+          info.innerText = `SHOWING ${total === 0 ? 0 : start + 1} TO ${end} OF ${total} DATA`;
+        }
+
+        const prevBtn = document.getElementById("prevBtn-order-barang");
+        const nextBtn = document.getElementById("nextBtn-order-barang");
+        if (prevBtn) prevBtn.disabled = orderBarangCurrentPage <= 1;
+        if (nextBtn) nextBtn.disabled = orderBarangCurrentPage >= totalPages;
+
+        lucide.createIcons();
+      }
+
+      // Debounce and search filters
+      let searchOrderBarangTimeout = null;
+      function debouncedSearchOrderBarang() {
+        clearTimeout(searchOrderBarangTimeout);
+        searchOrderBarangTimeout = setTimeout(() => {
+          const val = document.getElementById("searchOrderBarang").value || "";
+          orderBarangSearchTerm = val.trim();
+          orderBarangCurrentPage = 1;
+          renderOrderBarangData();
+        }, 300);
+      }
+
+      function toggleOrderBarangFilters() {
+        const panel = document.getElementById("order-barang-filters-panel");
+        const btn = document.getElementById("btn-order-barang-filter");
+        if (!panel || !btn) return;
+
+        panel.classList.toggle("hidden");
+        if (panel.classList.contains("hidden")) {
+          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+        } else {
+          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-100");
+          document.getElementById("order-barang-sort-panel").classList.add("hidden");
+          document.getElementById("btn-order-barang-sort").classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+        }
+      }
+
+      function applyOrderBarangFilters() {
+        const select = document.getElementById("filter-order-barang-supplier");
+        if (select) orderBarangFilterSupplier = select.value;
+        orderBarangCurrentPage = 1;
+        renderOrderBarangData();
+      }
+
+      function setOrderBarangFilterStatus(status) {
+        orderBarangFilterStatus = status;
+        
+        // Highlight active button
+        document.querySelectorAll(".order-barang-status-btn").forEach(btn => {
+          const val = btn.getAttribute("data-val");
+          if (val === status) {
+            btn.className = "order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-blue-200 transition-all active:scale-95 text-blue-600 bg-blue-50 text-center cursor-pointer";
+          } else {
+            btn.className = "order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 text-center cursor-pointer";
+          }
+        });
+
+        orderBarangCurrentPage = 1;
+        renderOrderBarangData();
+      }
+
+      function toggleOrderBarangSort() {
+        const panel = document.getElementById("order-barang-sort-panel");
+        const btn = document.getElementById("btn-order-barang-sort");
+        if (!panel || !btn) return;
+
+        panel.classList.toggle("hidden");
+        if (panel.classList.contains("hidden")) {
+          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+        } else {
+          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-100");
+          document.getElementById("order-barang-filters-panel").classList.add("hidden");
+          document.getElementById("btn-order-barang-filter").classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+        }
+      }
+
+      function setOrderBarangSort(field) {
+        orderBarangSortBy = field;
+
+        document.querySelectorAll(".order-barang-sort-btn").forEach(btn => {
+          const val = btn.getAttribute("data-val");
+          if (val === field) {
+            btn.classList.add("text-blue-600", "border-blue-200", "bg-blue-50");
+          } else {
+            btn.classList.remove("text-blue-600", "border-blue-200", "bg-blue-50");
+          }
+        });
+
+        orderBarangCurrentPage = 1;
+        renderOrderBarangData();
+      }
+
+      function toggleOrderBarangSortOrder() {
+        orderBarangSortOrder = orderBarangSortOrder === "asc" ? "desc" : "asc";
+        
+        const label = document.getElementById("text-order-barang-order");
+        const icon = document.getElementById("icon-order-barang-order");
+        if (label) label.innerText = orderBarangSortOrder === "asc" ? "Ascending" : "Descending";
+        if (icon) {
+          if (orderBarangSortOrder === "asc") {
+            icon.setAttribute("data-lucide", "arrow-up-narrow-wide");
+          } else {
+            icon.setAttribute("data-lucide", "arrow-down-narrow-wide");
+          }
+          lucide.createIcons();
+        }
+
+        orderBarangCurrentPage = 1;
+        renderOrderBarangData();
+      }
+
+      // Smart Autocomplete for Supplier in Order Form
+      function autocompleteOrderSupplier(query) {
+        const container = document.getElementById("form-orderSupplierSuggestions");
+        if (!container) return;
+
+        if (!query || query.trim() === "") {
+          container.classList.add("hidden");
+          return;
+        }
+
+        const q = query.toLowerCase();
+        
+        const filtered = rawDataSupplierData.filter(s => 
+          (s.namaSupplier || "").toLowerCase().includes(q) ||
+          (s.idSupplier || "").toLowerCase().includes(q)
+        );
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Supplier tidak ditemukan</div>`;
+        } else {
+          container.innerHTML = filtered.map(s => `
+            <div onclick="selectOrderSupplier('${s.idSupplier}', '${s.namaSupplier.replace(/'/g, "\\'")}')" class="p-4 hover:bg-slate-50 cursor-pointer border-b border-slate-50 transition-colors">
+              <div class="text-xs font-black text-slate-800">${s.idSupplier} - ${s.namaSupplier}</div>
+              <div class="text-[9px] font-bold text-slate-400 mt-1">${s.kontak || '-'} | ${s.alamat || '-'}</div>
+            </div>
+          `).join("");
+        }
+
+        container.classList.remove("hidden");
+      }
+
+      function selectOrderSupplier(id, nama) {
+        const idInput = document.getElementById("form-orderIdSupplier");
+        const nameInput = document.getElementById("form-orderNamaSupplier");
+        const searchInput = document.getElementById("form-orderSearchSupplier");
+
+        if (idInput) idInput.value = id;
+        if (nameInput) nameInput.value = nama;
+        if (searchInput) searchInput.value = nameInput.value;
+
+        const container = document.getElementById("form-orderSupplierSuggestions");
+        if (container) container.classList.add("hidden");
+      }
+
+      // Multi-Line Items Engine for Goods Order
+      let orderItemRowSequence = 0;
+
+      function addOrderItemRow(itemData = null) {
+        const container = document.getElementById("order-items-lines-container");
+        if (!container) return;
+
+        orderItemRowSequence++;
+        const seq = orderItemRowSequence;
+
+        const rowDiv = document.createElement("div");
+        rowDiv.id = `order-item-row-${seq}`;
+        rowDiv.className = "relative bg-white p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-stretch gap-4 shadow-sm animate-in zoom-in-95 duration-150";
+
+        rowDiv.innerHTML = `
+          <!-- Cari Barang Column -->
+          <div class="flex-1 space-y-2 relative">
+            <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Cari Barang (Barcode / ID / Nama)</label>
+            <div class="relative flex items-center">
+              <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></i>
+              <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" placeholder="Tulis nama barang atau scan..." required />
+              <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                <i data-lucide="x" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <!-- Auto-suggestions overlay -->
+            <div id="order-item-suggestions-${seq}" class="absolute left-0 right-0 mt-1 bg-white border border-slate-100 rounded-xl shadow-xl max-h-48 overflow-y-auto custom-scrollbar z-[7000] hidden"></div>
+          </div>
+
+          <!-- Hidden/Readonly auto details indices -->
+          <input type="hidden" id="order-item-idBarang-${seq}" />
+          <input type="hidden" id="order-item-namaBarang-${seq}" />
+
+          <!-- Details Display Col -->
+          <div class="grid grid-cols-2 md:w-80 gap-3">
+            <div class="space-y-2">
+              <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Satuan</label>
+              <input type="text" id="order-item-satuan-${seq}" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-extrabold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="Satuan" readonly required />
+            </div>
+            <div class="space-y-2">
+              <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Qty Order</label>
+              <input type="number" id="order-item-qtyOrder-${seq}" min="1" class="w-full px-4 py-3 text-xs bg-slate-50 border-none font-extrabold text-slate-705 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Qty" required />
+            </div>
+          </div>
+
+          <!-- Delete Action -->
+          <div class="flex items-end justify-end md:pb-1 shrink-0">
+            <button type="button" onclick="removeOrderItemRow(${seq})" class="p-3 bg-rose-50 text-rose-500 border border-rose-100 hover:bg-rose-100 rounded-xl transition-all active:scale-90 cursor-pointer" title="Hapus baris barang">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(rowDiv);
+        lucide.createIcons();
+
+        // Populate row if item data is explicitly specified
+        if (itemData) {
+          document.getElementById(`order-item-idBarang-${seq}`).value = itemData.idBarang || "";
+          document.getElementById(`order-item-namaBarang-${seq}`).value = itemData.namaBarang || "";
+          document.getElementById(`order-item-satuan-${seq}`).value = itemData.satuan || "";
+          document.getElementById(`order-item-qtyOrder-${seq}`).value = itemData.qtyOrder || "";
+          document.getElementById(`order-item-search-${seq}`).value = `${itemData.idBarang} - ${itemData.namaBarang}`;
+        }
+      }
+
+      function removeOrderItemRow(seq) {
+        const row = document.getElementById(`order-item-row-${seq}`);
+        if (row) {
+          row.classList.add("zoom-out-95", "opacity-0");
+          setTimeout(() => {
+            row.remove();
+          }, 150);
+        }
+      }
+
+      // Autocomplete for Goods on each multi-line line
+      function autocompleteOrderBarang(inputElement, seq) {
+        const query = inputElement.value;
+        const container = document.getElementById(`order-item-suggestions-${seq}`);
+        if (!container) return;
+
+        if (!query || query.trim() === "") {
+          container.classList.add("hidden");
+          return;
+        }
+
+        const q = query.toLowerCase();
+
+        // We use either rawSatuanBarangData or DEMO_DATA_SATUAN
+        const sourceData = rawSatuanBarangData.length > 0 ? rawSatuanBarangData : DEMO_DATA_SATUAN;
+
+        const filtered = sourceData.filter(s => 
+          (s.namaBarang || "").toLowerCase().includes(q) ||
+          (s.idBarang || "").toLowerCase().includes(q) ||
+          (s.barcode || "").toLowerCase().includes(q)
+        );
+
+        if (filtered.length === 0) {
+          container.innerHTML = `<div class="p-3 text-xs font-bold text-slate-400 italic">Barang tidak ditemukan</div>`;
+        } else {
+          container.innerHTML = filtered.map(s => `
+            <div onclick="selectOrderBarang(${seq}, '${s.barcode || ''}', '${s.idBarang}', '${s.namaBarang.replace(/'/g, "\\'")}', '${s.satuan}')" class="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 transition-colors">
+              <div class="text-xs font-black text-slate-800">${s.idBarang} - ${s.namaBarang}</div>
+              <div class="text-[9px] font-bold text-slate-400 mt-0.5">Satuan: ${s.satuan} | Barcode: ${s.barcode || '-'}</div>
+            </div>
+          `).join("");
+        }
+
+        container.classList.remove("hidden");
+      }
+
+      function selectOrderBarang(seq, barcode, idBarang, namaBarang, satuan) {
+        const searchInput = document.getElementById(`order-item-search-${seq}`);
+        const idInput = document.getElementById(`order-item-idBarang-${seq}`);
+        const nameInput = document.getElementById(`order-item-namaBarang-${seq}`);
+        const satInput = document.getElementById(`order-item-satuan-${seq}`);
+        const qtyInput = document.getElementById(`order-item-qtyOrder-${seq}`);
+
+        if (searchInput) searchInput.value = `${idBarang} - ${namaBarang}`;
+        if (idInput) idInput.value = idBarang;
+        if (nameInput) nameInput.value = namaBarang;
+        if (satInput) satInput.value = satuan;
+
+        const container = document.getElementById(`order-item-suggestions-${seq}`);
+        if (container) container.classList.add("hidden");
+
+        if (qtyInput) qtyInput.focus();
+      }
+
+      // Open Forms
+      function openOrderBarangModal(orderData = null) {
+        const modal = document.getElementById("orderBarangModal");
+        if (!modal) return;
+
+        // Reset the whole Form
+        document.getElementById("orderBarangForm").reset();
+        document.getElementById("form-orderRow").value = "";
+        document.getElementById("form-orderId").value = "Otomatis (ORD-001)";
+        document.getElementById("form-orderSearchSupplier").value = "";
+        document.getElementById("form-orderIdSupplier").value = "";
+        document.getElementById("form-orderNamaSupplier").value = "";
+        document.getElementById("form-orderCatatan").value = "";
+        document.getElementById("form-orderStatus").value = "Pending";
+
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById("form-orderTanggal").value = `${year}-${month}-${day}`;
+
+        // Empty current items
+        const container = document.getElementById("order-items-lines-container");
+        if (container) container.innerHTML = "";
+
+        if (orderData) {
+          // Editing mode
+          document.getElementById("orderBarangFormTitle").innerText = "Form Edit Order Barang";
+          document.getElementById("form-orderRow").value = orderData.row || "";
+          document.getElementById("form-orderId").value = orderData.idOrder || "";
+          document.getElementById("form-orderTanggal").value = orderData.tanggalOrder || "";
+          
+          selectOrderSupplier(orderData.idSupplier, orderData.namaSupplier);
+          document.getElementById("form-orderCatatan").value = orderData.catatan || "";
+          document.getElementById("form-orderStatus").value = orderData.statusOrder || "Pending";
+
+          // Get items from details matching ID
+          const details = rawOrderDetails.filter(d => d.idOrder === orderData.idOrder);
+          if (details.length > 0) {
+            details.forEach(d => addOrderItemRow(d));
+          } else {
+            addOrderItemRow();
+          }
+        } else {
+          // Creating mode
+          document.getElementById("orderBarangFormTitle").innerText = "Form Tambah Order Barang";
+          addOrderItemRow();
+        }
+
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+      }
+
+      function closeOrderBarangModal() {
+        const modal = document.getElementById("orderBarangModal");
+        if (!modal) return;
+
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.classList.remove("overflow-hidden");
+      }
+
+      // Save Handler
+      async function handleSimpanOrderBarang(event) {
+        event.preventDefault();
+
+        const row = document.getElementById("form-orderRow").value;
+        const idOrder = document.getElementById("form-orderId").value;
+        const tanggalOrder = document.getElementById("form-orderTanggal").value;
+        const idSupplier = document.getElementById("form-orderIdSupplier").value;
+        const namaSupplier = document.getElementById("form-orderNamaSupplier").value;
+        const catatan = document.getElementById("form-orderCatatan").value;
+        const statusOrder = document.getElementById("form-orderStatus").value;
+
+        // Collect rows of items
+        const itemRows = document.querySelectorAll("[id^='order-item-row-']");
+        const items = [];
+        let valid = true;
+
+        itemRows.forEach(rowEl => {
+          const match = rowEl.id.match(/\d+$/);
+          if (match) {
+            const seq = match[0];
+            const idBarang = document.getElementById(`order-item-idBarang-${seq}`).value;
+            const namaBarang = document.getElementById(`order-item-namaBarang-${seq}`).value;
+            const satuan = document.getElementById(`order-item-satuan-${seq}`).value;
+            const qtyOrder = parseInt(document.getElementById(`order-item-qtyOrder-${seq}`).value) || 0;
+
+            if (!idBarang || qtyOrder <= 0) {
+              valid = false;
+            } else {
+              items.push({ idBarang, namaBarang, satuan, qtyOrder });
+            }
+          }
+        });
+
+        if (!valid || items.length === 0) {
+          showToast("Isi semua barang pesanan dengan benar (jumlah tidak boleh kosong)", "warning");
+          return;
+        }
+
+        const payload = {
+          row,
+          idOrder: row ? idOrder : "",
+          tanggalOrder,
+          idSupplier,
+          namaSupplier,
+          catatan,
+          statusOrder,
+          items
+        };
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanOrderBarang", payload);
+          showLoading(false);
+
+          if (res && res.sukses) {
+            showToast(`Data order ${res.idOrder} berhasil disimpan`, "success");
+            closeOrderBarangModal();
+            fetchOrderBarangData();
+          } else if (!res) {
+            // Local Demo mode Simulation
+            let finalId = row ? idOrder : ("ORD-" + String(rawOrderHeaders.length + 1).padStart(3, '0'));
+            const totalQty = items.reduce((sum, item) => sum + item.qtyOrder, 0);
+
+            if (row) {
+              const idx = rawOrderHeaders.findIndex(h => h.row == row);
+              if (idx !== -1) {
+                rawOrderHeaders[idx] = {
+                  ...rawOrderHeaders[idx],
+                  tanggalOrder,
+                  idSupplier,
+                  namaSupplier,
+                  totalItem: items.length,
+                  totalQty,
+                  catatan,
+                  statusOrder
+                };
+              }
+              // Replace details
+              rawOrderDetails = rawOrderDetails.filter(d => d.idOrder !== finalId);
+            } else {
+              rawOrderHeaders.push({
+                row: rawOrderHeaders.length + 10,
+                no: rawOrderHeaders.length + 1,
+                idOrder: finalId,
+                tanggalOrder,
+                idSupplier,
+                namaSupplier,
+                totalItem: items.length,
+                totalQty,
+                catatan,
+                statusOrder
+              });
+            }
+
+            // Push items with new sequence
+            items.forEach(it => {
+              rawOrderDetails.push({
+                row: rawOrderDetails.length + 10,
+                no: rawOrderDetails.length + 1,
+                idOrder: finalId,
+                idBarang: it.idBarang,
+                namaBarang: it.namaBarang,
+                satuan: it.satuan,
+                qtyOrder: it.qtyOrder
+              });
+            });
+
+            showToast("Uji Simpan Berhasil secara lokal (Mode Terputus / Demo)", "success");
+            closeOrderBarangModal();
+            renderOrderBarangData();
+          } else {
+            showToast(res.pesan || "Gagal menyimpan order", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleSimpanOrderBarang Error:", err);
+          showToast("Gagal menyimpan data", "error");
+        }
+      }
+
+      // Detailed Popup Section
+      let currentActiveDetailOrder = null;
+
+      function openOrderBarangDetailModal(orderHeader) {
+        currentActiveDetailOrder = orderHeader;
+
+        document.getElementById("detail-order-id").innerText = orderHeader.idOrder || "-";
+        document.getElementById("detail-order-tanggal").innerText = orderHeader.tanggalOrder || "-";
+        
+        // Render Badges
+        const badgeEl = document.getElementById("detail-order-status-badge");
+        let badgeClass = "bg-slate-50 text-slate-500 border border-slate-100";
+        if (orderHeader.statusOrder === "Pending") badgeClass = "bg-amber-50 text-amber-600 border border-amber-100";
+        else if (orderHeader.statusOrder === "Diproses") badgeClass = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+        else if (orderHeader.statusOrder === "Selesai") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
+        else if (orderHeader.statusOrder === "Batal") badgeClass = "bg-rose-50 text-rose-500 border border-rose-100";
+
+        badgeEl.innerHTML = `<span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${badgeClass}">${orderHeader.statusOrder}</span>`;
+        document.getElementById("detail-order-supplier").innerText = `${orderHeader.idSupplier} | ${orderHeader.namaSupplier}`;
+        document.getElementById("detail-order-catatan").innerText = orderHeader.catatan || "-";
+
+        // Filter details list
+        const rows = rawOrderDetails.filter(d => d.idOrder === orderHeader.idOrder);
+        const tbody = document.getElementById("detailOrderItemsTableBody");
+
+        if (rows.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center py-6 font-bold text-slate-400 text-xs italic">
+                Daftar barang kosong / tidak ada data detail
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = rows.map((r, i) => `
+            <tr>
+              <td class="px-6 py-4 text-center font-bold text-slate-400">${i + 1}</td>
+              <td class="px-6 py-4">
+                <div class="font-extrabold text-slate-800">${r.namaBarang}</div>
+                <div class="text-[9px] text-slate-400 mt-0.5 font-mono">${r.idBarang}</div>
+              </td>
+              <td class="px-6 py-4 text-center">${r.satuan}</td>
+              <td class="px-6 py-4 text-center text-slate-900 font-extrabold">${r.qtyOrder}</td>
+            </tr>
+          `).join("");
+        }
+
+        const modal = document.getElementById("orderBarangDetailModal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          document.body.classList.add("overflow-hidden");
+        }
+      }
+
+      function closeOrderBarangDetailModal() {
+        const modal = document.getElementById("orderBarangDetailModal");
+        if (!modal) return;
+
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.classList.remove("overflow-hidden");
+        currentActiveDetailOrder = null;
+      }
+
+      // Generate exact formatted copy message
+      function getFormattedOrderText(orderHeader) {
+        const details = rawOrderDetails.filter(d => d.idOrder === orderHeader.idOrder);
+
+        let lines = [];
+        lines.push(`Yth. *${orderHeader.namaSupplier}*`);
+        lines.push(`Berikut kami kirimkan pesanan barang dari *Toko Wina*:`);
+        lines.push(``);
+        lines.push(`*ID ORDER:* ${orderHeader.idOrder}`);
+        lines.push(`*Tanggal:* ${orderHeader.tanggalOrder}`);
+        lines.push(``);
+        lines.push(`*DAFTAR BARANG YANG DIPESAN:*`);
+
+        details.forEach((d, i) => {
+          lines.push(`${i + 1}. ${d.namaBarang} = *${d.qtyOrder} ${d.satuan}*`);
+        });
+
+        if (orderHeader.catatan && orderHeader.catatan.trim() !== "") {
+          lines.push(``);
+          lines.push(`*Catatan:* _${orderHeader.catatan}_`);
+        }
+
+        lines.push(``);
+        lines.push(`Mohon dikonfirmasi kesediaan barang dan total tagihannya. Terima kasih.`);
+
+        return lines.join("\n");
+      }
+
+      function handleCopyOrderText() {
+        if (!currentActiveDetailOrder) return;
+        const txt = getFormattedOrderText(currentActiveDetailOrder);
+
+        navigator.clipboard.writeText(txt)
+          .then(() => showToast("Format teks pesanan berhasil disalin", "success"))
+          .catch(err => {
+            console.error("Clipboard Copy Error:", err);
+            showToast("Gagal menyalin teks pesanan", "error");
+          });
+      }
+
+      function handleKirimWhatsApp() {
+        if (!currentActiveDetailOrder) return;
+        const txt = getFormattedOrderText(currentActiveDetailOrder);
+
+        // Find supplier phone
+        const supplierObj = rawDataSupplierData.find(s => s.idSupplier === currentActiveDetailOrder.idSupplier);
+        let phoneNum = "";
+        if (supplierObj && supplierObj.kontak) {
+          // Keep only digits
+          phoneNum = supplierObj.kontak.replace(/\D/g, "");
+          // replace leading 0 with 62
+          if (phoneNum.startsWith("0")) {
+            phoneNum = "62" + phoneNum.slice(1);
+          }
+        }
+
+        const url = `https://wa.me/${phoneNum}?text=${encodeURIComponent(txt)}`;
+        window.open(url, "_blank");
+      }
+
+      // Toggle status easily via prompt
+      async function handleUbahStatusOrderClick(row, currentStatus) {
+        const statuses = ["Pending", "Diproses", "Selesai", "Batal"];
+        
+        let promptLines = statuses.filter(s => s !== currentStatus);
+
+        let htmlMenu = promptLines.map((s, i) => `
+          <button onclick="handleStatusClickConfirmation(${row}, '${s}')" class="w-full text-center font-black text-xs uppercase px-4 py-3 bg-slate-50 border border-slate-100/80 rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer capitalize">
+            Set Status: ${s}
+          </button>
+        `).join("");
+
+        const konfirmasi = await showKonfirmasiCustom(`Ubah Status Order`, `Status order saat ini adalah *${currentStatus}*. Ubah status order baris ini menjadi:`, htmlMenu);
+      }
+
+      async function showKonfirmasiCustom(title, text, customHtml) {
+        return new Promise((resolve) => {
+          const m = document.createElement("div");
+          m.className = "fixed inset-0 z-[10000] flex items-center justify-center p-4";
+          
+          m.innerHTML = `
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+            <div class="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl p-8 animate-in zoom-in-95 duration-200">
+               <h4 class="text-xl font-black text-slate-800 tracking-tight mb-2">${title}</h4>
+               <p class="text-xs font-bold text-slate-400 mb-6 leading-relaxed">${text}</p>
+               <div class="space-y-2 mb-6">
+                 ${customHtml}
+               </div>
+               <button id="cancel-confirm-custom" class="w-full py-3.5 bg-slate-150 hover:bg-slate-200 text-slate-500 rounded-xl text-xs font-black uppercase tracking-widest transition-all cursor-pointer">Batal</button>
+            </div>
+          `;
+          document.body.appendChild(m);
+
+          function cleanUp() {
+            m.remove();
+          }
+
+          m.querySelector("#cancel-confirm-custom").onclick = () => {
+            cleanUp();
+            resolve(false);
+          };
+
+          window.handleStatusClickConfirmation = async (row, newStatus) => {
+            cleanUp();
+            showLoading(true);
+            try {
+              const res = await callGAS("ubahStatusOrderBarang", { row: row, status: newStatus });
+              showLoading(false);
+
+              if (res && res.sukses) {
+                showToast(`Status order berhasil diubah ke ${newStatus}`, "success");
+                fetchOrderBarangData();
+              } else if (!res) {
+                const idx = rawOrderHeaders.findIndex(h => h.row == row);
+                if (idx !== -1) {
+                  rawOrderHeaders[idx].statusOrder = newStatus;
+                  showToast(`Status diubah secara lokal ke ${newStatus} (Demo)`, "success");
+                  renderOrderBarangData();
+                }
+              } else {
+                showToast(res.pesan || "Gagal mengubah status", "error");
+              }
+            } catch (err) {
+              showLoading(false);
+              showToast("Gagal mengubah status", "error");
+            }
+            resolve(true);
+          };
+        });
       }
 
       // Close autocomplete panels when user clicks outside

@@ -639,6 +639,9 @@
                     placeholder="Cari ID, Nama, atau Alamat..."
                     class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-orange-500/10 transition-all"
                   />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
@@ -946,6 +949,9 @@
                       placeholder="Cari Kategori..."
                       class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
                     />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
                   </div>
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                     <!-- Category Filter Trigger -->
@@ -1074,7 +1080,12 @@
                   </div>
                   <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Kategori</label>
-                    <input type="text" id="form-categoryName" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: SNACK" required />
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-categoryName" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: SNACK" required />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
                   </div>
                   <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-emerald-100 hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-5 h-5"></i>
@@ -1143,6 +1154,9 @@
                       placeholder="Cari..."
                       class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
                     />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
                   </div>
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                     <!-- Rows per page -->
@@ -1213,15 +1227,30 @@
                   <input type="hidden" id="form-referensiId" />
                   <div id="modal-ref-satuan-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
-                    <input type="text" id="form-ref-satuan" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-ref-satuan" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
                   </div>
                   <div id="modal-ref-kategori-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori Barang</label>
-                    <input type="text" id="form-ref-kategori" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: SNACK" />
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-ref-kategori" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: SNACK" />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
                   </div>
                   <div id="modal-ref-status-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
-                    <input type="text" id="form-ref-status" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-ref-status" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
                   </div>
                   <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <i data-lucide="save" class="w-5 h-5"></i>
@@ -1304,6 +1333,9 @@
                     placeholder="Cari..."
                     class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-orange-500/10 transition-all"
                   />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
@@ -1464,6 +1496,9 @@
                     placeholder="Cari transaksi berdasarkan ID, Nama Barang, Supplier, Barcode, Keterangan..."
                     class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                   />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
@@ -1591,9 +1626,12 @@
                         <!-- Smart Search Supplier -->
                         <div class="space-y-3 relative">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier</label>
-                          <div class="relative">
+                          <div class="relative flex items-center w-full">
                             <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                            <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Ketik Nama / ID Supplier..." required />
+                            <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Ketik Nama / ID Supplier..." required />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
                           </div>
                           <!-- Autocomplete Container -->
                           <div id="form-pembelianSupplierSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
@@ -1624,9 +1662,12 @@
                         <div class="space-y-3 relative">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Barang</label>
                           <div class="flex gap-2">
-                            <div class="relative flex-1 min-w-0">
+                            <div class="relative flex-1 min-w-0 flex items-center">
                               <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Scan barcode, type barcode, id, or name..." required />
+                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Scan barcode, type barcode, id, or name..." required />
+                              <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                              </button>
                             </div>
                             <button type="button" onclick="startSupplierScan('form-pembelianSearchBarang')" class="p-5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-2xl hover:bg-indigo-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-90" title="Scan Barcode">
                               <i data-lucide="scan" class="w-6 h-6"></i>
@@ -1670,11 +1711,21 @@
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian</label>
-                          <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="0" required />
+                          <div class="relative flex items-center w-full">
+                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="0" required />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                          </div>
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan)</label>
-                          <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp 0" required />
+                          <div class="relative flex items-center w-full">
+                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp 0" required />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -1710,7 +1761,12 @@
 
                       <div class="space-y-3">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan</label>
-                        <input type="text" id="form-pembelianKeterangan" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
+                        <div class="relative flex items-center w-full">
+                          <input type="text" id="form-pembelianKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
+                          <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                          </button>
+                        </div>
                       </div>
 
                       <div class="pt-6 flex gap-4">
@@ -1763,7 +1819,12 @@
 
                       <div class="space-y-3">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
-                        <input type="text" id="form-barangNama" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
+                        <div class="relative flex items-center w-full">
+                          <input type="text" id="form-barangNama" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
+                          <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                          </button>
+                        </div>
                       </div>
 
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1775,7 +1836,12 @@
                         </div>
                         <div class="space-y-3">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk / Brand</label>
-                            <input type="text" id="form-barangMerk" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
+                            <div class="relative flex items-center w-full">
+                              <input type="text" id="form-barangMerk" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
+                              <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                              </button>
+                            </div>
                         </div>
                       </div>
 
@@ -1881,6 +1947,9 @@
                     placeholder="Cari..."
                     class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
                   />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
@@ -1993,7 +2062,12 @@
                 <!-- Nama Supplier -->
                 <div class="space-y-3">
                   <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Supplier</label>
-                  <input type="text" id="form-dataSupplierNama" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." required />
+                  <div class="relative flex items-center w-full">
+                    <input type="text" id="form-dataSupplierNama" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="..." required />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -2001,7 +2075,12 @@
                 <!-- Kontak -->
                 <div class="space-y-3">
                   <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kontak / No. HP</label>
-                  <input type="text" id="form-dataSupplierKontak" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="08xx..." required />
+                  <div class="relative flex items-center w-full">
+                    <input type="text" id="form-dataSupplierKontak" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="08xx..." required />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                  </div>
                 </div>
                 <!-- Status -->
                 <div class="space-y-3">
@@ -2022,7 +2101,12 @@
               <!-- Keterangan -->
               <div class="space-y-3">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan Tambahan</label>
-                <input type="text" id="form-dataSupplierKeterangan" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Catatan khusus..." />
+                <div class="relative flex items-center w-full">
+                  <input type="text" id="form-dataSupplierKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Catatan khusus..." />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="pt-6 flex gap-4">
@@ -2041,105 +2125,77 @@
             <!-- MODAL SATUAN BARANG -->
             <div id="satuanBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSatuanBarangModal()"></div>
-              <div class="relative bg-white w-full max-w-2xl rounded-[2.5rem] p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-200">
+              <div class="relative bg-white w-full max-w-4xl rounded-[2.5rem] p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-200">
                 <div class="flex justify-between items-center mb-8">
-                  <h3 id="satuanBarangFormTitle" class="text-xl font-black text-slate-900">Tambah Satuan Barang</h3>
+                  <div>
+                    <h3 id="satuanBarangFormTitle" class="text-xl font-black text-slate-900">Tambah/Edit Satuan Barang</h3>
+                    <p id="satuanBarangFormSub" class="text-xs text-slate-400 font-bold mt-1 uppercase tracking-widest leading-normal">Kelola multi-satuan dan konversi harga jual untuk barang ini</p>
+                  </div>
                   <button onclick="closeSatuanBarangModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
                     <i data-lucide="x" class="w-5 h-5"></i>
                   </button>
                 </div>
+                
                 <form id="satuanBarangForm" onsubmit="handleSimpanSatuanBarang(event)" class="space-y-6">
-                  <input type="hidden" id="form-satuanRow" />
-                  
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
-                      <div class="relative group">
-                          <input type="text" id="form-satuanBarcode" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="..." />
-                          <button type="button" onclick="startGlobalScanner('form-satuanBarcode')" class="absolute right-4 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600">
-                              <i data-lucide="scan-barcode" class="w-5 h-5"></i>
-                          </button>
-                      </div>
-                    </div>
-                    <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
-                      <select id="form-satuanStatus" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all">
-                          <option value="Aktif">Aktif</option>
-                          <option value="Nonaktif">Nonaktif</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="space-y-2 relative">
+                  <!-- Autocomplete Search Area (Only visible when adding from scratch) -->
+                  <div id="satuan-search-container" class="space-y-2 relative">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pilih Barang (Autocomplete)</label>
-                    <div class="relative">
+                    <div class="relative flex items-center w-full">
                       <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                      <input type="text" id="form-satuanSearchBarang" oninput="autocompleteSatuanBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Ketik ID atau Nama Barang..." required />
+                      <input type="text" id="form-satuanSearchBarang" oninput="autocompleteSatuanBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Ketik ID atau Nama Barang..." />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
                     </div>
                     <!-- Autocomplete Container -->
                     <div id="form-satuanBarangSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
                       <!-- Suggestions -->
                     </div>
+                  </div>
+
+                  <!-- Locked Product Details Container -->
+                  <div class="p-6 bg-slate-50 border border-slate-100 rounded-[2rem] gap-4" id="satuan-locked-product-details">
                     <input type="hidden" id="form-satuanIdBarang" required />
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
-                    <input type="text" id="form-satuanNamaBarang" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none shadow-inner cursor-not-allowed" readonly placeholder="Nama barang otomatis..." />
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
-                      <select id="form-satuanSatuan" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all" required>
-                          <option value="">Pilih Satuan...</option>
-                      </select>
-                    </div>
-                    <div class="space-y-2">
-                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Satuan</label>
-                      <input type="number" id="form-satuanQty" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="1" required />
+                    <input type="hidden" id="form-satuanNamaBarang" />
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                      <div>
+                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest">Detail Barang Terpilih</span>
+                        <h4 class="font-black text-slate-800 text-base" id="form-satuanNamaDisplay">Pilih barang terlebih dahulu...</h4>
+                        <p class="font-mono text-xs font-bold text-slate-400 mt-1" id="form-satuanIdDisplay">-</p>
+                      </div>
+                      <div class="hidden" id="form-satuanBadgeDisplay">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[9px] font-black rounded-full uppercase tracking-widest font-mono">Grup Satuan</span>
+                      </div>
                     </div>
                   </div>
 
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
-                    <input type="text" id="form-satuanHarga" oninput="formatInputToRupiah(this)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Rp 0" required />
-                  </div>
-
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Link Gambar / Upload ke Google Drive</label>
-                    <div class="flex flex-col gap-3">
-                        <!-- Manual Link Input -->
-                        <input type="text" id="form-satuanGambarLink" oninput="updateSatuanGambarPreview(this.value)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs" placeholder="Paste link gambar Google Drive (manual)..." />
-                        
-                        <!-- Drag-and-drop & Click Upload Area -->
-                        <div class="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-3xl p-6 transition-colors bg-slate-50/50 flex flex-col items-center justify-center text-center cursor-pointer relative" id="satuan-upload-dropzone" onclick="document.getElementById('form-satuanGambarFile').click()">
-                            <input type="file" id="form-satuanGambarFile" class="hidden" accept="image/*" onchange="handleSatuanDriveUpload(this)" onclick="event.stopPropagation()" />
-                            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-2 transition-transform duration-200"></i>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Upload File ke Google Drive</span>
-                            <span class="text-[9px] text-slate-400 font-bold block">Klik untuk memilih file gambar atau drag & drop file ke sini</span>
-                            
-                            <!-- Upload Loading Spinner -->
-                            <div id="satuan-upload-spinner" class="hidden absolute inset-0 bg-white/95 rounded-3xl flex flex-col items-center justify-center gap-2 z-10 transition-all">
-                                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                                <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest animate-pulse">Menyimpan Ke Google Drive Anda...</span>
-                            </div>
-                        </div>
-
-                        <!-- Preview Container -->
-                        <div class="p-6 border border-slate-100 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center min-h-44 text-center">
-                            <div id="satuan-upload-preview" class="p-2 bg-white rounded-2xl border border-slate-100 inline-block overflow-hidden max-w-xs transition-all shadow-sm">
-                                <img id="satuan-preview-img" src="https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200" alt="Preview" class="max-h-32 rounded-xl object-contain mx-auto" />
-                            </div>
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 block">Preview Gambar</span>
-                        </div>
+                  <!-- MULTI-ROW CONTAINER -->
+                  <div class="space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                      <h4 class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
+                        <i data-lucide="layers" class="w-4 h-4 text-blue-500"></i>
+                        <span>Daftar Konversi Satuan</span>
+                      </h4>
+                      <button type="button" onclick="addSatuanGroupRow()" class="px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-100 flex items-center gap-1.5 shadow-sm transition-all duration-200">
+                        <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                        <span>Tambah Satuan</span>
+                      </button>
+                    </div>
+                    
+                    <div id="satuan-group-rows-container" class="space-y-6">
+                      <!-- Dynamically rendered rows go here -->
                     </div>
                   </div>
 
-                  <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    <span>SIMPAN DATA SATUAN</span>
-                  </button>
+                  <div class="pt-4 flex gap-4">
+                    <button type="submit" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 hover:bg-blue-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                      <i data-lucide="save" class="w-4 h-4"></i>
+                      <span>SIMPAN SEMUA DATA SATUAN</span>
+                    </button>
+                    <button type="button" onclick="closeSatuanBarangModal()" class="px-8 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98]">
+                      BATAL
+                    </button>
+                  </div>
                 </form>
               </div>
             </div>
@@ -3313,6 +3369,7 @@
           const res = await callGAS("simpanMasterCategory", { id, name, oldId });
           if (res && res.sukses) {
             showAlert("Sukses", oldId ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!", "success");
+            showToast(oldId ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!", "success");
             refreshCategoryData();
             closeCategoryModal();
             await fetchCategoryData();
@@ -3337,6 +3394,7 @@
             const res = await callGAS("hapusMasterCategory", { id: catId });
             if (res && res.sukses) {
               showAlert("Terhapus", "Category berhasil dihapus.", "success");
+              showToast("Category berhasil dihapus.", "success");
               refreshCategoryData();
               await fetchCategoryData();
               if (document.getElementById("section-category").classList.contains("active")) {
@@ -3508,6 +3566,7 @@
           const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tab });
           if (res && res.sukses) {
             showAlert("Sukses", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
+            showToast(id ? "Data referensi berhasil diperbarui!" : "Data referensi berhasil ditambahkan!", "success");
             closeReferensiModal();
             await fetchReferensiData();
           } else {
@@ -3529,6 +3588,7 @@
             const res = await callGAS("hapusReferensi", { id, tab: currentReferensiTab });
             if (res && res.sukses) {
               showAlert("Terhapus", "Data berhasil dihapus.", "success");
+              showToast("Data referensi berhasil dihapus.", "success");
               await fetchReferensiData();
             } else {
               showAlert("Error", res ? res.pesan : "Gagal menghapus data.", "error");
@@ -4464,7 +4524,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
-                <input type="text" class="variasi-barcode w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
+                <div class="relative flex items-center w-full">
+                  <input type="text" class="variasi-barcode w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="space-y-2">
@@ -4476,12 +4541,22 @@
 
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Satuan</label>
-                <input type="number" class="variasi-qty w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
+                <div class="relative flex items-center w-full">
+                  <input type="number" class="variasi-qty w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
               </div>
 
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
-                <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                <div class="relative flex items-center w-full">
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -4491,7 +4566,12 @@
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <!-- Input Link & Drag-and-Drop in a combined column -->
                 <div class="md:col-span-2 space-y-3">
-                  <input type="text" id="variasi-gambar-${rowId}" oninput="updateVariasiPreview(${rowId}, this.value)" class="variasi-gambar w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste link gambar Google Drive (manual)..." />
+                  <div class="relative flex items-center w-full">
+                    <input type="text" id="variasi-gambar-${rowId}" oninput="updateVariasiPreview(${rowId}, this.value)" class="variasi-gambar w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste link gambar Google Drive (manual)..." />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                  </div>
                   
                   <!-- Dropzone for Drag-and-Drop and Upload -->
                   <div id="variasi-dropzone-${rowId}" class="variasi-dropzone border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-2xl p-4 transition-colors bg-white flex flex-col items-center justify-center text-center cursor-pointer relative min-h-24" onclick="triggerVariasiFileInput(${rowId})">
@@ -4560,21 +4640,27 @@
         }
       }
 
-      function handleVariasiDriveUpload(rowId, input) {
+      async function handleVariasiDriveUpload(rowId, input) {
         const file = input.files[0];
         if (!file) return;
 
         const spinner = document.getElementById(`variasi-spinner-${rowId}`);
         if (spinner) spinner.classList.remove("hidden");
 
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const base64Data = e.target.result;
+        try {
+          // Compress the image down first for efficiency and reliability
+          const compressed = await compressAndResizeImg(file);
+          if (!compressed) {
+            showToast("Gagal membaca file gambar.", "error");
+            return;
+          }
+
+          let uploadSucceeded = false;
           try {
             const res = await callGAS("uploadKeDrive", {
-              base64Data: base64Data,
+              base64Data: compressed,
               fileName: file.name,
-              mimeType: file.type
+              mimeType: "image/jpeg"
             });
 
             if (res && res.sukses) {
@@ -4584,25 +4670,27 @@
                 updateVariasiPreview(rowId, res.url);
               }
               showToast("Gambar berhasil di-upload ke Google Drive!", "success");
-            } else {
-              showToast(res?.pesan || "Gagal mengunggah gambar ke Google Drive.", "error");
+              uploadSucceeded = true;
             }
-          } catch (err) {
-            console.error("Upload error:", err);
-            showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
-          } finally {
-            if (spinner) spinner.classList.add("hidden");
-            input.value = "";
+          } catch (gasErr) {
+            console.warn("GAS Drive upload connection failed, falling back to local base64 storage:", gasErr);
           }
-        };
 
-        reader.onerror = () => {
-          showToast("Gagal membaca file gambar.", "error");
+          if (!uploadSucceeded) {
+            const urlInput = document.getElementById(`variasi-gambar-${rowId}`);
+            if (urlInput) {
+              urlInput.value = compressed;
+              updateVariasiPreview(rowId, compressed);
+            }
+            showToast("Gambar berhasil disimpan!", "success");
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+          showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
+        } finally {
           if (spinner) spinner.classList.add("hidden");
           input.value = "";
-        };
-
-        reader.readAsDataURL(file);
+        }
       }
 
       function initVariasiUploadDragAndDrop(rowId) {
@@ -5053,6 +5141,22 @@
         el.setSelectionRange(newSelectionStart, newSelectionStart);
       }
 
+      function clearInlineInput(btnEl) {
+        if (!btnEl) return;
+        const parent = btnEl.parentElement;
+        if (!parent) return;
+        const input = parent.querySelector('input');
+        if (input) {
+          input.value = "";
+          // Dispatch input and change events to fire oninput handlers & reactive updates
+          const event = new Event('input', { bubbles: true });
+          input.dispatchEvent(event);
+          const changeEvent = new Event('change', { bubbles: true });
+          input.dispatchEvent(changeEvent);
+          input.focus();
+        }
+      }
+
       function convertGoogleDriveUrl(url) {
         if (!url) return "";
         let cleanUrl = url.trim();
@@ -5063,96 +5167,138 @@
           }
         }
         return cleanUrl;
+           function updateSatuanGambarPreview(url) {
+        // Legacy fallback - noop since we now use updateGroupPreview
       }
 
-      function updateSatuanGambarPreview(url) {
-        const img = document.getElementById("satuan-preview-img");
-        if (!img) return;
-        if (url && url.trim() !== "") {
-          img.src = convertGoogleDriveUrl(url);
-        } else {
-          img.src = "https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200";
+      function compressAndResizeImg(file, maxWidth = 400, maxHeight = 400, quality = 0.75) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > maxWidth) {
+                  height = Math.round((height * maxWidth) / width);
+                  width = maxWidth;
+                }
+              } else {
+                if (height > maxHeight) {
+                  width = Math.round((width * maxHeight) / height);
+                  height = maxHeight;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Export as compressed jpeg data-url
+              const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+              resolve(compressedBase64);
+            };
+            img.onerror = () => {
+              resolve(e.target.result);
+            };
+            img.src = e.target.result;
+          };
+          reader.onerror = () => {
+            resolve("");
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function updateGroupPreview(uniqueId, url) {
+        const img = document.getElementById(`group-preview-img-${uniqueId}`);
+        const statusText = document.getElementById(`group-status-text-${uniqueId}`);
+        if (img) {
+          if (url && url.trim() !== "") {
+            img.src = convertGoogleDriveUrl(url);
+            if (statusText) statusText.innerText = "Gambar Terpasang";
+          } else {
+            img.src = "https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200";
+            if (statusText) statusText.innerText = "Belum Ada Gambar";
+          }
         }
       }
 
-      function handleSatuanDriveUpload(input) {
+      function triggerGroupFileInput(uniqueId) {
+        const fileInput = document.getElementById(`group-file-input-${uniqueId}`);
+        if (fileInput) fileInput.click();
+      }
+
+      async function handleGroupDriveUpload(uniqueId, input) {
         const file = input.files[0];
         if (!file) return;
 
-        const spinner = document.getElementById("satuan-upload-spinner");
+        const spinner = document.getElementById(`group-spinner-${uniqueId}`);
         if (spinner) spinner.classList.remove("hidden");
 
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const base64Data = e.target.result;
+        const statusText = document.getElementById(`group-status-text-${uniqueId}`);
+        if (statusText) statusText.innerText = "Mengompres...";
+
+        try {
+          const compressed = await compressAndResizeImg(file);
+          if (!compressed) {
+            showToast("Gagal membaca file gambar.", "error");
+            return;
+          }
+
+          if (statusText) statusText.innerText = "Mengunggah...";
+
+          let uploadSucceeded = false;
           try {
             const res = await callGAS("uploadKeDrive", {
-              base64Data: base64Data,
+              base64Data: compressed,
               fileName: file.name,
-              mimeType: file.type
+              mimeType: "image/jpeg"
             });
 
             if (res && res.sukses) {
-              const urlInput = document.getElementById("form-satuanGambarLink");
+              const urlInput = document.getElementById(`group-gambar-${uniqueId}`);
               if (urlInput) {
                 urlInput.value = res.url;
-                updateSatuanGambarPreview(res.url);
+                updateGroupPreview(uniqueId, res.url);
               }
-              toast("success", "Gambar berhasil di-upload ke Google Drive!");
+              showToast("Gambar berhasil di-upload ke Google Drive!", "success");
+              uploadSucceeded = true;
             } else {
-              toast("error", res?.pesan || "Gagal mengunggah gambar ke Google Drive.");
+              console.warn("Upload response unsuccessful:", res);
             }
-          } catch (err) {
-            console.error("Upload error:", err);
-            toast("error", "Terjadi kesalahan koneksi saat mengunggah gambar.");
-          } finally {
-            if (spinner) spinner.classList.add("hidden");
-            input.value = ""; // reset file input value
+          } catch (gasErr) {
+            console.warn("GAS Drive upload connection failed, falling back to local base64 storage:", gasErr);
           }
-        };
 
-        reader.onerror = () => {
-          toast("error", "Gagal membaca file gambar.");
+          if (!uploadSucceeded) {
+            const urlInput = document.getElementById(`group-gambar-${uniqueId}`);
+            if (urlInput) {
+              urlInput.value = compressed;
+              updateGroupPreview(uniqueId, compressed);
+            }
+            showToast("Gambar berhasil disimpan!", "success");
+          }
+        } catch (err) {
+          console.error("Upload error:", err);
+          showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
+        } finally {
           if (spinner) spinner.classList.add("hidden");
-          input.value = "";
-        };
+          input.value = ""; // reset file input value
+        }
+      }
 
-        reader.readAsDataURL(file);
+      async function handleSatuanDriveUpload(input) {
+        // Legacy fallback - noop
       }
 
       function initSatuanUploadDragAndDrop() {
-        const dropzone = document.getElementById("satuan-upload-dropzone");
-        if (!dropzone) return;
-
-        ['dragenter', 'dragover'].forEach(eventName => {
-          dropzone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.remove('border-slate-200');
-            dropzone.classList.add('border-blue-400', 'bg-blue-50/20');
-          }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-          dropzone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropzone.classList.add('border-slate-200');
-            dropzone.classList.remove('border-blue-400', 'bg-blue-50/20');
-          }, false);
-        });
-
-        dropzone.addEventListener('drop', (e) => {
-          const dt = e.dataTransfer;
-          const files = dt.files;
-          if (files && files.length > 0) {
-            const fileInput = document.getElementById('form-satuanGambarFile');
-            if (fileInput) {
-              fileInput.files = files;
-              handleSatuanDriveUpload(fileInput);
-            }
-          }
-        }, false);
+        // Noop to satisfy onload hook gracefully
       }
 
       function autocompleteSatuanBarang(val) {
@@ -5184,78 +5330,259 @@
         container.classList.remove("hidden");
       }
 
+      // Group units row counter
+      let satuanGroupIndex = 0;
+
+      function getSatuanOptionsSelectHtml(selectedValue = "") {
+        if (!rawReferensiData) return '<option value="">Pilih Satuan...</option>';
+        const satuanList = [...new Set(rawReferensiData.filter(r => r.satuan).map(r => r.satuan))];
+        let html = '<option value="">Pilih Satuan...</option>';
+        satuanList.forEach(s => {
+          const selected = s.trim().toUpperCase() === selectedValue.trim().toUpperCase() ? "selected" : "";
+          html += `<option value="${s}" ${selected}>${s}</option>`;
+        });
+        return html;
+      }
+
+      function addSatuanGroupRow(item = null) {
+        const container = document.getElementById("satuan-group-rows-container");
+        if (!container) return;
+
+        const uId = "sat_" + (satuanGroupIndex++);
+        const rowVal = item ? (item.row || "") : "";
+        const barcodeVal = item ? (item.barcode || "") : "";
+        const selectedSatuan = item ? (item.satuan || "") : "";
+        const qtyVal = item ? (item.qtySatuan || 1) : 1;
+        const hargaVal = item ? (item.hargaJual || "") : "";
+        const statusVal = item ? (item.status || "Aktif") : "Aktif";
+        const gambarVal = item ? (item.gambar || "") : "";
+
+        const optionsHtml = getSatuanOptionsSelectHtml(selectedSatuan);
+
+        const cardHtml = `
+          <div class="satuan-group-card p-6 border border-slate-100 rounded-[2rem] bg-slate-50/50 space-y-4 relative transition-all duration-200 animate-in fade-in duration-300" id="group-card-${uId}" data-uid="${uId}">
+            <!-- Hidden inputs to track original row index if existing -->
+            <input type="hidden" class="satuan-card-row-index" value="${rowVal}" />
+            
+            <!-- Card Header -->
+            <div class="flex items-center justify-between border-b border-slate-100/60 pb-3">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center text-[10px] font-black text-blue-600 font-mono">
+                  #
+                </span>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest tracking-wider">Satuan Barang</span>
+              </div>
+              <button type="button" onclick="removeSatuanGroupRow('${uId}', ${rowVal ? 'true' : 'false'})" class="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-1.5" title="${rowVal ? 'Nonaktifkan' : 'Hapus baris ini'}">
+                <i data-lucide="${rowVal ? 'power-off' : 'trash-2'}" class="w-4 h-4"></i>
+                <span class="text-[9px] font-black uppercase tracking-widest">${rowVal ? 'Nonaktifkan' : 'Hapus'}</span>
+              </button>
+            </div>
+
+            <!-- Inputs Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- Barcode -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Barcode</label>
+                <div class="relative flex items-center w-full">
+                  <input type="text" class="satuan-card-barcode w-full pl-5 pr-14 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" id="barcode-input-${uId}" value="${barcodeVal}" placeholder="Kosong atau ketik barcode..." />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-9 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button type="button" onclick="startGlobalScanner('barcode-input-${uId}')" class="absolute right-3 text-blue-500 hover:text-blue-600" title="Scan Barcode">
+                    <i data-lucide="scan-barcode" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Satuan Select -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
+                <select class="satuan-card-satuan w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                  ${optionsHtml}
+                </select>
+              </div>
+
+              <!-- Qty Satuan -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Satuan (Isi per Satuan)</label>
+                <input type="number" class="satuan-card-qty w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" value="${qtyVal}" required min="1" />
+              </div>
+
+              <!-- Harga Jual -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual</label>
+                <input type="text" class="satuan-card-harga w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" oninput="formatInputToRupiah(this)" value="${hargaVal}" required placeholder="Rp 0" />
+              </div>
+
+              <!-- Status Keaktifan -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
+                <select class="satuan-card-status w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all">
+                  <option value="Aktif" ${statusVal === 'Aktif' ? 'selected' : ''}>Aktif</option>
+                  <option value="Nonaktif" ${statusVal === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option>
+                </select>
+              </div>
+
+              <!-- Drive upload & preview field combined -->
+              <div class="space-y-1.5 md:col-span-2 lg:col-span-3">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Link Gambar / Upload Ke Google Drive</label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <div class="relative flex-1">
+                    <input type="text" class="satuan-card-gambar w-full pl-5 pr-12 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" id="group-gambar-${uId}" oninput="updateGroupPreview('${uId}', this.value)" value="${gambarVal}" placeholder="Paste link gambar Google Drive (manual)..." />
+                    <button type="button" onclick="clearInlineInput(this); updateGroupPreview('${uId}', '')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                  <button type="button" onclick="triggerGroupFileInput('${uId}')" class="px-4 py-3.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap flex items-center justify-center gap-1.5 transition-all active:scale-95" title="Upload ke Google Drive">
+                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                    <span>Upload</span>
+                  </button>
+                  <input type="file" id="group-file-input-${uId}" class="hidden group-file-input" accept="image/*" onchange="handleGroupDriveUpload('${uId}', this)" onclick="event.stopPropagation()" />
+                </div>
+                
+                <!-- Drive Image Status & Preview display -->
+                <div class="flex items-center gap-4 mt-2 p-3 bg-white border border-slate-50 rounded-2xl">
+                  <div class="relative w-12 h-12 border border-slate-100 rounded-xl overflow-hidden bg-slate-50 shadow-inner flex items-center justify-center shrink-0">
+                    <img id="group-preview-img-${uId}" src="${convertGoogleDriveUrl(gambarVal) || 'https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200'}" alt="Preview" class="object-contain w-full h-full" />
+                    <div id="group-spinner-${uId}" class="hidden absolute inset-0 bg-white/90 flex items-center justify-center">
+                      <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  </div>
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Status Gambar</span>
+                    <span class="text-[9px] text-slate-500 font-bold block truncate" id="group-status-text-${uId}">
+                      ${gambarVal ? 'Gambar Terpasang' : 'Belum Ada Gambar'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', cardHtml);
+        
+        if (item && item.hargaJual) {
+           const cardEl = container.querySelector(`#group-card-${uId}`);
+           const hInput = cardEl.querySelector(".satuan-card-harga");
+           if (hInput) {
+              hInput.value = item.hargaJual;
+              formatInputToRupiah(hInput);
+           }
+        }
+
+        lucide.createIcons();
+      }
+
+      function removeSatuanGroupRow(uId, existsInSheet) {
+        if (existsInSheet) {
+          const card = document.getElementById(`group-card-${uId}`);
+          if (card) {
+            const statusSelect = card.querySelector(".satuan-card-status");
+            if (statusSelect) {
+               statusSelect.value = "Nonaktif";
+               showToast("Satuan ditandai sebagai Nonaktif. Simpan data untuk mendaftarkan perubahan.", "info");
+               card.classList.add("opacity-50", "border-rose-100", "bg-rose-50/5");
+            }
+          }
+        } else {
+          const card = document.getElementById(`group-card-${uId}`);
+          if (card) {
+            card.remove();
+          }
+        }
+      }
+
       function pilihSatuanBarangAutocomplete(id, nama) {
         document.getElementById("form-satuanSearchBarang").value = id + " - " + nama;
         document.getElementById("form-satuanIdBarang").value = id;
         document.getElementById("form-satuanNamaBarang").value = nama;
+        document.getElementById("form-satuanNamaDisplay").innerText = nama;
+        document.getElementById("form-satuanIdDisplay").innerText = "ID: " + id;
+        document.getElementById("form-satuanBadgeDisplay").classList.remove("hidden");
         document.getElementById("form-satuanBarangSuggestions").classList.add("hidden");
+
+        const rowsContainer = document.getElementById("satuan-group-rows-container");
+        rowsContainer.innerHTML = "";
+
+        const existingUnits = rawSatuanBarangData.filter(item => item.idBarang === id);
+        if (existingUnits.length > 0) {
+          existingUnits.forEach(item => addSatuanGroupRow(item));
+          showToast(`Ditemukan ${existingUnits.length} satuan terdaftar untuk barang ini. Anda dapat mengeditnya atau menambah satuan baru.`, "info");
+        } else {
+          addSatuanGroupRow();
+        }
       }
 
       function populateSatuanDropdowns() {
-        const satuanSelect = document.getElementById("form-satuanSatuan");
         const filterSatuan = document.getElementById("filter-satuan-dropdown");
+        if (!filterSatuan) return;
 
-        if (!satuanSelect) return;
-
-        // Satuan from Referensi
-        const currentSatValue = satuanSelect.value;
         const currentFilterSat = filterSatuan.value;
-        
-        satuanSelect.innerHTML = '<option value="">Pilih Satuan...</option>';
         filterSatuan.innerHTML = '<option value="all">Semua Satuan</option>';
         
         const satuanList = rawReferensiData.filter(r => r.satuan).map(r => r.satuan);
         [...new Set(satuanList)].forEach(s => {
-           satuanSelect.innerHTML += `<option value="${s}">${s}</option>`;
-           filterSatuan.innerHTML += `<option value="${s}">${s}</option>`;
+            filterSatuan.innerHTML += `<option value="${s}">${s}</option>`;
         });
-        
-        satuanSelect.value = currentSatValue;
         filterSatuan.value = currentFilterSat;
       }
 
       function autoFillNamaBarangBySatuan(idBarang) {
-        const barang = rawBarangData.find(b => b.idBarang === idBarang);
-        document.getElementById("form-satuanNamaBarang").value = barang ? barang.namaBarang : "";
+        // Noop fallback since name autofill is fully completed through select-autocomplete listener now
+      }
+
+      function startGlobalScanner(targetId) {
+        startSupplierScan(targetId);
       }
 
       function openSatuanBarangModal(data = null) {
         const modal = document.getElementById("satuanBarangModal");
         const title = document.getElementById("satuanBarangFormTitle");
+        const sub = document.getElementById("satuanBarangFormSub");
         const form = document.getElementById("satuanBarangForm");
-        
+        const searchContainer = document.getElementById("satuan-search-container");
+        const lockedDetails = document.getElementById("satuan-locked-product-details");
+        const rowsContainer = document.getElementById("satuan-group-rows-container");
+
         form.reset();
+        rowsContainer.innerHTML = "";
         document.getElementById("form-satuanBarangSuggestions").classList.add("hidden");
-        const spinner = document.getElementById("satuan-upload-spinner");
-        if (spinner) spinner.classList.add("hidden");
-        populateSatuanDropdowns();
+
+        satuanGroupIndex = 0;
 
         if (data) {
-          title.innerText = "Edit Satuan Barang";
-          document.getElementById("form-satuanRow").value = data.row;
-          document.getElementById("form-satuanBarcode").value = data.barcode || "";
+          title.innerText = "Edit Grup Satuan Barang";
+          sub.innerText = "Kelola multi-satuan dan konversi harga jual untuk barang ini";
+          
+          searchContainer.classList.add("hidden");
+          lockedDetails.classList.remove("hidden");
+          
           document.getElementById("form-satuanIdBarang").value = data.idBarang;
-          document.getElementById("form-satuanSearchBarang").value = data.idBarang + " - " + data.namaBarang;
           document.getElementById("form-satuanNamaBarang").value = data.namaBarang;
-          document.getElementById("form-satuanSatuan").value = data.satuan;
-          document.getElementById("form-satuanQty").value = data.qtySatuan;
           
-          const hargaInput = document.getElementById("form-satuanHarga");
-          hargaInput.value = data.hargaJual;
-          formatInputToRupiah(hargaInput);
+          document.getElementById("form-satuanNamaDisplay").innerText = data.namaBarang;
+          document.getElementById("form-satuanIdDisplay").innerText = "ID: " + data.idBarang;
+          document.getElementById("form-satuanBadgeDisplay").classList.remove("hidden");
 
-          document.getElementById("form-satuanStatus").value = data.status;
-          document.getElementById("form-satuanGambarLink").value = data.gambar || "";
-          
-          updateSatuanGambarPreview(data.gambar);
+          const groupItems = rawSatuanBarangData.filter(item => item.idBarang === data.idBarang);
+          if (groupItems.length > 0) {
+             groupItems.forEach(item => addSatuanGroupRow(item));
+          } else {
+             addSatuanGroupRow(data);
+          }
         } else {
           title.innerText = "Tambah Satuan Barang";
-          document.getElementById("form-satuanRow").value = "";
+          sub.innerText = "Pilih barang dan daftarkan variasi konversi satuannya";
+          
+          searchContainer.classList.remove("hidden");
+          lockedDetails.classList.remove("hidden");
+          document.getElementById("form-satuanNamaDisplay").innerText = "Silakan cari & pilih barang...";
+          document.getElementById("form-satuanIdDisplay").innerText = "-";
+          document.getElementById("form-satuanBadgeDisplay").classList.add("hidden");
+          
           document.getElementById("form-satuanIdBarang").value = "";
-          document.getElementById("form-satuanSearchBarang").value = "";
-          document.getElementById("form-satuanStatus").value = "Aktif";
-          document.getElementById("form-satuanGambarLink").value = "";
-          updateSatuanGambarPreview("");
+          document.getElementById("form-satuanNamaBarang").value = "";
         }
 
         modal.classList.replace("hidden", "flex");
@@ -5268,34 +5595,119 @@
 
       async function handleSimpanSatuanBarang(e) {
         e.preventDefault();
-        const payload = {
-          row: document.getElementById("form-satuanRow").value,
-          barcode: document.getElementById("form-satuanBarcode").value,
-          idBarang: document.getElementById("form-satuanIdBarang").value,
-          namaBarang: document.getElementById("form-satuanNamaBarang").value,
-          satuan: document.getElementById("form-satuanSatuan").value,
-          qtySatuan: document.getElementById("form-satuanQty").value,
-          hargaJual: (document.getElementById("form-satuanHarga").value || "").replace(/\D/g, ""),
-          status: document.getElementById("form-satuanStatus").value,
-          gambar: document.getElementById("form-satuanGambarLink").value
-        };
+        
+        const idBarang = document.getElementById("form-satuanIdBarang").value;
+        const namaBarang = document.getElementById("form-satuanNamaBarang").value;
+
+        if (!idBarang) {
+          showToast("Silakan pilih barang terlebih dahulu di form autocomplete.", "warning");
+          return;
+        }
+
+        const cards = document.querySelectorAll("#satuan-group-rows-container .satuan-group-card");
+        if (cards.length === 0) {
+          showToast("Harap tambahkan setidaknya satu baris satuan.", "warning");
+          return;
+        }
+
+        const satuanList = [];
+        let hasEmptyFields = false;
+
+        cards.forEach(card => {
+          const rowVal = card.querySelector(".satuan-card-row-index").value;
+          const barcodeVal = card.querySelector(".satuan-card-barcode").value;
+          const satuanVal = card.querySelector(".satuan-card-satuan").value;
+          const qtyVal = card.querySelector(".satuan-card-qty").value;
+          const hargaRaw = card.querySelector(".satuan-card-harga").value;
+          const statusVal = card.querySelector(".satuan-card-status").value;
+          const gambarVal = card.querySelector(".satuan-card-gambar").value;
+
+          const hargaJual = (hargaRaw || "").replace(/\D/g, "");
+
+          if (!satuanVal || !qtyVal || !hargaJual) {
+             hasEmptyFields = true;
+          }
+
+          satuanList.push({
+            row: rowVal,
+            barcode: barcodeVal,
+            idBarang: idBarang,
+            namaBarang: namaBarang,
+            satuan: satuanVal,
+            qtySatuan: qtyVal,
+            hargaJual: hargaJual,
+            status: statusVal,
+            gambar: gambarVal
+          });
+        });
+
+        if (hasEmptyFields) {
+          showToast("Harap isi semua kolom Satuan, Qty, dan Harga Jual.", "warning");
+          return;
+        }
 
         showLoading(true);
+
         try {
-          const res = await callGAS("simpanSatuanBarang", { ...payload, sheetName: "Satuan_Barang" });
-          showLoading(false);
+          // Attempt batch group save first
+          const res = await callGAS("simpanGrupSatuanBarang", {
+            idBarang: idBarang,
+            namaBarang: namaBarang,
+            satuanList: satuanList
+          });
+
           if (res && res.sukses) {
-            showToast("Satuan berhasil disimpan", "success");
+            showLoading(false);
+            showToast("Semua data satuan berhasil disimpan!", "success");
             closeSatuanBarangModal();
             fetchSatuanBarangData();
-          } else if (res) {
-            showToast(res.pesan, "error");
+          } else {
+            console.warn("simpanGrupSatuanBarang returned fail status or is unsupported. Executing item-by-item fallback.", res);
+            
+            let failedCount = 0;
+            let lastError = "";
+
+            for (let i = 0; i < satuanList.length; i++) {
+              const itemPayload = satuanList[i];
+              try {
+                const individualRes = await callGAS("simpanSatuanBarang", {
+                  row: itemPayload.row,
+                  barcode: itemPayload.barcode,
+                  idBarang: itemPayload.idBarang,
+                  namaBarang: itemPayload.namaBarang,
+                  satuan: itemPayload.satuan,
+                  qtySatuan: itemPayload.qtySatuan,
+                  hargaJual: itemPayload.hargaJual,
+                  status: itemPayload.status,
+                  gambar: itemPayload.gambar,
+                  sheetName: "Satuan_Barang"
+                });
+
+                if (!individualRes || !individualRes.sukses) {
+                  failedCount++;
+                  lastError = individualRes ? individualRes.pesan : "Unknown Error";
+                }
+              } catch (errIn) {
+                failedCount++;
+                lastError = errIn.message || errIn;
+              }
+            }
+
+            showLoading(false);
+            if (failedCount === 0) {
+              showToast("Grup satuan disimpan menggunakan Fallback Mode (Sukses)", "success");
+              closeSatuanBarangModal();
+              fetchSatuanBarangData();
+            } else {
+              showToast(`Gagal menyimpan ${failedCount} baris satuan: ${lastError}`, "error");
+            }
           }
         } catch (err) {
           showLoading(false);
           console.error("handleSimpanSatuanBarang Error:", err);
+          showToast("Terjadi kesalahan ketika menyimpan data satuan.", "error");
         }
-      }
+      }   }
 
       // ==========================================
       // FEATURE: DATA SUPPLIER NEW

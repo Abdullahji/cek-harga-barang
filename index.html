@@ -573,7 +573,7 @@
     </header>
 
         <div
-          class="flex-1 overflow-y-auto p-6 sm:p-10 custom-scrollbar flex flex-col"
+          class="flex-1 overflow-y-auto p-2 sm:p-4 md:p-6 custom-scrollbar flex flex-col"
         >
           <div class="flex-1">
             <!-- SECTION: SUPPLIER -->
@@ -688,7 +688,7 @@
               <!-- Table Container -->
               <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
                 <div class="hidden md:block overflow-x-auto custom-scrollbar">
-                  <table class="w-full text-left min-w-[1000px]">
+                  <table class="w-full text-left min-w-[1200px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
                         <th class="px-6 py-7 w-14 text-center">No.</th>
@@ -707,7 +707,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="dataSupplierCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
+                <div id="dataSupplierCardContainer" class="block md:hidden space-y-3 p-1 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
                 
@@ -1151,7 +1151,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="referensiCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
+                <div id="referensiCardContainer" class="block md:hidden space-y-3 p-2 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
 
@@ -1207,15 +1207,15 @@
             <!-- SECTION: DATA BARANG -->
             <section
               id="section-barang"
-              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+              class="page-section max-w-none px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
             >
               <div
                 class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
               >
                 <div class="absolute top-0 left-0 w-2.5 h-full bg-orange-500"></div>
                 <div class="flex-1 text-center lg:text-left">
-                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800">Master Data</h2>
-                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Database Produk & Kategori</p>
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800 italic">Master Data</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">DATABASE PRODUK & KATEGORI</p>
                 </div>
                 <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
                   <button
@@ -1318,16 +1318,16 @@
 
               <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
                 <div class="hidden md:block overflow-x-auto custom-scrollbar">
-                  <table class="w-full text-left min-w-[1000px]">
+                  <table class="w-full text-left min-w-[1700px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-6 py-7 w-14 text-center">No.</th>
-                        <th class="px-8 py-7 w-32">ID Barang</th>
-                        <th class="px-8 py-7">Nama Barang</th>
-                        <th class="px-8 py-7">Kategori</th>
-                        <th class="px-8 py-7">Merk</th>
-                        <th class="px-8 py-7 w-32 text-center">Status</th>
-                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                        <th class="px-6 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7 w-64">ID Barang</th>
+                        <th class="px-8 py-7 w-[550px]">Nama Barang</th>
+                        <th class="px-8 py-7 w-72">Kategori</th>
+                        <th class="px-8 py-7 w-72">Merk</th>
+                        <th class="px-8 py-7 w-44 text-center">Status</th>
+                        <th class="px-8 py-7 w-48 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="barangTableBody" class="divide-y divide-slate-50">
@@ -1337,7 +1337,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="barangCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
+                <div id="barangCardContainer" class="block md:hidden space-y-3 p-1 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
 
@@ -1359,51 +1359,69 @@
             </section>
 
             <!-- MODAL BARANG -->
-            <div id="barangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+            <div id="barangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeBarangModal()"></div>
-              <div class="relative bg-white w-full max-w-xl rounded-[2.5rem] p-8 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200">
-                <div class="flex justify-between items-center mb-8">
-                  <h3 id="barangFormTitle" class="text-xl font-black text-slate-900">Tambah Barang</h3>
-                  <button onclick="closeBarangModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                  </button>
+              <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button onclick="closeBarangModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-10 sm:p-12">
+                    <div class="mb-10">
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-orange-50 border border-orange-100 mb-4">
+                        <i data-lucide="package" class="w-4 h-4 text-orange-600"></i>
+                        <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest">Product Entry</span>
+                      </div>
+                      <h3 id="barangFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Data Barang</h3>
+                    </div>
+
+                    <form id="barangForm" onsubmit="handleSimpanBarang(event)" class="space-y-8">
+                      <input type="hidden" id="form-barangRow" />
+                      
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">ID Barang (Otomatis)</label>
+                            <input type="text" id="form-barangId" class="w-full px-6 py-5 rounded-2xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed shadow-inner" placeholder="Generated..." readonly />
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Keaktifan</label>
+                            <select id="form-barangStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                                <option value="Aktif">Aktif</option>
+                                <option value="Nonaktif">Nonaktif</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div class="space-y-3">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
+                        <input type="text" id="form-barangNama" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
+                      </div>
+
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori</label>
+                            <select id="form-barangKategori" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all" required>
+                                <option value="">Pilih Kategori...</option>
+                            </select>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk / Brand</label>
+                            <input type="text" id="form-barangMerk" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
+                        </div>
+                      </div>
+
+                      <div class="pt-6 flex gap-4">
+                        <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-2">
+                          <i data-lucide="save" class="w-4 h-4"></i>
+                          <span>Simpan Data</span>
+                        </button>
+                        <button type="button" onclick="closeBarangModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                          Batal
+                        </button>
+                      </div>
+                    </form>
                 </div>
-                <form id="barangForm" onsubmit="handleSimpanBarang(event)" class="space-y-6">
-                  <input type="hidden" id="form-barangRow" />
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">ID Barang (Auto)</label>
-                        <input type="text" id="form-barangId" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none cursor-not-allowed shadow-inner" placeholder="Generated..." readonly />
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
-                        <select id="form-barangStatus" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
-                            <option value="Aktif">Aktif</option>
-                            <option value="Nonaktif">Nonaktif</option>
-                        </select>
-                    </div>
-                  </div>
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
-                    <input type="text" id="form-barangNama" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
-                  </div>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori</label>
-                        <select id="form-barangKategori" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all" required>
-                            <option value="">Pilih Kategori...</option>
-                        </select>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk</label>
-                        <input type="text" id="form-barangMerk" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
-                    </div>
-                  </div>
-                  <button type="submit" class="w-full py-4 bg-orange-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:bg-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i data-lucide="save" class="w-5 h-5"></i>
-                    <span>SIMPAN DATA BARANG</span>
-                  </button>
-                </form>
               </div>
             </div>
 
@@ -1541,7 +1559,7 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="satuanBarangCardContainer" class="block md:hidden space-y-3 p-3 bg-slate-100/30">
+                <div id="satuanBarangCardContainer" class="block md:hidden space-y-3 p-1 bg-slate-100/30">
                   <!-- Rendered by JS -->
                 </div>
 
@@ -1565,7 +1583,7 @@
     <!-- SECTION: DATA SUPPLIER MODAL -->
     <div id="dataSupplierModal" class="fixed inset-0 z-[5000] hidden items-center justify-center p-4 sm:p-6">
       <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDataSupplierModal()"></div>
-      <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+      <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
         <!-- Close Button -->
         <button onclick="closeDataSupplierModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20">
           <i data-lucide="x" class="w-6 h-6"></i>
@@ -3173,7 +3191,7 @@
 
             // Mobile Card
             const card = document.createElement("div");
-            card.className = "p-6 space-y-4";
+            card.className = "w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]";
             card.innerHTML = `
               <div class="flex justify-between items-start">
                 <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">#${displayIdx}</div>
@@ -3832,14 +3850,14 @@
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
                  <td class="px-8 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
-                 <td class="px-8 py-6 font-black text-slate-900 text-xs">${item.idBarang}</td>
+                 <td class="px-8 py-6 font-black text-slate-800 text-sm whitespace-nowrap">${item.idBarang}</td>
                  <td class="px-8 py-6">
                     <div class="flex flex-col">
                       <span class="font-black text-slate-800 text-sm italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</span>
                     </div>
                  </td>
-                 <td class="px-8 py-6 font-bold text-slate-500 text-xs uppercase">${item.kategoriBarang || "-"}</td>
-                 <td class="px-8 py-6 font-bold text-slate-500 text-xs capitalize">${item.merk || "-"}</td>
+                 <td class="px-8 py-6 font-bold text-slate-800 text-sm uppercase">${item.kategoriBarang || "-"}</td>
+                 <td class="px-8 py-6 font-bold text-slate-800 text-sm capitalize">${item.merk || "-"}</td>
                  <td class="px-8 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                  </td>
@@ -3862,14 +3880,21 @@
              `;
 
              cardContainer.innerHTML += `
-               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
-                  <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.idBarang}</p>
-                        <h4 class="font-black text-slate-800 italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</h4>
-                    </div>
-                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
-                  </div>
+                <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
+                   <div class="flex justify-between items-start">
+                     <div>
+                         <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
+                           <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-[9px] font-black rounded-md border border-orange-100/50">
+                             No. ${rowIdx}
+                           </span>
+                           <span class="text-[9px] font-black text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md leading-none truncate max-w-[130px]" title="${item.idBarang}">
+                             ID: ${item.idBarang}
+                           </span>
+                         </div>
+                         <h4 class="font-black text-slate-800 italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</h4>
+                     </div>
+                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
+                   </div>
                   <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Kategori</p>
@@ -4227,16 +4252,24 @@
              `;
 
               cardContainer.innerHTML += `
-               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
+               <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
                   <div class="flex justify-between items-start">
-                    <div class="flex gap-4">
+                    <div class="flex gap-4 min-w-0">
                         ${imgHtml}
-                        <div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">${item.barcode || item.idBarang}</p>
-                            <h4 class="font-black text-slate-800 italic group-hover:text-blue-600 transition-colors">${item.namaBarang}</h4>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
+                              <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-md border border-blue-100/50">
+                                No. ${rowIdx}
+                              </span>
+                              <span class="text-[9px] font-black text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md leading-none truncate max-w-[130px]" title="${item.idBarang}">
+                                ID: ${item.idBarang}
+                              </span>
+                            </div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 truncate">Barcode: ${item.barcode || "-"}</p>
+                            <h4 class="font-black text-slate-800 italic group-hover:text-blue-600 transition-colors truncate">${item.namaBarang}</h4>
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
                   </div>
                   <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
                     <div class="text-center border-r border-slate-200">
@@ -4567,16 +4600,24 @@
              `;
           }).join("");
 
-          cardContainer.innerHTML = paginated.map((item) => {
+          cardContainer.innerHTML = paginated.map((item, idx) => {
+             const rowIdx = start + idx + 1;
              const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
              return `
-               <div class="p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
+               <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
                   <div class="flex justify-between items-start">
                     <div>
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 whitespace-nowrap">${item.idSupplier}</p>
+                        <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
+                          <span class="px-2 py-0.5 bg-orange-50 text-orange-600 text-[9px] font-black rounded-md border border-orange-100/50">
+                            No. ${rowIdx}
+                          </span>
+                          <span class="text-[9px] font-black text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md leading-none truncate max-w-[130px]" title="${item.idSupplier}">
+                            ID: ${item.idSupplier}
+                          </span>
+                        </div>
                         <h4 class="font-black text-slate-800 italic group-hover:text-orange-600 transition-colors">${item.namaSupplier}</h4>
                     </div>
-                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
                   </div>
                   <div class="grid grid-cols-2 gap-4">
                     <div>

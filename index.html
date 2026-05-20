@@ -485,6 +485,33 @@
               </div>
             </div>
 
+            <!-- Group: Transaksi -->
+            <div class="space-y-1 sidebar-group-container">
+              <button
+                onclick="toggleSubmenu('transaksi')"
+                class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all sidebar-submenu-trigger"
+              >
+                <i data-lucide="shopping-cart" class="w-5 h-5 text-indigo-500"></i>
+                <span class="font-bold text-sm sidebar-text">Transaksi</span>
+                <i
+                  id="icon-transaksi"
+                  data-lucide="chevron-down"
+                  class="ml-auto w-4 h-4 transition-transform duration-300 nav-chevron"
+                ></i>
+              </button>
+              <div id="submenu-transaksi" class="pl-10 space-y-1 hidden">
+                <div class="submenu-header-popup">Transaksi</div>
+                <button
+                  onclick="switchPage('pembelian-barang')"
+                  id="nav-pembelian-barang"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Pembelian Barang</span>
+                </button>
+              </div>
+            </div>
+
             <button
               class="nav-btn w-full flex items-center gap-4 px-6 py-4.5 rounded-2xl text-slate-400 hover:bg-slate-50 transition-all opacity-50 cursor-not-allowed"
             >
@@ -1358,6 +1385,347 @@
               </div>
             </section>
 
+            <!-- SECTION: PEMBELIAN BARANG -->
+            <section
+              id="section-pembelian-barang"
+              class="page-section max-w-none px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
+            >
+              <div
+                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
+              >
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-indigo-500"></div>
+                <div class="flex-1 text-center lg:text-left">
+                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800 italic">Pembelian Barang</h2>
+                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">TRANSAKSI PEMBELIAN & RESTOCK PRODUK</p>
+                </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
+                  <button
+                    onclick="openPembelianBarangModal()"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  >
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                    <span>TAMBAH TRANSAKSI</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- FILTER & SORT PANELS -->
+              <div id="pembelian-barang-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Supplier</label>
+                    <div class="relative">
+                      <select id="filter-pembelian-barang-supplier" onchange="applyPembelianBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner appearance-none transition-all">
+                        <option value="all">Semua Supplier</option>
+                      </select>
+                      <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Status</label>
+                    <div class="flex gap-2">
+                       <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="all">SEMUA</button>
+                       <button onclick="setPembelianBarangFilterStatus('Aktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="Aktif">AKTIF</button>
+                       <button onclick="setPembelianBarangFilterStatus('Nonaktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600" data-val="Nonaktif">NONAKTIF</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="pembelian-barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
+                   <button onclick="setPembelianBarangSort('idPembelianBrg')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="idPembelianBrg">
+                     <span>ID PEMBELIAN</span>
+                   </button>
+                   <button onclick="setPembelianBarangSort('tanggalPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-indigo-600 border-indigo-200" data-val="tanggalPembelian">
+                     <span>TANGGAL BELI</span>
+                   </button>
+                   <button onclick="setPembelianBarangSort('qtyPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="qtyPembelian">
+                     <span>QUANTITY</span>
+                   </button>
+                   <button onclick="setPembelianBarangSort('profit')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="profit">
+                     <span>PROFIT</span>
+                   </button>
+                   <button onclick="togglePembelianBarangSortOrder()" class="px-6 py-3 text-[10px] font-black rounded-xl bg-slate-900 text-white transition-all flex items-center gap-2 active:scale-95">
+                     <i id="icon-pembelian-barang-order" data-lucide="arrow-up-narrow-wide" class="w-4 h-4"></i>
+                     <span id="text-pembelian-barang-order">A - Z</span>
+                   </button>
+                </div>
+              </div>
+
+              <!-- SEARCH & ACTIONS BAR -->
+              <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex-1 relative group w-full min-w-0">
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-indigo-500 transition-colors"></i>
+                  <input
+                    type="text"
+                    id="searchPembelianBarang"
+                    oninput="debouncedSearchPembelianBarang()"
+                    placeholder="Cari transaksi berdasarkan ID, Nama Barang, Supplier, Barcode, Keterangan..."
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                  />
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
+                    <!-- Rows per page -->
+                    <div class="flex items-center gap-2">
+                       <select onchange="changeItemsPerPage('pembelian-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                       </select>
+                    </div>
+                    <button
+                        onclick="togglePembelianBarangFilters()"
+                        id="btn-pembelian-barang-filter"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Filter Data"
+                    >
+                        <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        onclick="togglePembelianBarangSort()"
+                        id="btn-pembelian-barang-sort"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Urutkan Data"
+                    >
+                        <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                    <button
+                        id="btn-pembelian-barang-refresh"
+                        onclick="fetchPembelianBarangData(true)"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        title="Refresh Data"
+                    >
+                        <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    </button>
+                </div>
+              </div>
+
+              <!-- Data Table & Mobile List Container -->
+              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
+                <!-- Desktop View -->
+                <div class="hidden md:block overflow-x-auto custom-scrollbar">
+                  <table class="w-full text-left min-w-[1900px]">
+                    <thead>
+                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
+                        <th class="px-6 py-7 w-20 text-center">No.</th>
+                        <th class="px-8 py-7 w-52">ID Pembelian</th>
+                        <th class="px-8 py-7 w-[350px]">Supplier</th>
+                        <th class="px-8 py-7 w-[450px]">Barang</th>
+                        <th class="px-8 py-7 w-[420px]">Qty & Keuangan</th>
+                        <th class="px-8 py-7 w-[320px]">Expired & Keterangan</th>
+                        <th class="px-8 py-7 w-36 text-center">Status</th>
+                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody id="pembelianBarangTableBody" class="divide-y divide-slate-50">
+                      <!-- Rendered by JS -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div id="pembelianBarangCardContainer" class="block md:hidden space-y-3 p-1 bg-slate-100/30">
+                  <!-- Rendered by JS -->
+                </div>
+
+                <!-- Pagination Pembelian -->
+                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p id="pembelianBarangPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    SHOWING 0 TO 0 OF 0 DATA
+                  </p>
+                  <div class="flex gap-2">
+                    <button onclick="prevPage('pembelian-barang')" id="prevBtn-pembelian-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="nextPage('pembelian-barang')" id="nextBtn-pembelian-barang" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
+                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION_MODAL_PEMBELIAN_BARANG -->
+            <div id="pembelianBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePembelianBarangModal()"></div>
+              <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closePembelianBarangModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-10 sm:p-12">
+                    <div class="mb-10">
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-100 mb-4">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 text-indigo-600"></i>
+                        <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">TRANSAKSI PEMBELIAN</span>
+                      </div>
+                      <h3 id="pembelianBarangFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Pembelian Barang</h3>
+                    </div>
+
+                    <form id="pembelianBarangForm" onsubmit="handleSimpanPembelianBarang(event)" class="space-y-8">
+                      <input type="hidden" id="form-pembelianRow" />
+                      <input type="hidden" id="form-pembelianHargaJual" />
+                      
+                      <!-- Row ID & Tanggal Pembelian -->
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Pembelian Brg (Otomatis)</label>
+                          <input type="text" id="form-pembelianId" class="w-full px-6 py-5 rounded-2xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed" placeholder="PB-XXX" readonly />
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
+                          <input type="date" id="form-pembelianTanggal" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" required />
+                        </div>
+                      </div>
+
+                      <!-- SUPPLIER SECTION -->
+                      <div class="bg-indigo-50/40 p-6 rounded-[2rem] border border-indigo-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <i data-lucide="truck" class="w-4 h-4"></i> Data Supplier
+                        </h4>
+                        
+                        <!-- Smart Search Supplier -->
+                        <div class="space-y-3 relative">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier</label>
+                          <div class="relative">
+                            <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                            <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Ketik Nama / ID Supplier..." required />
+                          </div>
+                          <!-- Autocomplete Container -->
+                          <div id="form-pembelianSupplierSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                            <!--Suggestions-->
+                          </div>
+                        </div>
+
+                        <!-- ReadOnly Supplier IDs/Nama -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Supplier</label>
+                             <input type="text" id="form-pembelianIdSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="ID..." readonly required />
+                          </div>
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Supplier</label>
+                             <input type="text" id="form-pembelianNamaSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="Nama..." readonly required />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- BARANG SECTION -->
+                      <div class="bg-indigo-50/40 p-6 rounded-[2rem] border border-indigo-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                          <i data-lucide="package" class="w-4 h-4"></i> Data Barang
+                        </h4>
+                        
+                        <!-- Smart Search Barang -->
+                        <div class="space-y-3 relative">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Barang</label>
+                          <div class="flex gap-2">
+                            <div class="relative flex-1 min-w-0">
+                              <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Scan barcode, type barcode, id, or name..." required />
+                            </div>
+                            <button type="button" onclick="startSupplierScan('form-pembelianSearchBarang')" class="p-5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-2xl hover:bg-indigo-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-90" title="Scan Barcode">
+                              <i data-lucide="scan" class="w-6 h-6"></i>
+                            </button>
+                          </div>
+                          <!-- Autocomplete Container -->
+                          <div id="form-pembelianBarangSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                            <!--Suggestions-->
+                          </div>
+                        </div>
+
+                        <!-- ReadOnly Barang IDs/Nama/Barcode/Satuan/HargaJual -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Barcode</label>
+                             <input type="text" id="form-pembelianBarcode" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="..." readonly />
+                          </div>
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Barang</label>
+                             <input type="text" id="form-pembelianIdBarang" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="ID..." readonly required />
+                          </div>
+                          <div class="space-y-2 col-span-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Barang</label>
+                             <input type="text" id="form-pembelianNamaBarang" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="..." readonly required />
+                          </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
+                             <input type="text" id="form-pembelianSatuan" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-400 rounded-xl outline-none cursor-not-allowed" placeholder="Pcs/Box..." readonly required />
+                          </div>
+                          <div class="space-y-2">
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual (Satuan)</label>
+                             <input type="text" id="form-pembelianHargaJualDisplay" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-black text-indigo-600 rounded-xl outline-none cursor-not-allowed" placeholder="Rp 0" readonly />
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- MANUAL VALUES -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian</label>
+                          <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="0" required />
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan)</label>
+                          <input type="number" id="form-pembelianHargaModal" min="0" oninput="hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp..." required />
+                        </div>
+                      </div>
+
+                      <!-- INTERACTIVE AUTOMATIC PROFIT DISPLAY -->
+                      <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center justify-between">
+                        <div>
+                          <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Kalkulasi Keuntungan</p>
+                          <h4 class="text-xs font-black text-slate-700 font-sans">Profit yang Diperoleh (Jual - Modal)</h4>
+                        </div>
+                        <div class="text-right">
+                          <p id="form-pembelianProfitCalculated" class="text-2xl font-black text-emerald-600">Rp 0</p>
+                          <p id="form-pembelianTotalProfitCalculated" class="text-[9px] font-bold text-emerald-500/80">Total: Rp 0</p>
+                        </div>
+                      </div>
+
+                      <!-- EXP DATE, KET & STATUS -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Expired</label>
+                          <input type="date" id="form-pembelianExpired" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" />
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
+                          <div class="relative">
+                            <select id="form-pembelianStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner appearance-none transition-all">
+                              <option value="Aktif">AKTIF</option>
+                              <option value="Nonaktif">NONAKTIF</option>
+                            </select>
+                            <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="space-y-3">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan</label>
+                        <input type="text" id="form-pembelianKeterangan" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
+                      </div>
+
+                      <div class="pt-6 flex gap-4">
+                        <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-indigo-100 hover:bg-indigo-600 transition-all active:scale-95">
+                          Simpan Data
+                        </button>
+                        <button type="button" onclick="closePembelianBarangModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                          Batal
+                        </button>
+                      </div>
+                    </form>
+                </div>
+              </div>
+            </div>
+
             <!-- MODAL BARANG -->
             <div id="barangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeBarangModal()"></div>
@@ -1772,6 +2140,14 @@
       let rawReferensiData = [];
       let rawBarangData = [];
       let rawSatuanBarangData = [];
+      let rawPembelianBarangData = [];
+      let pembelianBarangSearchTerm = "";
+      let pembelianBarangFilterStatus = "all";
+      let pembelianBarangFilterSupplier = "all";
+      let pembelianBarangSortBy = "tanggalPembelian";
+      let pembelianBarangSortOrder = "desc";
+      let pembelianBarangCurrentPage = 1;
+      let pembelianBarangItemsPerPage = 10;
       let filteredSupplierData = []; // Track filtered data for pagination
       let rawCekHargaData = [];
       let html5QrcodeScanner = null;
@@ -1862,16 +2238,27 @@
         { row: 4, satuan: "Box", kategori: "Elektronik" }
       ];
 
+      const DEMO_DATA_PEMBELIAN = [
+        { row: 2, no: 1, idPembelianBrg: "PB-001", tanggalPembelian: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyPembelian: 50, hargaModal: 120000, hargaJual: 150000, profit: 30000, tanggalExpired: "2029-12-31", keterangan: "First Batch restock", status: "Aktif" },
+        { row: 3, no: 2, idPembelianBrg: "PB-002", tanggalPembelian: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 80gr (Demo)", satuan: "Rim", qtyPembelian: 120, hargaModal: 45000, hargaJual: 55000, profit: 10000, tanggalExpired: "", keterangan: "Monthly Restock ATK", status: "Aktif" },
+        { row: 4, no: 3, idPembelianBrg: "PB-003", tanggalPembelian: "2026-05-20", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456703", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyPembelian: 20, hargaModal: 350000, hargaJual: 450000, profit: 100000, tanggalExpired: "", keterangan: "Gaming supplies check", status: "Aktif" },
+        { row: 5, no: 4, idPembelianBrg: "PB-004", tanggalPembelian: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. Abadi Jaya (Demo)", barcode: "899223344556", idBarang: "ID-0004", namaBarang: "Kabel HDMI 4K Gold 2M (Demo)", satuan: "Pcs", qtyPembelian: 75, hargaModal: 25000, hargaJual: 40000, profit: 15000, tanggalExpired: "", keterangan: "Cable stock refill", status: "Aktif" },
+        { row: 6, no: 5, idPembelianBrg: "PB-005", tanggalPembelian: "2026-05-21", idSupplier: "SUP-004", namaSupplier: "Sinar Terang Distribusi (Demo)", barcode: "899888877777", idBarang: "ID-0005", namaBarang: "Susu UHT Cokelat 1L (Demo)", satuan: "Box", qtyPembelian: 45, hargaModal: 18000, hargaJual: 22000, profit: 4000, tanggalExpired: "2026-11-20", keterangan: "Susu expired checked", status: "Aktif" },
+        { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, profit: 20000, tanggalExpired: "", keterangan: "Restok tinta hitam terlaris", status: "Nonaktif" }
+      ];
+
       function useFallbackDemoData() {
         rawDataSupplierData = DEMO_DATA_SUPPLIER;
         rawBarangData = DEMO_DATA_BARANG;
         rawSatuanBarangData = DEMO_DATA_SATUAN;
         rawReferensiData = DEMO_DATA_REFERENSI;
+        rawPembelianBarangData = DEMO_DATA_PEMBELIAN;
         
         populateSatuanDropdowns();
         renderDashboard();
         // updateStatusCounts(); // Removed as it is not defined
         updateCategorySelects();
+        populatePembelianSupplierFilter();
         
         showToast("Mode Demo: Menggunakan data contoh (Offline)", "warning");
       }
@@ -1894,7 +2281,7 @@
 
           // Optimized Initial Fetch: Combined Call
           const res = await callGAS("ambilInisialisasiData", {
-            sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier"]
+            sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier", "Pembelian_Barang"]
           });
           
           if (res && res.sukses) {
@@ -1904,9 +2291,10 @@
             rawBarangData = res.barang || [];
             rawSatuanBarangData = res.satuanBarang || [];
             rawDataSupplierData = res.masterSupplier || [];
+            rawPembelianBarangData = res.pembelianBarang || [];
             
             // Check if database is truly empty
-            if (rawDataSupplierData.length === 0 && rawBarangData.length === 0) {
+            if (rawDataSupplierData.length === 0 && rawBarangData.length === 0 && rawPembelianBarangData.length === 0) {
               console.info("Database empty, using demo data.");
               useFallbackDemoData();
             } else {
@@ -1916,6 +2304,7 @@
               try { renderDashboard(); } catch(e) { console.error("renderDashboard failed:", e); }
               try { populateSatuanDropdowns(); } catch(e) { console.error("populateSatuanDropdowns failed:", e); }
               try { updateCategorySelects(); } catch(e) { console.error("updateCategorySelects failed:", e); }
+              try { populatePembelianSupplierFilter(); } catch(e) { console.error("populatePembelianSupplierFilter failed:", e); }
               
               showToast("Sinkronisasi data berhasil", "success");
             }
@@ -2017,17 +2406,17 @@
         if (icon) icon.classList.toggle("rotate-180");
       }
 
-      // Dropdown toggle for mobile cards
+      // Dropdown toggle for mobile cards & rows (Category, Pembelian, etc.)
       function toggleCardAction(e, menuId) {
         e.stopPropagation();
         const menu = document.getElementById(menuId);
         
         // Reset all mobile card z-indexes to avoid overlap
-        document.querySelectorAll('.category-card-item').forEach(card => {
+        document.querySelectorAll('.category-card-item, .pembelian-card-item').forEach(card => {
           card.style.zIndex = "0";
         });
 
-        const allMenus = document.querySelectorAll('[id^="cat-action-"]');
+        const allMenus = document.querySelectorAll('[id^="cat-action-"], [id^="pb-action-"], [id^="pb-card-action-"]');
         allMenus.forEach(m => {
           if (m.id !== menuId) m.classList.add('hidden');
         });
@@ -2037,7 +2426,7 @@
           menu.classList.toggle('hidden');
           
           if (isOpening) {
-            const parentCard = menu.closest('.category-card-item');
+            const parentCard = menu.closest('.category-card-item, .pembelian-card-item');
             if (parentCard) parentCard.style.zIndex = "50";
           }
         }
@@ -2045,7 +2434,7 @@
 
       // Close dropdowns when clicking anywhere else
       document.addEventListener('click', () => {
-        const allMenus = document.querySelectorAll('[id^="cat-action-"]');
+        const allMenus = document.querySelectorAll('[id^="cat-action-"], [id^="pb-action-"], [id^="pb-card-action-"]');
         allMenus.forEach(m => m.classList.add('hidden'));
       });
 
@@ -2092,17 +2481,24 @@
           } else if (page === "supplier") {
             renderDataSupplierData();
             if (rawDataSupplierData.length === 0) fetchDataSupplierData();
+          } else if (page === "pembelian-barang") {
+            renderPembelianBarangData();
+            if (rawPembelianBarangData.length === 0) fetchPembelianBarangData();
           }
         }
 
         // Update nav buttons
         document.querySelectorAll(".nav-btn").forEach((b) => {
-          b.classList.remove("active", "text-orange-600", "bg-slate-50");
+          b.classList.remove("active", "text-orange-600", "bg-slate-50", "text-indigo-600");
         });
         
         const activeNav = document.getElementById("nav-" + page);
         if (activeNav) {
-          activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
+          if (page === "pembelian-barang") {
+            activeNav.classList.add("active", "text-indigo-600", "bg-slate-50");
+          } else {
+            activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
+          }
         }
 
         // Menu titles
@@ -2113,7 +2509,8 @@
           "category": "Kategori Barang",
           "barang": "Master Data Barang",
           "satuan-barang": "Master Satuan Barang",
-          "referensi": "Data Referensi"
+          "referensi": "Data Referensi",
+          "pembelian-barang": "Transaksi Pembelian Barang"
         };
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
@@ -2126,6 +2523,11 @@
           if (rawCategoryData.length === 0) fetchCategoryData();
           if (page === "referensi" && rawReferensiData.length === 0) fetchReferensiData();
           if (page === "supplier" && rawDataSupplierData.length === 0) fetchDataSupplierData();
+        }
+
+        if (page === "pembelian-barang") {
+          const submenu = document.getElementById("submenu-transaksi");
+          if (submenu) submenu.classList.remove("hidden");
         }
 
         if (window.innerWidth < 1024) {
@@ -2156,6 +2558,10 @@
           dataSupplierItemsPerPage = val;
           dataSupplierCurrentPage = 1;
           renderDataSupplierData();
+        } else if (type === 'pembelian-barang') {
+          pembelianBarangItemsPerPage = val;
+          pembelianBarangCurrentPage = 1;
+          renderPembelianBarangData();
         }
       }
 
@@ -2753,6 +3159,9 @@
           renderSatuanBarangData();
         } else if (type === 'supplier') {
           changePage(-1); // existing function
+        } else if (type === 'pembelian-barang' && pembelianBarangCurrentPage > 1) {
+          pembelianBarangCurrentPage--;
+          renderPembelianBarangData();
         }
       }
 
@@ -2802,6 +3211,13 @@
           }
         } else if (type === 'supplier') {
           changePage(1); // existing function
+        } else if (type === 'pembelian-barang') {
+          const filteredLen = getFilteredPembelianBarangCount();
+          const totalPages = Math.ceil(filteredLen / pembelianBarangItemsPerPage);
+          if (pembelianBarangCurrentPage < totalPages) {
+            pembelianBarangCurrentPage++;
+            renderPembelianBarangData();
+          }
         }
       }
 
@@ -3637,6 +4053,19 @@
       }
 
       // --- BARANG LOGIC ---
+      function applyRefreshSpinBarang() {
+        const btn = document.getElementById("btn-barang-refresh");
+        if (!btn) return;
+        const icon = btn.querySelector("i") || btn.querySelector("svg");
+        if (isFetchingBarang) {
+          btn.classList.add("bg-orange-50", "text-orange-600");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-orange-50", "text-orange-600");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
       async function fetchBarangData(resetFilters = false) {
         if (isFetchingBarang) return;
         
@@ -3650,52 +4079,54 @@
           showToast("Memperbarui data barang...", "info");
         }
 
-        const btn = document.getElementById("btn-barang-refresh");
-        const icon = btn?.querySelector("i") || btn?.querySelector("svg");
-        if (icon) icon.classList.add("animate-spin");
-        if (btn) btn.classList.add("bg-orange-50", "text-orange-600");
-
         isFetchingBarang = true;
+        applyRefreshSpinBarang();
         showLoading(true);
         try {
           const res = await callGAS("ambilBarang", { sheetName: "Data_Barang" });
           
-          // Cleanup UI
           showLoading(false);
-          if (icon) icon.classList.remove("animate-spin");
-          if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
           isFetchingBarang = false;
+          applyRefreshSpinBarang();
 
           if (res && res.sukses) {
             rawBarangData = res.data || [];
             renderBarangData();
             populateKategoriDropdown();
             if (resetFilters) showToast("Data barang berhasil diperbarui", "success");
-          } else if (!res) {
+          } else {
             // Mode Demo / Fallback
-            rawBarangData = [
-              {
-                no: 1,
-                idBarang: "BRG-001",
-                namaBarang: "Pocky Stick Chocolate 22g",
-                kategoriBarang: "SNACK",
-                merk: "Glico",
-                status: "Aktif",
-                row: 2
-              }
-            ];
+            if (rawBarangData.length === 0) {
+              rawBarangData = DEMO_DATA_BARANG || [
+                {
+                  no: 1,
+                  idBarang: "BRG-001",
+                  namaBarang: "Pocky Stick Chocolate 22g",
+                  kategoriBarang: "SNACK",
+                  merk: "Glico",
+                  status: "Aktif",
+                  row: 2
+                }
+              ];
+            }
             renderBarangData();
             populateKategoriDropdown();
-          } else {
-            showToast(res.pesan || "Gagal mengambil data", "error");
+            
+            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
           showLoading(false);
-          if (icon) icon.classList.remove("animate-spin");
-          if (btn) btn.classList.remove("bg-orange-50", "text-orange-600");
           isFetchingBarang = false;
+          applyRefreshSpinBarang();
           console.error("fetchBarangData Error:", err);
-          showToast("Koneksi gagal", "error");
+          
+          if (rawBarangData.length === 0) {
+            rawBarangData = DEMO_DATA_BARANG;
+          }
+          renderBarangData();
+          populateKategoriDropdown();
+          showToast("Koneksi gagal. Menggunakan Data Demo", "warning");
         }
       }
 
@@ -4059,6 +4490,19 @@
       }
 
       // --- SATUAN BARANG LOGIC ---
+      function applyRefreshSpinSatuanBarang() {
+        const btn = document.getElementById("btn-satuan-refresh");
+        if (!btn) return;
+        const icon = btn.querySelector("i") || btn.querySelector("svg");
+        if (isFetchingSatuan) {
+          btn.classList.add("bg-blue-50", "text-blue-600");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-blue-50", "text-blue-600");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
       async function fetchSatuanBarangData(resetFilters = false) {
         if (isFetchingSatuan) return;
 
@@ -4072,21 +4516,15 @@
           showToast("Memperbarui data satuan...", "info");
         }
 
-        const btn = document.getElementById("btn-satuan-refresh");
-        const icon = btn?.querySelector("i") || btn?.querySelector("svg");
-        if (icon) icon.classList.add("animate-spin");
-        if (btn) btn.classList.add("bg-blue-50", "text-blue-600");
-
         isFetchingSatuan = true;
+        applyRefreshSpinSatuanBarang();
         showLoading(true);
         try {
           const res = await callGAS("ambilSatuanBarang", { sheetName: "Satuan_Barang" });
           
-          // Cleanup UI
           showLoading(false);
-          if (icon) icon.classList.remove("animate-spin");
-          if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
           isFetchingSatuan = false;
+          applyRefreshSpinSatuanBarang();
 
           if (res && res.sukses) {
             rawSatuanBarangData = res.data || [];
@@ -4100,16 +4538,23 @@
                   { row: 1, idBarang: "BRG-001", namaBarang: "Data Contoh", status: "Aktif" }
                 ];
              }
+             rawSatuanBarangData = DEMO_DATA_SATUAN || [];
              renderSatuanBarangData();
-             if (res && res.pesan) showToast(res.pesan, "error");
+             populateSatuanDropdowns();
+             
+             const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
           showLoading(false);
-          if (icon) icon.classList.remove("animate-spin");
-          if (btn) btn.classList.remove("bg-blue-50", "text-blue-600");
           isFetchingSatuan = false;
+          applyRefreshSpinSatuanBarang();
           console.error("fetchSatuanBarangData Error:", err);
-          showToast("Koneksi gagal", "error");
+          
+          rawSatuanBarangData = DEMO_DATA_SATUAN || [];
+          renderSatuanBarangData();
+          populateSatuanDropdowns();
+          showToast("Koneksi gagal. Menggunakan Data Demo", "warning");
         }
       }
 
@@ -4899,6 +5344,755 @@
         }
         renderSatuanBarangData();
       }
+
+      // =========================================================================
+      // PEMBELIAN BARANG MANAGEMENT LOGIC
+      // =========================================================================
+      let isFetchingPembelian = false;
+
+      function applyRefreshSpinPembelianBarang() {
+        const btn = document.getElementById("btn-pembelian-barang-refresh");
+        if (!btn) return;
+        const icon = btn.querySelector("i") || btn.querySelector("svg");
+        if (isFetchingPembelian) {
+          btn.classList.add("bg-indigo-50", "text-indigo-600");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-indigo-50", "text-indigo-600");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
+      async function fetchPembelianBarangData(resetFilters = false) {
+        if (isFetchingPembelian) return;
+        
+        if (resetFilters) {
+          pembelianBarangSearchTerm = "";
+          const searchInput = document.getElementById("searchPembelianBarang");
+          if (searchInput) searchInput.value = "";
+          pembelianBarangFilterStatus = "all";
+          pembelianBarangFilterSupplier = "all";
+          const supSelect = document.getElementById("filter-pembelian-barang-supplier");
+          if (supSelect) supSelect.value = "all";
+          pembelianBarangCurrentPage = 1;
+          showToast("Memperbarui data pembelian...", "info");
+        }
+
+        isFetchingPembelian = true;
+        applyRefreshSpinPembelianBarang();
+        showLoading(true);
+        try {
+          const res = await callGAS("ambilPembelianBarang", {});
+          
+          showLoading(false);
+          isFetchingPembelian = false;
+          applyRefreshSpinPembelianBarang();
+
+          if (res && res.sukses) {
+            rawPembelianBarangData = res.data || [];
+            renderPembelianBarangData();
+            populatePembelianSupplierFilter();
+            if (resetFilters) showToast("Data pembelian berhasil diperbarui", "success");
+          } else {
+            // Offline Mode / DB Error Fallback
+            rawPembelianBarangData = DEMO_DATA_PEMBELIAN;
+            renderPembelianBarangData();
+            populatePembelianSupplierFilter();
+            
+            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
+          }
+        } catch (err) {
+          showLoading(false);
+          isFetchingPembelian = false;
+          applyRefreshSpinPembelianBarang();
+          console.error("fetchPembelianBarangData Error:", err);
+          
+          // Offline Fallback
+          rawPembelianBarangData = DEMO_DATA_PEMBELIAN;
+          renderPembelianBarangData();
+          populatePembelianSupplierFilter();
+          showToast("Koneksi gagal. Menggunakan Data Demo", "warning");
+        }
+      }
+
+      function populatePembelianSupplierFilter() {
+        const select = document.getElementById("filter-pembelian-barang-supplier");
+        if (!select) return;
+        
+        // Find all unique suppliers in rawPembelianBarangData or rawDataSupplierData
+        const suppliers = new Set();
+        rawDataSupplierData.forEach(s => {
+          if (s.namaSupplier) suppliers.add(s.namaSupplier);
+        });
+        rawPembelianBarangData.forEach(p => {
+          if (p.namaSupplier) suppliers.add(p.namaSupplier);
+        });
+        
+        const sortedSuppliers = Array.from(suppliers).sort();
+        
+        const currentVal = select.value || "all";
+        select.innerHTML = `<option value="all">Semua Supplier</option>` +
+          sortedSuppliers.map(s => `<option value="${s}">${s}</option>`).join("");
+        
+        select.value = currentVal;
+      }
+
+      function getFilteredPembelianBarangCount() {
+        let filtered = rawPembelianBarangData.slice();
+        
+        // Search Term
+        if (pembelianBarangSearchTerm) {
+          const q = pembelianBarangSearchTerm.toLowerCase();
+          filtered = filtered.filter(item => 
+            (item.idPembelianBrg || "").toLowerCase().includes(q) ||
+            (item.namaSupplier || "").toLowerCase().includes(q) ||
+            (item.idSupplier || "").toLowerCase().includes(q) ||
+            (item.namaBarang || "").toLowerCase().includes(q) ||
+            (item.idBarang || "").toLowerCase().includes(q) ||
+            (item.barcode || "").toLowerCase().includes(q) ||
+            (item.keterangan || "").toLowerCase().includes(q)
+          );
+        }
+        
+        // Status Filter
+        if (pembelianBarangFilterStatus !== "all") {
+          filtered = filtered.filter(item => item.status === pembelianBarangFilterStatus);
+        }
+        
+        // Supplier Filter
+        if (pembelianBarangFilterSupplier !== "all") {
+          filtered = filtered.filter(item => item.namaSupplier === pembelianBarangFilterSupplier);
+        }
+        
+        return filtered.length;
+      }
+
+      function applyPembelianBarangFilters() {
+        const supSelect = document.getElementById("filter-pembelian-barang-supplier");
+        if (supSelect) {
+          pembelianBarangFilterSupplier = supSelect.value;
+        }
+        pembelianBarangCurrentPage = 1;
+        renderPembelianBarangData();
+      }
+
+      function setPembelianBarangFilterStatus(val) {
+        pembelianBarangFilterStatus = val;
+        pembelianBarangCurrentPage = 1;
+        
+        // Update Filter Buttons Active style
+        document.querySelectorAll(".pembelian-barang-status-btn").forEach(btn => {
+          if (btn.getAttribute("data-val") === val) {
+            btn.classList.add("bg-indigo-600", "text-white", "font-black");
+            btn.classList.remove("text-slate-600", "border-slate-100");
+          } else {
+            btn.classList.remove("bg-indigo-600", "text-white", "font-black");
+            btn.classList.add("text-slate-600", "border-slate-100");
+          }
+        });
+        
+        renderPembelianBarangData();
+      }
+
+      function setPembelianBarangSort(by) {
+        pembelianBarangSortBy = by;
+        
+        // Update Sort Buttons Active style
+        document.querySelectorAll(".pembelian-barang-sort-btn").forEach(btn => {
+          if (btn.getAttribute("data-val") === by) {
+            btn.classList.add("text-indigo-600", "border-indigo-200");
+          } else {
+             btn.classList.remove("text-indigo-600", "border-indigo-200");
+             btn.classList.add("text-slate-600");
+          }
+        });
+        
+        renderPembelianBarangData();
+      }
+
+      function togglePembelianBarangSortOrder() {
+        pembelianBarangSortOrder = pembelianBarangSortOrder === "asc" ? "desc" : "asc";
+        const icon = document.getElementById("icon-pembelian-barang-order");
+        const text = document.getElementById("text-pembelian-barang-order");
+        if (icon) {
+          if (pembelianBarangSortOrder === "asc") {
+            icon.setAttribute("data-lucide", "arrow-up-narrow-wide");
+            if (text) text.innerText = "A - Z";
+          } else {
+            icon.setAttribute("data-lucide", "arrow-down-wide-narrow");
+            if (text) text.innerText = "Z - A";
+          }
+          lucide.createIcons();
+        }
+        renderPembelianBarangData();
+      }
+
+      function togglePembelianBarangFilters() {
+        const panel = document.getElementById("pembelian-barang-filters-panel");
+        const sortPanel = document.getElementById("pembelian-barang-sort-panel");
+        sortPanel.classList.add("hidden");
+        panel.classList.toggle("hidden");
+        
+        const filterBtn = document.getElementById("btn-pembelian-barang-filter");
+        if (filterBtn) {
+            if (!panel.classList.contains("hidden")) {
+                filterBtn.classList.add("bg-indigo-600", "text-white");
+            } else {
+                filterBtn.classList.remove("bg-indigo-600", "text-white");
+            }
+        }
+        
+        const sortBtn = document.getElementById("btn-pembelian-barang-sort");
+        if (sortBtn) {
+            sortBtn.classList.remove("bg-indigo-600", "text-white");
+        }
+        updatePembelianBarangControlUI();
+      }
+
+      function togglePembelianBarangSort() {
+        const panel = document.getElementById("pembelian-barang-sort-panel");
+        const filterPanel = document.getElementById("pembelian-barang-filters-panel");
+        filterPanel.classList.add("hidden");
+        panel.classList.toggle("hidden");
+        
+        const sortBtn = document.getElementById("btn-pembelian-barang-sort");
+        if (sortBtn) {
+            if (!panel.classList.contains("hidden")) {
+                sortBtn.classList.add("bg-indigo-600", "text-white");
+            } else {
+                sortBtn.classList.remove("bg-indigo-600", "text-white");
+            }
+        }
+        
+        const filterBtn = document.getElementById("btn-pembelian-barang-filter");
+        if (filterBtn) {
+            filterBtn.classList.remove("bg-indigo-600", "text-white");
+        }
+        updatePembelianBarangControlUI();
+      }
+
+      function updatePembelianBarangControlUI() {
+        lucide.createIcons();
+      }
+
+      let searchPembelianTimer;
+      function debouncedSearchPembelianBarang() {
+        clearTimeout(searchPembelianTimer);
+        searchPembelianTimer = setTimeout(() => {
+          pembelianBarangSearchTerm = document.getElementById("searchPembelianBarang").value;
+          pembelianBarangCurrentPage = 1;
+          renderPembelianBarangData();
+        }, 300);
+      }
+
+      function renderPembelianBarangData() {
+        const tbody = document.getElementById("pembelianBarangTableBody");
+        const cardContainer = document.getElementById("pembelianBarangCardContainer");
+        const info = document.getElementById("pembelianBarangPaginationInfo");
+        const prevBtn = document.getElementById("prevBtn-pembelian-barang");
+        const nextBtn = document.getElementById("nextBtn-pembelian-barang");
+        
+        if (!tbody || !cardContainer) return;
+
+        let filtered = rawPembelianBarangData.slice();
+        
+        // Apply Filters
+        if (pembelianBarangSearchTerm) {
+          const q = pembelianBarangSearchTerm.toLowerCase();
+          filtered = filtered.filter(item => 
+            (item.idPembelianBrg || "").toLowerCase().includes(q) ||
+            (item.namaSupplier || "").toLowerCase().includes(q) ||
+            (item.idSupplier || "").toLowerCase().includes(q) ||
+            (item.namaBarang || "").toLowerCase().includes(q) ||
+            (item.idBarang || "").toLowerCase().includes(q) ||
+            (item.barcode || "").toLowerCase().includes(q) ||
+            (item.keterangan || "").toLowerCase().includes(q)
+          );
+        }
+        
+        if (pembelianBarangFilterStatus !== "all") {
+          filtered = filtered.filter(item => item.status === pembelianBarangFilterStatus);
+        }
+        
+        if (pembelianBarangFilterSupplier !== "all") {
+          filtered = filtered.filter(item => item.namaSupplier === pembelianBarangFilterSupplier);
+        }
+
+        // Apply Sorting
+        filtered.sort((a, b) => {
+          let valA = a[pembelianBarangSortBy];
+          let valB = b[pembelianBarangSortBy];
+          
+          if (typeof valA === 'string') valA = valA.toLowerCase();
+          if (typeof valB === 'string') valB = valB.toLowerCase();
+          
+          if (pembelianBarangSortBy === "qtyPembelian" || pembelianBarangSortBy === "profit" || pembelianBarangSortBy === "hargaModal") {
+            valA = Number(valA) || 0;
+            valB = Number(valB) || 0;
+            return pembelianBarangSortOrder === 'asc' ? valA - valB : valB - valA;
+          }
+          
+          if (valA < valB) return pembelianBarangSortOrder === 'asc' ? -1 : 1;
+          if (valA > valB) return pembelianBarangSortOrder === 'asc' ? 1 : -1;
+          return 0;
+        });
+
+        const total = filtered.length;
+        if (total === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</td></tr>`;
+          cardContainer.innerHTML = '<div class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</div>';
+          if (info) info.innerText = "SHOWING 0 TO 0 OF 0 DATA";
+          if (prevBtn) prevBtn.disabled = true;
+          if (nextBtn) nextBtn.disabled = true;
+        } else {
+          const totalPages = Math.ceil(total / pembelianBarangItemsPerPage);
+          if (pembelianBarangCurrentPage > totalPages) pembelianBarangCurrentPage = totalPages || 1;
+
+          const start = (pembelianBarangCurrentPage - 1) * pembelianBarangItemsPerPage;
+          const end = Math.min(start + pembelianBarangItemsPerPage, total);
+          const paginated = filtered.slice(start, end);
+
+          tbody.innerHTML = paginated.map((item, idx) => {
+             const rowIdx = start + idx + 1;
+             
+             return `
+               <tr class="hover:bg-slate-50/50 transition-colors group">
+                 <td class="px-6 py-6 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
+                 <td class="px-8 py-6">
+                    <div class="font-black text-slate-800 text-sm">${item.idPembelianBrg}</div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-0.5">${item.tanggalPembelian}</div>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="font-black text-slate-800 text-sm">${item.namaSupplier}</div>
+                    <div class="text-[10px] font-mono font-bold text-indigo-500 mt-0.5">${item.idSupplier}</div>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="font-black text-slate-800 text-sm max-w-sm truncate">${item.namaBarang}</div>
+                    <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-0.5">
+                      <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
+                      ${item.barcode ? `<span class="bg-indigo-50/80 px-1.5 py-0.5 rounded font-mono text-indigo-600">★ ${item.barcode}</span>` : ''}
+                    </div>
+                 </td>
+                 <td class="px-8 py-6">
+                    <div class="text-xs font-bold text-slate-600">Qty Beli: <span class="font-black text-slate-800">${item.qtyPembelian}</span> <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${item.satuan}</span></div>
+                    <div class="grid grid-cols-2 gap-4 mt-2 text-[10px] bg-slate-50/80 p-2 rounded-xl border border-slate-100/50">
+                      <div>
+                        <span class="text-slate-400 font-bold block">Modal / Jual</span>
+                        <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-indigo-500">${formatIDR(item.hargaJual)}</span>
+                      </div>
+                      <div>
+                        <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
+                        <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> / <span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>
+                      </div>
+                    </div>
+                 </td>
+                 <td class="px-8 py-6 text-xs text-slate-600">
+                    <div class="max-w-[180px] break-words italic font-bold text-slate-500 mb-1">${item.keterangan || "-"}</div>
+                    ${item.tanggalExpired ? `<div class="text-[10px] font-bold text-rose-500 inline-flex items-center gap-1 bg-rose-50 px-2 py-0.5 rounded-full"><i data-lucide="calendar" class="w-3 h-3"></i> Exp: ${item.tanggalExpired}</div>` : ''}
+                 </td>
+                 <td class="px-8 py-6 text-center">
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${item.status}</span>
+                 </td>
+                 <td class="px-8 py-6 text-center">
+                    <div class="relative inline-block text-left">
+                       <button onclick="toggleCardAction(event, 'pb-action-${idx}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100" title="Aksi">
+                          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                       </button>
+                       <div id="pb-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left">
+                          <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                             <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
+                          </button>
+                          <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Aktif' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                             <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> ${item.status === 'Aktif' ? 'Set Nonaktif' : 'Set Aktif'}
+                          </button>
+                       </div>
+                    </div>
+                 </td>
+               </tr>
+             `;
+          }).join("");
+
+          cardContainer.innerHTML = paginated.map((item, idx) => {
+             const rowIdx = start + idx + 1;
+             const statusColorClass = item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]';
+             
+             return `
+               <div class="pembelian-card-item relative bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
+                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100 px-2 py-1 rounded-lg">${item.idPembelianBrg}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${item.status}</span>
+                       <div class="relative">
+                          <button onclick="toggleCardAction(event, 'pb-card-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
+                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                          </button>
+                          <div id="pb-card-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left">
+                             <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
+                             </button>
+                             <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Aktif' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                                <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> ${item.status === 'Aktif' ? 'Set Nonaktif' : 'Set Aktif'}
+                             </button>
+                          </div>
+                       </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</h4>
+                    <p class="text-sm font-black text-slate-800">${item.namaSupplier}</p>
+                    <p class="text-[10px] font-bold text-indigo-500 mt-0.5">${item.idSupplier}</p>
+                  </div>
+
+                  <div class="border-t border-slate-50 pt-3">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Barang</h4>
+                    <p class="text-sm font-black text-slate-800 font-sans">${item.namaBarang}</p>
+                    <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-1">
+                      <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
+                      ${item.barcode ? `<span class="bg-indigo-50/80 px-1.5 py-0.5 font-mono text-indigo-600 rounded">★ ${item.barcode}</span>` : ''}
+                      <span class="text-slate-600 font-black uppercase tracking-widest ml-auto">${item.qtyPembelian} ${item.satuan}</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 text-[10px] font-sans">
+                     <div>
+                       <span class="text-slate-400 font-bold block">Harga Modal / Jual</span>
+                       <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-indigo-500">${formatIDR(item.hargaJual)}</span>
+                     </div>
+                     <div>
+                       <span class="text-slate-400 font-bold block">Profit (Total)</span>
+                       <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> (<span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>)
+                     </div>
+                  </div>
+
+                  <div class="flex justify-between items-center border-t border-slate-50 pt-3">
+                    <div class="text-[10px] text-slate-500 font-bold pr-4 truncate">
+                      ${item.keterangan ? `<span>Ket: <i>${item.keterangan}</i></span>` : ''}
+                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5">Exp: ${item.tanggalExpired}</div>` : ''}
+                    </div>
+
+                  </div>
+               </div>
+             `;
+          }).join("");
+
+          if (info) info.innerText = `SHOWING ${start + 1} TO ${end} OF ${total} DATA`;
+          if (prevBtn) prevBtn.disabled = pembelianBarangCurrentPage === 1;
+          if (nextBtn) nextBtn.disabled = pembelianBarangCurrentPage >= totalPages;
+        }
+
+        lucide.createIcons();
+      }
+
+      function openPembelianBarangModal(data = null) {
+        const modal = document.getElementById("pembelianBarangModal");
+        const title = document.getElementById("pembelianBarangFormTitle");
+        const form = document.getElementById("pembelianBarangForm");
+        
+        form.reset();
+        
+        document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
+        document.getElementById("form-pembelianBarangSuggestions").classList.add("hidden");
+        
+        if (data) {
+          title.innerText = "Edit Transaksi Pembelian";
+          document.getElementById("form-pembelianRow").value = data.row;
+          document.getElementById("form-pembelianId").value = data.idPembelianBrg;
+          document.getElementById("form-pembelianTanggal").value = data.tanggalPembelian;
+          
+          document.getElementById("form-pembelianSearchSupplier").value = data.idSupplier + " - " + data.namaSupplier;
+          document.getElementById("form-pembelianIdSupplier").value = data.idSupplier;
+          document.getElementById("form-pembelianNamaSupplier").value = data.namaSupplier;
+          
+          document.getElementById("form-pembelianSearchBarang").value = data.namaBarang + " (" + data.satuan + ")";
+          document.getElementById("form-pembelianBarcode").value = data.barcode || "";
+          document.getElementById("form-pembelianIdBarang").value = data.idBarang;
+          document.getElementById("form-pembelianNamaBarang").value = data.namaBarang;
+          document.getElementById("form-pembelianSatuan").value = data.satuan;
+          
+          document.getElementById("form-pembelianHargaJual").value = data.hargaJual;
+          document.getElementById("form-pembelianHargaJualDisplay").value = formatIDR(data.hargaJual);
+          
+          document.getElementById("form-pembelianQty").value = data.qtyPembelian;
+          document.getElementById("form-pembelianHargaModal").value = data.hargaModal;
+          document.getElementById("form-pembelianExpired").value = data.tanggalExpired;
+          document.getElementById("form-pembelianStatus").value = data.status;
+          document.getElementById("form-pembelianKeterangan").value = data.keterangan;
+        } else {
+          title.innerText = "Tambah Transaksi Baru";
+          document.getElementById("form-pembelianRow").value = "";
+          document.getElementById("form-pembelianId").value = "PB-XXX (Otomatis)";
+          
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById("form-pembelianTanggal").value = today;
+          
+          document.getElementById("form-pembelianSearchSupplier").value = "";
+          document.getElementById("form-pembelianIdSupplier").value = "";
+          document.getElementById("form-pembelianNamaSupplier").value = "";
+          
+          document.getElementById("form-pembelianSearchBarang").value = "";
+          document.getElementById("form-pembelianBarcode").value = "";
+          document.getElementById("form-pembelianIdBarang").value = "";
+          document.getElementById("form-pembelianNamaBarang").value = "";
+          document.getElementById("form-pembelianSatuan").value = "";
+          document.getElementById("form-pembelianHargaJual").value = "";
+          document.getElementById("form-pembelianHargaJualDisplay").value = "Rp 0";
+          
+          document.getElementById("form-pembelianQty").value = "";
+          document.getElementById("form-pembelianHargaModal").value = "";
+          document.getElementById("form-pembelianExpired").value = "";
+          document.getElementById("form-pembelianStatus").value = "Aktif";
+          document.getElementById("form-pembelianKeterangan").value = "";
+        }
+        
+        hitungProfitLengkap();
+        modal.classList.replace("hidden", "flex");
+        document.body.classList.add("overflow-hidden");
+      }
+
+      function closePembelianBarangModal() {
+        document.getElementById("pembelianBarangModal").classList.replace("flex", "hidden");
+        document.body.classList.remove("overflow-hidden");
+      }
+
+      function autocompleteSupplier(val) {
+        const container = document.getElementById("form-pembelianSupplierSuggestions");
+        if (!val || val.trim().length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+        
+        const q = val.toLowerCase();
+        const matches = rawDataSupplierData.filter(item => 
+          item.status === "Aktif" && (
+            (item.namaSupplier || "").toLowerCase().includes(q) ||
+            (item.idSupplier || "").toLowerCase().includes(q)
+          )
+        );
+        
+        if (matches.length === 0) {
+          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Supplier aktif tidak ditemukan.</div>`;
+        } else {
+          container.innerHTML = matches.map(item => `
+            <button type="button" onclick="pilihSupplierAutocomplete('${item.idSupplier}', '${item.namaSupplier.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-indigo-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
+              <span class="font-black text-slate-800 text-xs">${item.namaSupplier}</span>
+              <span class="font-mono text-[9px] font-bold text-indigo-500">${item.idSupplier}</span>
+            </button>
+          `).join("");
+        }
+        
+        container.classList.remove("hidden");
+      }
+
+      function pilihSupplierAutocomplete(id, nama) {
+        document.getElementById("form-pembelianSearchSupplier").value = id + " - " + nama;
+        document.getElementById("form-pembelianIdSupplier").value = id;
+        document.getElementById("form-pembelianNamaSupplier").value = nama;
+        document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
+      }
+
+      function autocompleteBarang(val) {
+        const container = document.getElementById("form-pembelianBarangSuggestions");
+        if (!val || val.trim().length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+        
+        const q = val.toLowerCase();
+        const matches = rawSatuanBarangData.filter(item => 
+          item.status === "Aktif" && (
+            (item.namaBarang || "").toLowerCase().includes(q) ||
+            (item.idBarang || "").toLowerCase().includes(q) ||
+            (item.barcode || "").toLowerCase().includes(q)
+          )
+        );
+        
+        if (matches.length === 0) {
+          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
+        } else {
+          container.innerHTML = matches.map(item => `
+            <button type="button" onclick="pilihBarangAutocomplete('${item.barcode || ""}', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '${item.satuan}', ${item.hargaJual})" class="w-full text-left p-4 hover:bg-indigo-50/50 border-b border-slate-50 transition-colors flex justify-between items-center">
+              <div>
+                <span class="font-black text-slate-800 text-xs block">${item.namaBarang} (${item.satuan})</span>
+                <span class="text-[9px] font-bold text-slate-400 font-mono">ID: ${item.idBarang} ${item.barcode ? `| Barcode: ${item.barcode}` : ""}</span>
+              </div>
+              <div class="text-right shrink-0 ml-4 font-mono font-black text-indigo-600 text-xs">
+                ${formatIDR(item.hargaJual)}
+              </div>
+            </button>
+          `).join("");
+        }
+        
+        container.classList.remove("hidden");
+      }
+
+      function pilihBarangAutocomplete(barcode, id, nama, satuan, hargaJual) {
+        document.getElementById("form-pembelianSearchBarang").value = nama + " (" + satuan + ")";
+        document.getElementById("form-pembelianBarcode").value = barcode || "";
+        document.getElementById("form-pembelianIdBarang").value = id;
+        document.getElementById("form-pembelianNamaBarang").value = nama;
+        document.getElementById("form-pembelianSatuan").value = satuan;
+        
+        document.getElementById("form-pembelianHargaJual").value = hargaJual;
+        document.getElementById("form-pembelianHargaJualDisplay").value = formatIDR(hargaJual);
+        
+        document.getElementById("form-pembelianBarangSuggestions").classList.add("hidden");
+        
+        hitungProfitLengkap();
+      }
+
+      function hitungProfitLengkap() {
+        const hJual = Number(document.getElementById("form-pembelianHargaJual").value) || 0;
+        const hModal = Number(document.getElementById("form-pembelianHargaModal").value) || 0;
+        const qty = Number(document.getElementById("form-pembelianQty").value) || 0;
+        
+        const profitPerItem = hJual - hModal;
+        const totalProfit = profitPerItem * qty;
+        
+        const profitEl = document.getElementById("form-pembelianProfitCalculated");
+        const totalProfitEl = document.getElementById("form-pembelianTotalProfitCalculated");
+        
+        if (profitEl) {
+          profitEl.innerText = formatIDR(profitPerItem);
+          if (profitPerItem < 0) {
+            profitEl.className = "text-2xl font-black text-rose-500 animate-pulse";
+          } else {
+            profitEl.className = "text-2xl font-black text-emerald-600";
+          }
+        }
+        
+        if (totalProfitEl) {
+          totalProfitEl.innerText = "Total: " + formatIDR(totalProfit);
+          if (totalProfit < 0) {
+             totalProfitEl.className = "text-[9px] font-bold text-rose-400";
+          } else {
+             totalProfitEl.className = "text-[9px] font-bold text-emerald-500/80";
+          }
+        }
+      }
+
+      async function handleSimpanPembelianBarang(e) {
+        e.preventDefault();
+        
+        const payload = {
+          row: document.getElementById("form-pembelianRow").value,
+          idPembelianBrg: document.getElementById("form-pembelianId").value,
+          tanggalPembelian: document.getElementById("form-pembelianTanggal").value,
+          idSupplier: document.getElementById("form-pembelianIdSupplier").value,
+          namaSupplier: document.getElementById("form-pembelianNamaSupplier").value,
+          barcode: document.getElementById("form-pembelianBarcode").value,
+          idBarang: document.getElementById("form-pembelianIdBarang").value,
+          namaBarang: document.getElementById("form-pembelianNamaBarang").value,
+          satuan: document.getElementById("form-pembelianSatuan").value,
+          qtyPembelian: Number(document.getElementById("form-pembelianQty").value) || 0,
+          hargaModal: Number(document.getElementById("form-pembelianHargaModal").value) || 0,
+          hargaJual: Number(document.getElementById("form-pembelianHargaJual").value) || 0,
+          tanggalExpired: document.getElementById("form-pembelianExpired").value,
+          status: document.getElementById("form-pembelianStatus").value,
+          keterangan: document.getElementById("form-pembelianKeterangan").value
+        };
+
+        showLoading(true);
+        try {
+          const res = await callGAS("simpanPembelianBarang", payload);
+          showLoading(false);
+          
+          if (res && res.sukses) {
+            showToast(res.mode === 'create' ? "Transaksi berhasil ditambahkan!" : "Data transaksi berhasil diperbarui!", "success");
+            closePembelianBarangModal();
+            fetchPembelianBarangData();
+          } else if (!res) {
+            if (payload.row) {
+               const idx = rawPembelianBarangData.findIndex(item => item.row == payload.row);
+               if (idx !== -1) {
+                  rawPembelianBarangData[idx] = {
+                     ...rawPembelianBarangData[idx],
+                     ...payload,
+                     profit: (Number(payload.hargaJual) || 0) - (Number(payload.hargaModal) || 0)
+                  };
+               }
+               showToast("Data diperbarui secara lokal (Demo)", "success");
+            } else {
+               const nextRow = rawPembelianBarangData.length + 2;
+               let maxNum = 0;
+               rawPembelianBarangData.forEach(p => {
+                 if (p.idPembelianBrg && p.idPembelianBrg.startsWith("PB-")) {
+                   const num = parseInt(p.idPembelianBrg.replace("PB-", ""));
+                   if (!isNaN(num) && num > maxNum) maxNum = num;
+                 }
+               });
+               const newId = "PB-" + String(maxNum + 1).padStart(3, '0');
+               const newObj = {
+                  row: nextRow,
+                  idPembelianBrg: newId,
+                  ...payload,
+                  profit: (Number(payload.hargaJual) || 0) - (Number(payload.hargaModal) || 0),
+                  status: payload.status || "Aktif"
+               };
+               rawPembelianBarangData.push(newObj);
+               showToast("Data ditambahkan secara lokal (Demo)", "success");
+            }
+            closePembelianBarangModal();
+            renderPembelianBarangData();
+          } else {
+            showToast(res.pesan || "Gagal menyimpan data", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleSimpanPembelianBarang Error:", err);
+          showToast("Gagal menyimpan data", "error");
+        }
+      }
+
+      async function handleToggleStatusPembelianBarang(row, currentStatus) {
+        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        const msg = newStatus === "Aktif" ? "Aktifkan transaksi ini?" : "Nonaktifkan transaksi ini?";
+        
+        const konfirmasi = await showKonfirmasi(msg, `Status transaksi pembelian bernomor baris ${row} akan diubah menjadi ${newStatus}.`);
+        if (!konfirmasi) return;
+
+        showLoading(true);
+        try {
+          const res = await callGAS("ubahStatusPembelianBarang", { row: row, status: newStatus });
+          showLoading(false);
+          if (res && res.sukses) {
+            showToast(`Status berhasil diubah ke ${newStatus}`, "success");
+            fetchPembelianBarangData();
+          } else if (!res) {
+            const idx = rawPembelianBarangData.findIndex(item => item.row == row);
+            if (idx !== -1) {
+               rawPembelianBarangData[idx].status = newStatus;
+               showToast(`Status diperbarui secara lokal ke ${newStatus} (Demo)`, "success");
+               renderPembelianBarangData();
+            }
+          } else {
+            showToast(res.pesan || "Gagal mengubah status", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("handleToggleStatusPembelianBarang Error:", err);
+          showToast("Gagal mengubah status", "error");
+        }
+      }
+
+      // Close autocomplete panels when user clicks outside
+      document.addEventListener("click", (e) => {
+        const supSuggestions = document.getElementById("form-pembelianSupplierSuggestions");
+        const supInput = document.getElementById("form-pembelianSearchSupplier");
+        if (supSuggestions && !supSuggestions.contains(e.target) && e.target !== supInput) {
+          supSuggestions.classList.add("hidden");
+        }
+        
+        const brgSuggestions = document.getElementById("form-pembelianBarangSuggestions");
+        const brgInput = document.getElementById("form-pembelianSearchBarang");
+        if (brgSuggestions && !brgSuggestions.contains(e.target) && e.target !== brgInput) {
+          brgSuggestions.classList.add("hidden");
+        }
+      });
     </script>
   </body>
 </html>

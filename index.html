@@ -356,15 +356,23 @@
 
     <!-- Loading Screen -->
     <div id="loadingOverlay" class="loading-overlay">
-      <div class="flex flex-col items-center">
+      <div class="flex flex-col items-center p-6 text-center max-w-sm">
         <div
           class="w-14 h-14 border-4 border-orange-100 border-t-orange-600 rounded-full animate-spin mb-4"
         ></div>
         <p
-          class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400"
+          id="loadingText"
+          class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6"
         >
           Processing System...
         </p>
+        <button 
+          id="btn_cancel_loading" 
+          onclick="handleFallbackDemoModeManual()" 
+          class="hidden px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 border border-slate-200"
+        >
+          Batalkan & Gunakan Mode Demo
+        </button>
       </div>
     </div>
 
@@ -581,7 +589,18 @@
           </div>
         </div>
       </div>
-      <div class="flex items-center gap-3 sm:gap-4">
+      <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
+        <!-- Database Connection Settings Toggle -->
+        <button 
+          onclick="openDatabaseSettingsModal()" 
+          class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center bg-slate-800 rounded-2xl text-slate-400 hover:text-orange-500 hover:bg-slate-700/60 transition-all border border-slate-700/60 relative active:scale-90"
+          title="Pengaturan Koneksi Google Sheets"
+        >
+          <i data-lucide="database" class="w-5 h-5"></i>
+          <!-- Pulse status indicator for connectivity -->
+          <span id="db-conn-indicator" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-slate-950 animate-pulse"></span>
+        </button>
+
         <!-- Dark Mode Toggle -->
         <button 
           onclick="toggleDarkMode()" 
@@ -1061,6 +1080,76 @@
                 </div>
               </div>
             </section>
+
+            <!-- MODAL DATABASE SETTINGS -->
+            <div id="databaseSettingsModal" class="fixed inset-0 z-[6500] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDatabaseSettingsModal()"></div>
+              <div class="relative bg-white w-full max-w-xl rounded-[2.5rem] p-6 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh] custom-scrollbar">
+                <div class="flex justify-between items-center mb-6">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                      <i data-lucide="database" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-black text-slate-900 leading-none">Koneksi Google Sheets</h3>
+                      <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-wider">PENGATURAN DATABASE & SINKRONISASI</p>
+                    </div>
+                  </div>
+                  <button onclick="closeDatabaseSettingsModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+                
+                <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-6">
+                  <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+                    Menghubungkan Database Google Sheets Anda
+                  </h4>
+                  <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside leading-relaxed font-semibold">
+                    <li>Buat spreadsheet baru di Google Drive Anda.</li>
+                    <li>Buka menu: <span class="bg-slate-200 px-1 rounded">Extensions</span> &gt; <span class="bg-slate-200 px-1 rounded">Apps Script</span>.</li>
+                    <li>Buka tab <span class="font-bold">code.gs</span> dari file project ini, lalu salin seluruh kodenya.</li>
+                    <li>Hapus semua kode bawaan di editor Apps Script Anda, dan Paste (Tempel) kode tersebut.</li>
+                    <li>Klik opsi simpan (ikon disket).</li>
+                    <li>Klik <span class="bg-indigo-600 text-white px-1.5 py-0.5 rounded text-[10px] inline-block font-sans">Deploy</span> &gt; <span class="font-bold">New deployment</span>.</li>
+                    <li>Pilih jenis (Type) <span class="font-bold">Web app</span>.</li>
+                    <li>Atur <i>"Execute as"</i> ke <span class="font-bold">Me (email Anda)</span> dan <i>"Who has access"</i> ke <span class="font-bold">Anyone</span>.</li>
+                    <li>Lakukan otoritas akses jika diminta, klik Deploy, lalu salin URL Web App yang dihasilkan.</li>
+                    <li>Paste URL tersebut pada input di bawah ini, klik <b>Simpan Koneksi</b> atau <b>Uji Koneksi</b>.</li>
+                  </ol>
+                </div>
+
+                <form onsubmit="handleSaveDatabaseSettings(event)" class="space-y-5">
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Google Apps Script Web App URL</label>
+                    <div class="relative flex items-center w-full">
+                      <input type="url" id="form-databaseUrl" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-xs font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="https://script.google.com/macros/s/..." required />
+                      <button type="button" onclick="document.getElementById('form-databaseUrl').value = ''" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="handleUjiKoneksi(event)" class="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                      <i data-lucide="activity" class="w-4 h-4 text-orange-600"></i>
+                      <span>UJI KONEKSI</span>
+                    </button>
+                    <button type="button" onclick="handleResetDefaultDatabaseUrl()" class="px-5 py-4 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-[0.98] flex items-center justify-center gap-2" title="Gunakan URL Bawaan / Demo">
+                      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                      <span>RESET</span>
+                    </button>
+                  </div>
+
+                  <hr class="border-slate-100 my-4" />
+
+                  <button type="submit" class="w-full py-4 bg-orange-600 text-white rounded-2xl font-black text-sm shadow-xl shadow-orange-100 hover:bg-orange-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    <span>SIMPAN KONEKSI</span>
+                  </button>
+                </form>
+              </div>
+            </div>
 
             <!-- MODAL CATEGORY -->
             <div id="categoryModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
@@ -2337,12 +2426,35 @@
         { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, profit: 20000, tanggalExpired: "", keterangan: "Restok tinta hitam terlaris", status: "Nonaktif" }
       ];
 
+      function updateDatabaseStatusIndicator(status) {
+        const ind = document.getElementById("db-conn-indicator");
+        if (!ind) return;
+        if (status === "connected") {
+          ind.className = "absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-950 shadow-sm";
+          ind.setAttribute("title", "Terhubung ke Database");
+        } else if (status === "demo") {
+          ind.className = "absolute -top-1 -right-1 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-slate-950 shadow-sm animate-pulse";
+          ind.setAttribute("title", "Koneksi Bermasalah / Mode Demo");
+        } else {
+          ind.className = "absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-slate-950 shadow-sm animate-pulse";
+          ind.setAttribute("title", "Terputus dari Database");
+        }
+      }
+
       function useFallbackDemoData() {
+        updateDatabaseStatusIndicator("demo");
         rawDataSupplierData = DEMO_DATA_SUPPLIER;
         rawBarangData = DEMO_DATA_BARANG;
         rawSatuanBarangData = DEMO_DATA_SATUAN;
         rawReferensiData = DEMO_DATA_REFERENSI;
         rawPembelianBarangData = DEMO_DATA_PEMBELIAN;
+        rawCategoryData = [
+          { "ID Category Barang": "CAT-001", "Category Barang": "Aksesori" },
+          { "ID Category Barang": "CAT-002", "Category Barang": "ATK" },
+          { "ID Category Barang": "CAT-003", "Category Barang": "Elektronik" }
+        ];
+        rawCekHargaData = [];
+        isMasterCategoryLoaded = true;
         
         populateSatuanDropdowns();
         renderDashboard();
@@ -2350,7 +2462,7 @@
         updateCategorySelects();
         populatePembelianSupplierFilter();
         
-        showToast("Mode Demo: Menggunakan data contoh (Offline)", "warning");
+        showToast("Mode Demo: Menggunakan data contoh (Offline/Timeout)", "warning");
       }
 
       window.onload = async () => {
@@ -2370,10 +2482,10 @@
             el.textContent = new Date().getFullYear();
           });
 
-          // Optimized Initial Fetch: Combined Call
+          // Optimized Initial Fetch with generous timeout (30,000ms) to allow Google Sheets load
           const res = await callGAS("ambilInisialisasiData", {
             sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier", "Pembelian_Barang"]
-          });
+          }, 30000);
           
           if (res && res.sukses) {
             rawCekHargaData = res.cekHarga || [];
@@ -2391,6 +2503,7 @@
             } else {
               console.info("Data loaded successfully from GAS.");
               isMasterCategoryLoaded = true;
+              updateDatabaseStatusIndicator("connected");
               
               try { renderDashboard(); } catch(e) { console.error("renderDashboard failed:", e); }
               try { populateSatuanDropdowns(); } catch(e) { console.error("populateSatuanDropdowns failed:", e); }
@@ -2700,14 +2813,51 @@
       }
 
       let loadingCount = 0;
-      function showLoading(show) {
+      let cancelBtnTimeout = null;
+
+      function handleFallbackDemoModeManual() {
+        showLoading(false);
+        loadingCount = 0;
         const overlay = document.getElementById("loadingOverlay");
+        if (overlay) overlay.classList.remove("active");
+        
+        useFallbackDemoData();
+        showToast("Beralih ke Mode Demo secara manual.", "info");
+      }
+
+      function showLoading(show, message = "Processing System...") {
+        const overlay = document.getElementById("loadingOverlay");
+        if (!overlay) return;
+        
+        const textEl = overlay.querySelector("#loadingText") || overlay.querySelector("p");
+        const cancelBtn = document.getElementById("btn_cancel_loading");
+        
         if (show) {
+          if (textEl && message) {
+            textEl.textContent = message;
+          }
           loadingCount++;
           overlay.classList.add("active");
+          
+          if (cancelBtn) {
+            cancelBtn.classList.add("hidden");
+            if (cancelBtnTimeout) clearTimeout(cancelBtnTimeout);
+            cancelBtnTimeout = setTimeout(() => {
+              if (loadingCount > 0) {
+                cancelBtn.classList.remove("hidden");
+              }
+            }, 3500); // Tunjukkan opsi batal setelah 3.5 detik memuat
+          }
         } else {
           loadingCount = Math.max(0, loadingCount - 1);
-          if (loadingCount === 0) overlay.classList.remove("active");
+          if (loadingCount === 0) {
+            overlay.classList.remove("active");
+            if (cancelBtnTimeout) {
+              clearTimeout(cancelBtnTimeout);
+              cancelBtnTimeout = null;
+            }
+            if (cancelBtn) cancelBtn.classList.add("hidden");
+          }
         }
       }
 
@@ -2953,35 +3103,49 @@
       const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzh1fQOnYWDaOEJu9Nis9tKKOYI7AdRAjsZYn8nZ5sqyzIzDXBAEF_5oEw3VIsZbL61hw/exec"; 
 
       // --- BRIDGE COMMUNICATION ---
-      async function callGAS(action, payload = null) {
+      async function callGAS(action, payload = null, timeoutMs = 25000) {
         // Deteksi apakah sedang di dalam Google Apps Script Environment
         const isGAS = typeof window !== "undefined" && window.google && window.google.script && window.google.script.run;
         
         if (isGAS) {
           return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+              reject(new Error("Timeout koneksi Google Apps Script"));
+            }, timeoutMs);
+
             window.google.script.run
               .withSuccessHandler(res => {
+                clearTimeout(timer);
                 console.log(`GAS Response [${action}]:`, res);
                 resolve(res);
               })
               .withFailureHandler(err => {
+                clearTimeout(timer);
                 console.error(`GAS Error [${action}]:`, err);
                 reject(err);
               })
               .dispatchAction({ action, payload });
           });
         } else {
-          // Fallback via Fetch (standalone / development preview)
-          if (!GAS_WEBAPP_URL || GAS_WEBAPP_URL.length < 20 || GAS_WEBAPP_URL.includes("script.google.com") === false) {
-            console.warn("GAS_WEBAPP_URL belum diatur atau tidak valid. Menjalankan mode DEMO.");
+          // Fetch from custom local storage URL first, with fallback to hardcoded default
+          const activeUrl = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
+
+          if (!activeUrl || activeUrl.length < 20 || activeUrl.includes("script.google.com") === false) {
+            console.warn("GAS_WEBAPP_URL kustom/bawaan belum diatur atau tidak valid. Menjalankan mode DEMO.");
             return null; 
           }
+          
+          const controller = new AbortController();
+          const timerId = setTimeout(() => controller.abort(), timeoutMs);
+
           try {
-            const resp = await fetch(GAS_WEBAPP_URL, {
+            const resp = await fetch(activeUrl, {
               method: "POST",
               headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify({ action, payload }),
+              signal: controller.signal
             });
+            clearTimeout(timerId);
             if (!resp.ok) {
               console.error(`HTTP Error: ${resp.status} ${resp.statusText}`);
               return { sukses: false, pesan: `Server Error: ${resp.status}` };
@@ -2990,7 +3154,11 @@
             console.log(`Fetch Response [${action}]:`, data);
             return data;
           } catch (err) {
+            clearTimeout(timerId);
             console.error("Fetch Error:", err);
+            if (err.name === 'AbortError') {
+              throw new Error(`Koneksi ke Google Sheets / GAS timeout (melebihi ${timeoutMs / 1000} detik).`);
+            }
             return { sukses: false, pesan: `Fetch Error: ${err.message || 'Koneksi gagal'}. Periksa URL & akses 'Anyone'.` };
           }
         }
@@ -3310,6 +3478,106 @@
             renderPembelianBarangData();
           }
         }
+      }
+
+      function openDatabaseSettingsModal() {
+        const modal = document.getElementById("databaseSettingsModal");
+        if (modal) {
+          modal.classList.replace("hidden", "flex");
+          const input = document.getElementById("form-databaseUrl");
+          if (input) {
+            input.value = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
+          }
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            try { lucide.createIcons(); } catch(e) {}
+          }
+        }
+      }
+
+      function closeDatabaseSettingsModal() {
+        const modal = document.getElementById("databaseSettingsModal");
+        if (modal) {
+          modal.classList.replace("flex", "hidden");
+        }
+      }
+
+      async function handleUjiKoneksi(e) {
+        if (e) e.preventDefault();
+        const inputUrl = document.getElementById("form-databaseUrl").value.trim();
+        if (!inputUrl) {
+          showToast("Masukkan URL Google Apps Script terlebih dahulu!", "warning");
+          return;
+        }
+        if (!inputUrl.startsWith("https://script.google.com/")) {
+          showToast("Format URL tidak valid! Harus diawali dengan https://script.google.com/", "error");
+          return;
+        }
+
+        showLoading(true);
+        showToast("Sedang menguji koneksi ke database...", "info");
+        
+        try {
+          // Temporarily set custom GAS URL in localStorage so callGAS can use it to test
+          const previousUrl = localStorage.getItem("CUSTOM_GAS_URL");
+          localStorage.setItem("CUSTOM_GAS_URL", inputUrl);
+
+          const res = await callGAS("ambilInisialisasiData", {
+            sheets: ["Data_Barang"]
+          }, 8000); // 8 seconds timeout for test
+
+          showLoading(false);
+          // Restore previous URL as we haven't hit Save yet
+          if (previousUrl) {
+            localStorage.setItem("CUSTOM_GAS_URL", previousUrl);
+          } else {
+            localStorage.removeItem("CUSTOM_GAS_URL");
+          }
+
+          if (res && res.sukses) {
+            showAlert("Koneksi Sukses!", "Aplikasi berhasil terhubung dan membaca data dari Google Sheets Anda.", "success");
+            showToast("Uji koneksi berhasil!", "success");
+            updateDatabaseStatusIndicator("connected");
+          } else {
+            showAlert("Gagal Terhubung", "Google Apps Script terpanggil tapi Sheets Anda mengembalikan respon error: " + (res ? res.pesan : "Respon kosong"), "error");
+            showToast("Uji koneksi gagal.", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          showAlert("Timeout / Error", "Gagal menghubungi URL Web App. " + err.message + "\n\nPastikan:\n1. Anda sudah mendeploy sebagai Web App.\n2. Execute as dirancang ke 'Me'.\n3. Who has access diset ke 'Anyone'.\n4. Browser Anda tidak memblokir CORS.", "error");
+          showToast("Uji koneksi gagal.", "error");
+        }
+      }
+
+      function handleResetDefaultDatabaseUrl() {
+        showKonfirmasi("Reset Koneksi", "Apakah Anda yakin ingin menghapus koneksi kustom dan menggunakan URL default/demo kembali?")
+          .then(okay => {
+            if (okay) {
+              localStorage.removeItem("CUSTOM_GAS_URL");
+              const input = document.getElementById("form-databaseUrl");
+              if (input) {
+                input.value = GAS_WEBAPP_URL;
+              }
+              showToast("Koneksi diubah ke default. Memuat ulang halaman...", "info");
+              setTimeout(() => {
+                window.location.reload();
+              }, 1200);
+            }
+          });
+      }
+
+      async function handleSaveDatabaseSettings(e) {
+        if (e) e.preventDefault();
+        const inputUrl = document.getElementById("form-databaseUrl").value.trim();
+        if (!inputUrl) return;
+
+        localStorage.setItem("CUSTOM_GAS_URL", inputUrl);
+        showToast("URL kustom disimpan! Memuat ulang data...", "success");
+        closeDatabaseSettingsModal();
+        
+        showLoading(true);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
       }
 
       function openCategoryModal(id = "", name = "") {
@@ -5167,7 +5435,9 @@
           }
         }
         return cleanUrl;
-           function updateSatuanGambarPreview(url) {
+      }
+
+      function updateSatuanGambarPreview(url) {
         // Legacy fallback - noop since we now use updateGroupPreview
       }
 

@@ -1674,7 +1674,7 @@
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan)</label>
-                          <input type="number" id="form-pembelianHargaModal" min="0" oninput="hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp..." required />
+                          <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp 0" required />
                         </div>
                       </div>
 
@@ -1779,12 +1779,27 @@
                         </div>
                       </div>
 
-                      <div class="pt-6 flex gap-4">
-                        <button type="submit" class="flex-1 py-5 bg-slate-900 text-white rounded-[2rem] font-black text-sm uppercase tracking-widest shadow-2xl shadow-slate-200 hover:bg-orange-600 transition-all active:scale-95 flex items-center justify-center gap-2">
+                      <!-- VARIASI SATUAN -->
+                      <div id="section-barang-variasi" class="space-y-6 pt-8 border-t border-slate-100 hidden">
+                        <div class="flex items-center justify-between gap-4">
+                          <h4 class="text-xl font-black text-slate-950 tracking-tight whitespace-nowrap">Variasi Satuan</h4>
+                          <button type="button" onclick="addBarangVariasiRow()" class="px-3 py-2 bg-blue-50 text-blue-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-100 transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span class="whitespace-nowrap">Tambah Satuan</span>
+                          </button>
+                        </div>
+                        
+                        <div id="barang-variasi-container" class="space-y-8">
+                          <!-- Variasi rows will be rendered here dynamically -->
+                        </div>
+                      </div>
+
+                      <div class="pt-6 flex gap-3">
+                        <button type="submit" class="flex-1 py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 hover:bg-orange-600 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                           <i data-lucide="save" class="w-4 h-4"></i>
                           <span>Simpan Data</span>
                         </button>
-                        <button type="button" onclick="closeBarangModal()" class="px-10 py-5 bg-slate-100 text-slate-400 rounded-[2rem] font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                        <button type="button" onclick="closeBarangModal()" class="px-8 py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-[0.98]">
                           Batal
                         </button>
                       </div>
@@ -2055,11 +2070,17 @@
                     </div>
                   </div>
 
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pilih Barang</label>
-                    <select id="form-satuanIdBarang" onchange="autoFillNamaBarangBySatuan(this.value)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all" required>
-                        <option value="">Pilih ID Barang...</option>
-                    </select>
+                  <div class="space-y-2 relative">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pilih Barang (Autocomplete)</label>
+                    <div class="relative">
+                      <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
+                      <input type="text" id="form-satuanSearchBarang" oninput="autocompleteSatuanBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Ketik ID atau Nama Barang..." required />
+                    </div>
+                    <!-- Autocomplete Container -->
+                    <div id="form-satuanBarangSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                      <!-- Suggestions -->
+                    </div>
+                    <input type="hidden" id="form-satuanIdBarang" required />
                   </div>
 
                   <div class="space-y-2">
@@ -2082,22 +2103,35 @@
 
                   <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
-                    <input type="number" id="form-satuanHarga" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="0" required />
+                    <input type="text" id="form-satuanHarga" oninput="formatInputToRupiah(this)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Rp 0" required />
                   </div>
 
                   <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Link Gambar / Upload</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Link Gambar / Upload ke Google Drive</label>
                     <div class="flex flex-col gap-3">
-                        <input type="text" id="form-satuanGambarLink" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Paste link gambar (optional)" />
-                        <div class="p-6 border-2 border-dashed border-slate-100 rounded-3xl bg-slate-50/50 text-center group hover:border-blue-200 transition-all">
-                            <input type="file" id="form-satuanGambarFile" class="hidden" accept="image/*" onchange="handleSatuanImageUpload(this)" />
-                            <label for="form-satuanGambarFile" class="cursor-pointer">
-                                <i data-lucide="upload-cloud" class="w-10 h-10 text-slate-300 mx-auto mb-2 group-hover:text-blue-500 transition-colors"></i>
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Klik atau Drag Gambar untuk Upload</span>
-                            </label>
-                            <div id="satuan-upload-preview" class="mt-4 hidden p-2 bg-white rounded-2xl border border-slate-100 inline-block overflow-hidden max-w-xs">
-                                <img src="" alt="Preview" class="max-h-32 rounded-xl object-contain mx-auto" />
+                        <!-- Manual Link Input -->
+                        <input type="text" id="form-satuanGambarLink" oninput="updateSatuanGambarPreview(this.value)" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs" placeholder="Paste link gambar Google Drive (manual)..." />
+                        
+                        <!-- Drag-and-drop & Click Upload Area -->
+                        <div class="border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-3xl p-6 transition-colors bg-slate-50/50 flex flex-col items-center justify-center text-center cursor-pointer relative" id="satuan-upload-dropzone" onclick="document.getElementById('form-satuanGambarFile').click()">
+                            <input type="file" id="form-satuanGambarFile" class="hidden" accept="image/*" onchange="handleSatuanDriveUpload(this)" onclick="event.stopPropagation()" />
+                            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-2 transition-transform duration-200"></i>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Upload File ke Google Drive</span>
+                            <span class="text-[9px] text-slate-400 font-bold block">Klik untuk memilih file gambar atau drag & drop file ke sini</span>
+                            
+                            <!-- Upload Loading Spinner -->
+                            <div id="satuan-upload-spinner" class="hidden absolute inset-0 bg-white/95 rounded-3xl flex flex-col items-center justify-center gap-2 z-10 transition-all">
+                                <div class="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest animate-pulse">Menyimpan Ke Google Drive Anda...</span>
                             </div>
+                        </div>
+
+                        <!-- Preview Container -->
+                        <div class="p-6 border border-slate-100 rounded-3xl bg-slate-50/50 flex flex-col items-center justify-center min-h-44 text-center">
+                            <div id="satuan-upload-preview" class="p-2 bg-white rounded-2xl border border-slate-100 inline-block overflow-hidden max-w-xs transition-all shadow-sm">
+                                <img id="satuan-preview-img" src="https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200" alt="Preview" class="max-h-32 rounded-xl object-contain mx-auto" />
+                            </div>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 block">Preview Gambar</span>
                         </div>
                     </div>
                   </div>
@@ -2272,6 +2306,7 @@
           }
 
           lucide.createIcons();
+          initSatuanUploadDragAndDrop();
           showToast("Menghubungkan ke database...", "info");
 
           // Set current year
@@ -3765,14 +3800,7 @@
           resContainer.classList.remove("hidden");
 
           // Helper untuk handle URL Google Drive
-          let finalImageUrl = item.gambarBarang;
-          if (finalImageUrl && finalImageUrl.includes("drive.google.com")) {
-            // Jika URL drive, ubah ke direct link jika perlu
-            const fileIdMatch = finalImageUrl.match(/[-\w]{25,}/);
-            if (fileIdMatch) {
-              finalImageUrl = `https://lh3.googleusercontent.com/u/0/d/${fileIdMatch[0]}=w1000-h1000`;
-            }
-          }
+          let finalImageUrl = convertGoogleDriveUrl(item.gambarBarang);
 
           const formattedPrice = formatIDR(item.hargaBarang);
           const priceLength = formattedPrice.length;
@@ -3804,7 +3832,7 @@
             <div class="bg-slate-50 aspect-video rounded-[2rem] md:rounded-[3rem] mb-10 overflow-hidden border-2 border-slate-50 flex items-center justify-center relative shadow-inner mx-auto max-w-md">
               ${
                 item.gambarBarang
-                  ? `<img src="${finalImageUrl}" crossorigin="anonymous" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=512'" />`
+                  ? `<img src="${finalImageUrl}" crossorigin="anonymous" referrerpolicy="no-referrer" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=512'" />`
                   : `<div class="text-slate-200 flex flex-col items-center"><i data-lucide="image" class="w-16 h-16 opacity-20"></i><span class="text-[9px] font-black mt-3 opacity-30 uppercase tracking-[0.1em]">Produk Belum Ada Gambar</span></div>`
               }
             </div>
@@ -4396,6 +4424,222 @@
         renderBarangData();
       }
 
+      let barangVariasiIndex = 0;
+
+      function getSatuanOptionsHtml() {
+        if (!rawReferensiData) return '<option value="">Pilih Satuan...</option>';
+        const satuanList = [...new Set(rawReferensiData.filter(r => r.satuan).map(r => r.satuan))];
+        let html = '<option value="">Pilih Satuan...</option>';
+        satuanList.forEach(s => {
+          html += `<option value="${s}">${s}</option>`;
+        });
+        return html;
+      }
+
+      function addBarangVariasiRow() {
+        const container = document.getElementById("barang-variasi-container");
+        if (!container) return;
+
+        const rowId = barangVariasiIndex++;
+        const optionsHtml = getSatuanOptionsHtml();
+
+        const rowHtml = `
+          <div class="variasi-row p-6 border border-slate-100 rounded-[2rem] bg-slate-50/30 space-y-6 relative transition-all duration-200 animate-in fade-in duration-300" id="variasi-row-${rowId}" data-id="${rowId}">
+            <!-- Top bar of the card -->
+            <div class="flex items-center justify-between border-b border-slate-100/60 pb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-6 h-6 rounded-lg bg-orange-100 flex items-center justify-center text-[10px] font-black text-orange-600 font-mono">
+                  #
+                </div>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Variasi Satuan (Multi-Baris)</span>
+              </div>
+              <!-- Delete button -->
+              <button type="button" onclick="removeBarangVariasiRow(${rowId})" class="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-100 transition-all active:scale-95 text-xs font-black uppercase flex items-center gap-1.5" title="Hapus variasi ini">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span class="text-[9px] uppercase tracking-wider">Hapus</span>
+              </button>
+            </div>
+
+            <!-- Form inputs in 2 columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
+                <input type="text" class="variasi-barcode w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
+                <select class="variasi-satuan w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                  ${optionsHtml}
+                </select>
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Satuan</label>
+                <input type="number" class="variasi-qty w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
+              </div>
+
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
+                <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+              </div>
+            </div>
+
+            <!-- Link Gambar and Upload / Preview Container -->
+            <div class="space-y-3">
+              <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Link Gambar / Upload ke Google Drive</label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Input Link & Drag-and-Drop in a combined column -->
+                <div class="md:col-span-2 space-y-3">
+                  <input type="text" id="variasi-gambar-${rowId}" oninput="updateVariasiPreview(${rowId}, this.value)" class="variasi-gambar w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste link gambar Google Drive (manual)..." />
+                  
+                  <!-- Dropzone for Drag-and-Drop and Upload -->
+                  <div id="variasi-dropzone-${rowId}" class="variasi-dropzone border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-2xl p-4 transition-colors bg-white flex flex-col items-center justify-center text-center cursor-pointer relative min-h-24" onclick="triggerVariasiFileInput(${rowId})">
+                    <input type="file" id="variasi-file-input-${rowId}" class="variasi-file-input hidden" accept="image/*" onchange="handleVariasiDriveUpload(${rowId}, this)" onclick="event.stopPropagation()" />
+                    <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mb-1"></i>
+                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Upload ke Google Drive</span>
+                    <span class="text-[8px] text-slate-400 font-bold block">Klik / drag file gambar ke sini</span>
+                    
+                    <!-- Upload Spinner inside card -->
+                    <div id="variasi-spinner-${rowId}" class="variasi-spinner hidden absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center gap-1.5 z-10 font-sans">
+                      <div class="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span class="text-[8px] font-black text-blue-600 uppercase tracking-widest animate-pulse">Uploading...</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Preview Image Column -->
+                <div class="border border-slate-100 rounded-2xl bg-white p-4 flex flex-col items-center justify-center text-center min-h-32 relative">
+                  <div class="p-1.5 bg-slate-50 rounded-xl border border-slate-100 inline-block overflow-hidden max-w-[120px] shadow-sm">
+                    <img id="variasi-preview-img-${rowId}" class="variasi-preview-img max-h-20 rounded-lg object-contain mx-auto" src="https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200" alt="Preview" />
+                  </div>
+                  <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1.5 block">Preview</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.insertAdjacentHTML("beforeend", rowHtml);
+        lucide.createIcons();
+        initVariasiUploadDragAndDrop(rowId);
+        updateVariasiCardNumbers();
+      }
+
+      function removeBarangVariasiRow(rowId) {
+        const row = document.getElementById(`variasi-row-${rowId}`);
+        if (row) {
+          row.remove();
+          updateVariasiCardNumbers();
+        }
+      }
+
+      function updateVariasiCardNumbers() {
+        const rows = document.querySelectorAll("#barang-variasi-container .variasi-row");
+        rows.forEach((row, idx) => {
+          const badge = row.querySelector(".font-mono");
+          if (badge) badge.innerText = idx + 1;
+          
+          const label = row.querySelector(".uppercase.tracking-widest");
+          if (label) label.innerText = `Variasi Satuan #${idx + 1}`;
+        });
+      }
+
+      function triggerVariasiFileInput(rowId) {
+        const fileInput = document.getElementById(`variasi-file-input-${rowId}`);
+        if (fileInput) fileInput.click();
+      }
+
+      function updateVariasiPreview(rowId, url) {
+        const img = document.getElementById(`variasi-preview-img-${rowId}`);
+        if (!img) return;
+        if (url && url.trim() !== "") {
+          img.src = convertGoogleDriveUrl(url);
+        } else {
+          img.src = "https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200";
+        }
+      }
+
+      function handleVariasiDriveUpload(rowId, input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const spinner = document.getElementById(`variasi-spinner-${rowId}`);
+        if (spinner) spinner.classList.remove("hidden");
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const base64Data = e.target.result;
+          try {
+            const res = await callGAS("uploadKeDrive", {
+              base64Data: base64Data,
+              fileName: file.name,
+              mimeType: file.type
+            });
+
+            if (res && res.sukses) {
+              const urlInput = document.getElementById(`variasi-gambar-${rowId}`);
+              if (urlInput) {
+                urlInput.value = res.url;
+                updateVariasiPreview(rowId, res.url);
+              }
+              showToast("Gambar berhasil di-upload ke Google Drive!", "success");
+            } else {
+              showToast(res?.pesan || "Gagal mengunggah gambar ke Google Drive.", "error");
+            }
+          } catch (err) {
+            console.error("Upload error:", err);
+            showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
+          } finally {
+            if (spinner) spinner.classList.add("hidden");
+            input.value = "";
+          }
+        };
+
+        reader.onerror = () => {
+          showToast("Gagal membaca file gambar.", "error");
+          if (spinner) spinner.classList.add("hidden");
+          input.value = "";
+        };
+
+        reader.readAsDataURL(file);
+      }
+
+      function initVariasiUploadDragAndDrop(rowId) {
+        const dropzone = document.getElementById(`variasi-dropzone-${rowId}`);
+        if (!dropzone) return;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('border-slate-200');
+            dropzone.classList.add('border-blue-400', 'bg-blue-50/20');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('border-slate-200');
+            dropzone.classList.remove('border-blue-400', 'bg-blue-50/20');
+          }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+            const fileInput = document.getElementById(`variasi-file-input-${rowId}`);
+            if (fileInput) {
+              fileInput.files = files;
+              handleVariasiDriveUpload(rowId, fileInput);
+            }
+          }
+        }, false);
+      }
+
       function openBarangModal(data = null) {
         const modal = document.getElementById("barangModal");
         const title = document.getElementById("barangFormTitle");
@@ -4412,11 +4656,21 @@
           document.getElementById("form-barangKategori").value = data.kategoriBarang;
           document.getElementById("form-barangMerk").value = data.merk;
           document.getElementById("form-barangStatus").value = data.status;
+
+          document.getElementById("section-barang-variasi").classList.add("hidden");
         } else {
           title.innerText = "Tambah Barang";
           document.getElementById("form-barangRow").value = "";
           document.getElementById("form-barangId").value = "Generated After Save";
           document.getElementById("form-barangStatus").value = "Aktif";
+
+          document.getElementById("section-barang-variasi").classList.remove("hidden");
+          const container = document.getElementById("barang-variasi-container");
+          if (container) {
+            container.innerHTML = "";
+            barangVariasiIndex = 0;
+            addBarangVariasiRow();
+          }
         }
 
         modal.classList.replace("hidden", "flex");
@@ -4429,14 +4683,43 @@
 
       async function handleSimpanBarang(e) {
         e.preventDefault();
+        const rowVal = document.getElementById("form-barangRow").value;
         const payload = {
-          row: document.getElementById("form-barangRow").value,
+          row: rowVal,
           idBarang: document.getElementById("form-barangId").value,
           namaBarang: document.getElementById("form-barangNama").value,
           kategoriBarang: document.getElementById("form-barangKategori").value,
           merk: document.getElementById("form-barangMerk").value,
           status: document.getElementById("form-barangStatus").value
         };
+
+        // If in "Tambah Barang" (new item) mode, collect the variations
+        if (!rowVal) {
+          const variasiRows = document.querySelectorAll("#barang-variasi-container .variasi-row");
+          if (variasiRows.length === 0) {
+            showToast("Harap tambahkan setidaknya satu variasi satuan barang.", "warning");
+            return;
+          }
+
+          const variasiSatuan = [];
+          for (const row of variasiRows) {
+            const barcode = row.querySelector(".variasi-barcode").value;
+            const satuan = row.querySelector(".variasi-satuan").value;
+            const qtySatuan = row.querySelector(".variasi-qty").value;
+            const hargaJual = (row.querySelector(".variasi-harga").value || "").replace(/\D/g, "");
+            const gambar = row.querySelector(".variasi-gambar").value;
+
+            variasiSatuan.push({
+              barcode: barcode,
+              satuan: satuan,
+              qtySatuan: qtySatuan,
+              hargaJual: hargaJual,
+              gambar: gambar,
+              status: "Aktif"
+            });
+          }
+          payload.variasiSatuan = variasiSatuan;
+        }
 
         showLoading(true);
         try {
@@ -4446,6 +4729,7 @@
             showToast("Berhasil disimpan", "success");
             closeBarangModal();
             fetchBarangData();
+            fetchSatuanBarangData();
           } else if (res) {
             showToast(res.pesan, "error");
           }
@@ -4647,16 +4931,10 @@
               const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
               
               // Google Drive Image URL Fix
-              let displayImgUrl = item.gambar || "";
-              if (displayImgUrl && displayImgUrl.includes("drive.google.com")) {
-                const fileIdMatch = displayImgUrl.match(/[-\w]{25,}/);
-                if (fileIdMatch) {
-                  displayImgUrl = `https://lh3.googleusercontent.com/u/0/d/${fileIdMatch[0]}=w200-h200`;
-                }
-              }
+              let displayImgUrl = convertGoogleDriveUrl(item.gambar || "");
 
               const imgHtml = displayImgUrl 
-                ? `<img src="${displayImgUrl}" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=100'"/>` 
+                ? `<img src="${displayImgUrl}" referrerpolicy="no-referrer" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=100'"/>` 
                 : `<div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
              tbody.innerHTML += `
@@ -4753,22 +5031,171 @@
         lucide.createIcons();
       }
 
+      // Helper to format input elements dynamically into Indonesian Rupiah (Rp X.XXX.XXX)
+      function formatInputToRupiah(el) {
+        if (!el) return;
+        let valStr = el.value.replace(/\D/g, "");
+        if (valStr === "") {
+          el.value = "";
+          return;
+        }
+        let selectionStart = el.selectionStart;
+        const previousLength = el.value.length;
+
+        let formatted = "Rp " + new Intl.NumberFormat("id-ID").format(Number(valStr));
+        el.value = formatted;
+
+        // Keep cursor position stable
+        let newSelectionStart = selectionStart + (formatted.length - previousLength);
+        if (newSelectionStart < 3) {
+          newSelectionStart = 3;
+        }
+        el.setSelectionRange(newSelectionStart, newSelectionStart);
+      }
+
+      function convertGoogleDriveUrl(url) {
+        if (!url) return "";
+        let cleanUrl = url.trim();
+        if (cleanUrl.includes("drive.google.com") || cleanUrl.includes("docs.google.com") || cleanUrl.includes("lh3.googleusercontent.com")) {
+          const fileIdMatch = cleanUrl.match(/[-\w]{25,}/);
+          if (fileIdMatch) {
+            return `https://drive.google.com/thumbnail?id=${fileIdMatch[0]}&sz=w800`;
+          }
+        }
+        return cleanUrl;
+      }
+
+      function updateSatuanGambarPreview(url) {
+        const img = document.getElementById("satuan-preview-img");
+        if (!img) return;
+        if (url && url.trim() !== "") {
+          img.src = convertGoogleDriveUrl(url);
+        } else {
+          img.src = "https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200";
+        }
+      }
+
+      function handleSatuanDriveUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const spinner = document.getElementById("satuan-upload-spinner");
+        if (spinner) spinner.classList.remove("hidden");
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const base64Data = e.target.result;
+          try {
+            const res = await callGAS("uploadKeDrive", {
+              base64Data: base64Data,
+              fileName: file.name,
+              mimeType: file.type
+            });
+
+            if (res && res.sukses) {
+              const urlInput = document.getElementById("form-satuanGambarLink");
+              if (urlInput) {
+                urlInput.value = res.url;
+                updateSatuanGambarPreview(res.url);
+              }
+              toast("success", "Gambar berhasil di-upload ke Google Drive!");
+            } else {
+              toast("error", res?.pesan || "Gagal mengunggah gambar ke Google Drive.");
+            }
+          } catch (err) {
+            console.error("Upload error:", err);
+            toast("error", "Terjadi kesalahan koneksi saat mengunggah gambar.");
+          } finally {
+            if (spinner) spinner.classList.add("hidden");
+            input.value = ""; // reset file input value
+          }
+        };
+
+        reader.onerror = () => {
+          toast("error", "Gagal membaca file gambar.");
+          if (spinner) spinner.classList.add("hidden");
+          input.value = "";
+        };
+
+        reader.readAsDataURL(file);
+      }
+
+      function initSatuanUploadDragAndDrop() {
+        const dropzone = document.getElementById("satuan-upload-dropzone");
+        if (!dropzone) return;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('border-slate-200');
+            dropzone.classList.add('border-blue-400', 'bg-blue-50/20');
+          }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('border-slate-200');
+            dropzone.classList.remove('border-blue-400', 'bg-blue-50/20');
+          }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+            const fileInput = document.getElementById('form-satuanGambarFile');
+            if (fileInput) {
+              fileInput.files = files;
+              handleSatuanDriveUpload(fileInput);
+            }
+          }
+        }, false);
+      }
+
+      function autocompleteSatuanBarang(val) {
+        const container = document.getElementById("form-satuanBarangSuggestions");
+        if (!val || val.trim().length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+        
+        const q = val.toLowerCase();
+        const matches = rawBarangData.filter(item => 
+          item.status === "Aktif" && (
+            (item.namaBarang || "").toLowerCase().includes(q) ||
+            (item.idBarang || "").toLowerCase().includes(q)
+          )
+        );
+        
+        if (matches.length === 0) {
+          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
+        } else {
+          container.innerHTML = matches.map(item => `
+            <button type="button" onclick="pilihSatuanBarangAutocomplete('${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-blue-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
+              <span class="font-black text-slate-800 text-xs">${item.namaBarang}</span>
+              <span class="font-mono text-[9px] font-bold text-blue-500">${item.idBarang}</span>
+            </button>
+          `).join("");
+        }
+        
+        container.classList.remove("hidden");
+      }
+
+      function pilihSatuanBarangAutocomplete(id, nama) {
+        document.getElementById("form-satuanSearchBarang").value = id + " - " + nama;
+        document.getElementById("form-satuanIdBarang").value = id;
+        document.getElementById("form-satuanNamaBarang").value = nama;
+        document.getElementById("form-satuanBarangSuggestions").classList.add("hidden");
+      }
+
       function populateSatuanDropdowns() {
-        const itemSelect = document.getElementById("form-satuanIdBarang");
         const satuanSelect = document.getElementById("form-satuanSatuan");
         const filterSatuan = document.getElementById("filter-satuan-dropdown");
 
-        if (!itemSelect || !satuanSelect) return;
-
-        // Barang
-        const currentItemValue = itemSelect.value;
-        itemSelect.innerHTML = '<option value="">Pilih ID Barang...</option>';
-        rawBarangData.forEach(b => {
-           if (b.status === "Aktif") {
-              itemSelect.innerHTML += `<option value="${b.idBarang}">${b.idBarang} - ${b.namaBarang}</option>`;
-           }
-        });
-        itemSelect.value = currentItemValue;
+        if (!satuanSelect) return;
 
         // Satuan from Referensi
         const currentSatValue = satuanSelect.value;
@@ -4798,7 +5225,9 @@
         const form = document.getElementById("satuanBarangForm");
         
         form.reset();
-        document.getElementById("satuan-upload-preview").classList.add("hidden");
+        document.getElementById("form-satuanBarangSuggestions").classList.add("hidden");
+        const spinner = document.getElementById("satuan-upload-spinner");
+        if (spinner) spinner.classList.add("hidden");
         populateSatuanDropdowns();
 
         if (data) {
@@ -4806,22 +5235,27 @@
           document.getElementById("form-satuanRow").value = data.row;
           document.getElementById("form-satuanBarcode").value = data.barcode || "";
           document.getElementById("form-satuanIdBarang").value = data.idBarang;
+          document.getElementById("form-satuanSearchBarang").value = data.idBarang + " - " + data.namaBarang;
           document.getElementById("form-satuanNamaBarang").value = data.namaBarang;
           document.getElementById("form-satuanSatuan").value = data.satuan;
           document.getElementById("form-satuanQty").value = data.qtySatuan;
-          document.getElementById("form-satuanHarga").value = data.hargaJual;
+          
+          const hargaInput = document.getElementById("form-satuanHarga");
+          hargaInput.value = data.hargaJual;
+          formatInputToRupiah(hargaInput);
+
           document.getElementById("form-satuanStatus").value = data.status;
           document.getElementById("form-satuanGambarLink").value = data.gambar || "";
           
-          if (data.gambar) {
-            const preview = document.getElementById("satuan-upload-preview");
-            preview.querySelector("img").src = data.gambar;
-            preview.classList.remove("hidden");
-          }
+          updateSatuanGambarPreview(data.gambar);
         } else {
           title.innerText = "Tambah Satuan Barang";
           document.getElementById("form-satuanRow").value = "";
+          document.getElementById("form-satuanIdBarang").value = "";
+          document.getElementById("form-satuanSearchBarang").value = "";
           document.getElementById("form-satuanStatus").value = "Aktif";
+          document.getElementById("form-satuanGambarLink").value = "";
+          updateSatuanGambarPreview("");
         }
 
         modal.classList.replace("hidden", "flex");
@@ -4830,20 +5264,6 @@
 
       function closeSatuanBarangModal() {
         document.getElementById("satuanBarangModal").classList.replace("flex", "hidden");
-      }
-
-      function handleSatuanImageUpload(input) {
-        const file = input.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const preview = document.getElementById("satuan-upload-preview");
-          preview.querySelector("img").src = e.target.result;
-          preview.classList.remove("hidden");
-          // Store base64 in link field for simplicity or handle as separate payload
-          document.getElementById("form-satuanGambarLink").value = e.target.result;
-        };
-        reader.readAsDataURL(file);
       }
 
       async function handleSimpanSatuanBarang(e) {
@@ -4855,7 +5275,7 @@
           namaBarang: document.getElementById("form-satuanNamaBarang").value,
           satuan: document.getElementById("form-satuanSatuan").value,
           qtySatuan: document.getElementById("form-satuanQty").value,
-          hargaJual: document.getElementById("form-satuanHarga").value,
+          hargaJual: (document.getElementById("form-satuanHarga").value || "").replace(/\D/g, ""),
           status: document.getElementById("form-satuanStatus").value,
           gambar: document.getElementById("form-satuanGambarLink").value
         };
@@ -5818,7 +6238,9 @@
           document.getElementById("form-pembelianHargaJualDisplay").value = formatIDR(data.hargaJual);
           
           document.getElementById("form-pembelianQty").value = data.qtyPembelian;
-          document.getElementById("form-pembelianHargaModal").value = data.hargaModal;
+          const hModalIn = document.getElementById("form-pembelianHargaModal");
+          hModalIn.value = data.hargaModal;
+          formatInputToRupiah(hModalIn);
           document.getElementById("form-pembelianExpired").value = data.tanggalExpired;
           document.getElementById("form-pembelianStatus").value = data.status;
           document.getElementById("form-pembelianKeterangan").value = data.keterangan;
@@ -5947,7 +6369,7 @@
 
       function hitungProfitLengkap() {
         const hJual = Number(document.getElementById("form-pembelianHargaJual").value) || 0;
-        const hModal = Number(document.getElementById("form-pembelianHargaModal").value) || 0;
+        const hModal = Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0;
         const qty = Number(document.getElementById("form-pembelianQty").value) || 0;
         
         const profitPerItem = hJual - hModal;
@@ -5989,7 +6411,7 @@
           namaBarang: document.getElementById("form-pembelianNamaBarang").value,
           satuan: document.getElementById("form-pembelianSatuan").value,
           qtyPembelian: Number(document.getElementById("form-pembelianQty").value) || 0,
-          hargaModal: Number(document.getElementById("form-pembelianHargaModal").value) || 0,
+          hargaModal: Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0,
           hargaJual: Number(document.getElementById("form-pembelianHargaJual").value) || 0,
           tanggalExpired: document.getElementById("form-pembelianExpired").value,
           status: document.getElementById("form-pembelianStatus").value,
@@ -6091,6 +6513,12 @@
         const brgInput = document.getElementById("form-pembelianSearchBarang");
         if (brgSuggestions && !brgSuggestions.contains(e.target) && e.target !== brgInput) {
           brgSuggestions.classList.add("hidden");
+        }
+
+        const satSuggestions = document.getElementById("form-satuanBarangSuggestions");
+        const satInput = document.getElementById("form-satuanSearchBarang");
+        if (satSuggestions && !satSuggestions.contains(e.target) && e.target !== satInput) {
+          satSuggestions.classList.add("hidden");
         }
       });
     </script>

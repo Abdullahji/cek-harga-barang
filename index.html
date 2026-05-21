@@ -581,7 +581,7 @@
         <div class="min-w-0">
           <h2
             id="headerTitle"
-            class="text-sm sm:text-base md:text-xl font-black text-white tracking-tight leading-none truncate max-w-[120px] sm:max-w-[240px] md:max-w-[400px] lg:max-w-none"
+            class="text-sm sm:text-base md:text-xl font-black text-white tracking-tight leading-tight break-words"
           >
             Toko Wina Inventaris
           </h2>
@@ -5270,10 +5270,15 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" class="variasi-barcode w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
-                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                  </button>
+                  <input type="text" id="variasi-barcode-input-${rowId}" class="variasi-barcode w-full pl-5 pr-20 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
+                  <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    <button type="button" onclick="clearInlineInput(this)" class="text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                    <button type="button" onclick="startGlobalScanner('variasi-barcode-input-${rowId}')" class="text-orange-500 hover:text-orange-600 transition-colors focus:outline-none" title="Scan Barcode">
+                      <i data-lucide="scan-barcode" class="w-4.5 h-4.5"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 

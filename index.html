@@ -2310,14 +2310,16 @@
                   <table class="w-full text-left min-w-[1200px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-6 py-7 w-14 text-center">No.</th>
-                        <th class="px-8 py-7 w-40">Barcode</th>
-                        <th class="px-8 py-7">Barang</th>
-                        <th class="px-8 py-7 w-24">Satuan</th>
-                        <th class="px-8 py-7 w-20">Qty</th>
-                        <th class="px-8 py-7 w-40 text-right">Harga Jual</th>
-                        <th class="px-8 py-7 w-28 text-center">Status</th>
-                        <th class="px-8 py-7 w-32 text-center">Aksi</th>
+                        <th class="px-6 py-7 w-12 text-center">No.</th>
+                        <th class="px-6 py-7 w-32">Barcode</th>
+                        <th class="px-6 py-7">Barang</th>
+                        <th class="px-6 py-7 w-16 text-center">Level</th>
+                        <th class="px-6 py-7 w-20">Satuan</th>
+                        <th class="px-6 py-7 w-24 text-center">Qty Konv</th>
+                        <th class="px-6 py-7 w-24 text-center">Qty Satuan</th>
+                        <th class="px-6 py-7 w-32 text-right">Harga Jual</th>
+                        <th class="px-6 py-7 w-24 text-center">Status</th>
+                        <th class="px-6 py-7 w-28 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="satuanBarangTableBody" class="divide-y divide-slate-50">
@@ -5398,7 +5400,7 @@
         const paginated = filtered.slice(start, end);
 
         if (paginated.length === 0) {
-           tbody.innerHTML = '<tr><td colspan="8" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
+           tbody.innerHTML = '<tr><td colspan="10" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
            cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
         } else {
            paginated.forEach((item, idx) => {
@@ -5414,9 +5416,9 @@
 
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
-                 <td class="px-8 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
-                 <td class="px-8 py-6 font-mono text-slate-700 text-xs">${item.barcode || "-"}</td>
-                 <td class="px-8 py-6">
+                 <td class="px-6 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
+                 <td class="px-6 py-6 font-mono text-slate-700 text-xs">${item.barcode || "-"}</td>
+                 <td class="px-6 py-6 font-sans">
                     <div class="flex items-center gap-3">
                        ${imgHtml}
                        <div class="flex flex-col">
@@ -5425,13 +5427,17 @@
                        </div>
                     </div>
                  </td>
-                 <td class="px-8 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
-                 <td class="px-8 py-6 font-black text-slate-900 text-xs">${item.qtySatuan}</td>
-                 <td class="px-8 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
-                 <td class="px-8 py-6 text-center">
+                 <td class="px-6 py-6 text-center">
+                    <span class="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-black rounded-lg">Level ${item.levelSatuan || "1"}</span>
+                 </td>
+                 <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
+                 <td class="px-6 py-6 text-center font-black text-slate-900 text-xs">${item.qtyInputKonversi || 1}</td>
+                 <td class="px-6 py-6 text-center font-black text-blue-600 text-xs">${item.qtySatuan || 1}</td>
+                 <td class="px-6 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
+                 <td class="px-6 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                  </td>
-                 <td class="px-8 py-6">
+                 <td class="px-6 py-6">
                     <div class="flex items-center justify-center gap-2">
                        <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-90">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -5469,19 +5475,27 @@
                     </div>
                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
                   </div>
-                  <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                  <div class="grid grid-cols-4 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
+                    <div class="text-center border-r border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Level</p>
+                        <p class="text-[10px] font-black text-indigo-600">Lvl ${item.levelSatuan || 1}</p>
+                    </div>
                     <div class="text-center border-r border-slate-200">
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Satuan</p>
-                        <p class="text-[10px] font-bold text-slate-700 uppercase">${item.satuan}</p>
+                        <p class="text-[10px] font-bold text-slate-700 uppercase truncate">${item.satuan}</p>
                     </div>
                     <div class="text-center border-r border-slate-200">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Qty</p>
-                        <p class="text-[10px] font-bold text-slate-700">${item.qtySatuan}</p>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Qty Konv</p>
+                        <p class="text-[10px] font-bold text-slate-700">${item.qtyInputKonversi || 1}</p>
                     </div>
                     <div class="text-center">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Harga</p>
-                        <p class="text-[10px] font-black text-blue-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</p>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Qty Satuan</p>
+                        <p class="text-[10px] font-bold text-slate-700">${item.qtySatuan || 1}</p>
                     </div>
+                  </div>
+                  <div class="flex justify-between items-center bg-blue-50/20 px-4 py-2.5 rounded-xl border border-blue-100/30 text-xs">
+                      <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Harga Jual</span>
+                      <span class="font-black text-blue-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</span>
                   </div>
                   <div class="flex items-center gap-3 pt-2">
                      <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Edit Data</button>
@@ -5752,6 +5766,72 @@
         return html;
       }
 
+      function recalculateQtySatuanGlobal() {
+        const container = document.getElementById("satuan-group-rows-container");
+        if (!container) return;
+        const cards = Array.from(container.querySelectorAll(".satuan-group-card"));
+        
+        let activeLevel = 1;
+        let accumulatedQty = 1;
+
+        cards.forEach((card) => {
+          const statusSelect = card.querySelector(".satuan-card-status");
+          const statusVal = statusSelect ? statusSelect.value : "Aktif";
+          
+          const lvlBadge = card.querySelector(".satuan-card-lvl-badge");
+          const convInput = card.querySelector(".satuan-card-conv-input");
+          const totalQtyInput = card.querySelector(".satuan-card-qty");
+
+          // If the card is set to Nonaktif, let's fade it out, but keep level sorting intact.
+          if (statusVal === "Nonaktif") {
+            card.classList.add("opacity-50", "border-rose-100", "bg-rose-50/5");
+            if (lvlBadge) lvlBadge.innerText = "Nonaktif";
+            if (convInput) convInput.readOnly = true;
+            if (totalQtyInput) totalQtyInput.readOnly = true;
+            return;
+          } else {
+            card.classList.remove("opacity-50", "border-rose-100", "bg-rose-50/5");
+          }
+
+          const lvl = activeLevel++;
+          if (lvlBadge) lvlBadge.innerText = `Lvl ${lvl}`;
+
+          if (lvl === 1) {
+            if (convInput) {
+              convInput.value = 1;
+              convInput.readOnly = true;
+              convInput.classList.add("bg-slate-100/80", "text-slate-400");
+              convInput.classList.remove("bg-white");
+            }
+            if (totalQtyInput) {
+              totalQtyInput.value = 1;
+              totalQtyInput.readOnly = true;
+              totalQtyInput.classList.add("bg-slate-100/80", "text-slate-400");
+              totalQtyInput.classList.remove("bg-white");
+            }
+            accumulatedQty = 1;
+          } else {
+            if (convInput) {
+              convInput.readOnly = false;
+              convInput.classList.remove("bg-slate-100/80", "text-slate-400");
+              convInput.classList.add("bg-white");
+              
+              let convVal = parseInt(convInput.value);
+              if (isNaN(convVal) || convVal < 1) {
+                convVal = 1;
+              }
+              accumulatedQty = convVal * accumulatedQty;
+            }
+            if (totalQtyInput) {
+              totalQtyInput.value = accumulatedQty;
+              totalQtyInput.readOnly = true;
+              totalQtyInput.classList.add("bg-slate-100/80", "text-slate-400");
+              totalQtyInput.classList.remove("bg-white");
+            }
+          }
+        });
+      }
+
       function addSatuanGroupRow(item = null) {
         const container = document.getElementById("satuan-group-rows-container");
         if (!container) return;
@@ -5760,7 +5840,8 @@
         const rowVal = item ? (item.row || "") : "";
         const barcodeVal = item ? (item.barcode || "") : "";
         const selectedSatuan = item ? (item.satuan || "") : "";
-        const qtyVal = item ? (item.qtySatuan || 1) : 1;
+        const qtyInputVal = item ? (item.qtyInputKonversi || 1) : 1;
+        const qtyTotalVal = item ? (item.qtySatuan || 1) : 1;
         const hargaVal = item ? (item.hargaJual || "") : "";
         const statusVal = item ? (item.status || "Aktif") : "Aktif";
         const gambarVal = item ? (item.gambar || "") : "";
@@ -5775,10 +5856,10 @@
             <!-- Card Header -->
             <div class="flex items-center justify-between border-b border-slate-100/60 pb-3">
               <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center text-[10px] font-black text-blue-600 font-mono">
-                  #
+                <span class="satuan-card-lvl-badge px-3 py-1.5 bg-blue-100 rounded-xl text-[10px] font-black text-blue-600 font-mono">
+                  Lvl 1
                 </span>
-                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest tracking-wider">Satuan Barang</span>
+                <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Satuan Barang</span>
               </div>
               <button type="button" onclick="removeSatuanGroupRow('${uId}', ${rowVal ? 'true' : 'false'})" class="p-2 bg-rose-50 text-rose-500 rounded-xl hover:bg-rose-100 transition-all active:scale-95 flex items-center gap-1.5" title="${rowVal ? 'Nonaktifkan' : 'Hapus baris ini'}">
                 <i data-lucide="${rowVal ? 'power-off' : 'trash-2'}" class="w-4 h-4"></i>
@@ -5810,10 +5891,16 @@
                 </select>
               </div>
 
-              <!-- Qty Satuan -->
+              <!-- Qty Input Konversi -->
               <div class="space-y-1.5">
-                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Satuan (Isi per Satuan)</label>
-                <input type="number" class="satuan-card-qty w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" value="${qtyVal}" required min="1" />
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Input Konversi (Konv)</label>
+                <input type="number" class="satuan-card-conv-input w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" value="${qtyInputVal}" required min="1" oninput="recalculateQtySatuanGlobal()" />
+              </div>
+
+              <!-- Qty Satuan (Total calculated) -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Satuan (Total Qty)</label>
+                <input type="number" class="satuan-card-qty w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 font-bold outline-none text-xs shadow-inner" value="${qtyTotalVal}" readonly />
               </div>
 
               <!-- Harga Jual -->
@@ -5825,7 +5912,7 @@
               <!-- Status Keaktifan -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                <select class="satuan-card-status w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all">
+                <select class="satuan-card-status w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all" onchange="recalculateQtySatuanGlobal()">
                   <option value="Aktif" ${statusVal === 'Aktif' ? 'selected' : ''}>Aktif</option>
                   <option value="Nonaktif" ${statusVal === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option>
                 </select>
@@ -5879,6 +5966,7 @@
            }
         }
 
+        recalculateQtySatuanGlobal();
         lucide.createIcons();
       }
 
@@ -5890,13 +5978,14 @@
             if (statusSelect) {
                statusSelect.value = "Nonaktif";
                showToast("Satuan ditandai sebagai Nonaktif. Simpan data untuk mendaftarkan perubahan.", "info");
-               card.classList.add("opacity-50", "border-rose-100", "bg-rose-50/5");
+               recalculateQtySatuanGlobal();
             }
           }
         } else {
           const card = document.getElementById(`group-card-${uId}`);
           if (card) {
             card.remove();
+            recalculateQtySatuanGlobal();
           }
         }
       }
@@ -5913,8 +6002,9 @@
         const rowsContainer = document.getElementById("satuan-group-rows-container");
         rowsContainer.innerHTML = "";
 
-        const existingUnits = rawSatuanBarangData.filter(item => item.idBarang === id);
+        const existingUnits = rawSatuanBarangData.filter(item => String(item.idBarang) === String(id));
         if (existingUnits.length > 0) {
+          existingUnits.sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
           existingUnits.forEach(item => addSatuanGroupRow(item));
           showToast(`Ditemukan ${existingUnits.length} satuan terdaftar untuk barang ini. Anda dapat mengeditnya atau menambah satuan baru.`, "info");
         } else {
@@ -5973,8 +6063,9 @@
           document.getElementById("form-satuanIdDisplay").innerText = "ID: " + data.idBarang;
           document.getElementById("form-satuanBadgeDisplay").classList.remove("hidden");
 
-          const groupItems = rawSatuanBarangData.filter(item => item.idBarang === data.idBarang);
+          const groupItems = rawSatuanBarangData.filter(item => String(item.idBarang) === String(data.idBarang));
           if (groupItems.length > 0) {
+             groupItems.sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
              groupItems.forEach(item => addSatuanGroupRow(item));
           } else {
              addSatuanGroupRow(data);
@@ -6020,11 +6111,13 @@
 
         const satuanList = [];
         let hasEmptyFields = false;
+        let activeLevel = 1;
 
         cards.forEach(card => {
           const rowVal = card.querySelector(".satuan-card-row-index").value;
           const barcodeVal = card.querySelector(".satuan-card-barcode").value;
           const satuanVal = card.querySelector(".satuan-card-satuan").value;
+          const qtyInputVal = card.querySelector(".satuan-card-conv-input").value;
           const qtyVal = card.querySelector(".satuan-card-qty").value;
           const hargaRaw = card.querySelector(".satuan-card-harga").value;
           const statusVal = card.querySelector(".satuan-card-status").value;
@@ -6032,7 +6125,7 @@
 
           const hargaJual = (hargaRaw || "").replace(/\D/g, "");
 
-          if (!satuanVal || !qtyVal || !hargaJual) {
+          if (!satuanVal || !qtyInputVal || !qtyVal || !hargaJual) {
              hasEmptyFields = true;
           }
 
@@ -6042,12 +6135,19 @@
             finalStatusVal = "Nonaktif";
           }
 
+          let lvl = 99;
+          if (finalStatusVal === "Aktif") {
+            lvl = activeLevel++;
+          }
+
           satuanList.push({
             row: rowVal,
             barcode: barcodeVal,
             idBarang: idBarang,
             namaBarang: namaBarang,
+            levelSatuan: lvl,
             satuan: satuanVal,
+            qtyInputKonversi: qtyInputVal,
             qtySatuan: qtyVal,
             hargaJual: hargaJual,
             status: finalStatusVal,
@@ -6056,7 +6156,7 @@
         });
 
         if (hasEmptyFields) {
-          showToast("Harap isi semua kolom Satuan, Qty, dan Harga Jual.", "warning");
+          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual.", "warning");
           return;
         }
 
@@ -6089,7 +6189,9 @@
                   barcode: itemPayload.barcode,
                   idBarang: itemPayload.idBarang,
                   namaBarang: itemPayload.namaBarang,
+                  levelSatuan: itemPayload.levelSatuan,
                   satuan: itemPayload.satuan,
+                  qtyInputKonversi: itemPayload.qtyInputKonversi,
                   qtySatuan: itemPayload.qtySatuan,
                   hargaJual: itemPayload.hargaJual,
                   status: itemPayload.status,

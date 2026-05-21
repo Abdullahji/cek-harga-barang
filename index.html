@@ -1288,9 +1288,10 @@
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
                         <th class="px-6 py-7 w-20 text-center">No.</th>
                         <th class="px-8 py-7 w-64">ID Barang</th>
-                        <th class="px-8 py-7 w-[550px]">Nama Barang</th>
-                        <th class="px-8 py-7 w-72">Kategori</th>
-                        <th class="px-8 py-7 w-72">Merk</th>
+                        <th class="px-8 py-7 w-[500px]">Nama Barang</th>
+                        <th class="px-8 py-7 w-64">Kategori</th>
+                        <th class="px-8 py-7 w-64">Merk</th>
+                        <th class="px-8 py-7 w-44 text-center">Satuan Dasar</th>
                         <th class="px-8 py-7 w-44 text-center">Status</th>
                         <th class="px-8 py-7 w-48 text-center">Aksi</th>
                       </tr>
@@ -2141,6 +2142,16 @@
                         </div>
                       </div>
 
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan Dasar</label>
+                            <select id="form-barangSatuanDasar" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all" required>
+                                <option value="">Pilih Satuan Dasar...</option>
+                            </select>
+                        </div>
+                        <div class="space-y-3 invisible md:block"></div>
+                      </div>
+
                       <!-- VARIASI SATUAN -->
                       <div id="section-barang-variasi" class="space-y-6 pt-8 border-t border-slate-100 hidden">
                         <div class="flex items-center justify-between gap-4">
@@ -2643,8 +2654,8 @@
       ];
 
       const DEMO_DATA_BARANG = [
-        { row: 2, idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", kategori: "Aksesori", merk: "Logitech", tglBeli: "2024-05-10", supplier: "Global Tech Jaya (Demo)", status: "Aktif" },
-        { row: 3, idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", kategori: "ATK", merk: "Sinar Dunia", tglBeli: "2024-05-12", supplier: "CV. ATK Sejahtera (Demo)", status: "Aktif" }
+        { row: 2, idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", kategoriBarang: "Aksesori", merk: "Logitech", tglBeli: "2024-05-10", supplier: "Global Tech Jaya (Demo)", satuanDasar: "Pcs", status: "Aktif" },
+        { row: 3, idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", kategoriBarang: "ATK", merk: "Sinar Dunia", tglBeli: "2024-05-12", supplier: "CV. ATK Sejahtera (Demo)", satuanDasar: "Rim", status: "Aktif" }
       ];
 
       const DEMO_DATA_SATUAN = [
@@ -3652,13 +3663,66 @@
         showLoading(true);
         try {
           const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tab });
+          
+          // Apply local change to rawReferensiData immediately
+          if (!Array.isArray(rawReferensiData)) {
+            rawReferensiData = [];
+          }
+          
+          if (id) {
+            const targetItem = rawReferensiData.find(item => item.id === id);
+            if (targetItem) {
+              if (tab === 'satuan') targetItem.satuan = satuan || "";
+              else if (tab === 'kategori') targetItem.kategoriBarang = kategoriBarang || "";
+              else if (tab === 'status') targetItem.statusOrder = statusOrder || "";
+            }
+          } else {
+            const newId = "R-" + (rawReferensiData.length + 2);
+            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "" };
+            if (tab === 'satuan') newItem.satuan = satuan || "";
+            else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
+            else if (tab === 'status') newItem.statusOrder = statusOrder || "";
+            rawReferensiData.push(newItem);
+          }
+
+          // Clean, pack and sort column columns to mirror Spreadsheet's alphabetical alignment
+          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
+          const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
+          const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
+
+          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+
+          const maxLen = Math.max(sList.length, kList.length, oList.length);
+          const newRawData = [];
+          for (let i = 0; i < maxLen; i++) {
+            newRawData.push({
+              id: "R-" + (i + 2),
+              satuan: sList[i] || "",
+              kategoriBarang: kList[i] || "",
+              statusOrder: oList[i] || ""
+            });
+          }
+          rawReferensiData = newRawData;
+
+          try { populateKategoriDropdown(); } catch(e) {}
+          try { populateOrderStatusDropdown(); } catch(e) {}
+
           if (res && res.sukses) {
             showAlert("Sukses", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
             showToast(id ? "Data referensi berhasil diperbarui!" : "Data referensi berhasil ditambahkan!", "success");
             closeReferensiModal();
             await fetchReferensiData();
           } else {
-            showAlert("Error", res ? res.pesan : "Gagal menyimpan data.", "error");
+            closeReferensiModal();
+            renderReferensiData();
+            if (res) {
+              showAlert("Error", res.pesan, "error");
+            } else {
+              showAlert("Sukses (Mode Demo)", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
+              showToast(id ? "Data referensi berhasil diperbarui (Mode Demo)" : "Data referensi berhasil ditambahkan (Mode Demo)", "success");
+            }
           }
         } catch (err) {
           console.error(err);
@@ -3674,12 +3738,53 @@
           showLoading(true);
           try {
             const res = await callGAS("hapusReferensi", { id, tab: currentReferensiTab });
+            
+            // Apply local delete immediately
+            if (Array.isArray(rawReferensiData)) {
+              const targetItem = rawReferensiData.find(item => item.id === id);
+              if (targetItem) {
+                if (currentReferensiTab === 'satuan') targetItem.satuan = "";
+                else if (currentReferensiTab === 'kategori') targetItem.kategoriBarang = "";
+                else if (currentReferensiTab === 'status') targetItem.statusOrder = "";
+              }
+
+              // Pack and sort columns
+              const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
+              const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
+              const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
+
+              sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+              kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+              oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+
+              const maxLen = Math.max(sList.length, kList.length, oList.length);
+              const newRawData = [];
+              for (let i = 0; i < maxLen; i++) {
+                newRawData.push({
+                  id: "R-" + (i + 2),
+                  satuan: sList[i] || "",
+                  kategoriBarang: kList[i] || "",
+                  statusOrder: oList[i] || ""
+                });
+              }
+              rawReferensiData = newRawData;
+            }
+
+            try { populateKategoriDropdown(); } catch(e) {}
+            try { populateOrderStatusDropdown(); } catch(e) {}
+
             if (res && res.sukses) {
               showAlert("Terhapus", "Data berhasil dihapus.", "success");
               showToast("Data referensi berhasil dihapus.", "success");
               await fetchReferensiData();
             } else {
-              showAlert("Error", res ? res.pesan : "Gagal menghapus data.", "error");
+              renderReferensiData();
+              if (res) {
+                showAlert("Error", res.pesan, "error");
+              } else {
+                showAlert("Terhapus (Mode Demo)", "Data berhasil dihapus.", "success");
+                showToast("Data referensi berhasil dihapus (Mode Demo).", "success");
+              }
             }
           } catch (err) {
             console.error(err);
@@ -4350,8 +4455,41 @@
             });
             filterSelect.value = barangFilterKategori;
           }
+          try { populateSatuanDasarDropdown(); } catch (e) {}
         } catch (err) {
           console.error("populateKategoriDropdown Error:", err);
+        }
+      }
+
+      function populateSatuanDasarDropdown() {
+        try {
+          const select = document.getElementById("form-barangSatuanDasar");
+          if (!select) return;
+          const currentVal = select.value;
+          
+          let list = [];
+          if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+            list = [...new Set(rawReferensiData.map(item => item.satuan || item.Satuan).filter(Boolean))];
+          }
+          if (list.length === 0) {
+            const fromItems = [...new Set(rawBarangData.map(b => b.satuanDasar).filter(Boolean))];
+            if (fromItems.length > 0) list = fromItems;
+          }
+          if (list.length === 0) {
+            list = ["Pcs", "Box", "Pack", "Rim", "Sachet", "Botol", "Dus", "Lusin", "Kg", "Gram", "Liter"];
+          }
+          
+          list = list.filter(Boolean).map(s => String(s).trim());
+          list = [...new Set(list)].sort((a, b) => a.localeCompare(b));
+          
+          select.innerHTML = '<option value="">Pilih Satuan Dasar...</option>';
+          list.forEach(s => {
+            select.innerHTML += `<option value="${s}">${s}</option>`;
+          });
+          
+          select.value = currentVal;
+        } catch (err) {
+          console.error("populateSatuanDasarDropdown Error:", err);
         }
       }
 
@@ -4363,7 +4501,9 @@
         if (list.length === 0) {
           list = ["Pending", "Diproses", "Selesai", "Batal"];
         }
-        return list.filter(Boolean).map(st => String(st).trim());
+        // Trim, filter, and sort alphabetically
+        const cleanList = list.filter(Boolean).map(st => String(st).trim());
+        return [...new Set(cleanList)].sort((a, b) => a.localeCompare(b));
       }
 
       function populateOrderStatusDropdown() {
@@ -4497,7 +4637,7 @@
         const paginated = filtered.slice(start, end);
 
         if (paginated.length === 0) {
-           tbody.innerHTML = '<tr><td colspan="7" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
+           tbody.innerHTML = '<tr><td colspan="8" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
            cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
         } else {
            paginated.forEach((item, idx) => {
@@ -4515,6 +4655,7 @@
                  </td>
                  <td class="px-8 py-6 font-bold text-slate-800 text-sm uppercase">${item.kategoriBarang || "-"}</td>
                  <td class="px-8 py-6 font-bold text-slate-800 text-sm capitalize">${item.merk || "-"}</td>
+                 <td class="px-8 py-6 text-center font-bold text-slate-800 text-sm uppercase whitespace-nowrap">${item.satuanDasar || "-"}</td>
                  <td class="px-8 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                  </td>
@@ -4552,14 +4693,18 @@
                      </div>
                      <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
                    </div>
-                  <div class="grid grid-cols-2 gap-4">
+                  <div class="grid grid-cols-3 gap-2">
                     <div>
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Kategori</p>
-                        <p class="text-xs font-bold text-slate-600">${item.kategoriBarang || "-"}</p>
+                        <p class="text-xs font-bold text-slate-600 truncate">${item.kategoriBarang || "-"}</p>
                     </div>
                     <div>
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Merk</p>
-                        <p class="text-xs font-bold text-slate-600">${item.merk || "-"}</p>
+                        <p class="text-xs font-bold text-slate-600 truncate">${item.merk || "-"}</p>
+                    </div>
+                    <div>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Satuan</p>
+                        <p class="text-xs font-bold text-slate-600 truncate">${item.satuanDasar || "-"}</p>
                     </div>
                   </div>
                   <div class="flex items-center gap-3 pt-2">
@@ -4878,6 +5023,7 @@
         
         form.reset();
         populateKategoriDropdown();
+        populateSatuanDasarDropdown();
 
         if (data) {
           title.innerText = "Edit Barang";
@@ -4886,6 +5032,9 @@
           document.getElementById("form-barangNama").value = data.namaBarang;
           document.getElementById("form-barangKategori").value = data.kategoriBarang;
           document.getElementById("form-barangMerk").value = data.merk;
+          
+          populateSatuanDasarDropdown();
+          document.getElementById("form-barangSatuanDasar").value = data.satuanDasar || "";
           document.getElementById("form-barangStatus").value = data.status;
 
           document.getElementById("section-barang-variasi").classList.add("hidden");
@@ -4893,6 +5042,9 @@
           title.innerText = "Tambah Barang";
           document.getElementById("form-barangRow").value = "";
           document.getElementById("form-barangId").value = "Generated After Save";
+          
+          populateSatuanDasarDropdown();
+          document.getElementById("form-barangSatuanDasar").value = "";
           document.getElementById("form-barangStatus").value = "Aktif";
 
           document.getElementById("section-barang-variasi").classList.remove("hidden");
@@ -4921,6 +5073,7 @@
           namaBarang: document.getElementById("form-barangNama").value,
           kategoriBarang: document.getElementById("form-barangKategori").value,
           merk: document.getElementById("form-barangMerk").value,
+          satuanDasar: document.getElementById("form-barangSatuanDasar").value,
           status: document.getElementById("form-barangStatus").value
         };
 
@@ -4966,6 +5119,7 @@
               targetItem.namaBarang = payload.namaBarang;
               targetItem.kategoriBarang = payload.kategoriBarang;
               targetItem.merk = payload.merk;
+              targetItem.satuanDasar = payload.satuanDasar;
               targetItem.status = payload.status;
               
               if (Array.isArray(rawSatuanBarangData)) {
@@ -4994,6 +5148,7 @@
               namaBarang: payload.namaBarang,
               kategoriBarang: payload.kategoriBarang,
               merk: payload.merk,
+              satuanDasar: payload.satuanDasar,
               status: payload.status,
               row: newRow
             });

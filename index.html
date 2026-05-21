@@ -459,14 +459,6 @@
                   <span class="font-bold text-xs capitalize tracking-widest">Supplier</span>
                 </button>
                 <button
-                  onclick="switchPage('category')"
-                  id="nav-category"
-                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
-                >
-                  <div class="dot"></div>
-                  <span class="font-bold text-xs capitalize tracking-widest">Kategori Barang</span>
-                </button>
-                <button
                   onclick="switchPage('barang')"
                   id="nav-barang"
                   class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
@@ -792,7 +784,7 @@
               id="section-dashboard"
               class="page-section active max-w-[1400px] mx-auto space-y-10 py-4 px-2"
             >
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Stat Card 1 -->
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                   <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500">
@@ -813,17 +805,6 @@
                   <h3 id="stat-total-supplier" class="text-4xl font-black text-slate-900 mb-2">0</h3>
                   <div class="flex items-center gap-2">
                     <span class="px-2 py-0.5 rounded-md bg-orange-50 text-[10px] font-black text-orange-600 uppercase tracking-wider">Verified</span>
-                  </div>
-                </div>
-                <!-- Stat Card 3 -->
-                <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
-                  <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500 text-emerald-600">
-                    <i data-lucide="layout-grid" class="w-20 h-20"></i>
-                  </div>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Kategori Barang</p>
-                  <h3 id="stat-total-kategori" class="text-4xl font-black text-slate-900 mb-2">0</h3>
-                  <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-wider">Categories</span>
                   </div>
                 </div>
               </div>
@@ -943,154 +924,6 @@
 
           </div>
 
-            <!-- SECTION: CATEGORY -->
-            <section
-              id="section-category"
-              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
-            >
-              <div
-                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
-              >
-                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
-                <div class="flex-1 text-center lg:text-left">
-                  <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Kategori Barang</h2>
-                  <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Manajemen Kategori Produk</p>
-                </div>
-                <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
-                  <button
-                    onclick="openCategoryModal()"
-                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
-                  >
-                    <i data-lucide="plus-circle" class="w-5 h-5"></i>
-                    <span>TAMBAH KATEGORI</span>
-                  </button>
-                </div>
-              </div>
-
-                <!-- SEARCH & FILTER CATEGORY -->
-                <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
-                  <div class="flex-1 relative group min-w-0">
-                    <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
-                    <input
-                      type="text"
-                      id="searchCategory"
-                      oninput="debouncedSearchCategory()"
-                      placeholder="Cari Kategori..."
-                      class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
-                    />
-                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
-                      <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                  </div>
-                  <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                    <!-- Category Filter Trigger -->
-                    <!-- Rows per page -->
-                    <div class="flex items-center gap-3">
-                      <select onchange="changeItemsPerPage('category', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                      </select>
-                    </div>
-
-                    <button id="btn-filter-category" onclick="toggleAdvancedFiltersCategory()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Filter Lanjutan">
-                      <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
-                    </button>
-                    <!-- Category Sort Trigger -->
-                    <button id="btn-sort-category" onclick="toggleSortPanelCategory()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Urutan Kategori">
-                      <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
-                    </button>
-                    <!-- Category Refresh Trigger -->
-                    <button id="btn-refresh-category" onclick="refreshCategoryData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Kategori">
-                      <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- CATEGORY FILTER PANEL -->
-                <div id="filterExpandedCategory" class="hidden bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden mb-6 transition-all duration-300">
-                  <div class="p-6 md:p-8 space-y-6">
-                    <div class="flex items-center justify-between">
-                      <h4 class="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-2">
-                        <i data-lucide="filter" class="w-4 h-4 text-emerald-500"></i>
-                        Filter Lanjutan Kategori
-                      </h4>
-                      <button onclick="resetAdvancedFiltersCategory()" class="text-[10px] font-black text-slate-400 hover:text-red-500 uppercase tracking-widest transition-colors flex items-center gap-1.5">
-                        <i data-lucide="refresh-ccw" class="w-3 h-3"></i>
-                        Reset Filter
-                      </button>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
-                       <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Category</label>
-                        <input id="filter-cat-id" type="text" oninput="debouncedSearchCategory()" placeholder="Filter ID..." 
-                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all">
-                       </div>
-
-                       <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Kategori</label>
-                        <input id="filter-cat-name" type="text" oninput="debouncedSearchCategory()" placeholder="Filter Nama..." 
-                          class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-2 border-slate-50 font-bold text-sm outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-200 transition-all">
-                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- CATEGORY SORT PANEL -->
-                <div id="sortExpandedCategory" class="hidden bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden mb-6">
-                  <div class="p-4 md:p-6 flex flex-wrap items-center gap-4">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Urutan:</span>
-                    <button onclick="setCategorySort('name')" class="px-4 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-all">A-Z Nama</button>
-                    <button onclick="setCategorySort('id')" class="px-4 py-2 rounded-lg text-xs font-bold bg-slate-50 text-slate-600 hover:bg-emerald-50 transition-all">ID Kategori</button>
-                  </div>
-                </div>
-
-              <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
-                <div class="hidden md:block overflow-x-auto custom-scrollbar">
-                  <table class="w-full text-left min-w-[600px]">
-                    <thead>
-                      <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-6 py-7 w-16 text-center">No.</th>
-                        <th class="px-8 py-7 w-40">ID Kategori</th>
-                        <th class="px-8 py-7 cursor-pointer hover:bg-slate-700 transition-colors group" onclick="renderCategoryData()">
-                           <div class="flex items-center gap-2">
-                             <span>Nama Kategori</span>
-                             <i data-lucide="arrow-down-az" class="w-3 h-3 text-emerald-400 group-hover:text-white transition-colors"></i>
-                           </div>
-                        </th>
-                        <th class="px-8 py-7 w-40 text-center">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody id="categoryTableBody" class="divide-y divide-slate-50">
-                      <!-- Rendered by JS (Desktop) -->
-                    </tbody>
-                  </table>
-                </div>
-
-                <!-- Mobile Card View -->
-                <div id="categoryCardContainer" class="block md:hidden divide-y divide-slate-100 bg-slate-50/50">
-                  <!-- Rendered by JS (Mobile) -->
-                </div>
-
-                <!-- Pagination Category -->
-                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <p id="categoryPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    SHOWING 0 TO 0 OF 0 DATA
-                  </p>
-                  <div class="flex gap-2">
-                    <button onclick="prevPage('category')" id="prevBtn-category" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                      <i data-lucide="chevron-left" class="w-5 h-5"></i>
-                    </button>
-                    <button onclick="nextPage('category')" id="nextBtn-category" class="p-3 bg-white border border-slate-200 text-slate-400 rounded-xl hover:bg-slate-50 transition-all disabled:opacity-30 disabled:cursor-not-allowed">
-                      <i data-lucide="chevron-right" class="w-5 h-5"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </section>
-
             <!-- MODAL DATABASE SETTINGS -->
             <div id="databaseSettingsModal" class="fixed inset-0 z-[6500] hidden items-center justify-center p-4">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDatabaseSettingsModal()"></div>
@@ -1161,38 +994,7 @@
               </div>
             </div>
 
-            <!-- MODAL CATEGORY -->
-            <div id="categoryModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
-              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeCategoryModal()"></div>
-              <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 shadow-2xl animate-in zoom-in-95 duration-200">
-                <div class="flex justify-between items-center mb-8">
-                  <h3 id="categoryFormTitle" class="text-xl font-black text-slate-900">Tambah Kategori</h3>
-                  <button onclick="closeCategoryModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                  </button>
-                </div>
-                <form id="categoryForm" onsubmit="handleSimpanCategory(event)" class="space-y-6">
-                  <input type="hidden" id="form-categoryId-old" />
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">ID Kategori (Otomatis)</label>
-                    <input type="text" id="form-categoryId" class="w-full px-6 py-4 rounded-2xl bg-slate-100 border-none font-black text-slate-400 outline-none cursor-not-allowed shadow-inner" placeholder="Generated..." readonly />
-                  </div>
-                  <div class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Kategori</label>
-                    <div class="relative flex items-center w-full">
-                      <input type="text" id="form-categoryName" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: SNACK" required />
-                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i data-lucide="save" class="w-4 h-4"></i>
-                    <span>SIMPAN</span>
-                  </button>
-                </form>
-              </div>
-            </div>
+
 
             <!-- SECTION: REFERENSI -->
             <section
@@ -1905,11 +1707,11 @@
                           <input type="text" id="form-orderId" class="w-full px-6 py-4 rounded-xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed text-xs sm:text-sm" placeholder="ORD-XXX" readonly />
                         </div>
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 md:text-left text-center block">Tanggal Order</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-left block">Tanggal Order</label>
                           <input type="date" id="form-orderTanggal" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" required />
                         </div>
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 md:text-left text-center block">Status Order</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-left block">Status Order</label>
                           <div class="relative">
                             <select id="form-orderStatus" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none cursor-pointer text-xs sm:text-sm">
                               <option value="Pending">Pending</option>
@@ -2737,8 +2539,14 @@
     </div>
 
     <script>
+      // Ensure lucide safety fallback
+      if (typeof window.lucide === 'undefined') {
+        window.lucide = {
+          createIcons: function() { console.warn("lucide is not loaded from CDN, createIcons skipped."); }
+        };
+      }
+
       let isRefreshing = false;
-      let rawCategoryData = [];
       let rawReferensiData = [];
       let rawBarangData = [];
       let rawSatuanBarangData = [];
@@ -2755,7 +2563,6 @@
       let rawCekHargaData = [];
       let html5QrcodeScanner = null;
       let isScanning = false;
-      let isMasterCategoryLoaded = false;
       let referensiSearchTerm = "";
       let barangSearchTerm = "";
       let satuanBarangSearchTerm = "";
@@ -2798,8 +2605,6 @@
       // Pagination State
       let currentPage = 1;
       let itemsPerPage = 10;
-      let categoryCurrentPage = 1;
-      let categoryItemsPerPage = 10;
       let referensiCurrentPage = 1;
       let referensiItemsPerPage = 10;
 
@@ -2848,9 +2653,10 @@
       ];
 
       const DEMO_DATA_REFERENSI = [
-        { row: 2, satuan: "Pcs", kategori: "Aksesori" },
-        { row: 3, satuan: "Rim", kategori: "ATK" },
-        { row: 4, satuan: "Box", kategori: "Elektronik" }
+        { row: 2, satuan: "Pcs", kategoriBarang: "Aksesori", statusOrder: "Pending" },
+        { row: 3, satuan: "Rim", kategoriBarang: "ATK", statusOrder: "Diproses" },
+        { row: 4, satuan: "Box", kategoriBarang: "Elektronik", statusOrder: "Selesai" },
+        { row: 5, satuan: "Sachet", kategoriBarang: "Sembako", statusOrder: "Batal" }
       ];
 
       const DEMO_DATA_PEMBELIAN = [
@@ -2899,18 +2705,13 @@
         rawSatuanBarangData = DEMO_DATA_SATUAN;
         rawReferensiData = DEMO_DATA_REFERENSI;
         rawPembelianBarangData = DEMO_DATA_PEMBELIAN;
-        rawCategoryData = [
-          { "ID Category Barang": "CAT-001", "Category Barang": "Aksesori" },
-          { "ID Category Barang": "CAT-002", "Category Barang": "ATK" },
-          { "ID Category Barang": "CAT-003", "Category Barang": "Elektronik" }
-        ];
         rawCekHargaData = [];
-        isMasterCategoryLoaded = true;
         
         populateSatuanDropdowns();
         renderDashboard();
         // updateStatusCounts(); // Removed as it is not defined
-        updateCategorySelects();
+        populateKategoriDropdown();
+        populateOrderStatusDropdown();
         populatePembelianSupplierFilter();
         
         showToast("Mode Demo: Menggunakan data contoh (Offline/Timeout)", "warning");
@@ -2940,7 +2741,6 @@
           
           if (res && res.sukses) {
             rawCekHargaData = res.cekHarga || [];
-            rawCategoryData = res.category || [];
             rawReferensiData = res.referensi || [];
             rawBarangData = res.barang || [];
             rawSatuanBarangData = res.satuanBarang || [];
@@ -2953,12 +2753,12 @@
               useFallbackDemoData();
             } else {
               console.info("Data loaded successfully from GAS.");
-              isMasterCategoryLoaded = true;
               updateDatabaseStatusIndicator("connected");
               
               try { renderDashboard(); } catch(e) { console.error("renderDashboard failed:", e); }
               try { populateSatuanDropdowns(); } catch(e) { console.error("populateSatuanDropdowns failed:", e); }
-              try { updateCategorySelects(); } catch(e) { console.error("updateCategorySelects failed:", e); }
+              try { populateKategoriDropdown(); } catch(e) { console.error("populateKategoriDropdown failed:", e); }
+              try { populateOrderStatusDropdown(); } catch(e) { console.error("populateOrderStatusDropdown failed:", e); }
               try { populatePembelianSupplierFilter(); } catch(e) { console.error("populatePembelianSupplierFilter failed:", e); }
               
               showToast("Sinkronisasi data berhasil", "success");
@@ -3067,11 +2867,11 @@
         const menu = document.getElementById(menuId);
         
         // Reset all mobile card z-indexes to avoid overlap
-        document.querySelectorAll('.category-card-item, .pembelian-card-item').forEach(card => {
+        document.querySelectorAll('.pembelian-card-item').forEach(card => {
           card.style.zIndex = "0";
         });
 
-        const allMenus = document.querySelectorAll('[id^="cat-action-"], [id^="pb-action-"], [id^="pb-card-action-"]');
+        const allMenus = document.querySelectorAll('[id^="pb-action-"], [id^="pb-card-action-"]');
         allMenus.forEach(m => {
           if (m.id !== menuId) m.classList.add('hidden');
         });
@@ -3081,7 +2881,7 @@
           menu.classList.toggle('hidden');
           
           if (isOpening) {
-            const parentCard = menu.closest('.category-card-item, .pembelian-card-item');
+            const parentCard = menu.closest('.pembelian-card-item');
             if (parentCard) parentCard.style.zIndex = "50";
           }
         }
@@ -3089,7 +2889,7 @@
 
       // Close dropdowns when clicking anywhere else
       document.addEventListener('click', () => {
-        const allMenus = document.querySelectorAll('[id^="cat-action-"], [id^="pb-action-"], [id^="pb-card-action-"]');
+        const allMenus = document.querySelectorAll('[id^="pb-action-"], [id^="pb-card-action-"]');
         allMenus.forEach(m => m.classList.add('hidden'));
       });
 
@@ -3121,8 +2921,6 @@
           
           if (page === "dashboard") {
             renderDashboard();
-          } else if (page === "category") {
-            renderCategoryData();
           } else if (page === "cek-harga") {
             renderCekHargaData();
           } else if (page === "referensi") {
@@ -3165,7 +2963,6 @@
           "dashboard": "Ringkasan Sistem",
           "cek-harga": "Cek Harga Barang",
           "supplier": "Supplier",
-          "category": "Kategori Barang",
           "barang": "Master Data Barang",
           "satuan-barang": "Master Satuan Barang",
           "referensi": "Data Referensi",
@@ -3175,12 +2972,11 @@
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         // Auto transition logic for submenu
-        if (page === "category" || page === "referensi" || page === "satuan-barang" || page === "barang" || page === "supplier") {
+        if (page === "referensi" || page === "satuan-barang" || page === "barang" || page === "supplier") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
           
           // Background Refresh: Only if data is empty or explicitly requested
-          if (rawCategoryData.length === 0) fetchCategoryData();
           if (page === "referensi" && rawReferensiData.length === 0) fetchReferensiData();
           if (page === "supplier" && rawDataSupplierData.length === 0) fetchDataSupplierData();
         }
@@ -3198,11 +2994,7 @@
 
       function changeItemsPerPage(type, value) {
         const val = parseInt(value) || 10;
-        if (type === 'category') {
-          categoryItemsPerPage = val;
-          categoryCurrentPage = 1;
-          renderCategoryData();
-        } else if (type === 'referensi') {
+        if (type === 'referensi') {
           referensiItemsPerPage = val;
           referensiCurrentPage = 1;
           renderReferensiData();
@@ -3232,11 +3024,9 @@
       function renderDashboard() {
         const totalProduk = rawCekHargaData.length;
         const totalSupplier = rawDataSupplierData.length;
-        const totalCategories = rawCategoryData.length;
   
         document.getElementById("stat-total-produk").innerText = totalProduk;
         document.getElementById("stat-total-supplier").innerText = totalSupplier;
-        document.getElementById("stat-total-kategori").innerText = totalCategories;
   
         const recentList = document.getElementById("recent-entries-list");
         recentList.innerHTML = "";
@@ -3321,115 +3111,7 @@
         }
       }
 
-      // Karena lucide.createIcons() mengganti elemen <i> dengan <svg> baru,
-      // referensi lama bisa stale. Fungsi ini selalu re-query elemen terbaru.
-      let isRefreshingCategory = false;
-      async function refreshCategoryData() {
-        if (isRefreshingCategory) return;
-        isRefreshingCategory = true;
-        applyRefreshSpinCategory();
-        
-        showToast("Menyinkronkan data kategori...", "info");
-        
-        try {
-          await fetchCategoryData();
-          showToast("Data kategori diperbarui", "success");
-        } catch (err) {
-          showToast("Gagal memuat kategori", "error");
-        } finally {
-          isRefreshingCategory = false;
-          applyRefreshSpinCategory();
-        }
-      }
 
-      function applyRefreshSpinCategory() {
-        const btn = document.getElementById("btn-refresh-category");
-        if (!btn) return;
-        if (isRefreshingCategory) {
-          btn.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-          const icon = btn.querySelector("i") || btn.querySelector("svg");
-          if (icon) icon.classList.add("animate-spin");
-        } else {
-          btn.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
-          const icon = btn.querySelector("i") || btn.querySelector("svg");
-          if (icon) icon.classList.remove("animate-spin");
-        }
-      }
-
-      let categorySortBy = 'name';
-      let filterCategoryName = "";
-      let filterCategoryId = "";
-
-      function toggleSortPanelCategory() {
-        const panel = document.getElementById("sortExpandedCategory");
-        const btn = document.getElementById("btn-sort-category");
-        const filterPanel = document.getElementById("filterExpandedCategory");
-        if (!panel) return;
-        
-        if (filterPanel) filterPanel.classList.add("hidden");
-        document.getElementById("btn-filter-category")?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-
-        if (panel.classList.contains("hidden")) {
-          panel.classList.remove("hidden");
-          btn?.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
-        } else {
-          panel.classList.add("hidden");
-          btn?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-        }
-      }
-
-      function setCategorySort(mode) {
-        categorySortBy = mode;
-        renderCategoryData();
-        showToast(`Urutkan berdasarkan ${mode === 'name' ? 'Nama' : 'ID'}`, "success");
-      }
-
-      let categorySearchTimer;
-      function debouncedSearchCategory() {
-        clearTimeout(categorySearchTimer);
-        categorySearchTimer = setTimeout(() => {
-          categorySearchTerm = (document.getElementById("searchCategory")?.value || "").toLowerCase();
-          filterCategoryId = (document.getElementById("filter-cat-id")?.value || "").toLowerCase();
-          filterCategoryName = (document.getElementById("filter-cat-name")?.value || "").toLowerCase();
-          
-          categoryCurrentPage = 1;
-          renderCategoryData();
-        }, 300);
-      }
-
-      function toggleAdvancedFiltersCategory() {
-        const panel = document.getElementById("filterExpandedCategory");
-        const sortPanel = document.getElementById("sortExpandedCategory");
-        const btn = document.getElementById("btn-filter-category");
-        if (!panel) return;
-
-        if (sortPanel) sortPanel.classList.add("hidden");
-        document.getElementById("btn-sort-category")?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-
-        if (panel.classList.contains("hidden")) {
-          panel.classList.remove("hidden");
-          btn?.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-          panel.classList.add("animate-in", "fade-in", "slide-in-from-top-2", "duration-300");
-        } else {
-          panel.classList.add("hidden");
-          btn?.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
-        }
-      }
-
-      function resetAdvancedFiltersCategory() {
-        if (document.getElementById("filter-cat-id")) document.getElementById("filter-cat-id").value = "";
-        if (document.getElementById("filter-cat-name")) document.getElementById("filter-cat-name").value = "";
-        if (document.getElementById("searchCategory")) document.getElementById("searchCategory").value = "";
-        
-        filterCategoryId = "";
-        filterCategoryName = "";
-        categorySearchTerm = "";
-        
-        categoryCurrentPage = 1;
-        renderCategoryData();
-        showToast("Filter kategori telah direset", "info");
-      }
 
       function applyRefreshSpin() {
         const btn = document.getElementById("btn-refresh-all");
@@ -3624,235 +3306,7 @@
         }
       }
 
-      async function fetchCategoryData() {
-        try {
-          const res = await callGAS("ambilMasterCategory");
-          if (res && res.sukses && Array.isArray(res.data)) {
-            rawCategoryData = res.data;
-            isMasterCategoryLoaded = true;
-          } else {
-            console.warn("Category load failed or empty, using fallbacks:", res?.pesan);
-          }
-        } catch (err) {
-          console.error("fetchCategoryData Exception:", err);
-        }
-        
-        try {
-          updateCategorySelects();
-          const section = document.getElementById("section-category");
-          if (section && (!section.classList.contains("hidden") || section.classList.contains("active"))) {
-            renderCategoryData();
-          }
-        } catch (e) {
-          console.error("Post-fetch UI update failed:", e);
-        }
-      }
 
-      function updateCategorySelects() {
-        const formSelect = document.getElementById("form-category-select");
-        const filterSelect = document.getElementById("filter-category");
-        
-        const populate = (select) => {
-          if (!select) return;
-          const currentVal = select.value;
-          const isFilter = select.id === "filter-category";
-          
-          select.innerHTML = isFilter ? '<option value="">Semua Kategori</option>' : '<option value="">Pilih Kategori...</option>';
-          
-            if (Array.isArray(rawCategoryData) && rawCategoryData.length > 0) {
-              rawCategoryData.forEach(cat => {
-                if (cat) {
-                  const opt = document.createElement("option");
-                  // Handle both object structure ([ID, Name]) and simple string
-                  if (typeof cat === 'object' && cat !== null) {
-                    const catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0] || "Unknown";
-                    opt.value = catName;
-                    opt.innerText = catName;
-                  } else {
-                    opt.value = String(cat);
-                    opt.innerText = String(cat);
-                  }
-                  select.appendChild(opt);
-                }
-              });
-            } else {
-               console.warn("rawCategoryData is empty or not an array");
-            }
-          select.value = currentVal;
-        };
-
-        populate(formSelect);
-        populate(filterSelect);
-      }
-
-      // --- CATEGORY MANAGEMENT ---
-      let categorySearchTerm = "";
-
-      function handleSearchCategory() {
-        categorySearchTerm = (document.getElementById("searchCategory")?.value || "").toLowerCase();
-        categoryCurrentPage = 1;
-        renderCategoryData();
-      }
-
-      function renderCategoryData() {
-        try {
-          const tbody = document.getElementById("categoryTableBody");
-          const cardContainer = document.getElementById("categoryCardContainer");
-          if (!tbody || !cardContainer) return;
-
-          tbody.innerHTML = "";
-          cardContainer.innerHTML = "";
-
-          if (!Array.isArray(rawCategoryData) || rawCategoryData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data kategori.</td></tr>`;
-            cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data kategori.</div>`;
-            document.getElementById("categoryPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
-            updatePaginationButtons("category", 0, 1);
-            return;
-          }
-
-          // Filter & Sort
-          let filteredData = rawCategoryData.filter(cat => {
-            if (cat === null || cat === undefined) return false;
-            let catName = "";
-            let catId = "";
-
-            if (typeof cat === 'object') {
-              catName = String(cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || "").toLowerCase();
-              catId = String(cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || "").toLowerCase();
-            } else {
-              catName = String(cat).toLowerCase();
-            }
-            
-            const matchSearch = categorySearchTerm === "" || catName.includes(categorySearchTerm) || catId.includes(categorySearchTerm);
-            const matchId = filterCategoryId === "" || catId.includes(filterCategoryId);
-            const matchName = filterCategoryName === "" || catName.includes(filterCategoryName);
-            
-            return matchSearch && matchId && matchName;
-          });
-
-          // Sort
-          filteredData.sort((a, b) => {
-            let valA, valB;
-            if (categorySortBy === 'name') {
-              valA = typeof a === 'object' ? String(a["Category Barang"] || a["Category Brg"] || a["Name"] || Object.values(a)[1] || "") : String(a);
-              valB = typeof b === 'object' ? String(b["Category Barang"] || b["Category Brg"] || b["Name"] || Object.values(b)[1] || "") : String(b);
-            } else {
-              valA = typeof a === 'object' ? String(a["ID Category Barang"] || a["ID Category Brg"] || a["ID"] || Object.values(a)[0] || "") : "";
-              valB = typeof b === 'object' ? String(b["ID Category Barang"] || b["ID Category Brg"] || b["ID"] || Object.values(b)[0] || "") : "";
-            }
-            return (valA || "").localeCompare(valB || "", undefined, { numeric: true, sensitivity: 'base' });
-          });
-
-          const totalData = filteredData.length;
-
-          if (totalData === 0 && rawCategoryData.length > 0) {
-             tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada kategori yang cocok dengan filter.</td></tr>`;
-             cardContainer.innerHTML = `<div class="px-8 py-20 text-center text-slate-400 font-bold italic">Tidak ada kategori yang cocok dengan filter.</div>`;
-             document.getElementById("categoryPaginationInfo").innerText = "MENAMPILKAN 0 SAMPAI 0 DARI 0 DATA";
-             updatePaginationButtons("category", 0, 1);
-             return;
-          }
-        const totalPages = Math.ceil(totalData / categoryItemsPerPage) || 1;
-        
-        if (categoryCurrentPage > totalPages) categoryCurrentPage = totalPages;
-        if (categoryCurrentPage < 1) categoryCurrentPage = 1;
-        
-        const startIndex = (categoryCurrentPage - 1) * categoryItemsPerPage;
-        const endIndex = Math.min(startIndex + categoryItemsPerPage, totalData);
-        const paginatedData = filteredData.slice(startIndex, endIndex);
-
-        paginatedData.forEach((cat, idx) => {
-          if (!cat) return;
-          let catName = "", catId = "";
-          
-          if (typeof cat === 'object') {
-            catName = cat["Category Barang"] || cat["Category Brg"] || cat["categoryBrg"] || cat["Name"] || Object.values(cat)[1] || Object.values(cat)[0] || "Unknown";
-            catId = cat["ID Category Barang"] || cat["ID Category Brg"] || cat["idCategoryBrg"] || cat["ID"] || Object.values(cat)[0] || ("C-" + (startIndex + idx + 1));
-          } else {
-            catName = String(cat);
-            catId = "EXT-" + (startIndex + idx + 1);
-          }
-          
-          if (!catName) return;
-
-          const safeCatName = String(catName).replace(/'/g, "\\'");
-          const safeCatId = String(catId).replace(/'/g, "\\'");
-
-          // Desktop Table View
-          const tr = document.createElement("tr");
-          tr.className = "hover:bg-slate-50 transition-colors group";
-          tr.innerHTML = `
-            <td class="px-8 py-5 text-center font-bold text-slate-400 text-xs">${startIndex + idx + 1}</td>
-            <td class="px-8 py-5 font-black text-slate-800 text-sm tracking-tight">${catId}</td>
-            <td class="px-8 py-5 font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${catName}</td>
-            <td class="px-8 py-5">
-              <div class="flex justify-center gap-2">
-                <button onclick="openCategoryModal('${safeCatId}', '${safeCatName}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
-                  <i data-lucide="edit-3" class="w-4 h-4"></i>
-                </button>
-                <button onclick="handleHapusCategory('${safeCatId}')" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-90">
-                  <i data-lucide="trash-2" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(tr);
-
-          // Mobile Card View
-          const mobileCard = document.createElement("div");
-          mobileCard.className = "category-card-item relative p-4 sm:p-6 border-b border-slate-50 last:border-none duration-300";
-          mobileCard.innerHTML = `
-              <div class="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm relative flex flex-col pt-10">
-                <div class="flex justify-between items-start mb-8 absolute top-8 left-8 right-8 z-[5]">
-                  <span class="w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 text-xs font-black rounded-xl border border-slate-100 shadow-inner">
-                    ${startIndex + idx + 1}.
-                  </span>
-                  <div class="relative">
-                    <button onclick="toggleCardAction(event, 'cat-action-${idx}')" class="w-10 h-10 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
-                      <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </button>
-                    <div id="cat-action-${idx}" class="hidden absolute right-0 mt-2 w-32 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                      <button onclick="event.stopPropagation(); openCategoryModal('${safeCatId}', '${safeCatName}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
-                        <i data-lucide="edit-3" class="w-3 h-3"></i> Edit
-                      </button>
-                      <button onclick="event.stopPropagation(); handleHapusCategory('${safeCatId}')" class="w-full px-4 py-3 text-left text-[10px] font-black text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                        <i data-lucide="trash-2" class="w-3 h-3"></i> Hapus
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div class="space-y-6 mt-12">
-                  <div class="flex items-center gap-4">
-                    <span class="text-xs font-black text-slate-900 uppercase tracking-tight min-w-[110px]">ID Kategori :</span>
-                    <div class="px-4 py-2 bg-[#fff7ed] text-[#9a3412] rounded-2xl border border-orange-100 shadow-sm">
-                      <span class="text-base sm:text-lg font-black tracking-tight">${catId}</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center gap-4">
-                    <span class="text-xs font-black text-slate-900 uppercase tracking-tight min-w-[110px]">Nama Kategori :</span>
-                    <div class="px-6 py-3 bg-[#ecfdf5] text-[#065f46] rounded-2xl border border-emerald-100 shadow-sm">
-                      <span class="text-base sm:text-lg md:text-xl font-black tracking-tight italic leading-none whitespace-normal break-words">${catName}</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="mt-8 pt-6 border-t border-slate-50 flex justify-end">
-                   <span class="text-[8px] font-bold text-slate-200 uppercase tracking-[0.2em]">CATEGORY BARNG • MASTER</span>
-                </div>
-              </div>
-          `;
-          cardContainer.appendChild(mobileCard);
-        });
-        
-        document.getElementById("categoryPaginationInfo").innerText = `MENAMPILKAN ${startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
-        updatePaginationButtons("category", categoryCurrentPage, totalPages);
-        lucide.createIcons();
-      } catch (e) {
-        console.error("renderCategoryData Error:", e);
-        const tbody = document.getElementById("categoryTableBody");
-        if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="px-8 py-20 text-center text-red-500 font-bold">Terjadi kesalahan saat menampilkan data.</td></tr>`;
-      }
-    }
 
       function updatePaginationButtons(type, current, total) {
         const prevBtn = document.getElementById(`prevBtn-${type}`);
@@ -3864,10 +3318,7 @@
       }
 
       function prevPage(type) {
-        if (type === 'category' && categoryCurrentPage > 1) {
-          categoryCurrentPage--;
-          renderCategoryData();
-        } else if (type === 'referensi' && referensiCurrentPage > 1) {
+        if (type === 'referensi' && referensiCurrentPage > 1) {
           referensiCurrentPage--;
           renderReferensiData();
         } else if (type === 'barang' && barangCurrentPage > 1) {
@@ -3888,13 +3339,7 @@
       }
 
       function nextPage(type) {
-        if (type === 'category') {
-          const totalPages = Math.ceil(rawCategoryData.length / categoryItemsPerPage);
-          if (categoryCurrentPage < totalPages) {
-            categoryCurrentPage++;
-            renderCategoryData();
-          }
-        } else if (type === 'referensi') {
+        if (type === 'referensi') {
           let filteredData = rawReferensiData.filter(item => {
             let val = "";
             if (currentReferensiTab === 'satuan') val = item.satuan || "";
@@ -4050,105 +3495,7 @@
         }, 1200);
       }
 
-      function openCategoryModal(id = "", name = "") {
-        const modal = document.getElementById("categoryModal");
-        const title = document.getElementById("categoryFormTitle");
-        const inputId = document.getElementById("form-categoryId");
-        const inputName = document.getElementById("form-categoryName");
-        const inputOldId = document.getElementById("form-categoryId-old");
 
-        if (name === "") {
-          // ADD MODE
-          title.innerText = "Tambah Category";
-          inputOldId.value = "";
-          
-          let lastIdNum = 0;
-          if (Array.isArray(rawCategoryData)) {
-            rawCategoryData.forEach(cat => {
-              const currentId = typeof cat === 'object' ? (cat["ID Category Barang"] || cat["ID Category Brg"] || cat["ID"] || Object.values(cat)[0]) : cat;
-              const numMatch = String(currentId).match(/\d+/);
-              if (numMatch) {
-                const num = parseInt(numMatch[0]);
-                if (num > lastIdNum) lastIdNum = num;
-              }
-            });
-          }
-          inputId.value = "CB-" + (lastIdNum + 1).toString().padStart(3, '0');
-        } else {
-          // EDIT MODE
-          title.innerText = "Edit Category";
-          inputId.value = id;
-          inputOldId.value = id;
-        }
-
-        inputName.value = name;
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-        inputName.focus();
-      }
-
-      function closeCategoryModal() {
-        const modal = document.getElementById("categoryModal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        document.getElementById("categoryForm").reset();
-      }
-
-      async function handleSimpanCategory(e) {
-        e.preventDefault();
-        const id = document.getElementById("form-categoryId").value.trim().toUpperCase();
-        const name = document.getElementById("form-categoryName").value.trim().toUpperCase();
-        const oldId = document.getElementById("form-categoryId-old").value;
-
-        if (!id || !name) return;
-
-        showLoading(true);
-        try {
-          const res = await callGAS("simpanMasterCategory", { id, name, oldId });
-          if (res && res.sukses) {
-            showAlert("Sukses", oldId ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!", "success");
-            showToast(oldId ? "Category berhasil diperbarui!" : "Category berhasil ditambahkan!", "success");
-            refreshCategoryData();
-            closeCategoryModal();
-            await fetchCategoryData();
-            if (document.getElementById("section-category").classList.contains("active")) {
-              renderCategoryData();
-            }
-          } else {
-            showAlert("Error", res ? res.pesan : "Gagal menyimpan category.", "error");
-          }
-        } catch (err) {
-          console.error(err);
-          showAlert("Error", "Terjadi kesalahan sistem.", "error");
-        } finally {
-          showLoading(false);
-        }
-      }
-
-      async function handleHapusCategory(catId) {
-        showConfirm("Hapus Category?", `Apakah Anda yakin ingin menghapus category "${catId}"? Data barang dengan category ini akan terpengaruh.`, async () => {
-          showLoading(true);
-          try {
-            const res = await callGAS("hapusMasterCategory", { id: catId });
-            if (res && res.sukses) {
-              showAlert("Terhapus", "Category berhasil dihapus.", "success");
-              showToast("Category berhasil dihapus.", "success");
-              refreshCategoryData();
-              await fetchCategoryData();
-              if (document.getElementById("section-category").classList.contains("active")) {
-                renderCategoryData();
-              }
-            } else {
-              showAlert("Error", res ? res.pesan : "Gagal menghapus category.", "error");
-            }
-          } catch (err) {
-            console.error(err);
-            showAlert("Error", "Terjadi kesalahan sistem.", "error");
-          } finally {
-            showLoading(false);
-          }
-        });
-      }
 
       // --- REFERENSI MANAGEMENT ---
       let isRefreshingReferensi = false;
@@ -4193,6 +3540,9 @@
           console.error("fetchReferensiData Error:", err);
         }
         
+        try { populateKategoriDropdown(); } catch(e) {}
+        try { populateOrderStatusDropdown(); } catch(e) {}
+
         const section = document.getElementById("section-referensi");
         if (section && (section.classList.contains("active") || !section.classList.contains("hidden"))) {
           renderReferensiData();
@@ -4482,8 +3832,7 @@
         try {
           await Promise.all([
             fetchDataSupplierData(), 
-            fetchCekHargaData(), 
-            fetchCategoryData()
+            fetchCekHargaData()
           ]);
           
           if (document.getElementById("section-dashboard")?.classList.contains("active")) {
@@ -4965,11 +4314,13 @@
 
       async function populateKategoriDropdown() {
         try {
-          // Use cached data instead of making a new network call
-          let list = rawCategoryData.map(c => c["Category Barang"] || c.namaKategori || "");
+          let list = [];
+          
+          if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+            list = [...new Set(rawReferensiData.map(item => item.kategoriBarang || item.Kategori_Barang || item.Ketegori_Barang || item.kategori || item.namaKategori).filter(Boolean))];
+          }
           
           if (list.length === 0) {
-            // Fallback to extraction from items if category sheet is empty
             const fromItems = [...new Set(rawBarangData.map(b => b.kategoriBarang).filter(Boolean))];
             if (fromItems.length > 0) list = fromItems;
           }
@@ -4977,6 +4328,10 @@
           if (list.length === 0) {
             list = ["SNACK", "MINUMAN", "SEMBAKO", "SABUN", "LAINNYA"];
           }
+          
+          // Clean empty values and sort alphabetically
+          list = list.filter(Boolean).map(cat => String(cat).trim());
+          list = [...new Set(list)].sort((a, b) => a.localeCompare(b));
           
           const select = document.getElementById("form-barangKategori");
           const filterSelect = document.getElementById("filter-barang-kategori");
@@ -4997,6 +4352,44 @@
           }
         } catch (err) {
           console.error("populateKategoriDropdown Error:", err);
+        }
+      }
+
+      function getOrderStatusList() {
+        let list = [];
+        if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+          list = [...new Set(rawReferensiData.map(item => item.statusOrder || item.Status_Order || item.status_order || item.status).filter(Boolean))];
+        }
+        if (list.length === 0) {
+          list = ["Pending", "Diproses", "Selesai", "Batal"];
+        }
+        return list.filter(Boolean).map(st => String(st).trim());
+      }
+
+      function populateOrderStatusDropdown() {
+        try {
+          const select = document.getElementById("form-orderStatus");
+          if (!select) return;
+          
+          const currentVal = select.value;
+          
+          const list = getOrderStatusList();
+          
+          select.innerHTML = "";
+          list.forEach(status => {
+            const opt = document.createElement("option");
+            opt.value = status;
+            opt.innerText = status;
+            select.appendChild(opt);
+          });
+          
+          if (currentVal && list.includes(currentVal)) {
+            select.value = currentVal;
+          } else if (list.length > 0) {
+            select.value = list[0];
+          }
+        } catch (err) {
+          console.error("populateOrderStatusDropdown Error:", err);
         }
       }
 
@@ -5563,13 +4956,81 @@
         try {
           const res = await callGAS("simpanBarang", { ...payload, sheetName: "Data_Barang" });
           showLoading(false);
+          
+          // Apply local synchronizations immediately for responsive interaction or fallback mode
+          if (rowVal) {
+            const rowIndex = parseInt(rowVal);
+            const targetItem = rawBarangData.find(b => b.row === rowIndex);
+            if (targetItem) {
+              const oldId = targetItem.idBarang;
+              targetItem.namaBarang = payload.namaBarang;
+              targetItem.kategoriBarang = payload.kategoriBarang;
+              targetItem.merk = payload.merk;
+              targetItem.status = payload.status;
+              
+              if (Array.isArray(rawSatuanBarangData)) {
+                rawSatuanBarangData.forEach(sat => {
+                  if (String(sat.idBarang) === String(oldId)) {
+                    sat.status = payload.status;
+                    sat.namaBarang = payload.namaBarang;
+                  }
+                });
+              }
+            }
+          } else {
+            let maxNum = 0;
+            rawBarangData.forEach(b => {
+              if (b.idBarang && b.idBarang.startsWith('BRG-')) {
+                const num = parseInt(b.idBarang.replace('BRG-', ''));
+                if (!isNaN(num) && num > maxNum) maxNum = num;
+              }
+            });
+            const newId = "BRG-" + String(maxNum + 1).padStart(3, '0');
+            const newRow = rawBarangData.length + 2;
+            
+            rawBarangData.push({
+              no: rawBarangData.length + 1,
+              idBarang: newId,
+              namaBarang: payload.namaBarang,
+              kategoriBarang: payload.kategoriBarang,
+              merk: payload.merk,
+              status: payload.status,
+              row: newRow
+            });
+            
+            if (payload.variasiSatuan) {
+              payload.variasiSatuan.forEach(v => {
+                const finalStatus = (payload.status === "Nonaktif") ? "Nonaktif" : (v.status || "Aktif");
+                rawSatuanBarangData.push({
+                  no: rawSatuanBarangData.length + 1,
+                  barcode: v.barcode,
+                  idBarang: newId,
+                  namaBarang: payload.namaBarang,
+                  satuan: v.satuan,
+                  qtySatuan: v.qtySatuan,
+                  hargaJual: v.hargaJual,
+                  status: finalStatus,
+                  gambar: v.gambar,
+                  row: rawSatuanBarangData.length + 2
+                });
+              });
+            }
+          }
+
           if (res && res.sukses) {
             showToast("Berhasil disimpan", "success");
             closeBarangModal();
             fetchBarangData();
             fetchSatuanBarangData();
-          } else if (res) {
-            showToast(res.pesan, "error");
+          } else {
+            closeBarangModal();
+            renderBarangData();
+            renderSatuanBarangData();
+            if (res) {
+              showToast(res.pesan, "error");
+            } else {
+              showToast("Berhasil disimpan (Mode Demo)", "success");
+            }
           }
         } catch (err) {
           showLoading(false);
@@ -5588,11 +5049,32 @@
         try {
           const res = await callGAS("ubahStatusBarang", { row: row, status: newStatus });
           showLoading(false);
+          
+          // Sync local memory values for instant update or offline demo mode
+          const targetItem = rawBarangData.find(b => b.row === row);
+          if (targetItem) {
+            targetItem.status = newStatus;
+            if (Array.isArray(rawSatuanBarangData)) {
+              rawSatuanBarangData.forEach(sat => {
+                if (String(sat.idBarang) === String(targetItem.idBarang)) {
+                  sat.status = newStatus;
+                }
+              });
+            }
+          }
+          
           if (res && res.sukses) {
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
             fetchBarangData(); // Refresh UI
-          } else if (res) {
-            showToast(res.pesan, "error");
+            fetchSatuanBarangData(); // Refresh Satuan UI
+          } else {
+            renderBarangData();
+            renderSatuanBarangData();
+            if (res) {
+              showToast(res.pesan, "error");
+            } else {
+              showToast(`Status berhasil diubah ke ${newStatus} (Mode Demo)`, "success");
+            }
           }
         } catch (err) {
           showLoading(false);
@@ -6399,6 +5881,12 @@
              hasEmptyFields = true;
           }
 
+          const parentBarangObj = rawBarangData.find(b => String(b.idBarang) === String(idBarang));
+          let finalStatusVal = statusVal;
+          if (parentBarangObj && parentBarangObj.status === "Nonaktif") {
+            finalStatusVal = "Nonaktif";
+          }
+
           satuanList.push({
             row: rowVal,
             barcode: barcodeVal,
@@ -6407,7 +5895,7 @@
             satuan: satuanVal,
             qtySatuan: qtyVal,
             hargaJual: hargaJual,
-            status: statusVal,
+            status: finalStatusVal,
             gambar: gambarVal
           });
         });
@@ -6869,6 +6357,17 @@
 
       async function handleToggleStatusSatuanBarang(row, currentStatus) {
         const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        
+        // Find local item and check if parent is Nonaktif
+        const localItem = rawSatuanBarangData.find(item => item.row === row);
+        if (localItem && newStatus === "Aktif") {
+          const parentBarangObj = rawBarangData.find(b => String(b.idBarang) === String(localItem.idBarang));
+          if (parentBarangObj && parentBarangObj.status === "Nonaktif") {
+            showToast("Gagal: Induk Data Barang berstatus Nonaktif", "error");
+            return;
+          }
+        }
+
         const msg = newStatus === "Aktif" ? "Aktifkan satuan barang ini?" : "Nonaktifkan satuan barang ini?";
         
         const konfirmasi = await showKonfirmasi(msg, `Status satuan akan diubah menjadi ${newStatus}.`);
@@ -6878,11 +6377,21 @@
         try {
           const res = await callGAS("ubahStatusSatuanBarang", { row: row, status: newStatus });
           showLoading(false);
+          
+          if (localItem) {
+            localItem.status = newStatus;
+          }
+          
           if (res && res.sukses) {
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
             fetchSatuanBarangData(); // Refresh UI
-          } else if (res) {
-            showToast(res.pesan, "error");
+          } else {
+            renderSatuanBarangData();
+            if (res) {
+              showToast(res.pesan, "error");
+            } else {
+              showToast(`Status berhasil diubah ke ${newStatus} (Mode Demo)`, "success");
+            }
           }
         } catch (err) {
           showLoading(false);
@@ -7268,15 +6777,17 @@
       }
 
       function formatDateHyphen(dateStr) {
-        if (!dateStr || dateStr.trim() === "" || dateStr === "-") return "-";
+        if (dateStr === null || dateStr === undefined) return "-";
+        const str = String(dateStr).trim();
+        if (str === "" || str === "-") return "-";
         try {
           let parts = [];
-          if (dateStr.includes("-")) {
-            parts = dateStr.trim().split("-");
-          } else if (dateStr.includes("/")) {
-            parts = dateStr.trim().split("/");
+          if (str.includes("-")) {
+            parts = str.split("-");
+          } else if (str.includes("/")) {
+            parts = str.split("/");
           } else {
-            return dateStr;
+            return str;
           }
           
           if (parts.length === 3) {
@@ -7296,9 +6807,9 @@
             month = String(month).padStart(2, '0');
             return `${day}-${month}-${year}`;
           }
-          return dateStr;
+          return str;
         } catch (e) {
-          return dateStr;
+          return str;
         }
       }
 
@@ -7933,7 +7444,12 @@
           const supSelect = document.getElementById("filter-order-barang-supplier");
           if (supSelect) supSelect.value = "all";
           orderBarangCurrentPage = 1;
-          showToast("Memperbarui data order...", "info");
+          showToast("Memperbarui data order & referensi...", "info");
+          try {
+            await fetchReferensiData();
+          } catch (e) {
+            console.error("Failed to fetch referensi data during order refresh:", e);
+          }
         }
 
         isFetchingOrder = true;
@@ -8486,13 +8002,17 @@
 
         // Reset the whole Form
         document.getElementById("orderBarangForm").reset();
+        try { populateOrderStatusDropdown(); } catch(e) {}
+        
         document.getElementById("form-orderRow").value = "";
         document.getElementById("form-orderId").value = "Otomatis (ORD-001)";
         document.getElementById("form-orderSearchSupplier").value = "";
         document.getElementById("form-orderIdSupplier").value = "";
         document.getElementById("form-orderNamaSupplier").value = "";
         document.getElementById("form-orderCatatan").value = "";
-        document.getElementById("form-orderStatus").value = "Pending";
+        try {
+          document.getElementById("form-orderStatus").value = "Pending";
+        } catch (e) {}
 
         const now = new Date();
         const year = now.getFullYear();
@@ -8513,7 +8033,11 @@
           
           selectOrderSupplier(orderData.idSupplier, orderData.namaSupplier);
           document.getElementById("form-orderCatatan").value = orderData.catatan || "";
-          document.getElementById("form-orderStatus").value = orderData.statusOrder || "Pending";
+          try {
+            document.getElementById("form-orderStatus").value = orderData.statusOrder || "Pending";
+          } catch(e) {
+            console.warn("Status Order not found in dynamic choices: ", orderData.statusOrder);
+          }
 
           // Get items from details matching ID
           const details = rawOrderDetails.filter(d => d.idOrder === orderData.idOrder);
@@ -8802,7 +8326,7 @@
 
       // Toggle status easily via prompt
       async function handleUbahStatusOrderClick(row, currentStatus) {
-        const statuses = ["Pending", "Diproses", "Selesai", "Batal"];
+        const statuses = getOrderStatusList();
         
         let promptLines = statuses.filter(s => s !== currentStatus);
 

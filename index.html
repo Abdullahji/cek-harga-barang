@@ -467,6 +467,14 @@
                   <span class="font-bold text-xs capitalize tracking-widest">Data Barang</span>
                 </button>
                 <button
+                  onclick="switchPage('pembelian-barang')"
+                  id="nav-master-pembelian-barang"
+                  class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
+                >
+                  <div class="dot"></div>
+                  <span class="font-bold text-xs capitalize tracking-widest">Pembelian Barang</span>
+                </button>
+                <button
                   onclick="switchPage('satuan-barang')"
                   id="nav-satuan-barang"
                   class="nav-btn w-full flex items-center gap-3 px-6 py-3 rounded-xl text-slate-400 transition-all hover:bg-slate-50 nav-btn-dot"
@@ -491,7 +499,7 @@
                 onclick="toggleSubmenu('transaksi')"
                 class="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all sidebar-submenu-trigger"
               >
-                <i data-lucide="shopping-cart" class="w-5 h-5 text-indigo-500"></i>
+                <i data-lucide="shopping-cart" class="w-5 h-5 text-emerald-500"></i>
                 <span class="font-bold text-sm sidebar-text">Transaksi</span>
                 <i
                   id="icon-transaksi"
@@ -788,12 +796,12 @@
                 <!-- Stat Card 1 -->
                 <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group">
                   <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-500">
-                    <i data-lucide="package" class="w-20 h-20 text-blue-600"></i>
+                    <i data-lucide="package" class="w-20 h-20 text-emerald-600"></i>
                   </div>
                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Total Item Produk</p>
                   <h3 id="stat-total-produk" class="text-4xl font-black text-slate-900 mb-2">0</h3>
                   <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-md bg-blue-50 text-[10px] font-black text-blue-600 uppercase tracking-wider">Cek Harga</span>
+                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-[10px] font-black text-emerald-600 uppercase tracking-wider">Cek Harga</span>
                   </div>
                 </div>
                 <!-- Stat Card 2 -->
@@ -954,7 +962,7 @@
                     <li>Buka tab <span class="font-bold">code.gs</span> dari file project ini, lalu salin seluruh kodenya.</li>
                     <li>Hapus semua kode bawaan di editor Apps Script Anda, dan Paste (Tempel) kode tersebut.</li>
                     <li>Klik opsi simpan (ikon disket).</li>
-                    <li>Klik <span class="bg-indigo-600 text-white px-1.5 py-0.5 rounded text-[10px] inline-block font-sans">Deploy</span> &gt; <span class="font-bold">New deployment</span>.</li>
+                    <li>Klik <span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[10px] inline-block font-sans">Deploy</span> &gt; <span class="font-bold">New deployment</span>.</li>
                     <li>Pilih jenis (Type) <span class="font-bold">Web app</span>.</li>
                     <li>Atur <i>"Execute as"</i> ke <span class="font-bold">Me (email Anda)</span> dan <i>"Who has access"</i> ke <span class="font-bold">Anyone</span>.</li>
                     <li>Lakukan otoritas akses jika diminta, klik Deploy, lalu salin URL Web App yang dihasilkan.</li>
@@ -1004,7 +1012,7 @@
               <div
                 class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-6 relative overflow-hidden"
               >
-                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="w-full flex flex-col lg:flex-row justify-between items-center gap-6">
                   <div class="flex-1 text-center lg:text-left">
                     <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1">Data Referensi</h2>
@@ -1013,7 +1021,7 @@
                   <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
                     <button
                       onclick="openReferensiModal()"
-                      class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                      class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2"
                     >
                       <i data-lucide="plus-circle" class="w-5 h-5"></i>
                       <span>TAMBAH DATA</span>
@@ -1047,13 +1055,13 @@
                 <!-- SEARCH & FILTER REFERENSI -->
                 <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
                   <div class="flex-1 relative group min-w-0">
-                    <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                    <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
                     <input
                       type="text"
                       id="searchReferensi"
                       oninput="debouncedSearchReferensi()"
                       placeholder="Cari..."
-                      class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                      class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
                     />
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
@@ -1062,7 +1070,7 @@
                   <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
                     <!-- Rows per page -->
                     <div class="flex items-center gap-3">
-                      <select onchange="changeItemsPerPage('referensi', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                      <select onchange="changeItemsPerPage('referensi', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         <option value="10">10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
@@ -1070,7 +1078,7 @@
                       </select>
                     </div>
 
-                    <button id="btn-refresh-referensi" onclick="refreshReferensiData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-blue-600 hover:border-blue-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Referensi">
+                    <button id="btn-refresh-referensi" onclick="refreshReferensiData()" class="p-3 md:p-4 bg-white rounded-xl md:rounded-2xl border border-slate-100 shadow-sm text-slate-400 hover:text-emerald-600 hover:border-emerald-100 transition-all active:scale-95 flex items-center justify-center shrink-0" title="Refresh Referensi">
                       <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
                   </div>
@@ -1129,7 +1137,7 @@
                   <div id="modal-ref-satuan-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
                     <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-satuan" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
+                      <input type="text" id="form-ref-satuan" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
                       <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
@@ -1138,7 +1146,7 @@
                   <div id="modal-ref-kategori-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kategori Barang</label>
                     <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-kategori" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: SNACK" />
+                      <input type="text" id="form-ref-kategori" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: SNACK" />
                       <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
@@ -1147,13 +1155,13 @@
                   <div id="modal-ref-status-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
                     <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-status" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
+                      <input type="text" id="form-ref-status" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
                       <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
                     </div>
                   </div>
-                  <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-blue-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                  <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                     <i data-lucide="save" class="w-4 h-4"></i>
                     <span>SIMPAN</span>
                   </button>
@@ -1332,7 +1340,7 @@
               <div
                 class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
               >
-                <div class="absolute top-0 left-0 w-2.5 h-full bg-indigo-500"></div>
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="flex-1 text-center lg:text-left">
                   <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800 italic">Pembelian Barang</h2>
                   <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">TRANSAKSI PEMBELIAN & RESTOCK PRODUK</p>
@@ -1340,7 +1348,7 @@
                 <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
                   <button
                     onclick="openPembelianBarangModal()"
-                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-indigo-600 text-white shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 active:scale-95"
                   >
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span>TAMBAH TRANSAKSI</span>
@@ -1354,7 +1362,7 @@
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Supplier</label>
                     <div class="relative">
-                      <select id="filter-pembelian-barang-supplier" onchange="applyPembelianBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner appearance-none transition-all">
+                      <select id="filter-pembelian-barang-supplier" onchange="applyPembelianBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
                         <option value="all">Semua Supplier</option>
                       </select>
                       <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
@@ -1363,7 +1371,7 @@
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Status</label>
                     <div class="flex gap-2">
-                       <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition-all active:scale-95" data-val="all">SEMUA</button>
+                       <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-emerald-600 bg-emerald-600 text-white transition-all active:scale-95" data-val="all">SEMUA</button>
                        <button onclick="setPembelianBarangFilterStatus('Lunas')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Lunas">LUNAS</button>
                        <button onclick="setPembelianBarangFilterStatus('Hutang')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Hutang">HUTANG</button>
                     </div>
@@ -1371,7 +1379,7 @@
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Monitoring Expired</label>
                     <div class="flex gap-2">
-                       <button onclick="setPembelianBarangFilterExpired('all')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition-all active:scale-95 cursor-pointer" data-val="all">SEMUA</button>
+                       <button onclick="setPembelianBarangFilterExpired('all')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-emerald-600 bg-emerald-600 text-white transition-all active:scale-95 cursor-pointer" data-val="all">SEMUA</button>
                        <button onclick="setPembelianBarangFilterExpired('Aman')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Aman">AMAN</button>
                        <button onclick="setPembelianBarangFilterExpired('Mendekati Expired')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Mendekati Expired">DEKAT EXP</button>
                        <button onclick="setPembelianBarangFilterExpired('Expired')" class="pembelian-barang-expired-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95 cursor-pointer" data-val="Expired">EXPIRED</button>
@@ -1385,7 +1393,7 @@
                    <button onclick="setPembelianBarangSort('idPembelianBrg')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="idPembelianBrg">
                      <span>ID PEMBELIAN</span>
                    </button>
-                   <button onclick="setPembelianBarangSort('tanggalPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-indigo-600 border-indigo-200" data-val="tanggalPembelian">
+                   <button onclick="setPembelianBarangSort('tanggalPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-emerald-600 border-emerald-200" data-val="tanggalPembelian">
                      <span>TANGGAL BELI</span>
                    </button>
                    <button onclick="setPembelianBarangSort('qtyPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="qtyPembelian">
@@ -1410,19 +1418,19 @@
               <!-- SEARCH & ACTIONS BAR -->
               <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
                 <div class="flex-1 relative group w-full min-w-0">
-                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-indigo-500 transition-colors"></i>
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
                   <input
                     type="text"
                     id="searchPembelianBarang"
                     oninput="debouncedSearchPembelianBarang()"
                     placeholder="Cari transaksi berdasarkan ID, Nama Barang, Supplier, Barcode, Keterangan..."
-                    class="w-full pl-10 md:pl-16 pr-20 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-indigo-500/10 transition-all"
+                    class="w-full pl-10 md:pl-16 pr-20 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
                   />
                   <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <button type="button" onclick="clearInlineInput(this)" class="text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
-                    <button type="button" onclick="startSupplierScan('searchPembelianBarang')" class="text-indigo-600 hover:text-indigo-700 transition-colors focus:outline-none" title="Scan Barcode">
+                    <button type="button" onclick="startSupplierScan('searchPembelianBarang')" class="text-emerald-600 hover:text-emerald-700 transition-colors focus:outline-none" title="Scan Barcode">
                       <i data-lucide="scan-barcode" class="w-4.5 h-4.5"></i>
                     </button>
                   </div>
@@ -1431,7 +1439,7 @@
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
                     <!-- Rows per page -->
                     <div class="flex items-center gap-2">
-                       <select onchange="changeItemsPerPage('pembelian-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                       <select onchange="changeItemsPerPage('pembelian-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                           <option value="10">10</option>
                           <option value="25">25</option>
                           <option value="50">50</option>
@@ -1441,7 +1449,7 @@
                     <button
                         onclick="togglePembelianBarangFilters()"
                         id="btn-pembelian-barang-filter"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Filter Data"
                     >
                         <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1449,7 +1457,7 @@
                     <button
                         onclick="togglePembelianBarangSort()"
                         id="btn-pembelian-barang-sort"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Urutkan Data"
                     >
                         <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1457,7 +1465,7 @@
                     <button
                         id="btn-pembelian-barang-refresh"
                         onclick="fetchPembelianBarangData(true)"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Refresh Data"
                     >
                         <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1520,7 +1528,7 @@
               <div
                 class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
               >
-                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="flex-1 text-center lg:text-left">
                   <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800 italic">Order Barang</h2>
                   <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-[0.2em]">PENCATATAN PESANAN BARANG KE SUPPLIER</p>
@@ -1528,7 +1536,7 @@
                 <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
                   <button
                     onclick="openOrderBarangModal()"
-                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer"
                   >
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span>TAMBAH DATA</span>
@@ -1542,7 +1550,7 @@
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Supplier</label>
                     <div class="relative">
-                      <select id="filter-order-barang-supplier" onchange="applyOrderBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all cursor-pointer">
+                      <select id="filter-order-barang-supplier" onchange="applyOrderBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all cursor-pointer">
                         <option value="all">Semua Supplier</option>
                       </select>
                       <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
@@ -1566,7 +1574,7 @@
                    <button onclick="setOrderBarangSort('idOrder')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600 cursor-pointer" data-val="idOrder">
                      <span>ID ORDER</span>
                    </button>
-                   <button onclick="setOrderBarangSort('tanggalOrder')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-blue-600 border-blue-200 cursor-pointer" data-val="tanggalOrder">
+                   <button onclick="setOrderBarangSort('tanggalOrder')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-emerald-600 border-emerald-200 cursor-pointer" data-val="tanggalOrder">
                      <span>TANGGAL ORDER</span>
                    </button>
                    <button onclick="setOrderBarangSort('totalItem')" class="order-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600 cursor-pointer" data-val="totalItem">
@@ -1585,13 +1593,13 @@
               <!-- SEARCH & ACTIONS BAR -->
               <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
                 <div class="flex-1 relative group w-full min-w-0">
-                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
                   <input
                     type="text"
                     id="searchOrderBarang"
                     oninput="debouncedSearchOrderBarang()"
                     placeholder="Cari order berdasarkan ID Order, Supplier, Catatan..."
-                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
                   />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -1601,7 +1609,7 @@
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
                     <!-- Rows per page -->
                     <div class="flex items-center gap-2">
-                       <select onchange="changeItemsPerPage('order-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer">
+                       <select onchange="changeItemsPerPage('order-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 cursor-pointer">
                           <option value="10">10</option>
                           <option value="25">25</option>
                           <option value="50">50</option>
@@ -1611,7 +1619,7 @@
                     <button
                         onclick="toggleOrderBarangFilters()"
                         id="btn-order-barang-filter"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
                         title="Filter Data"
                     >
                         <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1619,7 +1627,7 @@
                     <button
                         onclick="toggleOrderBarangSort()"
                         id="btn-order-barang-sort"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
                         title="Urutkan Data"
                     >
                         <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1627,7 +1635,7 @@
                     <button
                         id="btn-order-barang-refresh"
                         onclick="fetchOrderBarangData(true)"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
                         title="Refresh Data"
                     >
                         <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -1691,9 +1699,9 @@
 
                 <div class="p-8 sm:p-10">
                     <div class="mb-10">
-                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-blue-50 border border-blue-100 mb-4">
-                        <i data-lucide="shopping-basket" class="w-4 h-4 text-blue-600"></i>
-                        <span class="text-[10px] font-black text-blue-600 uppercase tracking-widest">TRANSAKSI ORDER</span>
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 mb-4">
+                        <i data-lucide="shopping-basket" class="w-4 h-4 text-emerald-600"></i>
+                        <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">TRANSAKSI ORDER</span>
                       </div>
                       <h3 id="orderBarangFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Order Barang</h3>
                     </div>
@@ -1709,12 +1717,12 @@
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-left block">Tanggal Order</label>
-                          <input type="date" id="form-orderTanggal" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" required />
+                          <input type="date" id="form-orderTanggal" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" required />
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-left block">Status Order</label>
                           <div class="relative">
-                            <select id="form-orderStatus" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none cursor-pointer text-xs sm:text-sm">
+                            <select id="form-orderStatus" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none cursor-pointer text-xs sm:text-sm">
                               <option value="Pending">Pending</option>
                               <option value="Diproses">Diproses</option>
                               <option value="Selesai">Selesai</option>
@@ -1726,8 +1734,8 @@
                       </div>
 
                       <!-- SUPPLIER SECTION -->
-                      <div class="bg-blue-50/40 p-6 rounded-[2rem] border border-blue-100/50 space-y-6">
-                        <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <i data-lucide="truck" class="w-4 h-4"></i> Data Supplier
                         </h4>
                         
@@ -1736,7 +1744,7 @@
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier (ID / Nama)</label>
                           <div class="relative flex items-center w-full">
                             <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                            <input type="text" id="form-orderSearchSupplier" oninput="autocompleteOrderSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" placeholder="Ketik Nama / ID Supplier..." required />
+                            <input type="text" id="form-orderSearchSupplier" oninput="autocompleteOrderSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Ketik Nama / ID Supplier..." required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
@@ -1764,7 +1772,7 @@
                       <div class="bg-slate-50/50 p-6 rounded-[2rem] border border-slate-100/80 space-y-6">
                         <div class="flex justify-between items-center mb-2">
                           <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
-                            <i data-lucide="box" class="w-4 h-4 text-blue-500"></i> Daftar Barang
+                            <i data-lucide="box" class="w-4 h-4 text-emerald-500"></i> Daftar Barang
                           </h4>
                         </div>
                         
@@ -1775,7 +1783,7 @@
 
                         <!-- Centered Tambah Barang button -->
                         <div class="flex justify-center pt-2">
-                          <button type="button" onclick="addOrderItemRow()" class="px-6 py-2.5 bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-100 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all duration-200 active:scale-95">
+                          <button type="button" onclick="addOrderItemRow()" class="px-6 py-2.5 bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100 rounded-xl font-black text-xs uppercase tracking-widest flex items-center gap-2 shadow-sm transition-all duration-200 active:scale-95">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             <span>Tambah Barang</span>
                           </button>
@@ -1785,12 +1793,12 @@
                       <!-- CATATAN -->
                       <div class="space-y-3">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Catatan Tambahan</label>
-                        <textarea id="form-orderCatatan" rows="3" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner resize-none text-sm placeholder:text-slate-300" placeholder="Keterangan tambahan untuk pesanan..."></textarea>
+                        <textarea id="form-orderCatatan" rows="3" class="w-full px-6 py-4 rounded-xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner resize-none text-sm placeholder:text-slate-300" placeholder="Keterangan tambahan untuk pesanan..."></textarea>
                       </div>
 
                       <!-- ACTIONS -->
                       <div class="pt-6 flex gap-3">
-                        <button type="submit" class="flex-1 py-3 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                        <button type="submit" class="flex-1 py-3 bg-slate-900 hover:bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                           <i data-lucide="save" class="w-4 h-4"></i>
                           <span>SIMPAN</span>
                         </button>
@@ -1891,9 +1899,9 @@
 
                 <div class="p-10 sm:p-12">
                     <div class="mb-10">
-                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-indigo-50 border border-indigo-100 mb-4">
-                        <i data-lucide="shopping-cart" class="w-4 h-4 text-indigo-600"></i>
-                        <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">TRANSAKSI PEMBELIAN</span>
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-emerald-50 border border-emerald-100 mb-4">
+                        <i data-lucide="shopping-cart" class="w-4 h-4 text-emerald-600"></i>
+                        <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">TRANSAKSI PEMBELIAN</span>
                       </div>
                       <h3 id="pembelianBarangFormTitle" class="text-3xl font-black text-slate-900 tracking-tight">Form Pembelian Barang</h3>
                     </div>
@@ -1909,13 +1917,13 @@
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
-                          <input type="date" id="form-pembelianTanggal" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" required />
+                          <input type="date" id="form-pembelianTanggal" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" required />
                         </div>
                       </div>
 
                       <!-- SUPPLIER SECTION -->
-                      <div class="bg-indigo-50/40 p-6 rounded-[2rem] border border-indigo-100/50 space-y-6">
-                        <h4 class="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <i data-lucide="truck" class="w-4 h-4"></i> Data Supplier
                         </h4>
                         
@@ -1924,7 +1932,7 @@
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier</label>
                           <div class="relative flex items-center w-full">
                             <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                            <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Ketik Nama / ID Supplier..." required />
+                            <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Ketik Nama / ID Supplier..." required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
@@ -1949,8 +1957,8 @@
                       </div>
 
                       <!-- BARANG SECTION -->
-                      <div class="bg-indigo-50/40 p-6 rounded-[2rem] border border-indigo-100/50 space-y-6">
-                        <h4 class="text-xs font-black text-indigo-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                      <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100/50 space-y-6">
+                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                           <i data-lucide="package" class="w-4 h-4"></i> Data Barang
                         </h4>
                         
@@ -1960,12 +1968,12 @@
                           <div class="flex gap-2">
                             <div class="relative flex-1 min-w-0 flex items-center">
                               <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Scan barcode, type barcode, id, or name..." required />
+                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Scan barcode, type barcode, id, or name..." required />
                               <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                                 <i data-lucide="x" class="w-4 h-4"></i>
                               </button>
                             </div>
-                            <button type="button" onclick="startSupplierScan('form-pembelianSearchBarang')" class="p-5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-2xl hover:bg-indigo-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-90" title="Scan Barcode">
+                            <button type="button" onclick="startSupplierScan('form-pembelianSearchBarang')" class="p-5 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-2xl hover:bg-emerald-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-90" title="Scan Barcode">
                               <i data-lucide="scan" class="w-6 h-6"></i>
                             </button>
                           </div>
@@ -2004,7 +2012,7 @@
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian *</label>
                           <div class="relative flex items-center w-full">
-                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="0" required />
+                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="0" required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
@@ -2013,7 +2021,7 @@
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan) *</label>
                           <div class="relative flex items-center w-full">
-                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="Rp 0" required />
+                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="Rp 0" required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
@@ -2023,7 +2031,7 @@
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual Baru (Satuan) *</label>
                           <div class="relative flex items-center w-full">
-                            <input type="text" id="form-pembelianHargaJualInput" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="Rp 0" required />
+                            <input type="text" id="form-pembelianHargaJualInput" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="Rp 0" required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
@@ -2048,12 +2056,12 @@
                       <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Expired</label>
-                          <input type="date" id="form-pembelianExpired" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" />
+                          <input type="date" id="form-pembelianExpired" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" />
                         </div>
                         <div class="space-y-3">
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
                           <div class="relative">
-                            <select id="form-pembelianStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner appearance-none transition-all">
+                            <select id="form-pembelianStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
                               <option value="Lunas">LUNAS</option>
                               <option value="Hutang">HUTANG</option>
                             </select>
@@ -2065,7 +2073,7 @@
                       <div class="space-y-3">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan</label>
                         <div class="relative flex items-center w-full">
-                          <input type="text" id="form-pembelianKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
+                          <input type="text" id="form-pembelianKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
                           <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                             <i data-lucide="x" class="w-4 h-4"></i>
                           </button>
@@ -2073,7 +2081,7 @@
                       </div>
 
                       <div class="pt-6 flex gap-3">
-                        <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-indigo-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100/50 transition-all active:scale-95 cursor-pointer">
+                        <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100/50 transition-all active:scale-95 cursor-pointer">
                           SIMPAN
                         </button>
                         <button type="button" onclick="closePembelianBarangModal()" class="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 cursor-pointer">
@@ -2170,7 +2178,7 @@
 
                         <!-- Centered Tambah Satuan Button for Barang Modal -->
                         <div class="flex justify-center pt-2">
-                          <button type="button" onclick="addBarangVariasiRow()" class="px-6 py-2.5 bg-blue-50 text-blue-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-100 transition-all flex items-center gap-2 shadow-sm active:scale-95">
+                          <button type="button" onclick="addBarangVariasiRow()" class="px-6 py-2.5 bg-emerald-50 text-emerald-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-emerald-100 transition-all flex items-center gap-2 shadow-sm active:scale-95">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             <span>Tambah Satuan</span>
                           </button>
@@ -2199,7 +2207,7 @@
               <div
                 class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-6 relative overflow-hidden"
               >
-                <div class="absolute top-0 left-0 w-2.5 h-full bg-blue-500"></div>
+                <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="flex-1 text-center lg:text-left">
                   <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-1 text-slate-800">Satuan Barang</h2>
                   <p class="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest">Multi-Satuan & Konversi Harga Jual</p>
@@ -2207,7 +2215,7 @@
                 <div class="flex flex-wrap justify-center gap-3 w-full lg:w-auto">
                   <button
                     onclick="openSatuanBarangModal()"
-                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-blue-600 text-white shadow-xl shadow-blue-100 hover:bg-blue-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+                    class="flex-1 lg:flex-none px-6 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-black rounded-2xl bg-emerald-600 text-white shadow-xl shadow-emerald-100 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 active:scale-95"
                   >
                     <i data-lucide="plus-circle" class="w-5 h-5"></i>
                     <span>TAMBAH SATUAN</span>
@@ -2220,7 +2228,7 @@
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Satuan</label>
-                    <select id="filter-satuan-dropdown" onchange="applySatuanBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner appearance-none transition-all">
+                    <select id="filter-satuan-dropdown" onchange="applySatuanBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
                       <option value="all">Semua Satuan</option>
                     </select>
                   </div>
@@ -2256,19 +2264,19 @@
               <!-- SEARCH & ACTIONS BAR -->
               <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
                 <div class="flex-1 relative group w-full min-w-0">
-                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-blue-500 transition-colors"></i>
+                  <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
                   <input
                     type="text"
                     id="searchSatuanBarang"
                     oninput="debouncedSearchSatuanBarang()"
                     placeholder="Cari..."
-                    class="w-full pl-10 md:pl-16 pr-20 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    class="w-full pl-10 md:pl-16 pr-20 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-emerald-500/10 transition-all"
                   />
                   <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <button type="button" onclick="clearInlineInput(this)" class="text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
-                    <button type="button" onclick="startSupplierScan('searchSatuanBarang')" class="text-blue-500 hover:text-blue-600 transition-colors focus:outline-none" title="Scan Barcode">
+                    <button type="button" onclick="startSupplierScan('searchSatuanBarang')" class="text-emerald-500 hover:text-emerald-600 transition-colors focus:outline-none" title="Scan Barcode">
                       <i data-lucide="scan-barcode" class="w-4.5 h-4.5"></i>
                     </button>
                   </div>
@@ -2277,7 +2285,7 @@
                 <div class="flex items-center gap-1.5 md:gap-2 shrink-0 w-full sm:w-auto">
                     <!-- Rows per page -->
                     <div class="flex items-center gap-2">
-                      <select onchange="changeItemsPerPage('satuan-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                      <select onchange="changeItemsPerPage('satuan-barang', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         <option value="10">10</option>
                         <option value="25">25</option>
                         <option value="50">50</option>
@@ -2287,7 +2295,7 @@
                     <button
                         onclick="toggleSatuanBarangFilters()"
                         id="btn-satuan-filter"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Filter Data"
                     >
                         <i data-lucide="sliders-horizontal" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -2295,7 +2303,7 @@
                     <button
                         onclick="toggleSatuanBarangSort()"
                         id="btn-satuan-sort"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Urutkan Data"
                     >
                         <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -2303,7 +2311,7 @@
                     <button
                         id="btn-satuan-refresh"
                         onclick="fetchSatuanBarangData(true)"
-                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-blue-600 hover:border-blue-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
+                        class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Refresh Data"
                     >
                         <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
@@ -2466,12 +2474,12 @@
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pilih Barang (Autocomplete)</label>
                     <div class="relative flex items-center w-full">
                       <i data-lucide="search" class="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"></i>
-                      <input type="text" id="form-satuanSearchBarang" oninput="autocompleteSatuanBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-20 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Ketik ID, Nama, atau scan barcode..." />
+                      <input type="text" id="form-satuanSearchBarang" oninput="autocompleteSatuanBarang(this.value)" autocomplete="off" class="w-full pl-14 pr-20 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Ketik ID, Nama, atau scan barcode..." />
                       <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                         <button type="button" onclick="clearInlineInput(this)" class="text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                           <i data-lucide="x" class="w-4 h-4"></i>
                         </button>
-                        <button type="button" onclick="startSupplierScan('form-satuanSearchBarang')" class="text-blue-500 hover:text-blue-600 transition-colors focus:outline-none" title="Scan Barcode">
+                        <button type="button" onclick="startSupplierScan('form-satuanSearchBarang')" class="text-emerald-500 hover:text-emerald-600 transition-colors focus:outline-none" title="Scan Barcode">
                           <i data-lucide="scan-barcode" class="w-4.5 h-4.5"></i>
                         </button>
                       </div>
@@ -2488,12 +2496,12 @@
                     <input type="hidden" id="form-satuanNamaBarang" />
                     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                       <div>
-                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest">Detail Barang Terpilih</span>
+                        <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Detail Barang Terpilih</span>
                         <h4 class="font-black text-slate-800 text-base" id="form-satuanNamaDisplay">Pilih barang terlebih dahulu...</h4>
                         <p class="font-mono text-xs font-bold text-slate-400 mt-1" id="form-satuanIdDisplay">-</p>
                       </div>
                       <div class="hidden" id="form-satuanBadgeDisplay">
-                        <span class="px-3 py-1 bg-blue-100 text-blue-700 text-[9px] font-black rounded-full uppercase tracking-widest font-mono">Grup Satuan</span>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-full uppercase tracking-widest font-mono">Grup Satuan</span>
                       </div>
                     </div>
                   </div>
@@ -2502,7 +2510,7 @@
                   <div class="space-y-6">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                       <h4 class="text-xs font-black text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                        <i data-lucide="layers" class="w-4 h-4 text-blue-500"></i>
+                        <i data-lucide="layers" class="w-4 h-4 text-emerald-500"></i>
                         <span>Daftar Konversi Satuan</span>
                       </h4>
                     </div>
@@ -2521,7 +2529,7 @@
                   </div>
 
                   <div class="pt-4 flex gap-3">
-                    <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
+                    <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-slate-100/50 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                       <i data-lucide="save" class="w-4 h-4"></i>
                       <span>SIMPAN</span>
                     </button>
@@ -2965,17 +2973,17 @@
 
         // Update nav buttons
         document.querySelectorAll(".nav-btn").forEach((b) => {
-          b.classList.remove("active", "text-orange-600", "bg-slate-50", "text-indigo-600");
+          b.classList.remove("active", "text-orange-600", "bg-slate-50", "text-emerald-600");
         });
         
-        const activeNav = document.getElementById("nav-" + page);
-        if (activeNav) {
+        const activeNavs = document.querySelectorAll(`[id="nav-${page}"], [id="nav-master-${page}"]`);
+        activeNavs.forEach((activeNav) => {
           if (page === "pembelian-barang" || page === "order-barang") {
-            activeNav.classList.add("active", "text-indigo-600", "bg-slate-50");
+            activeNav.classList.add("active", "text-emerald-600", "bg-slate-50");
           } else {
             activeNav.classList.add("active", "text-orange-600", "bg-slate-50");
           }
-        }
+        });
 
         // Menu titles
         const titles = {
@@ -2991,7 +2999,7 @@
         document.getElementById("headerTitle").innerText = titles[page] || "Toko Wina";
 
         // Auto transition logic for submenu
-        if (page === "referensi" || page === "satuan-barang" || page === "barang" || page === "supplier") {
+        if (page === "referensi" || page === "satuan-barang" || page === "barang" || page === "supplier" || page === "pembelian-barang") {
           const submenu = document.getElementById("submenu-master");
           if (submenu) submenu.classList.remove("hidden");
           
@@ -3529,10 +3537,10 @@
           const btn = document.getElementById(`tab-ref-${t}`);
           if (!btn) return;
           if (t === tab) {
-            btn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            btn.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
             btn.classList.remove('text-slate-400');
           } else {
-            btn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+            btn.classList.remove('bg-white', 'text-emerald-600', 'shadow-sm');
             btn.classList.add('text-slate-400');
           }
         });
@@ -3590,10 +3598,10 @@
         if (!btn) return;
         const icon = btn.querySelector("i") || btn.querySelector("svg");
         if (isRefreshingReferensi) {
-          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-200");
+          btn.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-200");
           if (icon) icon.classList.add("animate-spin");
         } else {
-          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-200");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-200");
           if (icon) icon.classList.remove("animate-spin");
         }
       }
@@ -3886,11 +3894,11 @@
             const tr = document.createElement("tr");
             tr.className = "hover:bg-slate-50 transition-colors group";
             tr.innerHTML = `
-              <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-blue-500 transition-colors">${displayIdx}</td>
+              <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-emerald-500 transition-colors">${displayIdx}</td>
               <td class="px-8 py-6 font-bold text-slate-700">${displayVal || "-"}</td>
               <td class="px-8 py-6">
                 <div class="flex items-center justify-center gap-2">
-                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all" title="Edit">
+                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all" title="Edit">
                     <i data-lucide="edit-3" class="w-4 h-4"></i>
                   </button>
                   <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all" title="Hapus">
@@ -3906,9 +3914,9 @@
             card.className = "w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]";
             card.innerHTML = `
               <div class="flex justify-between items-start">
-                <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-black text-xs">#${displayIdx}</div>
+                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 font-black text-xs">#${displayIdx}</div>
                 <div class="flex gap-2">
-                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
                   <button onclick="handleHapusReferensi('${item.id}')" class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 </div>
               </div>
@@ -3927,7 +3935,7 @@
           // Initial tab activation highlight
           const activeTabBtn = document.getElementById(`tab-ref-${currentReferensiTab}`);
           if (activeTabBtn) {
-            activeTabBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+            activeTabBtn.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
             activeTabBtn.classList.remove('text-slate-400');
           }
         } catch (e) {
@@ -4870,7 +4878,7 @@
                   </div>
                   
                   <!-- Dropzone for Drag-and-Drop and Upload -->
-                  <div id="variasi-dropzone-${rowId}" class="variasi-dropzone border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-2xl p-4 transition-colors bg-white flex flex-col items-center justify-center text-center cursor-pointer relative min-h-24" onclick="triggerVariasiFileInput(${rowId})">
+                  <div id="variasi-dropzone-${rowId}" class="variasi-dropzone border-2 border-dashed border-slate-200 hover:border-emerald-400 rounded-2xl p-4 transition-colors bg-white flex flex-col items-center justify-center text-center cursor-pointer relative min-h-24" onclick="triggerVariasiFileInput(${rowId})">
                     <input type="file" id="variasi-file-input-${rowId}" class="variasi-file-input hidden" accept="image/*" onchange="handleVariasiDriveUpload(${rowId}, this)" onclick="event.stopPropagation()" />
                     <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mb-1"></i>
                     <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Upload ke Google Drive</span>
@@ -4878,8 +4886,8 @@
                     
                     <!-- Upload Spinner inside card -->
                     <div id="variasi-spinner-${rowId}" class="variasi-spinner hidden absolute inset-0 bg-white/95 rounded-2xl flex flex-col items-center justify-center gap-1.5 z-10 font-sans">
-                      <div class="w-6 h-6 border-3 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                      <span class="text-[8px] font-black text-blue-600 uppercase tracking-widest animate-pulse">Uploading...</span>
+                      <div class="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span class="text-[8px] font-black text-emerald-600 uppercase tracking-widest animate-pulse">Uploading...</span>
                     </div>
                   </div>
                 </div>
@@ -4998,7 +5006,7 @@
             e.preventDefault();
             e.stopPropagation();
             dropzone.classList.remove('border-slate-200');
-            dropzone.classList.add('border-blue-400', 'bg-blue-50/20');
+            dropzone.classList.add('border-emerald-400', 'bg-emerald-50/20');
           }, false);
         });
 
@@ -5007,7 +5015,7 @@
             e.preventDefault();
             e.stopPropagation();
             dropzone.classList.add('border-slate-200');
-            dropzone.classList.remove('border-blue-400', 'bg-blue-50/20');
+            dropzone.classList.remove('border-emerald-400', 'bg-emerald-50/20');
           }, false);
         });
 
@@ -5262,10 +5270,10 @@
         if (!btn) return;
         const icon = btn.querySelector("i") || btn.querySelector("svg");
         if (isFetchingSatuan) {
-          btn.classList.add("bg-blue-50", "text-blue-600");
+          btn.classList.add("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.add("animate-spin");
         } else {
-          btn.classList.remove("bg-blue-50", "text-blue-600");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.remove("animate-spin");
         }
       }
@@ -5338,9 +5346,9 @@
              const icon = btn.querySelector('i') || btn.querySelector('svg');
              if (icon) {
                if (!panel.classList.contains('hidden')) {
-                  icon.classList.add('text-blue-600');
+                  icon.classList.add('text-emerald-600');
                } else {
-                  icon.classList.remove('text-blue-600');
+                  icon.classList.remove('text-emerald-600');
                }
              }
            }
@@ -5351,17 +5359,17 @@
         
         if (filterBtn) {
           if (satuanBarangFilterStatus !== 'all' || satuanBarangFilterSatuan !== 'all') {
-            filterBtn.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+            filterBtn.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50');
           } else {
-            filterBtn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+            filterBtn.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50');
           }
         }
 
         if (sortBtn) {
           if (satuanBarangSortBy !== 'namaBarang' || satuanBarangSortOrder !== 'asc') {
-             sortBtn.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50');
+             sortBtn.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50');
           } else {
-             sortBtn.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50');
+             sortBtn.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50');
           }
         }
       }
@@ -5428,24 +5436,24 @@
                     <div class="flex items-center gap-3">
                        ${imgHtml}
                        <div class="flex flex-col">
-                         <span class="font-black text-slate-800 text-sm italic group-hover:text-blue-600 transition-colors">${item.namaBarang}</span>
+                         <span class="font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors">${item.namaBarang}</span>
                          <span class="text-[10px] font-bold text-slate-400">${item.idBarang}</span>
                        </div>
                     </div>
                  </td>
                  <td class="px-6 py-6 text-center">
-                    <span class="px-2 py-1 bg-blue-50 text-blue-700 border border-blue-100 text-[10px] font-black rounded-lg">Level ${item.levelSatuan || "1"}</span>
+                    <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${item.levelSatuan || "1"}</span>
                  </td>
                  <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
                  <td class="px-6 py-6 text-center font-black text-slate-900 text-xs">${item.qtyInputKonversi || 1}</td>
-                 <td class="px-6 py-6 text-center font-black text-blue-600 text-xs">${item.qtySatuan || 1}</td>
+                 <td class="px-6 py-6 text-center font-black text-emerald-600 text-xs">${item.qtySatuan || 1}</td>
                  <td class="px-6 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
                  <td class="px-6 py-6 text-center">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
                  </td>
                  <td class="px-6 py-6">
                     <div class="flex items-center justify-center gap-2">
-                       <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all active:scale-90">
+                       <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
                        </button>
                         <!-- Toggle Status Switch -->
@@ -5468,7 +5476,7 @@
                         ${imgHtml}
                         <div class="min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
-                              <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-md border border-blue-100/50">
+                              <span class="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-md border border-emerald-100/50">
                                 No. ${rowIdx}
                               </span>
                               <span class="text-[9px] font-black text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md leading-none truncate max-w-[130px]" title="${item.idBarang}">
@@ -5476,7 +5484,7 @@
                               </span>
                             </div>
                             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 truncate">Barcode: ${item.barcode || "-"}</p>
-                            <h4 class="font-black text-slate-800 italic group-hover:text-blue-600 transition-colors truncate">${item.namaBarang}</h4>
+                            <h4 class="font-black text-slate-800 italic group-hover:text-emerald-600 transition-colors truncate">${item.namaBarang}</h4>
                         </div>
                     </div>
                     <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusClass} shrink-0">${item.status}</span>
@@ -5484,7 +5492,7 @@
                   <div class="grid grid-cols-4 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-100/50">
                     <div class="text-center border-r border-slate-200">
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Level</p>
-                        <p class="text-[10px] font-black text-indigo-600">Lvl ${item.levelSatuan || 1}</p>
+                        <p class="text-[10px] font-black text-emerald-600">Lvl ${item.levelSatuan || 1}</p>
                     </div>
                     <div class="text-center border-r border-slate-200">
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Satuan</p>
@@ -5499,12 +5507,12 @@
                         <p class="text-[10px] font-bold text-slate-700">${item.qtySatuan || 1}</p>
                     </div>
                   </div>
-                  <div class="flex justify-between items-center bg-blue-50/20 px-4 py-2.5 rounded-xl border border-blue-100/30 text-xs">
+                  <div class="flex justify-between items-center bg-emerald-50/20 px-4 py-2.5 rounded-xl border border-emerald-100/30 text-xs">
                       <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Harga Jual</span>
-                      <span class="font-black text-blue-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</span>
+                      <span class="font-black text-emerald-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</span>
                   </div>
                   <div class="flex items-center gap-3 pt-2">
-                     <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-all">Edit Data</button>
+                     <button onclick='openSatuanBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-all">Edit Data</button>
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusSatuanBarang(${item.row}, '${item.status}')" 
@@ -5748,9 +5756,9 @@
           container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
         } else {
           container.innerHTML = matches.map(item => `
-            <button type="button" onclick="pilihSatuanBarangAutocomplete('${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-blue-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
+            <button type="button" onclick="pilihSatuanBarangAutocomplete('${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
               <span class="font-black text-slate-800 text-xs">${item.namaBarang}</span>
-              <span class="font-mono text-[9px] font-bold text-blue-500">${item.idBarang}</span>
+              <span class="font-mono text-[9px] font-bold text-emerald-500">${item.idBarang}</span>
             </button>
           `).join("");
         }
@@ -5862,7 +5870,7 @@
             <!-- Card Header -->
             <div class="flex items-center justify-between border-b border-slate-100/60 pb-3">
               <div class="flex items-center gap-2">
-                <span class="satuan-card-lvl-badge px-3 py-1.5 bg-blue-100 rounded-xl text-[10px] font-black text-blue-600 font-mono">
+                <span class="satuan-card-lvl-badge px-3 py-1.5 bg-emerald-100 rounded-xl text-[10px] font-black text-emerald-600 font-mono">
                   Lvl 1
                 </span>
                 <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Satuan Barang</span>
@@ -5879,11 +5887,11 @@
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Barcode</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" class="satuan-card-barcode w-full pl-5 pr-14 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" id="barcode-input-${uId}" value="${barcodeVal}" placeholder="Kosong atau ketik barcode..." />
+                  <input type="text" class="satuan-card-barcode w-full pl-5 pr-14 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" id="barcode-input-${uId}" value="${barcodeVal}" placeholder="Kosong atau ketik barcode..." />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-9 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button type="button" onclick="startGlobalScanner('barcode-input-${uId}')" class="absolute right-3 text-blue-500 hover:text-blue-600" title="Scan Barcode">
+                  <button type="button" onclick="startGlobalScanner('barcode-input-${uId}')" class="absolute right-3 text-emerald-500 hover:text-emerald-600" title="Scan Barcode">
                     <i data-lucide="scan-barcode" class="w-4 h-4"></i>
                   </button>
                 </div>
@@ -5892,7 +5900,7 @@
               <!-- Satuan Select -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
-                <select class="satuan-card-satuan w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                <select class="satuan-card-satuan w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" required>
                   ${optionsHtml}
                 </select>
               </div>
@@ -5900,7 +5908,7 @@
               <!-- Qty Input Konversi -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Input Konversi (Konv)</label>
-                <input type="number" class="satuan-card-conv-input w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" value="${qtyInputVal}" required min="1" oninput="recalculateQtySatuanGlobal()" />
+                <input type="number" class="satuan-card-conv-input w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" value="${qtyInputVal}" required min="1" oninput="recalculateQtySatuanGlobal()" />
               </div>
 
               <!-- Qty Satuan (Total calculated) -->
@@ -5912,13 +5920,13 @@
               <!-- Harga Jual -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual</label>
-                <input type="text" class="satuan-card-harga w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" oninput="formatInputToRupiah(this)" value="${hargaVal}" required placeholder="Rp 0" />
+                <input type="text" class="satuan-card-harga w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" oninput="formatInputToRupiah(this)" value="${hargaVal}" required placeholder="Rp 0" />
               </div>
 
               <!-- Status Keaktifan -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
-                <select class="satuan-card-status w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner appearance-none transition-all" onchange="recalculateQtySatuanGlobal()">
+                <select class="satuan-card-status w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" onchange="recalculateQtySatuanGlobal()">
                   <option value="Aktif" ${statusVal === 'Aktif' ? 'selected' : ''}>Aktif</option>
                   <option value="Nonaktif" ${statusVal === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option>
                 </select>
@@ -5929,12 +5937,12 @@
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Link Gambar / Upload Ke Google Drive</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                   <div class="relative flex-1">
-                    <input type="text" class="satuan-card-gambar w-full pl-5 pr-12 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-blue-100/40 text-xs shadow-inner" id="group-gambar-${uId}" oninput="updateGroupPreview('${uId}', this.value)" value="${gambarVal}" placeholder="Paste link gambar Google Drive (manual)..." />
+                    <input type="text" class="satuan-card-gambar w-full pl-5 pr-12 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" id="group-gambar-${uId}" oninput="updateGroupPreview('${uId}', this.value)" value="${gambarVal}" placeholder="Paste link gambar Google Drive (manual)..." />
                     <button type="button" onclick="clearInlineInput(this); updateGroupPreview('${uId}', '')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                   </div>
-                  <button type="button" onclick="triggerGroupFileInput('${uId}')" class="px-4 py-3.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-100 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap flex items-center justify-center gap-1.5 transition-all active:scale-95" title="Upload ke Google Drive">
+                  <button type="button" onclick="triggerGroupFileInput('${uId}')" class="px-4 py-3.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-100 rounded-xl font-black text-[10px] uppercase tracking-widest whitespace-nowrap flex items-center justify-center gap-1.5 transition-all active:scale-95" title="Upload ke Google Drive">
                     <i data-lucide="upload-cloud" class="w-4 h-4"></i>
                     <span>Upload</span>
                   </button>
@@ -5946,7 +5954,7 @@
                   <div class="relative w-12 h-12 border border-slate-100 rounded-xl overflow-hidden bg-slate-50 shadow-inner flex items-center justify-center shrink-0">
                     <img id="group-preview-img-${uId}" src="${convertGoogleDriveUrl(gambarVal) || 'https://ui-avatars.com/api/?name=No+Image&background=F1F5F9&color=94A3B8&size=200'}" alt="Preview" class="object-contain w-full h-full" />
                     <div id="group-spinner-${uId}" class="hidden absolute inset-0 bg-white/90 flex items-center justify-center">
-                      <div class="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   </div>
                   <div class="min-w-0 flex-1">
@@ -6730,10 +6738,10 @@
         if (!btn) return;
         const icon = btn.querySelector("i") || btn.querySelector("svg");
         if (isFetchingPembelian) {
-          btn.classList.add("bg-indigo-50", "text-indigo-600");
+          btn.classList.add("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.add("animate-spin");
         } else {
-          btn.classList.remove("bg-indigo-50", "text-indigo-600");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.remove("animate-spin");
         }
       }
@@ -6755,19 +6763,19 @@
           // Reset UI filter styles
           document.querySelectorAll(".pembelian-barang-status-btn").forEach(btn => {
             if (btn.getAttribute("data-val") === "all") {
-              btn.classList.add("bg-indigo-600", "text-white", "font-black");
+              btn.classList.add("bg-emerald-600", "text-white", "font-black");
               btn.classList.remove("text-slate-600", "border-slate-100");
             } else {
-              btn.classList.remove("bg-indigo-600", "text-white", "font-black");
+              btn.classList.remove("bg-emerald-600", "text-white", "font-black");
               btn.classList.add("text-slate-600", "border-slate-100");
             }
           });
           document.querySelectorAll(".pembelian-barang-expired-btn").forEach(btn => {
             if (btn.getAttribute("data-val") === "all") {
-              btn.classList.add("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+              btn.classList.add("bg-emerald-600", "text-white", "font-black", "border-emerald-600");
               btn.classList.remove("text-slate-600", "border-slate-100");
             } else {
-              btn.classList.remove("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+              btn.classList.remove("bg-emerald-600", "text-white", "font-black", "border-emerald-600");
               btn.classList.add("text-slate-600", "border-slate-100");
             }
           });
@@ -6881,10 +6889,10 @@
         // Update Filter Buttons Active style
         document.querySelectorAll(".pembelian-barang-status-btn").forEach(btn => {
           if (btn.getAttribute("data-val") === val) {
-            btn.classList.add("bg-indigo-600", "text-white", "font-black");
+            btn.classList.add("bg-emerald-600", "text-white", "font-black");
             btn.classList.remove("text-slate-600", "border-slate-100");
           } else {
-            btn.classList.remove("bg-indigo-600", "text-white", "font-black");
+            btn.classList.remove("bg-emerald-600", "text-white", "font-black");
             btn.classList.add("text-slate-600", "border-slate-100");
           }
         });
@@ -6899,10 +6907,10 @@
         // Update Filter Buttons Active style
         document.querySelectorAll(".pembelian-barang-expired-btn").forEach(btn => {
           if (btn.getAttribute("data-val") === val) {
-            btn.classList.add("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+            btn.classList.add("bg-emerald-600", "text-white", "font-black", "border-emerald-600");
             btn.classList.remove("text-slate-600", "border-slate-100");
           } else {
-            btn.classList.remove("bg-indigo-600", "text-white", "font-black", "border-indigo-600");
+            btn.classList.remove("bg-emerald-600", "text-white", "font-black", "border-emerald-600");
             btn.classList.add("text-slate-600", "border-slate-100");
           }
         });
@@ -6916,9 +6924,9 @@
         // Update Sort Buttons Active style
         document.querySelectorAll(".pembelian-barang-sort-btn").forEach(btn => {
           if (btn.getAttribute("data-val") === by) {
-            btn.classList.add("text-indigo-600", "border-indigo-200");
+            btn.classList.add("text-emerald-600", "border-emerald-200");
           } else {
-             btn.classList.remove("text-indigo-600", "border-indigo-200");
+             btn.classList.remove("text-emerald-600", "border-emerald-200");
              btn.classList.add("text-slate-600");
           }
         });
@@ -6952,15 +6960,15 @@
         const filterBtn = document.getElementById("btn-pembelian-barang-filter");
         if (filterBtn) {
             if (!panel.classList.contains("hidden")) {
-                filterBtn.classList.add("bg-indigo-600", "text-white");
+                filterBtn.classList.add("bg-emerald-600", "text-white");
             } else {
-                filterBtn.classList.remove("bg-indigo-600", "text-white");
+                filterBtn.classList.remove("bg-emerald-600", "text-white");
             }
         }
         
         const sortBtn = document.getElementById("btn-pembelian-barang-sort");
         if (sortBtn) {
-            sortBtn.classList.remove("bg-indigo-600", "text-white");
+            sortBtn.classList.remove("bg-emerald-600", "text-white");
         }
         updatePembelianBarangControlUI();
       }
@@ -6974,15 +6982,15 @@
         const sortBtn = document.getElementById("btn-pembelian-barang-sort");
         if (sortBtn) {
             if (!panel.classList.contains("hidden")) {
-                sortBtn.classList.add("bg-indigo-600", "text-white");
+                sortBtn.classList.add("bg-emerald-600", "text-white");
             } else {
-                sortBtn.classList.remove("bg-indigo-600", "text-white");
+                sortBtn.classList.remove("bg-emerald-600", "text-white");
             }
         }
         
         const filterBtn = document.getElementById("btn-pembelian-barang-filter");
         if (filterBtn) {
-            filterBtn.classList.remove("bg-indigo-600", "text-white");
+            filterBtn.classList.remove("bg-emerald-600", "text-white");
         }
         updatePembelianBarangControlUI();
       }
@@ -7242,22 +7250,22 @@
                  </td>
                  <td class="px-8 py-6">
                     <div class="font-black text-slate-800 text-sm">${item.namaSupplier}</div>
-                    <div class="text-[10px] font-mono font-bold text-indigo-500 mt-0.5">${item.idSupplier}</div>
+                    <div class="text-[10px] font-mono font-bold text-emerald-500 mt-0.5">${item.idSupplier}</div>
                  </td>
                  <td class="px-8 py-6">
                     <div class="font-black text-slate-800 text-sm max-w-sm truncate">${item.namaBarang}</div>
                     <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-0.5">
                       <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
-                      ${item.barcode ? `<span class="bg-indigo-50/80 px-1.5 py-0.5 rounded font-mono text-indigo-600">★ ${item.barcode}</span>` : ''}
+                      ${item.barcode ? `<span class="bg-emerald-50/80 px-1.5 py-0.5 rounded font-mono text-emerald-600">★ ${item.barcode}</span>` : ''}
                     </div>
                  </td>
                  <td class="px-8 py-6">
                     <div class="text-xs font-bold text-slate-600">Qty Beli: <span class="font-black text-slate-800">${item.qtyPembelian}</span> <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${item.satuan}</span></div>
-                    <div class="text-xs font-black text-slate-700 mt-1">Subtotal: <span class="text-indigo-600 font-extrabold">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</span></div>
+                    <div class="text-xs font-black text-slate-700 mt-1">Subtotal: <span class="text-emerald-600 font-extrabold">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</span></div>
                     <div class="grid grid-cols-2 gap-4 mt-2 text-[10px] bg-slate-50/80 p-2 rounded-xl border border-slate-100/50">
                       <div>
                         <span class="text-slate-400 font-bold block">Modal / Jual</span>
-                        <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-indigo-500">${formatIDR(item.hargaJual)}</span>
+                        <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-emerald-500">${formatIDR(item.hargaJual)}</span>
                       </div>
                       <div>
                         <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
@@ -7266,7 +7274,7 @@
                       ${(item.hargaModalSebelumnya && item.hargaModalSebelumnya > 0) || (item.hargaJualSebelumnya && item.hargaJualSebelumnya > 0) ? `
                       <div class="col-span-2 border-t border-slate-150 pt-1.5 mt-1 flex justify-between gap-2 text-[9px] text-slate-500">
                         <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
-                        <span>Jual Sblmnya: <b class="text-indigo-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
+                        <span>Jual Sblmnya: <b class="text-emerald-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
                       </div>
                       ` : ''}
                     </div>
@@ -7290,7 +7298,7 @@
                           <i data-lucide="chevron-down" class="w-4 h-4"></i>
                        </button>
                        <div id="pb-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left">
-                          <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                          <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
                              <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
                           </button>
                           <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
@@ -7321,7 +7329,7 @@
                              <i data-lucide="chevron-down" class="w-4 h-4"></i>
                           </button>
                           <div id="pb-card-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left">
-                             <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                             <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
                              </button>
                              <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
@@ -7335,7 +7343,7 @@
                   <div>
                     <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</h4>
                     <p class="text-sm font-black text-slate-800">${item.namaSupplier}</p>
-                    <p class="text-[10px] font-bold text-indigo-500 mt-0.5">${item.idSupplier}</p>
+                    <p class="text-[10px] font-bold text-emerald-500 mt-0.5">${item.idSupplier}</p>
                   </div>
 
                   <div class="border-t border-slate-50 pt-3">
@@ -7343,7 +7351,7 @@
                     <p class="text-sm font-black text-slate-800 font-sans">${item.namaBarang}</p>
                     <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-1">
                       <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
-                      ${item.barcode ? `<span class="bg-indigo-50/80 px-1.5 py-0.5 font-mono text-indigo-600 rounded">★ ${item.barcode}</span>` : ''}
+                      ${item.barcode ? `<span class="bg-emerald-50/80 px-1.5 py-0.5 font-mono text-emerald-600 rounded">★ ${item.barcode}</span>` : ''}
                       <span class="text-slate-600 font-black uppercase tracking-widest ml-auto">${item.qtyPembelian} ${item.satuan}</span>
                     </div>
                   </div>
@@ -7351,19 +7359,19 @@
                   <div class="grid grid-cols-2 gap-3 bg-slate-50/80 p-3 rounded-2xl border border-slate-100/50 text-[10px] font-sans">
                      <div>
                        <span class="text-slate-400 font-bold block">Harga Modal / Jual</span>
-                       <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-indigo-500">${formatIDR(item.hargaJual)}</span>
+                       <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-emerald-500">${formatIDR(item.hargaJual)}</span>
                      </div>
                      <div>
                        <span class="text-slate-400 font-bold block">Profit (Total)</span>
                        <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> (<span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>)
                      </div>
                      <div class="col-span-2 border-t border-slate-100/80 pt-2 flex justify-between gap-1 text-[9px] text-slate-500">
-                       <span>Subtotal: <b class="text-indigo-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>
+                       <span>Subtotal: <b class="text-emerald-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>
                      </div>
                      ${(item.hargaModalSebelumnya && item.hargaModalSebelumnya > 0) || (item.hargaJualSebelumnya && item.hargaJualSebelumnya > 0) ? `
                      <div class="col-span-2 border-t border-slate-100/80 pt-1.5 flex justify-between gap-2 text-[9px] text-slate-500">
                        <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
-                       <span>Jual Sblmnya: <b class="text-indigo-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
+                       <span>Jual Sblmnya: <b class="text-emerald-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
                      </div>
                      ` : ''}
                   </div>
@@ -7487,9 +7495,9 @@
           container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Supplier aktif tidak ditemukan.</div>`;
         } else {
           container.innerHTML = matches.map(item => `
-            <button type="button" onclick="pilihSupplierAutocomplete('${item.idSupplier}', '${item.namaSupplier.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-indigo-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
+            <button type="button" onclick="pilihSupplierAutocomplete('${item.idSupplier}', '${item.namaSupplier.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
               <span class="font-black text-slate-800 text-xs">${item.namaSupplier}</span>
-              <span class="font-mono text-[9px] font-bold text-indigo-500">${item.idSupplier}</span>
+              <span class="font-mono text-[9px] font-bold text-emerald-500">${item.idSupplier}</span>
             </button>
           `).join("");
         }
@@ -7535,12 +7543,12 @@
           container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
         } else {
           container.innerHTML = matches.map(item => `
-            <button type="button" onclick="pilihBarangAutocomplete('${item.barcode || ""}', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '${item.satuan}', ${item.hargaJual})" class="w-full text-left p-4 hover:bg-indigo-50/50 border-b border-slate-50 transition-colors flex justify-between items-center">
+            <button type="button" onclick="pilihBarangAutocomplete('${item.barcode || ""}', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '${item.satuan}', ${item.hargaJual})" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex justify-between items-center">
               <div>
                 <span class="font-black text-slate-800 text-xs block">${item.namaBarang} (${item.satuan})</span>
                 <span class="text-[9px] font-bold text-slate-400 font-mono">ID: ${item.idBarang} ${item.barcode ? `| Barcode: ${item.barcode}` : ""}</span>
               </div>
-              <div class="text-right shrink-0 ml-4 font-mono font-black text-indigo-600 text-xs">
+              <div class="text-right shrink-0 ml-4 font-mono font-black text-emerald-600 text-xs">
                 ${formatIDR(item.hargaJual)}
               </div>
             </button>
@@ -7605,7 +7613,7 @@
         
         if (jualLabel) {
           if (prevJual !== undefined && prevJual !== "" && Number(prevJual) > 0) {
-            jualLabel.innerHTML = `Sebelumnya: <span class="text-indigo-600 font-extrabold">${formatIDR(prevJual)}</span>`;
+            jualLabel.innerHTML = `Sebelumnya: <span class="text-emerald-600 font-extrabold">${formatIDR(prevJual)}</span>`;
             jualLabel.classList.remove("hidden");
           } else {
             jualLabel.classList.add("hidden");
@@ -7757,10 +7765,10 @@
         if (!btn) return;
         const icon = btn.querySelector("i");
         if (isFetchingOrder) {
-          btn.classList.add("bg-blue-50", "text-blue-600");
+          btn.classList.add("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.add("animate-spin");
         } else {
-          btn.classList.remove("bg-blue-50", "text-blue-600");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600");
           if (icon) icon.classList.remove("animate-spin");
         }
       }
@@ -7920,7 +7928,7 @@
             // Status Badges
             let badgeClass = "bg-slate-50 text-slate-500 border border-slate-100";
             if (o.statusOrder === "Pending") badgeClass = "bg-amber-50 text-amber-600 border border-amber-100";
-            else if (o.statusOrder === "Diproses") badgeClass = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+            else if (o.statusOrder === "Diproses") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
             else if (o.statusOrder === "Selesai") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
             else if (o.statusOrder === "Batal") badgeClass = "bg-rose-50 text-rose-500 border border-rose-100";
 
@@ -7933,7 +7941,7 @@
                 <td class="px-8 py-5 text-xs font-bold text-slate-500">${formatDateHyphen(o.tanggalOrder)}</td>
                 <td class="px-8 py-5">
                   <div class="font-black text-slate-800 text-sm">${o.namaSupplier}</div>
-                  <div class="text-[10px] font-mono font-bold text-blue-500 mt-0.5">${o.idSupplier}</div>
+                  <div class="text-[10px] font-mono font-bold text-emerald-500 mt-0.5">${o.idSupplier}</div>
                 </td>
                 <td class="px-8 py-5 text-center text-xs font-black text-slate-700">${o.totalItem} Item</td>
                 <td class="px-8 py-5 text-center text-xs font-black text-slate-700">${o.totalQty} Qty</td>
@@ -7945,7 +7953,7 @@
                     <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-slate-50 text-slate-600 hover:bg-slate-100/80 rounded-xl transition-all border border-slate-100 cursor-pointer" title="Detail Order">
                       <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     </button>
-                    <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-blue-50 text-blue-600 hover:bg-blue-100/85 rounded-xl transition-all border border-blue-50 cursor-pointer" title="Edit Order">
+                    <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100/85 rounded-xl transition-all border border-emerald-50 cursor-pointer" title="Edit Order">
                       <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                     </button>
                     <button onclick="handleUbahStatusOrderClick(${o.row}, '${o.statusOrder || 'Pending'}')" class="p-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 cursor-pointer" title="Ubah Status">
@@ -7970,7 +7978,7 @@
             const rowIdx = start + idx + 1;
             
             let statusColor = "bg-amber-500";
-            if (o.statusOrder === "Diproses") statusColor = "bg-indigo-500";
+            if (o.statusOrder === "Diproses") statusColor = "bg-emerald-500";
             else if (o.statusOrder === "Selesai") statusColor = "bg-emerald-500";
             else if (o.statusOrder === "Batal") statusColor = "bg-rose-500";
 
@@ -8011,7 +8019,7 @@
                   <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> DETAIL
                   </button>
-                  <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-blue-50 border border-blue-50 flex items-center justify-center gap-1 text-[10px] text-blue-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                  <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-emerald-50 border border-emerald-50 flex items-center justify-center gap-1 text-[10px] text-emerald-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
                     <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> EDIT
                   </button>
                   <button onclick="handleUbahStatusOrderClick(${o.row}, '${o.statusOrder || 'Pending'}')" class="py-2.5 rounded-xl bg-slate-100 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-500 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
@@ -8056,11 +8064,11 @@
 
         panel.classList.toggle("hidden");
         if (panel.classList.contains("hidden")) {
-          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
         } else {
-          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-100");
+          btn.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-100");
           document.getElementById("order-barang-sort-panel").classList.add("hidden");
-          document.getElementById("btn-order-barang-sort").classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+          document.getElementById("btn-order-barang-sort").classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
         }
       }
 
@@ -8078,7 +8086,7 @@
         document.querySelectorAll(".order-barang-status-btn").forEach(btn => {
           const val = btn.getAttribute("data-val");
           if (val === status) {
-            btn.className = "order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-blue-200 transition-all active:scale-95 text-blue-600 bg-blue-50 text-center cursor-pointer";
+            btn.className = "order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-emerald-200 transition-all active:scale-95 text-emerald-600 bg-emerald-50 text-center cursor-pointer";
           } else {
             btn.className = "order-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all active:scale-95 text-slate-600 text-center cursor-pointer";
           }
@@ -8095,11 +8103,11 @@
 
         panel.classList.toggle("hidden");
         if (panel.classList.contains("hidden")) {
-          btn.classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+          btn.classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
         } else {
-          btn.classList.add("bg-blue-50", "text-blue-600", "border-blue-100");
+          btn.classList.add("bg-emerald-50", "text-emerald-600", "border-emerald-100");
           document.getElementById("order-barang-filters-panel").classList.add("hidden");
-          document.getElementById("btn-order-barang-filter").classList.remove("bg-blue-50", "text-blue-600", "border-blue-100");
+          document.getElementById("btn-order-barang-filter").classList.remove("bg-emerald-50", "text-emerald-600", "border-emerald-100");
         }
       }
 
@@ -8109,9 +8117,9 @@
         document.querySelectorAll(".order-barang-sort-btn").forEach(btn => {
           const val = btn.getAttribute("data-val");
           if (val === field) {
-            btn.classList.add("text-blue-600", "border-blue-200", "bg-blue-50");
+            btn.classList.add("text-emerald-600", "border-emerald-200", "bg-emerald-50");
           } else {
-            btn.classList.remove("text-blue-600", "border-blue-200", "bg-blue-50");
+            btn.classList.remove("text-emerald-600", "border-emerald-200", "bg-emerald-50");
           }
         });
 
@@ -8202,12 +8210,12 @@
             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Cari Barang (Barcode / ID / Nama)</label>
             <div class="relative flex items-center">
               <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></i>
-              <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-blue-100 shadow-inner text-xs sm:text-sm" placeholder="Tulis nama barang atau scan..." required />
+              <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Tulis nama barang atau scan..." required />
               <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                 <button type="button" onclick="clearInlineInput(this)" class="text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                   <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
-                <button type="button" onclick="startSupplierScan('order-item-search-${seq}')" class="text-blue-500 hover:text-blue-600 transition-colors focus:outline-none" title="Scan Barcode">
+                <button type="button" onclick="startSupplierScan('order-item-search-${seq}')" class="text-emerald-500 hover:text-emerald-600 transition-colors focus:outline-none" title="Scan Barcode">
                   <i data-lucide="scan-barcode" class="w-4 h-4"></i>
                 </button>
               </div>
@@ -8228,7 +8236,7 @@
             </div>
             <div class="space-y-2">
               <label class="text-[8px] font-black text-slate-500 uppercase tracking-widest leading-none">Qty Order</label>
-              <input type="number" id="order-item-qtyOrder-${seq}" min="1" class="w-full px-4 py-3 text-xs bg-slate-50 border-none font-extrabold text-slate-705 rounded-xl outline-none focus:ring-4 focus:ring-blue-100 shadow-inner" placeholder="Qty" required />
+              <input type="number" id="order-item-qtyOrder-${seq}" min="1" class="w-full px-4 py-3 text-xs bg-slate-50 border-none font-extrabold text-slate-705 rounded-xl outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Qty" required />
             </div>
           </div>
 
@@ -8533,7 +8541,7 @@
         const badgeEl = document.getElementById("detail-order-status-badge");
         let badgeClass = "bg-slate-50 text-slate-500 border border-slate-100";
         if (orderHeader.statusOrder === "Pending") badgeClass = "bg-amber-50 text-amber-600 border border-amber-100";
-        else if (orderHeader.statusOrder === "Diproses") badgeClass = "bg-indigo-50 text-indigo-600 border border-indigo-100";
+        else if (orderHeader.statusOrder === "Diproses") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
         else if (orderHeader.statusOrder === "Selesai") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
         else if (orderHeader.statusOrder === "Batal") badgeClass = "bg-rose-50 text-rose-500 border border-rose-100";
 
@@ -8664,7 +8672,7 @@
         let promptLines = statuses.filter(s => s !== currentStatus);
 
         let htmlMenu = promptLines.map((s, i) => `
-          <button onclick="handleStatusClickConfirmation(${row}, '${s}')" class="w-full text-center font-black text-xs uppercase px-4 py-3 bg-slate-50 border border-slate-100/80 rounded-xl text-slate-700 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer capitalize">
+          <button onclick="handleStatusClickConfirmation(${row}, '${s}')" class="w-full text-center font-black text-xs uppercase px-4 py-3 bg-slate-50 border border-slate-100/80 rounded-xl text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer capitalize">
             Set Status: ${s}
           </button>
         `).join("");

@@ -1364,8 +1364,8 @@
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 opacity-80">Filter Status</label>
                     <div class="flex gap-2">
                        <button onclick="setPembelianBarangFilterStatus('all')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-indigo-600 bg-indigo-600 text-white transition-all active:scale-95" data-val="all">SEMUA</button>
-                       <button onclick="setPembelianBarangFilterStatus('Aktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Aktif">AKTIF</button>
-                       <button onclick="setPembelianBarangFilterStatus('Nonaktif')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Nonaktif">NONAKTIF</button>
+                       <button onclick="setPembelianBarangFilterStatus('Lunas')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Lunas">LUNAS</button>
+                       <button onclick="setPembelianBarangFilterStatus('Hutang')" class="pembelian-barang-status-btn flex-1 py-3 text-[10px] font-black rounded-xl border border-slate-100 text-slate-600 transition-all active:scale-95" data-val="Hutang">HUTANG</button>
                     </div>
                   </div>
                   <div class="space-y-3">
@@ -1900,7 +1900,6 @@
 
                     <form id="pembelianBarangForm" onsubmit="handleSimpanPembelianBarang(event)" class="space-y-8">
                       <input type="hidden" id="form-pembelianRow" />
-                      <input type="hidden" id="form-pembelianHargaJual" />
                       
                       <!-- Row ID & Tanggal Pembelian -->
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -1992,37 +1991,44 @@
                           </div>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                           <div class="space-y-2">
                              <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
                              <input type="text" id="form-pembelianSatuan" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-400 rounded-xl outline-none cursor-not-allowed" placeholder="Pcs/Box..." readonly required />
-                          </div>
-                          <div class="space-y-2">
-                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual (Satuan)</label>
-                             <input type="text" id="form-pembelianHargaJualDisplay" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-black text-indigo-600 rounded-xl outline-none cursor-not-allowed" placeholder="Rp 0" readonly />
                           </div>
                         </div>
                       </div>
 
                       <!-- MANUAL VALUES -->
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian *</label>
                           <div class="relative flex items-center w-full">
-                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="0" required />
+                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="0" required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
                           </div>
                         </div>
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan)</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan) *</label>
                           <div class="relative flex items-center w-full">
-                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner" placeholder="Rp 0" required />
+                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="Rp 0" required />
                             <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
                           </div>
+                          <p id="label-pembelianHargaModalSebelumnya" class="text-[9px] font-bold text-slate-400 mt-1 hidden"></p>
+                        </div>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual Baru (Satuan) *</label>
+                          <div class="relative flex items-center w-full">
+                            <input type="text" id="form-pembelianHargaJualInput" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner text-sm" placeholder="Rp 0" required />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                          </div>
+                          <p id="label-pembelianHargaJualSebelumnya" class="text-[9px] font-bold text-slate-400 mt-1 hidden"></p>
                         </div>
                       </div>
 
@@ -2048,8 +2054,8 @@
                           <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
                           <div class="relative">
                             <select id="form-pembelianStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-indigo-100 shadow-inner appearance-none transition-all">
-                              <option value="Aktif">AKTIF</option>
-                              <option value="Nonaktif">NONAKTIF</option>
+                              <option value="Lunas">LUNAS</option>
+                              <option value="Hutang">HUTANG</option>
                             </select>
                             <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
                           </div>
@@ -2673,12 +2679,12 @@
       ];
 
       const DEMO_DATA_PEMBELIAN = [
-        { row: 2, no: 1, idPembelianBrg: "PB-001", tanggalPembelian: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyPembelian: 50, hargaModal: 120000, hargaJual: 150000, profit: 30000, tanggalExpired: "2029-12-31", sisaHari: 1320, statusExpired: "🟢 Aman", keterangan: "First Batch restock", status: "Aktif" },
-        { row: 3, no: 2, idPembelianBrg: "PB-002", tanggalPembelian: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 80gr (Demo)", satuan: "Rim", qtyPembelian: 120, hargaModal: 45000, hargaJual: 55000, profit: 10000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Monthly Restock ATK", status: "Aktif" },
-        { row: 4, no: 3, idPembelianBrg: "PB-003", tanggalPembelian: "2026-05-20", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456703", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyPembelian: 20, hargaModal: 350000, hargaJual: 450000, profit: 100000, tanggalExpired: "2026-06-15", sisaHari: 26, statusExpired: "🟡 <=30 Hari", keterangan: "Gaming supplies check", status: "Aktif" },
-        { row: 5, no: 4, idPembelianBrg: "PB-004", tanggalPembelian: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. Abadi Jaya (Demo)", barcode: "899223344556", idBarang: "ID-0004", namaBarang: "Kabel HDMI 4K Gold 2M (Demo)", satuan: "Pcs", qtyPembelian: 75, hargaModal: 25000, hargaJual: 40000, profit: 15000, tanggalExpired: "2026-06-01", sisaHari: 12, statusExpired: "🟠 <=15 Hari", keterangan: "Cable stock refill", status: "Aktif" },
-        { row: 6, no: 5, idPembelianBrg: "PB-005", tanggalPembelian: "2026-05-21", idSupplier: "SUP-004", namaSupplier: "Sinar Terang Distribusi (Demo)", barcode: "899888877777", idBarang: "ID-0005", namaBarang: "Susu UHT Cokelat 1L (Demo)", satuan: "Box", qtyPembelian: 45, hargaModal: 18000, hargaJual: 22000, profit: 4000, tanggalExpired: "2026-05-15", sisaHari: -5, statusExpired: "🔴 Expired", keterangan: "Susu expired checked", status: "Aktif" },
-        { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, profit: 20000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Restok tinta hitam terlaris", status: "Nonaktif" }
+        { row: 2, no: 1, idPembelianBrg: "PB-001", tanggalPembelian: "2026-05-18", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtyPembelian: 50, hargaModal: 120000, hargaJual: 150000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 30000, subtotal: 6000000, tanggalExpired: "2029-12-31", sisaHari: 1320, statusExpired: "🟢 Aman", keterangan: "First Batch restock", status: "Lunas" },
+        { row: 3, no: 2, idPembelianBrg: "PB-002", tanggalPembelian: "2026-05-19", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 80gr (Demo)", satuan: "Rim", qtyPembelian: 120, hargaModal: 45000, hargaJual: 55000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 10000, subtotal: 5400000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Monthly Restock ATK", status: "Lunas" },
+        { row: 4, no: 3, idPembelianBrg: "PB-003", tanggalPembelian: "2026-05-20", idSupplier: "SUP-001", namaSupplier: "PT. Sumber Makmur (Demo)", barcode: "899123456703", idBarang: "ID-0003", namaBarang: "Keyboard Mechanical RGB (Demo)", satuan: "Pcs", qtyPembelian: 20, hargaModal: 350000, hargaJual: 450000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 100000, subtotal: 7000000, tanggalExpired: "2026-06-15", sisaHari: 26, statusExpired: "🟡 <=30 Hari", keterangan: "Gaming supplies check", status: "Hutang" },
+        { row: 5, no: 4, idPembelianBrg: "PB-004", tanggalPembelian: "2026-05-20", idSupplier: "SUP-003", namaSupplier: "CV. Abadi Jaya (Demo)", barcode: "899223344556", idBarang: "ID-0004", namaBarang: "Kabel HDMI 4K Gold 2M (Demo)", satuan: "Pcs", qtyPembelian: 75, hargaModal: 25000, hargaJual: 40000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 15000, subtotal: 1875000, tanggalExpired: "2026-06-01", sisaHari: 12, statusExpired: "🟠 <=15 Hari", keterangan: "Cable stock refill", status: "Lunas" },
+        { row: 6, no: 5, idPembelianBrg: "PB-005", tanggalPembelian: "2026-05-21", idSupplier: "SUP-004", namaSupplier: "Sinar Terang Distribusi (Demo)", barcode: "899888877777", idBarang: "ID-0005", namaBarang: "Susu UHT Cokelat 1L (Demo)", satuan: "Box", qtyPembelian: 45, hargaModal: 18000, hargaJual: 22000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 4000, subtotal: 810000, tanggalExpired: "2026-05-15", sisaHari: -5, statusExpired: "🔴 Expired", keterangan: "Susu expired checked", status: "Lunas" },
+        { row: 7, no: 6, idPembelianBrg: "PB-006", tanggalPembelian: "2026-05-21", idSupplier: "SUP-002", namaSupplier: "Global Tech Jaya (Demo)", barcode: "", idBarang: "ID-0006", namaBarang: "Tinta Printer Epson L3110 Black (Demo)", satuan: "Botol", qtyPembelian: 80, hargaModal: 85000, hargaJual: 105000, hargaModalSebelumnya: "", hargaJualSebelumnya: "", profit: 20000, subtotal: 6800000, tanggalExpired: "", sisaHari: "", statusExpired: "🟢 Aman", keterangan: "Restok tinta hitam terlaris", status: "Hutang" }
       ];
 
       const DEMO_DATA_ORDER_HEADER = [
@@ -7247,6 +7253,7 @@
                  </td>
                  <td class="px-8 py-6">
                     <div class="text-xs font-bold text-slate-600">Qty Beli: <span class="font-black text-slate-800">${item.qtyPembelian}</span> <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${item.satuan}</span></div>
+                    <div class="text-xs font-black text-slate-700 mt-1">Subtotal: <span class="text-indigo-600 font-extrabold">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</span></div>
                     <div class="grid grid-cols-2 gap-4 mt-2 text-[10px] bg-slate-50/80 p-2 rounded-xl border border-slate-100/50">
                       <div>
                         <span class="text-slate-400 font-bold block">Modal / Jual</span>
@@ -7256,6 +7263,12 @@
                         <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
                         <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> / <span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>
                       </div>
+                      ${(item.hargaModalSebelumnya && item.hargaModalSebelumnya > 0) || (item.hargaJualSebelumnya && item.hargaJualSebelumnya > 0) ? `
+                      <div class="col-span-2 border-t border-slate-150 pt-1.5 mt-1 flex justify-between gap-2 text-[9px] text-slate-500">
+                        <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
+                        <span>Jual Sblmnya: <b class="text-indigo-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
+                      </div>
+                      ` : ''}
                     </div>
                  </td>
                  <td class="px-8 py-6 text-xs text-slate-600">
@@ -7269,7 +7282,7 @@
                     ${getExpiredStatusBadgeHtml(item.statusExpired)}
                  </td>
                  <td class="px-8 py-6 text-center">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${item.status}</span>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${item.status || 'Hutang'}</span>
                  </td>
                  <td class="px-8 py-6 text-center">
                     <div class="relative inline-block text-left">
@@ -7280,8 +7293,8 @@
                           <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
                              <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
                           </button>
-                          <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Aktif' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                             <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> ${item.status === 'Aktif' ? 'Set Nonaktif' : 'Set Aktif'}
+                          <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                             <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${item.status === 'Lunas' ? 'Hutang' : 'Lunas'}
                           </button>
                        </div>
                     </div>
@@ -7302,7 +7315,7 @@
                       <span class="font-black text-slate-800 text-sm font-mono bg-slate-100/60 px-2 py-1 rounded-lg">${item.idPembelianBrg}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${item.status}</span>
+                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${item.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${item.status || 'Hutang'}</span>
                        <div class="relative">
                           <button onclick="toggleCardAction(event, 'pb-card-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
                              <i data-lucide="chevron-down" class="w-4 h-4"></i>
@@ -7311,8 +7324,8 @@
                              <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
                              </button>
-                             <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Aktif' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                                <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> ${item.status === 'Aktif' ? 'Set Nonaktif' : 'Set Aktif'}
+                             <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                                <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${item.status === 'Lunas' ? 'Hutang' : 'Lunas'}
                              </button>
                           </div>
                        </div>
@@ -7344,6 +7357,15 @@
                        <span class="text-slate-400 font-bold block">Profit (Total)</span>
                        <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> (<span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>)
                      </div>
+                     <div class="col-span-2 border-t border-slate-100/80 pt-2 flex justify-between gap-1 text-[9px] text-slate-500">
+                       <span>Subtotal: <b class="text-indigo-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>
+                     </div>
+                     ${(item.hargaModalSebelumnya && item.hargaModalSebelumnya > 0) || (item.hargaJualSebelumnya && item.hargaJualSebelumnya > 0) ? `
+                     <div class="col-span-2 border-t border-slate-100/80 pt-1.5 flex justify-between gap-2 text-[9px] text-slate-500">
+                       <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
+                       <span>Jual Sblmnya: <b class="text-indigo-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
+                     </div>
+                     ` : ''}
                   </div>
 
                   <div class="flex justify-between items-center border-t border-slate-50 pt-3 flex-wrap gap-2">
@@ -7394,16 +7416,19 @@
           document.getElementById("form-pembelianNamaBarang").value = data.namaBarang;
           document.getElementById("form-pembelianSatuan").value = data.satuan;
           
-          document.getElementById("form-pembelianHargaJual").value = data.hargaJual;
-          document.getElementById("form-pembelianHargaJualDisplay").value = formatIDR(data.hargaJual);
+          const hJualIn = document.getElementById("form-pembelianHargaJualInput");
+          hJualIn.value = data.hargaJual || 0;
+          formatInputToRupiah(hJualIn);
           
           document.getElementById("form-pembelianQty").value = data.qtyPembelian;
           const hModalIn = document.getElementById("form-pembelianHargaModal");
           hModalIn.value = data.hargaModal;
           formatInputToRupiah(hModalIn);
           document.getElementById("form-pembelianExpired").value = data.tanggalExpired;
-          document.getElementById("form-pembelianStatus").value = data.status;
+          document.getElementById("form-pembelianStatus").value = data.status || "Lunas";
           document.getElementById("form-pembelianKeterangan").value = data.keterangan;
+          
+          updatePreviousPricesLabels(data.hargaModalSebelumnya, data.hargaJualSebelumnya);
         } else {
           title.innerText = "Tambah Transaksi Baru";
           document.getElementById("form-pembelianRow").value = "";
@@ -7421,14 +7446,16 @@
           document.getElementById("form-pembelianIdBarang").value = "";
           document.getElementById("form-pembelianNamaBarang").value = "";
           document.getElementById("form-pembelianSatuan").value = "";
-          document.getElementById("form-pembelianHargaJual").value = "";
-          document.getElementById("form-pembelianHargaJualDisplay").value = "Rp 0";
+          
+          document.getElementById("form-pembelianHargaJualInput").value = "";
           
           document.getElementById("form-pembelianQty").value = "";
           document.getElementById("form-pembelianHargaModal").value = "";
           document.getElementById("form-pembelianExpired").value = "";
-          document.getElementById("form-pembelianStatus").value = "Aktif";
+          document.getElementById("form-pembelianStatus").value = "Lunas";
           document.getElementById("form-pembelianKeterangan").value = "";
+          
+          updatePreviousPricesLabels("", "");
         }
         
         hitungProfitLengkap();
@@ -7530,16 +7557,65 @@
         document.getElementById("form-pembelianNamaBarang").value = nama;
         document.getElementById("form-pembelianSatuan").value = satuan;
         
-        document.getElementById("form-pembelianHargaJual").value = hargaJual;
-        document.getElementById("form-pembelianHargaJualDisplay").value = formatIDR(hargaJual);
+        const hJualIn = document.getElementById("form-pembelianHargaJualInput");
+        hJualIn.value = hargaJual || 0;
+        formatInputToRupiah(hJualIn);
         
         document.getElementById("form-pembelianBarangSuggestions").classList.add("hidden");
         
+        const prevPrices = findPreviousPrices(id, satuan, barcode);
+        updatePreviousPricesLabels(prevPrices.hargaModalSebelumnya, prevPrices.hargaJualSebelumnya);
+
         hitungProfitLengkap();
       }
 
+      function findPreviousPrices(idBarang, satuan, barcode) {
+        const history = rawPembelianBarangData
+          .filter(item => 
+            String(item.idBarang) === String(idBarang) && 
+            String(item.satuan) === String(satuan)
+          )
+          .sort((a, b) => Number(b.row) - Number(a.row));
+          
+        if (history.length > 0) {
+          return {
+            hargaModalSebelumnya: history[0].hargaModal,
+            hargaJualSebelumnya: history[0].hargaJual
+          };
+        }
+        return {
+          hargaModalSebelumnya: "",
+          hargaJualSebelumnya: ""
+        };
+      }
+
+      function updatePreviousPricesLabels(prevModal, prevJual) {
+        const modalLabel = document.getElementById("label-pembelianHargaModalSebelumnya");
+        const jualLabel = document.getElementById("label-pembelianHargaJualSebelumnya");
+        
+        if (modalLabel) {
+          if (prevModal !== undefined && prevModal !== "" && Number(prevModal) > 0) {
+            modalLabel.innerHTML = `Sebelumnya: <span class="text-rose-500 font-extrabold">${formatIDR(prevModal)}</span>`;
+            modalLabel.classList.remove("hidden");
+          } else {
+            modalLabel.classList.add("hidden");
+            modalLabel.innerHTML = "";
+          }
+        }
+        
+        if (jualLabel) {
+          if (prevJual !== undefined && prevJual !== "" && Number(prevJual) > 0) {
+            jualLabel.innerHTML = `Sebelumnya: <span class="text-indigo-600 font-extrabold">${formatIDR(prevJual)}</span>`;
+            jualLabel.classList.remove("hidden");
+          } else {
+            jualLabel.classList.add("hidden");
+            jualLabel.innerHTML = "";
+          }
+        }
+      }
+
       function hitungProfitLengkap() {
-        const hJual = Number(document.getElementById("form-pembelianHargaJual").value) || 0;
+        const hJual = Number(document.getElementById("form-pembelianHargaJualInput").value.replace(/\D/g, "")) || 0;
         const hModal = Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0;
         const qty = Number(document.getElementById("form-pembelianQty").value) || 0;
         
@@ -7583,7 +7659,7 @@
           satuan: document.getElementById("form-pembelianSatuan").value,
           qtyPembelian: Number(document.getElementById("form-pembelianQty").value) || 0,
           hargaModal: Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0,
-          hargaJual: Number(document.getElementById("form-pembelianHargaJual").value) || 0,
+          hargaJual: Number(document.getElementById("form-pembelianHargaJualInput").value.replace(/\D/g, "")) || 0,
           tanggalExpired: document.getElementById("form-pembelianExpired").value,
           status: document.getElementById("form-pembelianStatus").value,
           keterangan: document.getElementById("form-pembelianKeterangan").value
@@ -7624,7 +7700,7 @@
                   idPembelianBrg: newId,
                   ...payload,
                   profit: (Number(payload.hargaJual) || 0) - (Number(payload.hargaModal) || 0),
-                  status: payload.status || "Aktif"
+                  status: payload.status || "Lunas"
                };
                rawPembelianBarangData.push(newObj);
                showToast("Data ditambahkan secara lokal (Demo)", "success");
@@ -7642,8 +7718,8 @@
       }
 
       async function handleToggleStatusPembelianBarang(row, currentStatus) {
-        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
-        const msg = newStatus === "Aktif" ? "Aktifkan transaksi ini?" : "Nonaktifkan transaksi ini?";
+        const newStatus = currentStatus === "Lunas" ? "Hutang" : "Lunas";
+        const msg = `Ubah status transaksi ini menjadi ${newStatus}?`;
         
         const konfirmasi = await showKonfirmasi(msg, `Status transaksi pembelian bernomor baris ${row} akan diubah menjadi ${newStatus}.`);
         if (!konfirmasi) return;

@@ -3861,21 +3861,15 @@
           if (id) {
             const targetItem = rawReferensiData.find(item => item.id === id);
             if (targetItem) {
-              if (tab === 'satuan') {
-                targetItem.satuan = satuan || "";
-                targetItem.tipeSatuan = tipeSatuan || "KEDUANYA";
-              }
+              if (tab === 'satuan') targetItem.satuan = satuan || "";
               else if (tab === 'kategori') targetItem.kategoriBarang = kategoriBarang || "";
               else if (tab === 'status') targetItem.statusOrder = statusOrder || "";
               else if (tab === 'tipe_satuan') targetItem.tipeSatuanOption = tipeSatuanOption || "";
             }
           } else {
             const newId = "R-" + (rawReferensiData.length + 2);
-            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuan: "", tipeSatuanOption: "" };
-            if (tab === 'satuan') {
-              newItem.satuan = satuan || "";
-              newItem.tipeSatuan = tipeSatuan || "KEDUANYA";
-            }
+            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuanOption: "" };
+            if (tab === 'satuan') newItem.satuan = satuan || "";
             else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
             else if (tab === 'status') newItem.statusOrder = statusOrder || "";
             else if (tab === 'tipe_satuan') newItem.tipeSatuanOption = tipeSatuanOption || "";
@@ -3883,12 +3877,12 @@
           }
 
           // Clean, pack and sort column columns to mirror Spreadsheet's alphabetical alignment
-          const sList = rawReferensiData.map(r => ({ satuan: r.satuan, tipeSatuan: r.tipeSatuan || "KEDUANYA" })).filter(x => !!x.satuan);
+          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
           const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
           const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
           const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
 
-          sList.sort((a, b) => String(a.satuan).localeCompare(String(b.satuan), undefined, { numeric: true, sensitivity: 'base' }));
+          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
@@ -3898,8 +3892,7 @@
           for (let i = 0; i < maxLen; i++) {
             newRawData.push({
               id: "R-" + (i + 2),
-              satuan: sList[i] ? sList[i].satuan : "",
-              tipeSatuan: sList[i] ? sList[i].tipeSatuan : "KEDUANYA",
+              satuan: sList[i] || "",
               kategoriBarang: kList[i] || "",
               statusOrder: oList[i] || "",
               tipeSatuanOption: tList[i] || ""
@@ -3944,22 +3937,19 @@
             if (Array.isArray(rawReferensiData)) {
               const targetItem = rawReferensiData.find(item => item.id === id);
               if (targetItem) {
-                if (currentReferensiTab === 'satuan') {
-                  targetItem.satuan = "";
-                  targetItem.tipeSatuan = "";
-                }
+                if (currentReferensiTab === 'satuan') targetItem.satuan = "";
                 else if (currentReferensiTab === 'kategori') targetItem.kategoriBarang = "";
                 else if (currentReferensiTab === 'status') targetItem.statusOrder = "";
                 else if (currentReferensiTab === 'tipe_satuan') targetItem.tipeSatuanOption = "";
               }
 
               // Pack and sort columns
-              const sList = rawReferensiData.map(r => ({ satuan: r.satuan, tipeSatuan: r.tipeSatuan || "KEDUANYA" })).filter(x => !!x.satuan);
+              const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
               const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
               const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
               const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
 
-              sList.sort((a, b) => String(a.satuan).localeCompare(String(b.satuan), undefined, { numeric: true, sensitivity: 'base' }));
+              sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
@@ -3969,8 +3959,7 @@
               for (let i = 0; i < maxLen; i++) {
                 newRawData.push({
                   id: "R-" + (i + 2),
-                  satuan: sList[i] ? sList[i].satuan : "",
-                  tipeSatuan: sList[i] ? sList[i].tipeSatuan : "KEDUANYA",
+                  satuan: sList[i] || "",
                   kategoriBarang: kList[i] || "",
                   statusOrder: oList[i] || "",
                   tipeSatuanOption: tList[i] || ""

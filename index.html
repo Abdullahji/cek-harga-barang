@@ -4161,6 +4161,12 @@
         }
       }
 
+       function isBeliOnlyBarcode(barcode) {
+        if (!barcode) return false;
+        const satObj = rawSatuanBarangData.find(s => s.barcode && String(s.barcode).trim() === String(barcode).trim());
+        return satObj && String(satObj.tipeSatuan || "").toUpperCase() === "BELI";
+      }
+
       let isSearchingBarang = false;
       function cariBarang(codeParam) {
         if (isSearchingBarang) return;
@@ -4184,16 +4190,24 @@
           (it) => it.barcode && it.barcode.toLowerCase() === query,
         );
 
+        if (item && isBeliOnlyBarcode(item.barcode)) {
+          showToast("Barang ini bertipe BELI, tidak dapat dicek harganya.", "warning");
+          isSearchingBarang = false;
+          return;
+        }
+
         // 2. Jika tidak ada, Cari Partial Name
         if (!item) {
           const matches = rawCekHargaData.filter(
             (it) =>
-              it.namaBarang && it.namaBarang.toLowerCase().includes(query),
+              it.namaBarang && it.namaBarang.toLowerCase().includes(query) &&
+              !isBeliOnlyBarcode(it.barcode),
           );
           if (matches.length === 1) {
             item = matches[0];
           } else if (matches.length > 1) {
             showSuggestions(matches);
+            isSearchingBarang = false;
             return;
           }
         }
@@ -4295,8 +4309,9 @@
         const matches = rawCekHargaData
           .filter(
             (it) =>
-              (it.namaBarang && it.namaBarang.toLowerCase().includes(query)) ||
-              (it.barcode && it.barcode.toLowerCase().includes(query)),
+              ((it.namaBarang && it.namaBarang.toLowerCase().includes(query)) ||
+              (it.barcode && it.barcode.toLowerCase().includes(query))) &&
+              !isBeliOnlyBarcode(it.barcode)
           )
           .slice(0, 10); // Limit to 10 suggestions
 
@@ -5566,6 +5581,12 @@
                 ? `<img src="${displayImgUrl}" referrerpolicy="no-referrer" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=?&background=F1F5F9&color=94A3B8&size=100'"/>` 
                 : `<div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
+              const tipeSatuanBadge = item.tipeSatuan === 'BELI' 
+                ? '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 text-[9px] font-black rounded-md uppercase tracking-wider">BELI</span>'
+                : (item.tipeSatuan === 'JUAL'
+                  ? '<span class="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-100 text-[9px] font-black rounded-md uppercase tracking-wider">JUAL</span>'
+                  : '<span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-100 text-[9px] font-black rounded-md uppercase tracking-wider">KEDUANYA</span>');
+
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
                  <td class="px-6 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
@@ -5582,7 +5603,12 @@
                  <td class="px-6 py-6 text-center">
                     <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${item.levelSatuan || "1"}</span>
                  </td>
-                 <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">${item.satuan}</td>
+                 <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">
+                    <div class="flex flex-col gap-1 items-start">
+                      <span>${item.satuan}</span>
+                      ${tipeSatuanBadge}
+                    </div>
+                 </td>
                  <td class="px-6 py-6 text-center font-black text-slate-900 text-xs">${item.qtyInputKonversi || 1}</td>
                  <td class="px-6 py-6 text-center font-black text-emerald-600 text-xs">${item.qtySatuan || 1}</td>
                  <td class="px-6 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</td>
@@ -5624,6 +5650,7 @@
                               <span class="text-[9px] font-black text-slate-400 bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded-md leading-none truncate max-w-[130px]" title="${item.idBarang}">
                                 ID: ${item.idBarang}
                               </span>
+                              ${tipeSatuanBadge}
                             </div>
                             <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 truncate">Barcode: ${item.barcode || "-"}</p>
                             <h4 class="font-black text-slate-800 italic group-hover:text-emerald-600 transition-colors truncate">${item.namaBarang}</h4>
@@ -5948,6 +5975,54 @@
         return html;
       }
 
+      function getTipeSatuanOptions() {
+        const list = [];
+        if (typeof rawReferensiData !== 'undefined' && Array.isArray(rawReferensiData)) {
+          rawReferensiData.forEach(item => {
+            const v = String(item.tipeSatuan || "").trim();
+            if (v && !list.includes(v)) {
+              list.push(v);
+            }
+          });
+        }
+        if (list.length === 0) {
+          return ["BELI", "JUAL", "KEDUANYA"];
+        }
+        const standard = ["BELI", "JUAL", "KEDUANYA"];
+        standard.forEach(s => {
+          if (!list.includes(s)) {
+            list.push(s);
+          }
+        });
+        return list;
+      }
+
+      function getTipeSatuanSelectOptionsHtml(selected = "KEDUANYA") {
+        const options = getTipeSatuanOptions();
+        return options.map(opt => `
+          <option value="${opt}" ${opt === selected ? 'selected' : ''}>${opt}</option>
+        `).join('');
+      }
+
+      function handleTipeSatuanChange(uId, value) {
+        const rowCard = document.getElementById("group-card-" + uId);
+        if (!rowCard) return;
+        
+        const hargaJualInput = rowCard.querySelector(".satuan-card-harga");
+        if (hargaJualInput) {
+          if (value === "BELI") {
+            hargaJualInput.required = false;
+            if (hargaJualInput.value === "Rp 0" || hargaJualInput.value === "0" || !hargaJualInput.value) {
+              hargaJualInput.value = "";
+            }
+            hargaJualInput.placeholder = "Kosong (Opsional)";
+          } else {
+            hargaJualInput.required = true;
+            hargaJualInput.placeholder = "Rp 0";
+          }
+        }
+      }
+
       function recalculateQtySatuanGlobal() {
         const container = document.getElementById("satuan-group-rows-container");
         if (!container) return;
@@ -6022,6 +6097,7 @@
         const rowVal = item ? (item.row || "") : "";
         const barcodeVal = item ? (item.barcode || "") : "";
         const selectedSatuan = item ? (item.satuan || "") : "";
+        const tipeSatuanVal = item ? (item.tipeSatuan || "KEDUANYA") : "KEDUANYA";
         const qtyInputVal = item ? (item.qtyInputKonversi || 1) : 1;
         const qtyTotalVal = item ? (item.qtySatuan || 1) : 1;
         const hargaVal = item ? (item.hargaJual || "") : "";
@@ -6029,6 +6105,7 @@
         const gambarVal = item ? (item.gambar || "") : "";
 
         const optionsHtml = getSatuanOptionsSelectHtml(selectedSatuan);
+        const tipeOptionsHtml = getTipeSatuanSelectOptionsHtml(tipeSatuanVal);
 
         const cardHtml = `
           <div class="satuan-group-card p-6 border border-slate-100 rounded-[2rem] bg-slate-50/50 space-y-4 relative transition-all duration-200 animate-in fade-in duration-300" id="group-card-${uId}" data-uid="${uId}">
@@ -6070,6 +6147,14 @@
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
                 <select class="satuan-card-satuan w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" required>
                   ${optionsHtml}
+                </select>
+              </div>
+
+              <!-- Tipe Satuan Select -->
+              <div class="space-y-1.5">
+                <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Tipe Satuan</label>
+                <select class="satuan-card-tipe-satuan w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" required onchange="handleTipeSatuanChange('${uId}', this.value)">
+                  ${tipeOptionsHtml}
                 </select>
               </div>
 
@@ -6148,6 +6233,7 @@
         `;
 
         container.insertAdjacentHTML('beforeend', cardHtml);
+        handleTipeSatuanChange(uId, tipeSatuanVal);
         
         if (item && item.hargaJual) {
            const cardEl = container.querySelector(`#group-card-${uId}`);
@@ -6309,15 +6395,17 @@
           const rowVal = card.querySelector(".satuan-card-row-index").value;
           const barcodeVal = card.querySelector(".satuan-card-barcode").value;
           const satuanVal = card.querySelector(".satuan-card-satuan").value;
+          const tipeSatuanVal = card.querySelector(".satuan-card-tipe-satuan") ? card.querySelector(".satuan-card-tipe-satuan").value : "KEDUANYA";
           const qtyInputVal = card.querySelector(".satuan-card-conv-input").value;
           const qtyVal = card.querySelector(".satuan-card-qty").value;
           const hargaRaw = card.querySelector(".satuan-card-harga").value;
           const statusVal = card.querySelector(".satuan-card-status").value;
           const gambarVal = card.querySelector(".satuan-card-gambar").value;
 
-          const hargaJual = (hargaRaw || "").replace(/\D/g, "");
+          const isHargaJualOptional = (tipeSatuanVal === "BELI");
+          const hargaJual = isHargaJualOptional && !hargaRaw.trim() ? "" : (hargaRaw || "").replace(/\D/g, "");
 
-          if (!satuanVal || !qtyInputVal || !qtyVal || !hargaJual) {
+          if (!satuanVal || !qtyInputVal || !qtyVal || (!isHargaJualOptional && !hargaJual)) {
              hasEmptyFields = true;
           }
 
@@ -6339,6 +6427,7 @@
             namaBarang: namaBarang,
             levelSatuan: lvl,
             satuan: satuanVal,
+            tipeSatuan: tipeSatuanVal,
             qtyInputKonversi: qtyInputVal,
             qtySatuan: qtyVal,
             hargaJual: hargaJual,
@@ -6348,7 +6437,7 @@
         });
 
         if (hasEmptyFields) {
-          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual.", "warning");
+          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual (Harga Jual opsional untuk tipe BELI).", "warning");
           return;
         }
 
@@ -8027,7 +8116,8 @@
 
         const q = val.toLowerCase().trim();
         const matches = rawSatuanBarangData.filter(item => 
-          item.status === "Aktif" && (
+          item.status === "Aktif" && 
+          String(item.tipeSatuan || "").toUpperCase() !== "JUAL" && (
             (item.namaBarang || "").toLowerCase().includes(q) ||
             (item.idBarang || "").toLowerCase().includes(q) ||
             (item.barcode || "").toLowerCase().includes(q)
@@ -8782,9 +8872,11 @@
         const sourceData = rawSatuanBarangData.length > 0 ? rawSatuanBarangData : DEMO_DATA_SATUAN;
 
         const filtered = sourceData.filter(s => 
-          (s.namaBarang || "").toLowerCase().includes(q) ||
-          (s.idBarang || "").toLowerCase().includes(q) ||
-          (s.barcode || "").toLowerCase().includes(q)
+          String(s.tipeSatuan || "").toUpperCase() !== "BELI" && (
+            (s.namaBarang || "").toLowerCase().includes(q) ||
+            (s.idBarang || "").toLowerCase().includes(q) ||
+            (s.barcode || "").toLowerCase().includes(q)
+          )
         );
 
         // Autocomplete exact match logic on barcode or ID

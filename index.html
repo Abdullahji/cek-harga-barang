@@ -5,7 +5,7 @@
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    /> 
+    />
     <meta name="theme-color" content="#8B0000" />
     <title>TOKO WINA</title>
 
@@ -6072,7 +6072,12 @@
               <!-- Qty Input Konversi -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Qty Input Konversi (Konv)</label>
-                <input type="number" class="satuan-card-conv-input w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" value="${qtyInputVal}" required min="1" oninput="recalculateQtySatuanGlobal()" />
+                <div class="relative flex items-center w-full">
+                  <input type="number" class="satuan-card-conv-input w-full pl-5 pr-10 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" value="${qtyInputVal}" required min="1" oninput="recalculateQtySatuanGlobal()" />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
 
               <!-- Qty Satuan (Total calculated) -->
@@ -6084,7 +6089,12 @@
               <!-- Harga Jual -->
               <div class="space-y-1.5">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual</label>
-                <input type="text" class="satuan-card-harga w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" oninput="formatInputToRupiah(this)" value="${hargaVal}" required placeholder="Rp 0" />
+                <div class="relative flex items-center w-full">
+                  <input type="text" class="satuan-card-harga w-full pl-5 pr-10 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" oninput="formatInputToRupiah(this)" value="${hargaVal}" required placeholder="Rp 0" />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
 
               <!-- Status Keaktifan -->
@@ -7435,12 +7445,6 @@
                         <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
                         <span class="font-black text-emerald-600">${formatIDR(item.profit)}</span> / <span class="font-black text-emerald-600">${formatIDR(item.profit * item.qtyPembelian)}</span>
                       </div>
-                      ${false ? `
-                      <div class="col-span-2 border-t border-slate-150 pt-1.5 mt-1 flex justify-between gap-2 text-[9px] text-slate-500">
-                        <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
-                        <span>Jual Sblmnya: <b class="text-emerald-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
-                      </div>
-                      ` : ''}
                     </div>
                  </td>
                  <td class="px-8 py-6 text-xs text-slate-600">
@@ -7538,13 +7542,11 @@
                      <div class="col-span-2 border-t border-slate-100/80 pt-2 flex justify-between gap-1 text-[9px] text-slate-500">
                        <span>Subtotal: <b class="text-emerald-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>
                      </div>
-                     ${false ? `
-                     <div class="col-span-2 border-t border-slate-100/80 pt-1.5 flex justify-between gap-2 text-[9px] text-slate-500">
-                       <span>Modal Sblmnya: <b class="text-rose-500 font-black">${item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-'}</b></span>
-                       <span>Jual Sblmnya: <b class="text-emerald-500 font-black">${item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-'}</b></span>
-                     </div>
-                     ` : ''}
                   </div>
+
+
+
+
 
                   <div class="flex justify-between items-center border-t border-slate-50 pt-3 flex-wrap gap-2">
                     <div class="text-[10px] text-slate-500 font-bold pr-4 truncate">
@@ -7732,6 +7734,24 @@
         const container = document.getElementById("pembelian-barang-items-container");
         if (!container) return;
 
+        // Save active element & state to restore focus
+        const activeEl = document.activeElement;
+        let activeId = null;
+        let selectionStart = null;
+        let selectionEnd = null;
+
+        if (activeEl && activeEl.id && activeEl.id.startsWith("cart-")) {
+          activeId = activeEl.id;
+          if (activeEl.setSelectionRange) {
+            try {
+              selectionStart = activeEl.selectionStart;
+              selectionEnd = activeEl.selectionEnd;
+            } catch (e) {
+              // Not supported
+            }
+          }
+        }
+
         if (pembelianCartItems.length === 0) {
           container.innerHTML = `
             <div class="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-slate-200 rounded-[2rem] text-slate-400 bg-slate-50/50 font-sans">
@@ -7746,13 +7766,16 @@
         }
 
         container.innerHTML = pembelianCartItems.map((item, index) => {
-          const formattedModal = item.hargaModal ? formatIDRVal(item.hargaModal) : "";
-          const formattedJual = item.hargaJual ? formatIDRVal(item.hargaJual) : "";
+          const formattedModal = item.hargaModal ? "Rp " + formatIDRVal(item.hargaModal) : "";
+          const formattedJual = item.hargaJual ? "Rp " + formatIDRVal(item.hargaJual) : "";
           const profit = item.hargaJual - item.hargaModal;
           const subtotal = item.hargaModal * item.qtyPembelian;
           
-          const modalPrevSpan = item.hargaModalSebelumnya ? `<span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-black font-mono">Modal Sblm: ${formatIDR(item.hargaModalSebelumnya)}</span>` : '';
-          const jualPrevSpan = item.hargaJualSebelumnya ? `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black font-mono">Jual Sblm: ${formatIDR(item.hargaJualSebelumnya)}</span>` : '';
+          const modalPrevVal = item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-';
+          const modalPrevSpan = `<span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-black font-mono">Modal Sblmnya: ${modalPrevVal}</span>`;
+          
+          const jualPrevVal = item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-';
+          const jualPrevSpan = `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black font-mono">Jual Sblmnya: ${jualPrevVal}</span>`;
 
           const itemSelectedHTML = item.idBarang ? `
             <div class="bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-sans">
@@ -7808,19 +7831,34 @@
               <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Beli</label>
-                  <input type="number" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
+                  <div class="relative flex items-center w-full">
+                    <input type="number" id="cart-qty-${item.id}" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                 </div>
                 <div class="space-y-1.5 flex-1 font-sans">
-                  <label class="text-[9px] font-black text-slate-505 uppercase tracking-widest ml-1">Harga Modal</label>
-                  <input type="text" value="${formattedModal}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaModal', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Modal</label>
+                  <div class="relative flex items-center w-full">
+                    <input type="text" id="cart-hargaModal-${item.id}" value="${formattedModal}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaModal', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                   <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
                     ${modalPrevSpan}
                     ${getModalTrendHTML(item)}
                   </div>
                 </div>
                 <div class="space-y-1.5 flex-1 font-sans">
-                  <label class="text-[9px] font-black text-slate-505 uppercase tracking-widest ml-1">Harga Jual Baru</label>
-                  <input type="text" value="${formattedJual}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaJual', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Baru</label>
+                  <div class="relative flex items-center w-full">
+                    <input type="text" id="cart-hargaJual-${item.id}" value="${formattedJual}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaJual', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                   <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
                     ${jualPrevSpan}
                     ${getJualTrendHTML(item)}
@@ -7828,7 +7866,12 @@
                 </div>
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Tgl Expired</label>
-                  <input type="date" value="${item.tanggalExpired}" onchange="updateCartItemPropertyValue('${item.id}', 'tanggalExpired', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" />
+                  <div class="relative flex items-center w-full">
+                    <input type="date" id="cart-tanggalExpired-${item.id}" value="${item.tanggalExpired}" onchange="updateCartItemPropertyValue('${item.id}', 'tanggalExpired', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" />
+                    <button type="button" onclick="clearInlineInput(this)" class="absolute right-8 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -7852,6 +7895,25 @@
 
         calculateCartTotals();
         lucide.createIcons();
+
+        // Restore focus
+        if (activeId) {
+          const newActiveEl = document.getElementById(activeId);
+          if (newActiveEl) {
+            newActiveEl.focus();
+            if (selectionStart !== null && selectionEnd !== null && newActiveEl.setSelectionRange) {
+              try {
+                // Ensure ranges do not exceed current value length
+                const currentLen = newActiveEl.value.length;
+                const safeStart = Math.min(selectionStart, currentLen);
+                const safeEnd = Math.min(selectionEnd, currentLen);
+                newActiveEl.setSelectionRange(safeStart, safeEnd);
+              } catch (e) {
+                // Ignore
+              }
+            }
+          }
+        }
       }
 
       function formatIDRVal(num) {
@@ -7859,11 +7921,27 @@
       }
 
       function formatCartInputRupiah(el) {
-        let val = el.value.replace(/\D/g, "");
-        if (val) {
-          el.value = formatIDRVal(val);
-        } else {
+        if (!el) return;
+        let valStr = el.value.replace(/\D/g, "");
+        if (valStr === "" || valStr === "0") {
           el.value = "";
+          return;
+        }
+        let selectionStart = el.selectionStart;
+        const previousLength = el.value.length;
+
+        let formatted = "Rp " + new Intl.NumberFormat("id-ID").format(Number(valStr));
+        el.value = formatted;
+
+        // Keep cursor position stable
+        let newSelectionStart = selectionStart + (formatted.length - previousLength);
+        if (newSelectionStart < 3) {
+          newSelectionStart = 3;
+        }
+        try {
+          el.setSelectionRange(newSelectionStart, newSelectionStart);
+        } catch (e) {
+          // Ignore
         }
       }
 
@@ -8045,6 +8123,8 @@
             qtyPembelian: Number(item.qtyPembelian) || 0,
             hargaModal: Number(item.hargaModal) || 0,
             hargaJual: Number(item.hargaJual) || 0,
+            hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
+            hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
             tanggalExpired: item.tanggalExpired || ""
           }))
         };
@@ -8080,6 +8160,8 @@
                    qtyPembelian: item.qtyPembelian,
                    hargaModal: item.hargaModal,
                    hargaJual: item.hargaJual,
+                   hargaModalSebelumnya: item.hargaModalSebelumnya || "",
+                   hargaJualSebelumnya: item.hargaJualSebelumnya || "",
                    profit: item.hargaJual - item.hargaModal,
                    subtotal: item.qtyPembelian * item.hargaModal,
                    tanggalExpired: item.tanggalExpired
@@ -8112,6 +8194,8 @@
                    qtyPembelian: item.qtyPembelian,
                    hargaModal: item.hargaModal,
                    hargaJual: item.hargaJual,
+                   hargaModalSebelumnya: item.hargaModalSebelumnya || "",
+                   hargaJualSebelumnya: item.hargaJualSebelumnya || "",
                    profit: item.hargaJual - item.hargaModal,
                    subtotal: item.qtyPembelian * item.hargaModal,
                    tanggalExpired: item.tanggalExpired

@@ -1041,6 +1041,12 @@
                     class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
                     Status Order <span id="count-ref-status"></span>
                   </button>
+                  <button 
+                    onclick="switchReferensiTab('tipe_satuan')" 
+                    id="tab-ref-tipe_satuan"
+                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    Tipe Satuan <span id="count-ref-tipe_satuan"></span>
+                  </button>
                 </div>
               </div>
 
@@ -1126,13 +1132,23 @@
                 </div>
                 <form id="referensiForm" onsubmit="handleSimpanReferensi(event)" class="space-y-6">
                   <input type="hidden" id="form-referensiId" />
-                  <div id="modal-ref-satuan-group" class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
-                    <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-satuan" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
-                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                      </button>
+                  <div id="modal-ref-satuan-group" class="space-y-4">
+                    <div class="space-y-2">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
+                      <div class="relative flex items-center w-full">
+                        <input type="text" id="form-ref-satuan" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: PCS / BALL" />
+                        <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                          <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="space-y-2 hidden">
+                      <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan Default</label>
+                      <select id="form-ref-tipe-satuan" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
+                        <option value="KEDUANYA">KEDUANYA</option>
+                        <option value="BELI">BELI</option>
+                        <option value="JUAL">JUAL</option>
+                      </select>
                     </div>
                   </div>
                   <div id="modal-ref-kategori-group" class="space-y-2">
@@ -1148,6 +1164,15 @@
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
                     <div class="relative flex items-center w-full">
                       <input type="text" id="form-ref-status" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div id="modal-ref-tipe_satuan-group" class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan Option</label>
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-ref-tipe-satuan-option" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: BELI / JUAL / KEDUANYA" />
                       <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
@@ -3670,7 +3695,7 @@
         referensiCurrentPage = 1;
         
         // Update UI classes
-        const tabs = ['satuan', 'kategori', 'status'];
+        const tabs = ['satuan', 'kategori', 'status', 'tipe_satuan'];
         tabs.forEach(t => {
           const btn = document.getElementById(`tab-ref-${t}`);
           if (!btn) return;
@@ -3686,7 +3711,8 @@
         const labels = {
           'satuan': 'Satuan',
           'kategori': 'Kategori Barang',
-          'status': 'Status Order'
+          'status': 'Status Order',
+          'tipe_satuan': 'Tipe Satuan'
         };
         const th = document.getElementById('th-referensi-label');
         if (th) th.innerText = labels[tab];
@@ -3766,11 +3792,13 @@
         document.getElementById("modal-ref-satuan-group").classList.add("hidden");
         document.getElementById("modal-ref-kategori-group").classList.add("hidden");
         document.getElementById("modal-ref-status-group").classList.add("hidden");
+        document.getElementById("modal-ref-tipe_satuan-group").classList.add("hidden");
 
         const tabLabels = {
           'satuan': 'Satuan',
           'kategori': 'Kategori Barang',
-          'status': 'Status Order'
+          'status': 'Status Order',
+          'tipe_satuan': 'Tipe Satuan'
         };
 
         if (data) {
@@ -3779,8 +3807,12 @@
           document.getElementById("form-ref-satuan").value = data.satuan || "";
           document.getElementById("form-ref-kategori").value = data.kategoriBarang || "";
           document.getElementById("form-ref-status").value = data.statusOrder || "";
+          document.getElementById("form-ref-tipe-satuan").value = data.tipeSatuan || "KEDUANYA";
+          document.getElementById("form-ref-tipe-satuan-option").value = data.tipeSatuanOption || "";
         } else {
           title.innerText = "Tambah " + tabLabels[currentReferensiTab];
+          document.getElementById("form-ref-tipe-satuan").value = "KEDUANYA";
+          document.getElementById("form-ref-tipe-satuan-option").value = "";
         }
         
         // Only show the group corresponding to active tab
@@ -3802,12 +3834,15 @@
         const satuan = document.getElementById("form-ref-satuan").value.trim().toUpperCase();
         const kategoriBarang = document.getElementById("form-ref-kategori").value.trim().toUpperCase();
         const statusOrder = document.getElementById("form-ref-status").value.trim().toUpperCase();
+        const tipeSatuanOption = document.getElementById("form-ref-tipe-satuan-option").value.trim().toUpperCase();
+        const tipeSatuan = document.getElementById("form-ref-tipe-satuan").value;
 
         const tab = currentReferensiTab;
         let val = "";
         if (tab === 'satuan') val = satuan;
         else if (tab === 'kategori') val = kategoriBarang;
         else if (tab === 'status') val = statusOrder;
+        else if (tab === 'tipe_satuan') val = tipeSatuanOption;
 
         if (!val) {
           showAlert("Peringatan", "Input tidak boleh kosong.", "warning");
@@ -3816,7 +3851,7 @@
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tab });
+          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tipeSatuan, tipeSatuanOption, tab });
           
           // Apply local change to rawReferensiData immediately
           if (!Array.isArray(rawReferensiData)) {
@@ -3826,36 +3861,48 @@
           if (id) {
             const targetItem = rawReferensiData.find(item => item.id === id);
             if (targetItem) {
-              if (tab === 'satuan') targetItem.satuan = satuan || "";
+              if (tab === 'satuan') {
+                targetItem.satuan = satuan || "";
+                targetItem.tipeSatuan = tipeSatuan || "KEDUANYA";
+              }
               else if (tab === 'kategori') targetItem.kategoriBarang = kategoriBarang || "";
               else if (tab === 'status') targetItem.statusOrder = statusOrder || "";
+              else if (tab === 'tipe_satuan') targetItem.tipeSatuanOption = tipeSatuanOption || "";
             }
           } else {
             const newId = "R-" + (rawReferensiData.length + 2);
-            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "" };
-            if (tab === 'satuan') newItem.satuan = satuan || "";
+            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuan: "", tipeSatuanOption: "" };
+            if (tab === 'satuan') {
+              newItem.satuan = satuan || "";
+              newItem.tipeSatuan = tipeSatuan || "KEDUANYA";
+            }
             else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
             else if (tab === 'status') newItem.statusOrder = statusOrder || "";
+            else if (tab === 'tipe_satuan') newItem.tipeSatuanOption = tipeSatuanOption || "";
             rawReferensiData.push(newItem);
           }
 
           // Clean, pack and sort column columns to mirror Spreadsheet's alphabetical alignment
-          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
+          const sList = rawReferensiData.map(r => ({ satuan: r.satuan, tipeSatuan: r.tipeSatuan || "KEDUANYA" })).filter(x => !!x.satuan);
           const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
           const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
+          const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
 
-          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          sList.sort((a, b) => String(a.satuan).localeCompare(String(b.satuan), undefined, { numeric: true, sensitivity: 'base' }));
           kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
 
-          const maxLen = Math.max(sList.length, kList.length, oList.length);
+          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length);
           const newRawData = [];
           for (let i = 0; i < maxLen; i++) {
             newRawData.push({
               id: "R-" + (i + 2),
-              satuan: sList[i] || "",
+              satuan: sList[i] ? sList[i].satuan : "",
+              tipeSatuan: sList[i] ? sList[i].tipeSatuan : "KEDUANYA",
               kategoriBarang: kList[i] || "",
-              statusOrder: oList[i] || ""
+              statusOrder: oList[i] || "",
+              tipeSatuanOption: tList[i] || ""
             });
           }
           rawReferensiData = newRawData;
@@ -3887,7 +3934,7 @@
       }
 
       async function handleHapusReferensi(id) {
-        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order' };
+        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order', 'tipe_satuan': 'Tipe Satuan' };
         showConfirm("Hapus?", `Hapus item ${tabLabels[currentReferensiTab]} ini?`, async () => {
           showLoading(true);
           try {
@@ -3897,28 +3944,36 @@
             if (Array.isArray(rawReferensiData)) {
               const targetItem = rawReferensiData.find(item => item.id === id);
               if (targetItem) {
-                if (currentReferensiTab === 'satuan') targetItem.satuan = "";
+                if (currentReferensiTab === 'satuan') {
+                  targetItem.satuan = "";
+                  targetItem.tipeSatuan = "";
+                }
                 else if (currentReferensiTab === 'kategori') targetItem.kategoriBarang = "";
                 else if (currentReferensiTab === 'status') targetItem.statusOrder = "";
+                else if (currentReferensiTab === 'tipe_satuan') targetItem.tipeSatuanOption = "";
               }
 
               // Pack and sort columns
-              const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
+              const sList = rawReferensiData.map(r => ({ satuan: r.satuan, tipeSatuan: r.tipeSatuan || "KEDUANYA" })).filter(x => !!x.satuan);
               const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
               const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
+              const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
 
-              sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+              sList.sort((a, b) => String(a.satuan).localeCompare(String(b.satuan), undefined, { numeric: true, sensitivity: 'base' }));
               kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+              tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
 
-              const maxLen = Math.max(sList.length, kList.length, oList.length);
+              const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length);
               const newRawData = [];
               for (let i = 0; i < maxLen; i++) {
                 newRawData.push({
                   id: "R-" + (i + 2),
-                  satuan: sList[i] || "",
+                  satuan: sList[i] ? sList[i].satuan : "",
+                  tipeSatuan: sList[i] ? sList[i].tipeSatuan : "KEDUANYA",
                   kategoriBarang: kList[i] || "",
-                  statusOrder: oList[i] || ""
+                  statusOrder: oList[i] || "",
+                  tipeSatuanOption: tList[i] || ""
                 });
               }
               rawReferensiData = newRawData;
@@ -3962,14 +4017,17 @@
           const countSatuan = rawReferensiData.filter(item => !!item.satuan).length;
           const countKategori = rawReferensiData.filter(item => !!item.kategoriBarang).length;
           const countStatus = rawReferensiData.filter(item => !!item.statusOrder).length;
+          const countTipeSatuan = rawReferensiData.filter(item => !!item.tipeSatuanOption).length;
           
           const elSatuan = document.getElementById("count-ref-satuan");
           const elKategori = document.getElementById("count-ref-kategori");
           const elStatus = document.getElementById("count-ref-status");
+          const elTipeSatuan = document.getElementById("count-ref-tipe_satuan");
           
           if (elSatuan) elSatuan.innerText = `(${countSatuan})`;
           if (elKategori) elKategori.innerText = `(${countKategori})`;
           if (elStatus) elStatus.innerText = `(${countStatus})`;
+          if (elTipeSatuan) elTipeSatuan.innerText = `(${countTipeSatuan})`;
 
           if (!Array.isArray(rawReferensiData) || rawReferensiData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
@@ -3985,6 +4043,7 @@
             if (currentReferensiTab === 'satuan') val = item.satuan || "";
             else if (currentReferensiTab === 'kategori') val = item.kategoriBarang || "";
             else if (currentReferensiTab === 'status') val = item.statusOrder || "";
+            else if (currentReferensiTab === 'tipe_satuan') val = item.tipeSatuanOption || "";
             
             if (!val && !referensiSearchTerm) return false; // Hide empty rows in tabs unless searching? Actually, usually independent.
             
@@ -3999,6 +4058,7 @@
              if (currentReferensiTab === 'satuan') { valA = a.satuan || ""; valB = b.satuan || ""; }
              else if (currentReferensiTab === 'kategori') { valA = a.kategoriBarang || ""; valB = b.kategoriBarang || ""; }
              else if (currentReferensiTab === 'status') { valA = a.statusOrder || ""; valB = b.statusOrder || ""; }
+             else if (currentReferensiTab === 'tipe_satuan') { valA = a.tipeSatuanOption || ""; valB = b.tipeSatuanOption || ""; }
              return valA.localeCompare(valB);
           });
 
@@ -4024,16 +4084,28 @@
             const displayIdx = startIndex + idx + 1;
             let displayVal = "";
             let fieldLabel = "";
-            if (currentReferensiTab === 'satuan') { displayVal = item.satuan; fieldLabel = "Satuan"; }
+            let badgeHtml = "";
+            
+            if (currentReferensiTab === 'satuan') { 
+              displayVal = item.satuan; 
+              fieldLabel = "Satuan"; 
+              badgeHtml = "";
+            }
             else if (currentReferensiTab === 'kategori') { displayVal = item.kategoriBarang; fieldLabel = "Kategori"; }
             else if (currentReferensiTab === 'status') { displayVal = item.statusOrder; fieldLabel = "Status"; }
+            else if (currentReferensiTab === 'tipe_satuan') { displayVal = item.tipeSatuanOption; fieldLabel = "Tipe Satuan"; }
 
             // Desktop Row
             const tr = document.createElement("tr");
             tr.className = "hover:bg-slate-50 transition-colors group";
             tr.innerHTML = `
               <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-emerald-500 transition-colors">${displayIdx}</td>
-              <td class="px-8 py-6 font-bold text-slate-700">${displayVal || "-"}</td>
+              <td class="px-8 py-6 font-bold text-slate-700">
+                <div class="flex items-center gap-2">
+                  <span>${displayVal || "-"}</span>
+                  ${badgeHtml}
+                </div>
+              </td>
               <td class="px-8 py-6">
                 <div class="flex items-center justify-center gap-2">
                   <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all" title="Edit">
@@ -4060,7 +4132,10 @@
               </div>
               <div>
                 <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">${fieldLabel}</p>
-                <p class="text-sm font-bold text-slate-700">${displayVal || "-"}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs font-bold text-slate-700">${displayVal || "-"}</span>
+                  ${badgeHtml}
+                </div>
               </div>
             `;
             cardContainer.appendChild(card);
@@ -5979,7 +6054,7 @@
         const list = [];
         if (typeof rawReferensiData !== 'undefined' && Array.isArray(rawReferensiData)) {
           rawReferensiData.forEach(item => {
-            const v = String(item.tipeSatuan || "").trim();
+            const v = String(item.tipeSatuanOption || "").trim();
             if (v && !list.includes(v)) {
               list.push(v);
             }

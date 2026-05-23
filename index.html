@@ -2015,30 +2015,28 @@
 
                     <form id="pembelianBarangForm" onsubmit="handleSimpanPembelianBarang(event)" class="space-y-8">
                       <input type="hidden" id="form-pembelianRow" />
-                      <input type="hidden" id="form-pembelianPrevHargaModal" />
-                      <input type="hidden" id="form-pembelianPrevHargaJual" />
                       
                       <!-- Row ID & Tanggal Pembelian -->
                       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Pembelian Brg (Otomatis)</label>
-                          <input type="text" id="form-pembelianId" class="w-full px-6 py-5 rounded-2xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed" placeholder="PB-XXX" readonly />
+                          <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 font-sans">ID Pembelian Brg (Otomatis)</label>
+                          <input type="text" id="form-pembelianId" class="w-full px-6 py-5 rounded-2xl bg-slate-100 border-none font-bold text-slate-500 outline-none cursor-not-allowed font-mono" placeholder="PB-XXX" readonly />
                         </div>
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Pembelian</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 font-sans">Tanggal Pembelian</label>
                           <input type="date" id="form-pembelianTanggal" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" required />
                         </div>
                       </div>
 
                       <!-- SUPPLIER SECTION -->
                       <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100/50 space-y-6">
-                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5 font-sans">
                           <i data-lucide="truck" class="w-4 h-4"></i> Data Supplier
                         </h4>
                         
                         <!-- Smart Search Supplier -->
                         <div class="space-y-3 relative">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Supplier</label>
+                          <label class="text-[10px] font-black text-slate-555 uppercase tracking-widest ml-1 font-sans">Cari Supplier</label>
                           <div class="relative flex items-center w-full">
                             <i data-lucide="search" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5"></i>
                             <input type="text" id="form-pembelianSearchSupplier" oninput="autocompleteSupplier(this.value)" autocomplete="off" class="w-full pl-10 sm:pl-14 pr-10 sm:pr-12 py-3.5 sm:py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Ketik Nama / ID Supplier..." required />
@@ -2055,154 +2053,20 @@
                         <!-- ReadOnly Supplier IDs/Nama -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div class="space-y-2">
-                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Supplier</label>
-                             <input type="text" id="form-pembelianIdSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="ID..." readonly required />
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1 font-sans">ID Supplier</label>
+                             <input type="text" id="form-pembelianIdSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed font-mono" placeholder="ID..." readonly required />
                           </div>
                           <div class="space-y-2">
-                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Supplier</label>
-                             <input type="text" id="form-pembelianNamaSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="Nama..." readonly required />
+                             <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1 font-sans">Nama Supplier</label>
+                             <input type="text" id="form-pembelianNamaSupplier" class="w-full px-4 py-3 text-xs bg-slate-100/80 border-none font-bold text-slate-505 rounded-xl outline-none cursor-not-allowed" placeholder="Nama..." readonly required />
                           </div>
                         </div>
                       </div>
 
-                      <!-- BARANG SECTION -->
-                      <div class="bg-emerald-50/40 p-6 rounded-[2rem] border border-emerald-100/50 space-y-6">
-                        <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-2 flex items-center gap-1.5">
-                          <i data-lucide="package" class="w-4 h-4"></i> Data Barang
-                        </h4>
-                        
-                        <!-- Smart Search Barang -->
-                        <div class="space-y-3 relative">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari Barang</label>
-                          <div class="flex gap-2">
-                            <div class="relative flex-1 min-w-0 flex items-center">
-                              <i data-lucide="search" class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5"></i>
-                              <input type="text" id="form-pembelianSearchBarang" oninput="autocompleteBarang(this.value)" autocomplete="off" class="w-full pl-10 sm:pl-14 pr-10 sm:pr-12 py-3.5 sm:py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Cari nama, barcode, atau ID..." required />
-                              <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 sm:right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                              </button>
-                            </div>
-                            <button type="button" onclick="startSupplierScan('form-pembelianSearchBarang')" class="p-3.5 sm:p-5 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-2xl hover:bg-emerald-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-90" title="Scan Barcode">
-                              <i data-lucide="scan" class="w-5 h-5 sm:w-6 sm:h-6"></i>
-                            </button>
-                          </div>
-                          <!-- Autocomplete Container -->
-                          <div id="form-pembelianBarangSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
-                            <!--Suggestions-->
-                          </div>
-                        </div>
-
-                        <!-- ReadOnly Barang & Price History Information (Automatic) -->
-                        <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
-                          <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
-                            <i data-lucide="info" class="w-4 h-4 text-emerald-600"></i>
-                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Informasi Barang & Histori (Read-only)</span>
-                          </div>
-                          
-                          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Barcode</label>
-                               <input type="text" id="form-pembelianBarcode" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-medium text-slate-500 rounded-xl outline-none cursor-not-allowed font-mono truncate" placeholder="..." readonly />
-                            </div>
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">ID Barang</label>
-                               <input type="text" id="form-pembelianIdBarang" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-medium text-slate-500 rounded-xl outline-none cursor-not-allowed font-mono" placeholder="ID..." readonly required />
-                            </div>
-                            <div class="space-y-1.5 col-span-2">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Barang</label>
-                               <input type="text" id="form-pembelianNamaBarang" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-bold text-slate-700 rounded-xl outline-none cursor-not-allowed truncate" placeholder="..." readonly required />
-                            </div>
-                          </div>
-                          
-                          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
-                               <input type="text" id="form-pembelianSatuan" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-medium text-slate-500 rounded-xl outline-none cursor-not-allowed" placeholder="..." readonly required />
-                            </div>
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Modal Sblmnya</label>
-                               <input type="text" id="form-pembelianHargaModalSebelumnya" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-black text-rose-500 rounded-xl outline-none cursor-not-allowed" placeholder="-" readonly />
-                            </div>
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Jual Sblmnya</label>
-                               <input type="text" id="form-pembelianHargaJualSebelumnya" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-black text-emerald-600 rounded-xl outline-none cursor-not-allowed" placeholder="-" readonly />
-                            </div>
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Profit Pcs</label>
-                               <input type="text" id="form-pembelianProfitField" class="w-full px-4 py-2 text-xs bg-slate-50 border-none font-black text-emerald-600 rounded-xl outline-none cursor-not-allowed" placeholder="Rp 0" readonly />
-                            </div>
-                          </div>
-
-                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="space-y-1.5">
-                               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Subtotal Transaksi</label>
-                               <input type="text" id="form-pembelianSubtotalField" class="w-full px-4 py-2 text-xs bg-indigo-50 border border-indigo-100/30 font-extrabold text-indigo-700 rounded-xl outline-none cursor-not-allowed" placeholder="Rp 0" readonly />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- MANUAL VALUES -->
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                      <!-- STATUS & KETERANGAN UMUM -->
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 font-sans">
                         <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Pembelian *</label>
-                          <div class="relative flex items-center w-full">
-                            <input type="number" id="form-pembelianQty" min="1" oninput="hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="0" required />
-                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                              <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                          </div>
-                        </div>
-                        <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal (Satuan) *</label>
-                          <div class="relative flex items-center w-full">
-                            <input type="text" id="form-pembelianHargaModal" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="Rp 0" required />
-                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                              <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                          </div>
-                          <!-- Previous Info & Real-time Trend Indicator -->
-                          <div class="mt-1.5 space-y-1">
-                            <p id="label-pembelianHargaModalSebelumnya" class="text-[10px] font-bold text-slate-400 hidden"></p>
-                            <div id="trend-pembelianHargaModal" class="text-[10px] font-black mt-1 hidden"></div>
-                          </div>
-                        </div>
-                        <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual Baru (Satuan) *</label>
-                          <div class="relative flex items-center w-full">
-                            <input type="text" id="form-pembelianHargaJualInput" oninput="formatInputToRupiah(this); hitungProfitLengkap()" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-sm" placeholder="Rp 0" required />
-                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                              <i data-lucide="x" class="w-4 h-4"></i>
-                            </button>
-                          </div>
-                          <!-- Previous Info & Real-time Trend Indicator -->
-                          <div class="mt-1.5 space-y-1">
-                            <p id="label-pembelianHargaJualSebelumnya" class="text-[10px] font-bold text-slate-400 hidden"></p>
-                            <div id="trend-pembelianHargaJual" class="text-[10px] font-black mt-1 hidden"></div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- INTERACTIVE AUTOMATIC PROFIT DISPLAY -->
-                      <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex items-center justify-between">
-                        <div>
-                          <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest">Kalkulasi Keuntungan</p>
-                          <h4 class="text-xs font-black text-slate-700 font-sans">Profit yang Diperoleh (Jual - Modal)</h4>
-                        </div>
-                        <div class="text-right">
-                          <p id="form-pembelianProfitCalculated" class="text-2xl font-black text-emerald-600">Rp 0</p>
-                          <p id="form-pembelianTotalProfitCalculated" class="text-[9px] font-bold text-emerald-500/80">Total: Rp 0</p>
-                        </div>
-                      </div>
-
-                      <!-- EXP DATE, KET & STATUS -->
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                        <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Expired</label>
-                          <input type="date" id="form-pembelianExpired" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" />
-                        </div>
-                        <div class="space-y-3">
-                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status</label>
+                          <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Pembayaran</label>
                           <div class="relative">
                             <select id="form-pembelianStatus" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
                               <option value="Lunas">LUNAS</option>
@@ -2211,21 +2075,53 @@
                             <i data-lucide="chevron-down" class="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
                           </div>
                         </div>
-                      </div>
-
-                      <div class="space-y-3">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Keterangan</label>
-                        <div class="relative flex items-center w-full">
-                          <input type="text" id="form-pembelianKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
-                          <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                          </button>
+                        <div class="space-y-3">
+                          <label class="text-[10px] font-black text-slate-505 uppercase tracking-widest ml-1">Keterangan Umum</label>
+                          <div class="relative flex items-center w-full">
+                            <input type="text" id="form-pembelianKeterangan" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Misal: Restock Grosir, Promo, dll." />
+                            <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                              <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                          </div>
                         </div>
                       </div>
 
-                      <div class="pt-6 flex gap-3">
+                      <!-- DETAILED ITEMS SECTION (KERANJANG BELANJA) -->
+                      <div class="space-y-6 font-sans">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                          <div class="flex items-center gap-2">
+                            <i data-lucide="shopping-basket" class="w-5 h-5 text-emerald-600"></i>
+                            <h4 class="text-xs font-black text-emerald-600 uppercase tracking-widest font-sans">Keranjang Belanja</h4>
+                          </div>
+                          <button type="button" onclick="addPembelianCartItem()" class="flex items-center gap-1 px-4 py-2 bg-emerald-50 text-emerald-650 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-100/80 transition-all border border-emerald-100 active:scale-95 cursor-pointer">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Barang
+                          </button>
+                        </div>
+
+                        <!-- CARDS CONTAINER FOR MULTI ITEMS -->
+                        <div id="pembelian-barang-items-container" class="space-y-6 max-h-[500px] overflow-y-auto pr-1">
+                          <!-- Filled Dynamically via renderPembelianCart() -->
+                        </div>
+                      </div>
+
+                      <!-- TOTAL SUMMARY SECTION -->
+                      <div class="bg-slate-900 text-white p-6 rounded-[2rem] flex flex-col sm:flex-row gap-4 justify-between items-center shadow-lg font-sans">
+                        <div>
+                          <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest">Ringkasan Pembelian</p>
+                          <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[11px] font-bold text-slate-400 font-mono">
+                            <span>Jenis Barang: <strong class="text-white font-black" id="pembelian-cart-total-items">0</strong></span>
+                            <span>Total Qty: <strong class="text-white font-black" id="pembelian-cart-total-qty">0</strong></span>
+                          </div>
+                        </div>
+                        <div class="text-right flex flex-col items-center sm:items-end">
+                          <span class="text-[10px] font-bold text-slate-400">Grand Total Pembelian</span>
+                          <span id="pembelian-cart-grand-total" class="text-2xl sm:text-3xl font-black text-emerald-450 tracking-tight font-mono font-bold">Rp 0</span>
+                        </div>
+                      </div>
+
+                      <div class="pt-6 flex gap-3 font-sans font-semibold">
                         <button type="submit" class="flex-1 py-3.5 bg-slate-900 hover:bg-emerald-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100/50 transition-all active:scale-95 cursor-pointer">
-                          SIMPAN
+                          SIMPAN TRANSAKSI
                         </button>
                         <button type="button" onclick="closePembelianBarangModal()" class="px-8 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 cursor-pointer">
                           BATAL
@@ -3116,6 +3012,27 @@
             const parentCard = menu.closest('.pembelian-card-item');
             if (parentCard) parentCard.style.zIndex = "50";
           }
+        }
+      }
+
+      // Toggle Detail Harga for Master Satuan Barang in mobile cards
+      function toggleCardDetail(btn, elementId) {
+        if (!btn) return;
+        const detailEl = document.getElementById(elementId);
+        if (!detailEl) return;
+        
+        const isHidden = detailEl.classList.contains("hidden");
+        const icon = btn.querySelector("i");
+        const span = btn.querySelector("span");
+        
+        if (isHidden) {
+          detailEl.classList.remove("hidden");
+          if (icon) icon.style.transform = "rotate(180deg)";
+          if (span) span.innerText = "▲ SEMBUNYIKAN DETAIL HARGA";
+        } else {
+          detailEl.classList.add("hidden");
+          if (icon) icon.style.transform = "rotate(0deg)";
+          if (span) span.innerText = "▼ DETAIL HARGA";
         }
       }
 
@@ -5670,12 +5587,16 @@
                           </span>
                         </button>
                     </div>
-                 </td>
-               </tr>
-             `;
+                  </td>
+                </tr>
+              `;
+
+              const hModalNum = Number(item.hargaModal) || 0;
+              const hJualNum = Number(item.hargaJual) || 0;
+              const hProfitNum = Number(item.profit) || (hJualNum - hModalNum);
 
               cardContainer.innerHTML += `
-               <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
+               <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all">
                   <div class="flex justify-between items-start">
                     <div class="flex gap-4 min-w-0">
                         ${imgHtml}
@@ -5712,6 +5633,32 @@
                         <p class="text-[10px] font-bold text-slate-700">${item.qtySatuan || 1}</p>
                     </div>
                   </div>
+
+                  <!-- Accordion / Toggle Detail Harga -->
+                  <div class="w-full">
+                     <button onclick="toggleCardDetail(this, 'detail-satuan-harga-${idx}')" class="w-full flex items-center justify-between py-2.5 text-[9px] font-black text-slate-500 hover:text-emerald-600 transition-colors uppercase tracking-widest border-t border-b border-dashed border-slate-100 transition-all cursor-pointer">
+                       <span>▼ DETAIL HARGA</span>
+                       <i data-lucide="chevron-down" class="w-3.5 h-3.5 transition-transform duration-300"></i>
+                     </button>
+                     
+                     <div id="detail-satuan-harga-${idx}" class="hidden mt-3 space-y-2 bg-slate-50/50 p-3.5 rounded-2xl border border-slate-100 transition-all duration-300">
+                        <div class="flex justify-between items-center text-xs px-1">
+                           <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Harga Modal</span>
+                           <span class="font-bold text-rose-500">Rp ${hModalNum.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs px-1">
+                           <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Harga Jual</span>
+                           <span class="font-bold text-emerald-600">Rp ${hJualNum.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs border-t border-slate-200/40 pt-2 px-1">
+                           <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Profit</span>
+                           <span class="font-extrabold ${hProfitNum >= 0 ? 'text-emerald-600' : 'text-rose-500'}">
+                             Rp ${hProfitNum.toLocaleString('id-ID')}
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
                   <div class="flex justify-between items-center bg-emerald-50/20 px-4 py-2.5 rounded-xl border border-emerald-100/30 text-xs">
                       <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Harga Jual</span>
                       <span class="font-black text-emerald-600">Rp ${Number(item.hargaJual || 0).toLocaleString('id-ID')}</span>
@@ -5729,7 +5676,7 @@
                      </div>
                   </div>
                </div>
-             `;
+              `;
            });
         }
 
@@ -7609,6 +7556,8 @@
         lucide.createIcons();
       }
 
+      let pembelianCartItems = [];
+
       function openPembelianBarangModal(data = null) {
         const modal = document.getElementById("pembelianBarangModal");
         const title = document.getElementById("pembelianBarangFormTitle");
@@ -7617,7 +7566,6 @@
         form.reset();
         
         document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
-        document.getElementById("form-pembelianBarangSuggestions").classList.add("hidden");
         
         if (data) {
           title.innerText = "Edit Transaksi Pembelian";
@@ -7629,25 +7577,26 @@
           document.getElementById("form-pembelianIdSupplier").value = data.idSupplier;
           document.getElementById("form-pembelianNamaSupplier").value = data.namaSupplier;
           
-          document.getElementById("form-pembelianSearchBarang").value = data.namaBarang + " (" + data.satuan + ")";
-          document.getElementById("form-pembelianBarcode").value = data.barcode || "";
-          document.getElementById("form-pembelianIdBarang").value = data.idBarang;
-          document.getElementById("form-pembelianNamaBarang").value = data.namaBarang;
-          document.getElementById("form-pembelianSatuan").value = data.satuan;
-          
-          const hJualIn = document.getElementById("form-pembelianHargaJualInput");
-          hJualIn.value = data.hargaJual || 0;
-          formatInputToRupiah(hJualIn);
-          
-          document.getElementById("form-pembelianQty").value = data.qtyPembelian;
-          const hModalIn = document.getElementById("form-pembelianHargaModal");
-          hModalIn.value = data.hargaModal;
-          formatInputToRupiah(hModalIn);
-          document.getElementById("form-pembelianExpired").value = data.tanggalExpired;
           document.getElementById("form-pembelianStatus").value = data.status || "Lunas";
-          document.getElementById("form-pembelianKeterangan").value = data.keterangan;
+          document.getElementById("form-pembelianKeterangan").value = data.keterangan || "";
           
-          updatePreviousPricesLabels(data.hargaModalSebelumnya, data.hargaJualSebelumnya);
+          // Populate cart items from all rows sharing same idPembelianBrg
+          const transactionItems = rawPembelianBarangData.filter(x => x.idPembelianBrg === data.idPembelianBrg);
+          
+          pembelianCartItems = transactionItems.map(item => ({
+            id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '_' + item.row,
+            row: item.row,
+            barcode: item.barcode || "",
+            idBarang: item.idBarang,
+            namaBarang: item.namaBarang,
+            satuan: item.satuan,
+            qtyPembelian: Number(item.qtyPembelian) || 1,
+            hargaModal: Number(item.hargaModal) || 0,
+            hargaJual: Number(item.hargaJual) || 0,
+            hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
+            hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
+            tanggalExpired: item.tanggalExpired || ""
+          }));
         } else {
           title.innerText = "Tambah Transaksi Baru";
           document.getElementById("form-pembelianRow").value = "";
@@ -7659,25 +7608,15 @@
           document.getElementById("form-pembelianSearchSupplier").value = "";
           document.getElementById("form-pembelianIdSupplier").value = "";
           document.getElementById("form-pembelianNamaSupplier").value = "";
-          
-          document.getElementById("form-pembelianSearchBarang").value = "";
-          document.getElementById("form-pembelianBarcode").value = "";
-          document.getElementById("form-pembelianIdBarang").value = "";
-          document.getElementById("form-pembelianNamaBarang").value = "";
-          document.getElementById("form-pembelianSatuan").value = "";
-          
-          document.getElementById("form-pembelianHargaJualInput").value = "";
-          
-          document.getElementById("form-pembelianQty").value = "";
-          document.getElementById("form-pembelianHargaModal").value = "";
-          document.getElementById("form-pembelianExpired").value = "";
           document.getElementById("form-pembelianStatus").value = "Lunas";
           document.getElementById("form-pembelianKeterangan").value = "";
           
-          updatePreviousPricesLabels("", "");
+          pembelianCartItems = [];
+          // Pre-add one item row for best UX
+          addPembelianCartItem();
         }
         
-        hitungProfitLengkap();
+        renderPembelianCart();
         modal.classList.replace("hidden", "flex");
         document.body.classList.add("overflow-hidden");
       }
@@ -7703,10 +7642,10 @@
         );
         
         if (matches.length === 0) {
-          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Supplier aktif tidak ditemukan.</div>`;
+          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic font-sans font-sans">Supplier aktif tidak ditemukan.</div>`;
         } else {
           container.innerHTML = matches.map(item => `
-            <button type="button" onclick="pilihSupplierAutocomplete('${item.idSupplier}', '${item.namaSupplier.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1">
+            <button type="button" onclick="pilihSupplierAutocomplete('${item.idSupplier}', '${item.namaSupplier.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex flex-col gap-1 font-sans">
               <span class="font-black text-slate-800 text-xs">${item.namaSupplier}</span>
               <span class="font-mono text-[9px] font-bold text-emerald-500">${item.idSupplier}</span>
             </button>
@@ -7723,71 +7662,8 @@
         document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
       }
 
-      function autocompleteBarang(val) {
-        const container = document.getElementById("form-pembelianBarangSuggestions");
-        if (!val || val.trim().length === 0) {
-          container.classList.add("hidden");
-          return;
-        }
-        
-        const q = val.toLowerCase().trim();
-        const matches = rawSatuanBarangData.filter(item => 
-          item.status === "Aktif" && (
-            (item.namaBarang || "").toLowerCase().includes(q) ||
-            (item.idBarang || "").toLowerCase().includes(q) ||
-            (item.barcode || "").toLowerCase().includes(q)
-          )
-        );
-        
-        // Autocomplete exact match on barcode or ID
-        const exactMatch = matches.find(item => 
-          (item.barcode && item.barcode.toLowerCase() === q) || 
-          (item.idBarang && item.idBarang.toLowerCase() === q)
-        );
-        
-        if (exactMatch) {
-          pilihBarangAutocomplete(exactMatch.barcode || "", exactMatch.idBarang, exactMatch.namaBarang, exactMatch.satuan, exactMatch.hargaJual);
-          return;
-        }
-        
-        if (matches.length === 0) {
-          container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
-        } else {
-          container.innerHTML = matches.map(item => `
-            <button type="button" onclick="pilihBarangAutocomplete('${item.barcode || ""}', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '${item.satuan}', ${item.hargaJual})" class="w-full text-left p-4 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex justify-between items-center">
-              <div>
-                <span class="font-black text-slate-800 text-xs block">${item.namaBarang} (${item.satuan})</span>
-                <span class="text-[9px] font-bold text-slate-400 font-mono">ID: ${item.idBarang} ${item.barcode ? `| Barcode: ${item.barcode}` : ""}</span>
-              </div>
-              <div class="text-right shrink-0 ml-4 font-mono font-black text-emerald-600 text-xs">
-                ${formatIDR(item.hargaJual)}
-              </div>
-            </button>
-          `).join("");
-        }
-        
-        container.classList.remove("hidden");
-      }
-
-      function pilihBarangAutocomplete(barcode, id, nama, satuan, hargaJual) {
-        document.getElementById("form-pembelianSearchBarang").value = nama + " (" + satuan + ")";
-        document.getElementById("form-pembelianBarcode").value = barcode || "";
-        document.getElementById("form-pembelianIdBarang").value = id;
-        document.getElementById("form-pembelianNamaBarang").value = nama;
-        document.getElementById("form-pembelianSatuan").value = satuan;
-        
-        const hJualIn = document.getElementById("form-pembelianHargaJualInput");
-        hJualIn.value = hargaJual || 0;
-        formatInputToRupiah(hJualIn);
-        
-        document.getElementById("form-pembelianBarangSuggestions").classList.add("hidden");
-        
-        const prevPrices = findPreviousPrices(id, satuan, barcode);
-        updatePreviousPricesLabels(prevPrices.hargaModalSebelumnya, prevPrices.hargaJualSebelumnya);
-      }
-
       function findPreviousPrices(idBarang, satuan, barcode) {
-        // Sort history descending by row to get latest transaction
+        // Sort history descending to find latest transaction
         const history = rawPembelianBarangData
           .filter(item => 
             String(item.idBarang) === String(idBarang) && 
@@ -7802,7 +7678,6 @@
           };
         }
         
-        // No history found. Modal is empty, Jual is fetched from Satuan_Barang
         let activeHargaJual = "";
         const activeItem = rawSatuanBarangData.find(item => 
           (barcode && String(item.barcode).trim() === String(barcode).trim()) ||
@@ -7818,162 +7693,348 @@
         };
       }
 
-      function updatePreviousPricesLabels(prevModal, prevJual) {
-        // Set values inside hidden storage elements for comparison
-        const hiddenPrevModal = document.getElementById("form-pembelianPrevHargaModal");
-        if (hiddenPrevModal) hiddenPrevModal.value = prevModal || "";
-        const hiddenPrevJual = document.getElementById("form-pembelianPrevHargaJual");
-        if (hiddenPrevJual) hiddenPrevJual.value = prevJual || "";
-
-        // Update read-only input elements in the form
-        const inputPrevModal = document.getElementById("form-pembelianHargaModalSebelumnya");
-        if (inputPrevModal) {
-          inputPrevModal.value = prevModal ? formatIDR(prevModal) : "-";
-        }
-        
-        const inputPrevJual = document.getElementById("form-pembelianHargaJualSebelumnya");
-        if (inputPrevJual) {
-          inputPrevJual.value = prevJual ? formatIDR(prevJual) : "-";
-        }
-
-        // Keep standard UI label text for backward compatibility
-        const modalLabel = document.getElementById("label-pembelianHargaModalSebelumnya");
-        const jualLabel = document.getElementById("label-pembelianHargaJualSebelumnya");
-        
-        if (modalLabel) {
-          if (prevModal !== undefined && prevModal !== "" && Number(prevModal) > 0) {
-            modalLabel.innerHTML = `Sebelumnya: <span class="text-rose-500 font-extrabold">${formatIDR(prevModal)}</span>`;
-            modalLabel.classList.remove("hidden");
-          } else {
-            modalLabel.classList.add("hidden");
-            modalLabel.innerHTML = "";
-          }
-        }
-        
-        if (jualLabel) {
-          if (prevJual !== undefined && prevJual !== "" && Number(prevJual) > 0) {
-            jualLabel.innerHTML = `Sebelumnya: <span class="text-emerald-600 font-extrabold">${formatIDR(prevJual)}</span>`;
-            jualLabel.classList.remove("hidden");
-          } else {
-            jualLabel.classList.add("hidden");
-            jualLabel.innerHTML = "";
-          }
-        }
-
-        // Trigger calculating to immediately update trend indicators
-        hitungProfitLengkap();
+      function addPembelianCartItem(existingData = null) {
+        const item = {
+          id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000),
+          barcode: existingData ? (existingData.barcode || "") : "",
+          idBarang: existingData ? (existingData.idBarang || "") : "",
+          namaBarang: existingData ? (existingData.namaBarang || "") : "",
+          satuan: existingData ? (existingData.satuan || "") : "",
+          qtyPembelian: existingData ? (Number(existingData.qtyPembelian) || 1) : 1,
+          hargaModal: existingData ? (Number(existingData.hargaModal) || 0) : 0,
+          hargaJual: existingData ? (Number(existingData.hargaJual) || 0) : 0,
+          hargaModalSebelumnya: existingData ? (existingData.hargaModalSebelumnya !== undefined ? existingData.hargaModalSebelumnya : "") : "",
+          hargaJualSebelumnya: existingData ? (existingData.hargaJualSebelumnya !== undefined ? existingData.hargaJualSebelumnya : "") : "",
+          tanggalExpired: existingData ? (existingData.tanggalExpired || "") : ""
+        };
+        pembelianCartItems.push(item);
+        renderPembelianCart();
       }
 
-      function hitungProfitLengkap() {
-        const hJual = Number(document.getElementById("form-pembelianHargaJualInput").value.replace(/\D/g, "")) || 0;
-        const hModal = Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0;
-        const qty = Number(document.getElementById("form-pembelianQty").value) || 0;
-        
-        // Profit per item & total profit
-        const profitPerItem = hJual - hModal;
-        const totalProfit = profitPerItem * qty;
-        
-        const profitEl = document.getElementById("form-pembelianProfitCalculated");
-        const totalProfitEl = document.getElementById("form-pembelianTotalProfitCalculated");
-        
-        if (profitEl) {
-          profitEl.innerText = formatIDR(profitPerItem);
-          if (profitPerItem < 0) {
-            profitEl.className = "text-2xl font-black text-rose-500 animate-pulse";
-          } else {
-            profitEl.className = "text-2xl font-black text-emerald-600";
-          }
-        }
-        
-        if (totalProfitEl) {
-          totalProfitEl.innerText = "Total: " + formatIDR(totalProfit);
-          if (totalProfit < 0) {
-             totalProfitEl.className = "text-[9px] font-bold text-rose-400";
-          } else {
-             totalProfitEl.className = "text-[9px] font-bold text-emerald-500/80";
-          }
+      function removePembelianCartItem(id) {
+        pembelianCartItems = pembelianCartItems.filter(item => item.id !== id);
+        renderPembelianCart();
+      }
+
+      function renderPembelianCart() {
+        const container = document.getElementById("pembelian-barang-items-container");
+        if (!container) return;
+
+        if (pembelianCartItems.length === 0) {
+          container.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-12 px-4 border-2 border-dashed border-slate-200 rounded-[2rem] text-slate-400 bg-slate-50/50 font-sans">
+              <i data-lucide="shopping-bag" class="w-10 h-10 mb-3 text-slate-300"></i>
+              <p class="text-[11px] font-black uppercase tracking-wider text-slate-400 text-center">Belum ada barang di keranjang</p>
+              <p class="text-[10px] text-slate-400 text-center mt-1">Silakan klik "+ Tambah Barang" di atas</p>
+            </div>
+          `;
+          calculateCartTotals();
+          lucide.createIcons();
+          return;
         }
 
-        // Subtotal
-        const subtotalVal = hModal * qty;
+        container.innerHTML = pembelianCartItems.map((item, index) => {
+          const formattedModal = item.hargaModal ? formatIDRVal(item.hargaModal) : "";
+          const formattedJual = item.hargaJual ? formatIDRVal(item.hargaJual) : "";
+          const profit = item.hargaJual - item.hargaModal;
+          const subtotal = item.hargaModal * item.qtyPembelian;
+          
+          const modalPrevSpan = item.hargaModalSebelumnya ? `<span class="bg-rose-50 text-rose-600 px-2 py-0.5 rounded font-black font-mono">Modal Sblm: ${formatIDR(item.hargaModalSebelumnya)}</span>` : '';
+          const jualPrevSpan = item.hargaJualSebelumnya ? `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black font-mono">Jual Sblm: ${formatIDR(item.hargaJualSebelumnya)}</span>` : '';
 
-        // Form fields update
-        const profitField = document.getElementById("form-pembelianProfitField");
-        if (profitField) profitField.value = formatIDR(profitPerItem);
-        
-        const subtotalField = document.getElementById("form-pembelianSubtotalField");
-        if (subtotalField) subtotalField.value = formatIDR(subtotalVal);
+          const itemSelectedHTML = item.idBarang ? `
+            <div class="bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-sans">
+              <div class="space-y-1">
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400 block font-sans">Barcode / ID</span>
+                <span class="font-extrabold text-slate-700 font-mono text-[10px] truncate block">${item.barcode || item.idBarang}</span>
+              </div>
+              <div class="space-y-1 col-span-2">
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400 block font-sans">Nama & Satuan</span>
+                <span class="font-black text-slate-800 text-[11px] truncate block">${item.namaBarang} (${item.satuan})</span>
+              </div>
+              <div class="space-y-1 flex flex-col justify-center items-end text-right">
+                <button type="button" onclick="resetCartProduct('${item.id}')" class="text-[9px] font-black uppercase tracking-wider text-rose-500 hover:text-rose-700 transition-colors cursor-pointer">
+                  Ganti Barang
+                </button>
+              </div>
+            </div>
+          ` : `
+            <div class="relative space-y-2 font-sans">
+              <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Cari / Scan Barang *</label>
+              <div class="flex gap-2">
+                <div class="relative flex-1 min-w-0 flex items-center">
+                  <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
+                  <input type="text" id="cart-item-search-${item.id}" oninput="autocompleteCartItem('${item.id}', this.value)" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold outline-none focus:ring-4 focus:ring-emerald-100/55 shadow-inner animate-pulse-placeholder" placeholder="Cari nama, barcode, atau ID..." />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
+                    <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+                <button type="button" onclick="startCartItemScan('${item.id}')" class="p-3.5 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-2xl hover:bg-emerald-100 transition-all flex items-center justify-center shrink-0 shadow-sm active:scale-95" title="Scan Barcode">
+                  <i data-lucide="scan" class="w-4 h-4"></i>
+                </button>
+              </div>
+              <div id="cart-suggestions-${item.id}" class="absolute left-0 right-0 mt-1 bg-white border border-slate-150 rounded-2xl shadow-2xl max-h-48 overflow-y-auto custom-scrollbar z-[7100] hidden">
+              </div>
+            </div>
+          `;
 
-        // Get stored previous prices from hidden fields
-        const prevModalVal = Number(document.getElementById("form-pembelianPrevHargaModal").value) || 0;
-        const prevJualVal = Number(document.getElementById("form-pembelianPrevHargaJual").value) || 0;
+          return `
+            <div class="bg-white p-6 rounded-[2.2rem] border border-slate-200/80 shadow-sm space-y-5 transition-all relative group hover:border-slate-300">
+              <div class="flex items-center justify-between font-sans">
+                <div class="flex items-center gap-2">
+                  <span class="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-black text-[10px] font-mono">${index + 1}</span>
+                  <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Detail Barang</span>
+                </div>
+                <button type="button" onclick="removePembelianCartItem('${item.id}')" class="flex items-center gap-1 px-3 py-1.5 text-rose-500 hover:text-white rounded-xl hover:bg-rose-500 hover:shadow-lg hover:shadow-rose-100 transition-all text-[9px] font-black uppercase tracking-widest active:scale-95 border border-transparent hover:border-rose-300 cursor-pointer">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  Hapus
+                </button>
+              </div>
 
-        // Visual Trend MODAL
-        const trendModalEl = document.getElementById("trend-pembelianHargaModal");
-        if (trendModalEl) {
-          if (hModal > 0) {
-            if (prevModalVal > 0) {
-              const diff = hModal - prevModalVal;
-              if (diff > 0) {
-                trendModalEl.innerHTML = `<span class="text-rose-500 font-extrabold flex items-center gap-1">🔺 Modal Naik (+${formatIDR(diff)})</span>`;
-              } else if (diff < 0) {
-                trendModalEl.innerHTML = `<span class="text-emerald-600 font-extrabold flex items-center gap-1">🔻 Modal Turun (${formatIDR(Math.abs(diff))})</span>`;
-              } else {
-                trendModalEl.innerHTML = `<span class="text-slate-500 font-bold flex items-center gap-1">Harga Tetap</span>`;
-              }
-              trendModalEl.classList.remove("hidden");
-            } else {
-              trendModalEl.innerHTML = `<span class="text-slate-400 font-bold flex items-center gap-1">Harga Tetap (Baru)</span>`;
-              trendModalEl.classList.remove("hidden");
-            }
-          } else {
-            trendModalEl.classList.add("hidden");
-          }
-        }
+              ${itemSelectedHTML}
 
-        // Visual Trend JUAL
-        const trendJualEl = document.getElementById("trend-pembelianHargaJual");
-        if (trendJualEl) {
-          if (hJual > 0) {
-            if (prevJualVal > 0) {
-              const diff = hJual - prevJualVal;
-              if (diff > 0) {
-                trendJualEl.innerHTML = `<span class="text-emerald-600 font-extrabold flex items-center gap-1">🔺 Harga Jual Naik (+${formatIDR(diff)})</span>`;
-              } else if (diff < 0) {
-                trendJualEl.innerHTML = `<span class="text-rose-500 font-extrabold flex items-center gap-1">🔻 Harga Jual Turun (${formatIDR(Math.abs(diff))})</span>`;
-              } else {
-                trendJualEl.innerHTML = `<span class="text-slate-500 font-bold flex items-center gap-1">Harga Tetap</span>`;
-              }
-              trendJualEl.classList.remove("hidden");
-            } else {
-              trendJualEl.innerHTML = `<span class="text-slate-400 font-bold flex items-center gap-1">Harga Tetap (Baru)</span>`;
-              trendJualEl.classList.remove("hidden");
-            }
-          } else {
-            trendJualEl.classList.add("hidden");
-          }
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="space-y-1.5 flex-1 font-sans">
+                  <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Beli</label>
+                  <input type="number" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
+                </div>
+                <div class="space-y-1.5 flex-1 font-sans">
+                  <label class="text-[9px] font-black text-slate-505 uppercase tracking-widest ml-1">Harga Modal</label>
+                  <input type="text" value="${formattedModal}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaModal', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                  <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
+                    ${modalPrevSpan}
+                    ${getModalTrendHTML(item)}
+                  </div>
+                </div>
+                <div class="space-y-1.5 flex-1 font-sans">
+                  <label class="text-[9px] font-black text-slate-505 uppercase tracking-widest ml-1">Harga Jual Baru</label>
+                  <input type="text" value="${formattedJual}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaJual', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                  <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
+                    ${jualPrevSpan}
+                    ${getJualTrendHTML(item)}
+                  </div>
+                </div>
+                <div class="space-y-1.5 flex-1 font-sans">
+                  <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Tgl Expired</label>
+                  <input type="date" value="${item.tanggalExpired}" onchange="updateCartItemPropertyValue('${item.id}', 'tanggalExpired', this.value)" class="w-full px-4 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" />
+                </div>
+              </div>
+
+              <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-between text-xs border border-slate-150/40 font-sans">
+                <div class="flex flex-col">
+                  <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Profit / Pcs</span>
+                  <span class="font-extrabold ${profit < 0 ? 'text-rose-500 animate-pulse' : 'text-emerald-600'} font-mono text-[11px] mt-0.5">
+                    ${formatIDR(profit)}
+                  </span>
+                </div>
+                <div class="flex flex-col text-right">
+                  <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Subtotal Item</span>
+                  <span class="font-extrabold text-indigo-700 font-mono text-[11px] mt-0.5">
+                    ${formatIDR(subtotal)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+        calculateCartTotals();
+        lucide.createIcons();
+      }
+
+      function formatIDRVal(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+
+      function formatCartInputRupiah(el) {
+        let val = el.value.replace(/\D/g, "");
+        if (val) {
+          el.value = formatIDRVal(val);
+        } else {
+          el.value = "";
         }
       }
+
+      function updateCartItemPropertyValue(id, prop, rawVal) {
+        const item = pembelianCartItems.find(item => item.id === id);
+        if (!item) return;
+
+        if (prop === 'qtyPembelian') {
+          item.qtyPembelian = Math.max(1, parseInt(rawVal) || 1);
+        } else if (prop === 'hargaModal' || prop === 'hargaJual') {
+          item[prop] = parseFloat(rawVal.replace(/\D/g, "")) || 0;
+        } else if (prop === 'tanggalExpired') {
+          item.tanggalExpired = rawVal;
+        }
+
+        renderPembelianCart();
+      }
+
+      function resetCartProduct(id) {
+        const item = pembelianCartItems.find(item => item.id === id);
+        if (!item) return;
+        item.barcode = "";
+        item.idBarang = "";
+        item.namaBarang = "";
+        item.satuan = "";
+        item.hargaModal = 0;
+        item.hargaJual = 0;
+        item.hargaModalSebelumnya = "";
+        item.hargaJualSebelumnya = "";
+        renderPembelianCart();
+      }
+
+      function getModalTrendHTML(item) {
+        if (!item.hargaModal || !item.hargaModalSebelumnya) return "";
+        const diff = item.hargaModal - Number(item.hargaModalSebelumnya);
+        if (diff > 0) {
+          return `<span class="text-rose-500 font-black flex items-center gap-0.5">🔺 Naik (+${formatIDR(diff)})</span>`;
+        } else if (diff < 0) {
+          return `<span class="text-emerald-600 font-black flex items-center gap-0.5">🔻 Turun (${formatIDR(Math.abs(diff))})</span>`;
+        } else {
+          return `<span class="text-slate-400 font-black flex items-center gap-0.5">Harga Tetap</span>`;
+        }
+      }
+
+      function getJualTrendHTML(item) {
+        if (!item.hargaJual || !item.hargaJualSebelumnya) return "";
+        const diff = item.hargaJual - Number(item.hargaJualSebelumnya);
+        if (diff > 0) {
+          return `<span class="text-emerald-600 font-black flex items-center gap-0.5">🔺 Naik (+${formatIDR(diff)})</span>`;
+        } else if (diff < 0) {
+          return `<span class="text-rose-500 font-black flex items-center gap-0.5 border-rose-100">🔻 Turun (${formatIDR(Math.abs(diff))})</span>`;
+        } else {
+          return `<span class="text-slate-400 font-black flex items-center gap-0.5">Harga Tetap</span>`;
+        }
+      }
+
+      function calculateCartTotals() {
+        const uniqueItemsCount = pembelianCartItems.filter(item => item.idBarang).length;
+        const totalQty = pembelianCartItems.reduce((acc, item) => acc + (item.qtyPembelian || 0), 0);
+        const grandTotal = pembelianCartItems.reduce((acc, item) => acc + ((item.qtyPembelian || 0) * (item.hargaModal || 0)), 0);
+
+        const itemsEl = document.getElementById("pembelian-cart-total-items");
+        const qtyEl = document.getElementById("pembelian-cart-total-qty");
+        const totalEl = document.getElementById("pembelian-cart-grand-total");
+
+        if (itemsEl) itemsEl.innerText = uniqueItemsCount;
+        if (qtyEl) qtyEl.innerText = totalQty;
+        if (totalEl) totalEl.innerText = formatIDR(grandTotal);
+      }
+
+      function autocompleteCartItem(itemId, val) {
+        const container = document.getElementById("cart-suggestions-" + itemId);
+        if (!container) return;
+
+        if (!val || val.trim().length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+
+        const q = val.toLowerCase().trim();
+        const matches = rawSatuanBarangData.filter(item => 
+          item.status === "Aktif" && (
+            (item.namaBarang || "").toLowerCase().includes(q) ||
+            (item.idBarang || "").toLowerCase().includes(q) ||
+            (item.barcode || "").toLowerCase().includes(q)
+          )
+        );
+
+        const exactMatch = matches.find(item => 
+          (item.barcode && item.barcode.toLowerCase() === q) || 
+          (item.idBarang && item.idBarang.toLowerCase() === q)
+        );
+
+        if (exactMatch) {
+          pilihCartItemGoods(itemId, exactMatch.barcode || "", exactMatch.idBarang, exactMatch.namaBarang, exactMatch.satuan, exactMatch.hargaJual);
+          return;
+        }
+
+        if (matches.length === 0) {
+          container.innerHTML = `<div class="p-3.5 text-[10px] font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
+        } else {
+          container.innerHTML = matches.map(item => `
+            <button type="button" onclick="pilihCartItemGoods('${itemId}', '${item.barcode || ""}', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '${item.satuan}', ${item.hargaJual})" class="w-full text-left p-3.5 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex justify-between items-center pr-4 font-sans">
+              <div class="min-w-0 flex-1">
+                <span class="font-black text-slate-800 text-[11px] block truncate">${item.namaBarang} (${item.satuan})</span>
+                <span class="text-[9px] font-bold text-slate-400 font-mono">ID: ${item.idBarang} ${item.barcode ? `| Barcode: ${item.barcode}` : ""}</span>
+              </div>
+              <div class="text-right shrink-0 ml-4 font-mono font-black text-emerald-600 text-[10px]">
+                ${formatIDR(item.hargaJual || 0)}
+              </div>
+            </button>
+          `).join("");
+        }
+
+        container.classList.remove("hidden");
+      }
+
+      function pilihCartItemGoods(itemId, barcode, idBarang, namaBarang, satuan, hargaJualVal) {
+        const item = pembelianCartItems.find(item => item.id === itemId);
+        if (!item) return;
+
+        item.barcode = barcode || "";
+        item.idBarang = idBarang;
+        item.namaBarang = namaBarang;
+        item.satuan = satuan;
+        item.hargaJual = hargaJualVal || 0;
+
+        const prevPrices = findPreviousPrices(idBarang, satuan, barcode);
+        item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
+        item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || hargaJualVal || "";
+        item.hargaModal = prevPrices.hargaModalSebelumnya || 0;
+
+        renderPembelianCart();
+      }
+
+      function startCartItemScan(itemId) {
+        startSupplierScan(`cart-item-search-${itemId}`);
+      }
+
+      // Backward compatible stubs
+      function updatePreviousPricesLabels() {}
+      function hitungProfitLengkap() {}
 
       async function handleSimpanPembelianBarang(e) {
         e.preventDefault();
         
+        const idSupplier = document.getElementById("form-pembelianIdSupplier").value;
+        const namaSupplier = document.getElementById("form-pembelianNamaSupplier").value;
+        if (!idSupplier || !namaSupplier) {
+          showAlert("Peringatan", "Silakan pilih supplier terlebih dahulu.", "warning");
+          return;
+        }
+
+        if (pembelianCartItems.length === 0) {
+          showAlert("Peringatan", "Keranjang belanja tidak boleh kosong. Silakan tambah barang.", "warning");
+          return;
+        }
+
+        const invalidItem = pembelianCartItems.find(item => !item.idBarang || !item.namaBarang);
+        if (invalidItem) {
+          showAlert("Peringatan", "Ada item dalam keranjang yang belum dipilih barangnya.", "warning");
+          return;
+        }
+
         const payload = {
           row: document.getElementById("form-pembelianRow").value,
           idPembelianBrg: document.getElementById("form-pembelianId").value,
           tanggalPembelian: document.getElementById("form-pembelianTanggal").value,
-          idSupplier: document.getElementById("form-pembelianIdSupplier").value,
-          namaSupplier: document.getElementById("form-pembelianNamaSupplier").value,
-          barcode: document.getElementById("form-pembelianBarcode").value,
-          idBarang: document.getElementById("form-pembelianIdBarang").value,
-          namaBarang: document.getElementById("form-pembelianNamaBarang").value,
-          satuan: document.getElementById("form-pembelianSatuan").value,
-          qtyPembelian: Number(document.getElementById("form-pembelianQty").value) || 0,
-          hargaModal: Number(document.getElementById("form-pembelianHargaModal").value.replace(/\D/g, "")) || 0,
-          hargaJual: Number(document.getElementById("form-pembelianHargaJualInput").value.replace(/\D/g, "")) || 0,
-          tanggalExpired: document.getElementById("form-pembelianExpired").value,
+          idSupplier: idSupplier,
+          namaSupplier: namaSupplier,
           status: document.getElementById("form-pembelianStatus").value,
-          keterangan: document.getElementById("form-pembelianKeterangan").value
+          keterangan: document.getElementById("form-pembelianKeterangan").value,
+          items: pembelianCartItems.map(item => ({
+            row: item.row || "",
+            barcode: item.barcode || "",
+            idBarang: item.idBarang,
+            namaBarang: item.namaBarang,
+            satuan: item.satuan,
+            qtyPembelian: Number(item.qtyPembelian) || 0,
+            hargaModal: Number(item.hargaModal) || 0,
+            hargaJual: Number(item.hargaJual) || 0,
+            tanggalExpired: item.tanggalExpired || ""
+          }))
         };
 
         showLoading(true);
@@ -7986,18 +8047,34 @@
             closePembelianBarangModal();
             fetchPembelianBarangData();
           } else if (!res) {
+            // Static offline demo simulation
             if (payload.row) {
-               const idx = rawPembelianBarangData.findIndex(item => item.row == payload.row);
-               if (idx !== -1) {
-                  rawPembelianBarangData[idx] = {
-                     ...rawPembelianBarangData[idx],
-                     ...payload,
-                     profit: (Number(payload.hargaJual) || 0) - (Number(payload.hargaModal) || 0)
-                  };
-               }
+               const oldId = payload.idPembelianBrg;
+               rawPembelianBarangData = rawPembelianBarangData.filter(x => x.idPembelianBrg !== oldId);
+               
+               payload.items.forEach((item, index) => {
+                 rawPembelianBarangData.push({
+                   row: Date.now() + index,
+                   idPembelianBrg: oldId,
+                   tanggalPembelian: payload.tanggalPembelian,
+                   idSupplier: payload.idSupplier,
+                   namaSupplier: payload.namaSupplier,
+                   status: payload.status,
+                   keterangan: payload.keterangan,
+                   barcode: item.barcode,
+                   idBarang: item.idBarang,
+                   namaBarang: item.namaBarang,
+                   satuan: item.satuan,
+                   qtyPembelian: item.qtyPembelian,
+                   hargaModal: item.hargaModal,
+                   hargaJual: item.hargaJual,
+                   profit: item.hargaJual - item.hargaModal,
+                   subtotal: item.qtyPembelian * item.hargaModal,
+                   tanggalExpired: item.tanggalExpired
+                 });
+               });
                showToast("Data diperbarui secara lokal (Demo)", "success");
             } else {
-               const nextRow = rawPembelianBarangData.length + 2;
                let maxNum = 0;
                rawPembelianBarangData.forEach(p => {
                  if (p.idPembelianBrg && p.idPembelianBrg.startsWith("PB-")) {
@@ -8006,14 +8083,28 @@
                  }
                });
                const newId = "PB-" + String(maxNum + 1).padStart(3, '0');
-               const newObj = {
-                  row: nextRow,
-                  idPembelianBrg: newId,
-                  ...payload,
-                  profit: (Number(payload.hargaJual) || 0) - (Number(payload.hargaModal) || 0),
-                  status: payload.status || "Lunas"
-               };
-               rawPembelianBarangData.push(newObj);
+               
+               payload.items.forEach((item, index) => {
+                 rawPembelianBarangData.push({
+                   row: Date.now() + index,
+                   idPembelianBrg: newId,
+                   tanggalPembelian: payload.tanggalPembelian,
+                   idSupplier: payload.idSupplier,
+                   namaSupplier: payload.namaSupplier,
+                   status: payload.status,
+                   keterangan: payload.keterangan,
+                   barcode: item.barcode,
+                   idBarang: item.idBarang,
+                   namaBarang: item.namaBarang,
+                   satuan: item.satuan,
+                   qtyPembelian: item.qtyPembelian,
+                   hargaModal: item.hargaModal,
+                   hargaJual: item.hargaJual,
+                   profit: item.hargaJual - item.hargaModal,
+                   subtotal: item.qtyPembelian * item.hargaModal,
+                   tanggalExpired: item.tanggalExpired
+                 });
+               });
                showToast("Data ditambahkan secara lokal (Demo)", "success");
             }
             closePembelianBarangModal();

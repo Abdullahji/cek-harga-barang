@@ -5615,11 +5615,50 @@
 
         // Sort
         filtered.sort((a, b) => {
-           let valA = a[satuanBarangSortBy] || "";
-           let valB = b[satuanBarangSortBy] || "";
-           if (typeof valA === 'string') valA = valA.toLowerCase();
-           if (typeof valB === 'string') valB = valB.toLowerCase();
-           return satuanBarangSortOrder === 'asc' ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+           if (satuanBarangSortBy === 'namaBarang') {
+             const nameA = String(a.namaBarang || "").trim().toLowerCase();
+             const nameB = String(b.namaBarang || "").trim().toLowerCase();
+             
+             if (nameA !== nameB) {
+               const comp = nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+               return satuanBarangSortOrder === 'asc' ? comp : -comp;
+             }
+             
+             // Secondary sort for levelSatuan (numeric, always ascending)
+             const lvlA = Number(a.levelSatuan) || 1;
+             const lvlB = Number(b.levelSatuan) || 1;
+             return lvlA - lvlB;
+           } else {
+             // Standard sorting for other criteria (barcode, hargaJual, etc.)
+             let valA = a[satuanBarangSortBy];
+             let valB = b[satuanBarangSortBy];
+
+             // Handle numeric sorting for hargaJual
+             if (satuanBarangSortBy === 'hargaJual') {
+               const numA = Number(valA) || 0;
+               const numB = Number(valB) || 0;
+               if (numA !== numB) {
+                 return satuanBarangSortOrder === 'asc' ? numA - numB : numB - numA;
+               }
+             } else {
+               valA = String(valA || "").trim().toLowerCase();
+               valB = String(valB || "").trim().toLowerCase();
+               if (valA !== valB) {
+                 const comp = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+                 return satuanBarangSortOrder === 'asc' ? comp : -comp;
+               }
+             }
+
+             // Fallback secondary sort: name then levelSatuan
+             const nameA = String(a.namaBarang || "").trim().toLowerCase();
+             const nameB = String(b.namaBarang || "").trim().toLowerCase();
+             if (nameA !== nameB) {
+               return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+             }
+             const lvlA = Number(a.levelSatuan) || 1;
+             const lvlB = Number(b.levelSatuan) || 1;
+             return lvlA - lvlB;
+           }
         });
 
         const total = filtered.length;
@@ -7945,25 +7984,10 @@
           const jualPrevVal = item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-';
           const jualPrevSpan = `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black font-mono">Jual Sblmnya: ${jualPrevVal}</span>`;
 
-          // Generate Satuan dropdown HTML filtered to only BELI & KEDUANYA (exclude JUAL)
+          // Generate Satuan display HTML as a clean, static, high-contrast display-only label
           let selectSatuanHtml = "";
           if (item.idBarang) {
-            const unitsForBarang = rawSatuanBarangData.filter(s => 
-              String(s.idBarang) === String(item.idBarang) &&
-              String(s.status).toUpperCase() === "AKTIF" &&
-              String(s.tipeSatuan || "").toUpperCase() !== "JUAL"
-            );
-            if (unitsForBarang.length > 0) {
-              selectSatuanHtml = `
-                <select onchange="handleCartItemSatuanChange('${item.id}', this.value)" class="px-2.5 py-1 text-[10px] font-black text-slate-700 bg-white border border-slate-200 rounded-lg outline-none cursor-pointer hover:border-slate-300">
-                  ${unitsForBarang.map(u => `
-                    <option value="${u.satuan}" ${String(u.satuan).toUpperCase() === String(item.satuan).toUpperCase() ? "selected" : ""}>${u.satuan}</option>
-                  `).join("")}
-                </select>
-              `;
-            } else {
-              selectSatuanHtml = `<span class="font-extrabold text-slate-800 font-mono text-[10.5px]">${item.satuan}</span>`;
-            }
+            selectSatuanHtml = `<span class="px-2.5 py-1 text-[10.5px] font-mono font-black text-emerald-800 bg-emerald-50 rounded-lg border border-emerald-150 uppercase tracking-wider">${item.satuan}</span>`;
           }
 
           const itemSelectedHTML = item.idBarang ? `
@@ -8296,32 +8320,6 @@
           item.hargaJual = "";
         } else {
           item.hargaJual = hargaJualVal || (unitRecord ? unitRecord.hargaJual : 0) || 0;
-        }
-
-        renderPembelianCart();
-      }
-
-      function handleCartItemSatuanChange(itemId, newSatuan) {
-        const item = pembelianCartItems.find(x => x.id === itemId);
-        if (!item) return;
-
-        const unitRecord = rawSatuanBarangData.find(s => 
-          String(s.idBarang) === String(item.idBarang) && 
-          String(s.satuan).toUpperCase() === String(newSatuan).toUpperCase()
-        );
-
-        item.satuan = newSatuan;
-        item.barcode = unitRecord ? (unitRecord.barcode || "") : "";
-        item.tipeSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
-
-        const prevPrices = findPreviousPrices(item.idBarang, newSatuan, item.barcode);
-        item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
-        item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || (unitRecord ? unitRecord.hargaJual : "") || "";
-
-        if (String(item.tipeSatuan).toUpperCase() === "BELI") {
-          item.hargaJual = "";
-        } else {
-          item.hargaJual = (unitRecord ? unitRecord.hargaJual : 0) || 0;
         }
 
         renderPembelianCart();

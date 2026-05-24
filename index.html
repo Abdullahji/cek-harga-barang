@@ -6074,16 +6074,8 @@
         
         const hargaJualInput = rowCard.querySelector(".satuan-card-harga");
         if (hargaJualInput) {
-          if (value === "BELI") {
-            hargaJualInput.required = false;
-            if (hargaJualInput.value === "Rp 0" || hargaJualInput.value === "0" || !hargaJualInput.value) {
-              hargaJualInput.value = "";
-            }
-            hargaJualInput.placeholder = "Kosong (Opsional)";
-          } else {
-            hargaJualInput.required = true;
-            hargaJualInput.placeholder = "Rp 0";
-          }
+          hargaJualInput.required = true;
+          hargaJualInput.placeholder = "Rp 0";
         }
       }
 
@@ -6683,10 +6675,9 @@
           const statusVal = card.querySelector(".satuan-card-status").value;
           const gambarVal = card.querySelector(".satuan-card-gambar").value;
 
-          const isHargaJualOptional = (tipeSatuanVal === "BELI");
-          const hargaJual = isHargaJualOptional && !hargaRaw.trim() ? "" : (hargaRaw || "").replace(/\D/g, "");
+          const hargaJual = (hargaRaw || "").replace(/\D/g, "");
 
-          if (!satuanVal || !qtyInputVal || !qtyVal || (!isHargaJualOptional && !hargaJual)) {
+          if (!satuanVal || !qtyInputVal || !qtyVal || !hargaJual) {
              hasEmptyFields = true;
           }
 
@@ -6718,7 +6709,7 @@
         });
 
         if (hasEmptyFields) {
-          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual (Harga Jual opsional untuk tipe BELI).", "warning");
+          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual (Harga Jual wajib diisi).", "warning");
           return;
         }
 
@@ -8358,7 +8349,12 @@
         if (!item) return;
 
         if (prop === 'qtyPembelian') {
-          item.qtyPembelian = Math.max(1, parseInt(rawVal) || 1);
+          if (rawVal === '') {
+            item.qtyPembelian = '';
+          } else {
+            const parsed = parseInt(rawVal);
+            item.qtyPembelian = isNaN(parsed) ? '' : parsed;
+          }
         } else if (prop === 'hargaModal') {
           item[prop] = parseFloat(rawVal.replace(/\D/g, "")) || 0;
         } else if (prop === 'hargaJual') {
@@ -8531,6 +8527,12 @@
         const invalidItem = pembelianCartItems.find(item => !item.idBarang || !item.namaBarang);
         if (invalidItem) {
           showAlert("Peringatan", "Ada item dalam keranjang yang belum dipilih barangnya.", "warning");
+          return;
+        }
+
+        const invalidQtyItem = pembelianCartItems.find(item => !item.qtyPembelian || Number(item.qtyPembelian) <= 0);
+        if (invalidQtyItem) {
+          showAlert("Peringatan", "Jumlah kuantitas pembelian (Qty Beli) untuk semua item harus lebih besar dari 0.", "warning");
           return;
         }
 

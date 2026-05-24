@@ -1908,7 +1908,7 @@
             <!-- DETAIL PEMBELIAN BARANG MODAL -->
             <div id="pembelianBarangDetailModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePembelianBarangDetailModal()"></div>
-              <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+              <div class="relative bg-white w-full max-w-3xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
                 <!-- Close Button -->
                 <button type="button" onclick="closePembelianBarangDetailModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
                   <i data-lucide="x" class="w-6 h-6"></i>
@@ -1924,98 +1924,12 @@
                       <p class="text-xs font-bold text-slate-400 mt-1" id="detail-pb-tanggal">-</p>
                     </div>
 
-                    <div class="space-y-6">
-                      <!-- Grid Info Umum -->
-                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100/50 text-xs text-slate-700">
-                        <div>
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Supplier</p>
-                          <p class="font-extrabold text-slate-800 text-sm" id="detail-pb-supplier-nama">-</p>
-                          <p class="font-mono text-emerald-500 font-bold mt-0.5" id="detail-pb-supplier-id">-</p>
-                        </div>
-                        <div>
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Status Transaksi</p>
-                          <span id="detail-pb-status-badge" class="inline-block mt-0.5">-</span>
-                        </div>
-                        <div class="sm:col-span-2 border-t border-slate-200/50 pt-4">
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Barang</p>
-                          <p class="font-black text-slate-800 text-sm" id="detail-pb-barang-nama">-</p>
-                          <div class="flex gap-2 items-center mt-1">
-                            <span class="font-mono bg-white px-2 py-0.5 text-[10px] font-bold border border-slate-200 rounded" id="detail-pb-barang-id">-</span>
-                            <span class="font-mono bg-emerald-50 text-emerald-600 px-2 py-0.5 text-[10px] font-bold border border-emerald-100 rounded" id="detail-pb-barang-barcode">-</span>
-                          </div>
-                        </div>
-                        <div>
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Qty & Satuan</p>
-                          <p class="font-extrabold text-slate-800 text-sm" id="detail-pb-qty-satuan">-</p>
-                        </div>
-                        <div>
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Subtotal Transaksi</p>
-                          <p class="font-black text-indigo-600 text-sm" id="detail-pb-subtotal">-</p>
-                        </div>
-                        <div class="sm:col-span-2 border-t border-slate-200/50 pt-4">
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Informasi Kadaluarsa</p>
-                          <div class="flex flex-wrap items-center gap-3 mt-1.5">
-                            <span class="text-xs font-bold text-slate-600" id="detail-pb-exp-date">Exp: -</span>
-                            <span class="text-[10px] font-mono bg-slate-100 px-2 py-1 rounded" id="detail-pb-exp-hari">- Days Left</span>
-                            <span id="detail-pb-exp-badge">-</span>
-                          </div>
-                        </div>
-                        <div class="sm:col-span-2 border-t border-slate-200/50 pt-4">
-                          <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Keterangan</p>
-                          <p class="font-medium text-slate-600 italic" id="detail-pb-keterangan">-</p>
-                        </div>
-                      </div>
-
-                      <!-- PERBANDINGAN HARGA (PRICING DIFFERENCES) PANEL -->
-                      <div class="bg-indigo-50/50 border border-indigo-100/60 p-6 rounded-2xl space-y-4">
-                        <div class="flex items-center gap-2 border-b border-indigo-100/40 pb-2">
-                          <i data-lucide="trending-up" class="w-4 h-4 text-indigo-600 font-bold"></i>
-                          <h4 class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Analisis Perbandingan Harga & Keuntungan</h4>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <!-- Modal Pricing differences -->
-                          <div class="p-4 bg-white rounded-xl border border-slate-100 space-y-2">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Harga Modal (Satuan)</span>
-                            <div class="flex justify-between text-xs font-bold text-slate-600">
-                              <span>Sebelumnya:</span>
-                              <span id="detail-pb-modal-prev" class="text-rose-500 font-extrabold">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs font-bold text-slate-800">
-                              <span>Baru (Sekarang):</span>
-                              <span id="detail-pb-modal-new" class="text-rose-600 font-black">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs font-bold border-t border-slate-100 pt-1.5 mt-1.5">
-                              <span>Selisih Modal:</span>
-                              <span id="detail-pb-modal-diff" class="font-extrabold">-</span>
-                            </div>
-                          </div>
-
-                          <!-- Jual Pricing differences -->
-                          <div class="p-4 bg-white rounded-xl border border-slate-100 space-y-2">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Harga Jual (Satuan)</span>
-                            <div class="flex justify-between text-xs font-bold text-slate-600">
-                              <span>Sebelumnya:</span>
-                              <span id="detail-pb-jual-prev" class="text-emerald-500 font-extrabold">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs font-bold text-slate-800">
-                              <span>Baru (Sekarang):</span>
-                              <span id="detail-pb-jual-new" class="text-emerald-600 font-black">-</span>
-                            </div>
-                            <div class="flex justify-between text-xs font-bold border-t border-slate-100 pt-1.5 mt-1.5">
-                              <span>Selisih Jual:</span>
-                              <span id="detail-pb-jual-diff" class="font-extrabold">-</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="pt-2 flex gap-3">
-                        <button type="button" onclick="closePembelianBarangDetailModal()" class="flex-1 py-4 bg-slate-900 hover:bg-slate-850 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 cursor-pointer text-center">
-                          TUTUP
-                        </button>
-                      </div>
+                    <div id="detail-pb-content-container" class="space-y-6">
+                      <!-- Dynamic Invoice content will be inserted here -->
                     </div>
+                </div>
+              </div>
+            </div>
                 </div>
               </div>
             </div>
@@ -9349,90 +9263,262 @@
       }
 
       function openPembelianBarangDetailModal(item) {
-        document.getElementById("detail-pb-id").innerText = item.idPembelianBrg || "-";
-        document.getElementById("detail-pb-tanggal").innerText = "Tanggal Pembelian: " + (item.tanggalPembelian || "-");
-        document.getElementById("detail-pb-supplier-nama").innerText = item.namaSupplier || "-";
-        document.getElementById("detail-pb-supplier-id").innerText = "ID: " + (item.idSupplier || "-");
+        const orderId = item.idPembelianBrg || "";
         
-        const statusBadge = document.getElementById("detail-pb-status-badge");
-        if (statusBadge) {
-          const isLunas = item.status === "Lunas";
-          statusBadge.innerHTML = `
-            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-              isLunas ? "bg-emerald-50 text-emerald-600 border border-emerald-100" : "bg-rose-50 text-rose-500 border border-rose-100"
-            }">${item.status || "Hutang"}</span>
-          `;
+        // Find all items sharing the same idPembelianBrg in local rawPembelianBarangData array
+        let transactionItems = [];
+        if (orderId) {
+          transactionItems = rawPembelianBarangData.filter(x => String(x.idPembelianBrg) === String(orderId));
+        }
+        
+        // Fallback to current selected row if no matches
+        if (transactionItems.length === 0) {
+          transactionItems = [item];
         }
 
-        document.getElementById("detail-pb-barang-nama").innerText = item.namaBarang || "-";
-        document.getElementById("detail-pb-barang-id").innerText = item.idBarang || "-";
-        document.getElementById("detail-pb-barang-barcode").innerText = item.barcode ? "Barcode: " + item.barcode : "-";
-        document.getElementById("detail-pb-qty-satuan").innerText = (item.qtyPembelian || 0) + " " + (item.satuan || "");
-        document.getElementById("detail-pb-subtotal").innerText = formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal));
-        
-        document.getElementById("detail-pb-exp-date").innerText = item.tanggalExpired ? "Exp: " + formatDateIndo(item.tanggalExpired) : "Exp: -";
-        document.getElementById("detail-pb-exp-hari").innerText = (item.sisaHari !== undefined && item.sisaHari !== "") ? item.sisaHari + " Days Left" : "- Days Left";
-        
-        const expBadge = document.getElementById("detail-pb-exp-badge");
-        if (expBadge) {
-          expBadge.innerHTML = getExpiredStatusBadgeHtml(item.statusExpired);
-        }
+        const firstItem = transactionItems[0] || item;
+        const showId = orderId || firstItem.idPembelianBrg || "-";
+        const rawDate = firstItem.tanggalPembelian || "";
+        const formattedDate = rawDate ? formatDateIndo(rawDate) : "-";
+        const supplierNama = firstItem.namaSupplier || "-";
+        const supplierId = firstItem.idSupplier || "-";
+        const paymentStatus = firstItem.status || "Hutang";
+        const notes = firstItem.keterangan || "-";
 
-        document.getElementById("detail-pb-keterangan").innerText = item.keterangan || "-";
+        document.getElementById("detail-pb-id").innerText = showId;
+        document.getElementById("detail-pb-tanggal").innerText = "Tanggal Pembelian: " + formattedDate;
 
-        // Pricing Analysis
-        const prevModal = Number(item.hargaModalSebelumnya) || 0;
-        const newModal = Number(item.hargaModal) || 0;
-        const prevJual = Number(item.hargaJualSebelumnya) || 0;
-        const newJual = Number(item.hargaJual) || 0;
-
-        // Modal Elements
-        document.getElementById("detail-pb-modal-prev").innerText = prevModal > 0 ? formatIDR(prevModal) : "-";
-        document.getElementById("detail-pb-modal-new").innerText = formatIDR(newModal);
+        // Calculate aggregate sums
+        const totalItems = transactionItems.filter(x => x.idBarang).length || transactionItems.length;
+        const totalQty = transactionItems.reduce((acc, x) => acc + (Number(x.qtyPembelian) || 0), 0);
         
-        const modalDiffEl = document.getElementById("detail-pb-modal-diff");
-        if (modalDiffEl) {
+        let grandTotal = 0;
+        let totalProfit = 0;
+
+        transactionItems.forEach(x => {
+          const qty = Number(x.qtyPembelian) || 0;
+          const modal = Number(x.hargaModal) || 0;
+          const sub = x.subtotal !== undefined && x.subtotal !== "" ? Number(x.subtotal) : (qty * modal);
+          grandTotal += sub;
+
+          const unitRecord = rawSatuanBarangData.find(s => 
+            String(s.idBarang) === String(x.idBarang) && 
+            String(s.satuan).toUpperCase() === String(x.satuan).toUpperCase()
+          );
+          const tSatuan = unitRecord ? (unitRecord.tipeSatuan || x.tipeSatuan || "KEDUANYA") : (x.tipeSatuan || "KEDUANYA");
+          const isBeli = String(tSatuan).toUpperCase() === "BELI";
+
+          if (!isBeli) {
+            const sellingPrice = x.hargaJual !== undefined && x.hargaJual !== "" ? Number(x.hargaJual) : 0;
+            const pVal = sellingPrice - modal;
+            totalProfit += (pVal * qty);
+          }
+        });
+
+        // Building the HTML for invoice items card list
+        let itemsHtml = "";
+        transactionItems.forEach((x, idx) => {
+          const qty = Number(x.qtyPembelian) || 0;
+          const modal = Number(x.hargaModal) || 0;
+          const sub = x.subtotal !== undefined && x.subtotal !== "" ? Number(x.subtotal) : (qty * modal);
+
+          const unitRecord = rawSatuanBarangData.find(s => 
+            String(s.idBarang) === String(x.idBarang) && 
+            String(s.satuan).toUpperCase() === String(x.satuan).toUpperCase()
+          );
+          const tSatuan = unitRecord ? (unitRecord.tipeSatuan || x.tipeSatuan || "KEDUANYA") : (x.tipeSatuan || "KEDUANYA");
+          const isBeli = String(tSatuan).toUpperCase() === "BELI";
+
+          const sellingPrice = isBeli ? "" : (x.hargaJual !== undefined && x.hargaJual !== "" ? Number(x.hargaJual) : 0);
+          const rawProfit = isBeli ? 0 : (sellingPrice - modal);
+          const itemProfit = isBeli ? 0 : (rawProfit * qty);
+
+          // Expired state values
+          const expDateFormatted = x.tanggalExpired ? formatDateIndo(x.tanggalExpired) : "-";
+          const expDaysLeft = (x.sisaHari !== undefined && x.sisaHari !== "") ? x.sisaHari + " Days Left" : "- Days Left";
+          const expBadgeHtml = getExpiredStatusBadgeHtml(x.statusExpired || "🟢 Aman");
+
+          const prevModal = Number(x.hargaModalSebelumnya) || 0;
+          const prevJual = Number(x.hargaJualSebelumnya) || 0;
+
+          // Price differences indicators
+          let modalDiffText = "";
           if (prevModal > 0) {
-            const diff = newModal - prevModal;
+            const diff = modal - prevModal;
             if (diff > 0) {
-              modalDiffEl.className = "text-rose-500 font-extrabold";
-              modalDiffEl.innerText = "🔺 +" + formatIDR(diff) + " (Naik)";
+              modalDiffText = `<span class="text-[9.5px] font-black text-rose-500 font-sans tracking-tight">🔺 +${formatIDR(diff)} (Naik)</span>`;
             } else if (diff < 0) {
-              modalDiffEl.className = "text-emerald-600 font-extrabold";
-              modalDiffEl.innerText = "🔻 " + formatIDR(Math.abs(diff)) + " (Turun)";
+              modalDiffText = `<span class="text-[9.5px] font-black text-emerald-600 font-sans tracking-tight">🔻 -${formatIDR(Math.abs(diff))} (Turun)</span>`;
             } else {
-              modalDiffEl.className = "text-slate-500 font-bold";
-              modalDiffEl.innerText = "Tetap";
+              modalDiffText = `<span class="text-[9.5px] font-bold text-slate-400 font-mono tracking-tight">Tetap</span>`;
             }
           } else {
-            modalDiffEl.className = "text-indigo-600 font-extrabold";
-            modalDiffEl.innerText = "Baru (Pertama)";
+            modalDiffText = `<span class="text-[9.5px] font-black text-indigo-500 font-sans tracking-tight">Baru (Pertama)</span>`;
           }
-        }
 
-        // Jual Elements
-        document.getElementById("detail-pb-jual-prev").innerText = prevJual > 0 ? formatIDR(prevJual) : "-";
-        document.getElementById("detail-pb-jual-new").innerText = formatIDR(newJual);
-
-        const jualDiffEl = document.getElementById("detail-pb-jual-diff");
-        if (jualDiffEl) {
-          if (prevJual > 0) {
-            const diff = newJual - prevJual;
-            if (diff > 0) {
-              jualDiffEl.className = "text-emerald-600 font-extrabold";
-              jualDiffEl.innerText = "🔺 +" + formatIDR(diff) + " (Naik)";
-            } else if (diff < 0) {
-              jualDiffEl.className = "text-rose-500 font-extrabold";
-              jualDiffEl.innerText = "🔻 " + formatIDR(Math.abs(diff)) + " (Turun)";
+          let jualDiffText = "";
+          if (!isBeli) {
+            if (prevJual > 0) {
+              const diff = sellingPrice - prevJual;
+              if (diff > 0) {
+                jualDiffText = `<span class="text-[9.5px] font-black text-emerald-600 font-sans tracking-tight">🔺 +${formatIDR(diff)} (Naik)</span>`;
+              } else if (diff < 0) {
+                jualDiffText = `<span class="text-[9.5px] font-black text-rose-500 font-sans tracking-tight">🔻 -${formatIDR(Math.abs(diff))} (Turun)</span>`;
+              } else {
+                jualDiffText = `<span class="text-[9.5px] font-bold text-slate-400 font-mono tracking-tight">Harga Tetap</span>`;
+              }
             } else {
-              jualDiffEl.className = "text-slate-500 font-bold";
-              jualDiffEl.innerText = "Harga Tetap";
+              jualDiffText = `<span class="text-[9.5px] font-black text-indigo-500 font-sans tracking-tight">Baru (Pertama)</span>`;
             }
           } else {
-            jualDiffEl.className = "text-indigo-600 font-extrabold";
-            jualDiffEl.innerText = "Baru (Pertama)";
+            jualDiffText = `<span class="text-[9.5px] font-black text-amber-600 font-sans tracking-tight">⚠️ Tipe BELI</span>`;
           }
-        }
+
+          itemsHtml += `
+            <div class="p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition-all space-y-4">
+              <!-- Item Header / Name -->
+              <div class="flex items-start justify-between gap-4">
+                <div class="space-y-1">
+                  <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest font-sans">Item #${idx + 1}</span>
+                  <p class="font-extrabold text-slate-800 text-[13px] leading-tight flex items-center justify-start flex-wrap gap-2">
+                    ${x.namaBarang}
+                    <span class="px-2 py-0.5 text-[9.5px] font-mono font-black text-emerald-800 bg-emerald-50 rounded-md border border-emerald-150 uppercase tracking-wider">${x.satuan}</span>
+                  </p>
+                  <p class="font-mono text-[9px] text-slate-400 font-bold">
+                    Barcode: <span class="bg-slate-50 border border-slate-100 px-1 py-0.5 rounded text-slate-600">${x.barcode || "N/A"}</span> | ID: <span class="bg-indigo-50/50 border border-indigo-100/30 px-1 py-0.5 rounded text-indigo-600">${x.idBarang || "N/A"}</span>
+                  </p>
+                </div>
+                <div class="text-right">
+                  <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block font-sans">Subtotal</span>
+                  <span class="font-black text-indigo-600 text-sm font-mono">${formatIDR(sub)}</span>
+                </div>
+              </div>
+
+              <!-- Price Breakdown & Analysis Grid -->
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100/60 text-[11px] font-bold text-slate-700">
+                <div class="space-y-0.5">
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest font-sans">Harga Modal Baru</p>
+                  <p class="font-black text-slate-800 font-mono text-xs">${formatIDR(modal)}</p>
+                  <p class="text-[9px] leading-none shrink-0">${modalDiffText}</p>
+                </div>
+                <div class="space-y-0.5">
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest font-sans">Harga Jual Baru</p>
+                  <p class="font-black text-slate-800 font-mono text-xs">${isBeli ? "Rp -" : formatIDR(sellingPrice)}</p>
+                  <p class="text-[9px] leading-none shrink-0">${jualDiffText}</p>
+                </div>
+                <div class="space-y-0.5">
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest font-sans">Qty Beli</p>
+                  <p class="font-extrabold text-slate-700 font-mono text-xs">${qty}</p>
+                </div>
+                <div class="space-y-0.5">
+                  <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest font-sans">Est. Profit / Item</p>
+                  <p class="font-black ${!isBeli && itemProfit < 0 ? 'text-rose-500' : 'text-emerald-600'} font-mono text-xs">
+                    ${isBeli ? "Rp -" : formatIDR(itemProfit)}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Expired Metadata -->
+              <div class="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] border-t border-slate-100/50">
+                <div class="flex items-center gap-2">
+                  <span class="text-[8.5px] font-black text-slate-400 uppercase tracking-widest font-sans">Expired:</span>
+                  <span class="font-bold text-slate-600 font-mono">${expDateFormatted}</span>
+                  <span class="text-[9px] font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-500">${expDaysLeft}</span>
+                </div>
+                <div>
+                  ${expBadgeHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        // payment status mapping styles
+        const badgeClass = paymentStatus === "Lunas"
+          ? "bg-emerald-50 text-emerald-600 border border-emerald-100" 
+          : "bg-rose-50 text-rose-500 border border-rose-100";
+
+        // Dynamic HTML output structure with Action Button Hooks and Close Handlers
+        const containerHtml = `
+          <!-- Header Info Banner -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 bg-slate-50 p-6 rounded-3xl border border-slate-200/60 text-xs">
+            <div class="space-y-1">
+              <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-sans">Supplier</span>
+              <p class="font-extrabold text-slate-800 text-sm">${supplierNama}</p>
+              <p class="font-mono text-emerald-600 font-black text-[10px] bg-emerald-50 border border-emerald-100/40 rounded px-1.5 py-0.5 inline-block">ID: ${supplierId}</p>
+            </div>
+            <div class="space-y-1 sm:text-right">
+              <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-sans">Status Pembayaran</span>
+              <span class="inline-flex px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest ${badgeClass}">
+                ${paymentStatus}
+              </span>
+            </div>
+            <div class="sm:col-span-2 border-t border-slate-200/50 pt-3.5 space-y-1">
+              <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest block font-sans">Keterangan Umum</span>
+              <p class="font-medium text-slate-600 italic text-[11px] leading-relaxed">${notes}</p>
+            </div>
+          </div>
+
+          <!-- Items Title -->
+          <div class="flex items-center gap-2 border-b border-slate-100 pb-2 mt-4">
+            <i data-lucide="package" class="w-4 h-4 text-emerald-600"></i>
+            <h4 class="text-[10px] font-black text-emerald-600 uppercase tracking-widest font-sans">Rincian Daftar Barang Pesanan (${totalItems})</h4>
+          </div>
+
+          <!-- Items List Stack -->
+          <div class="space-y-4 max-h-[300px] overflow-y-auto pr-1 pad-right-mini custom-scrollbar">
+            ${itemsHtml}
+          </div>
+
+          <!-- Summary aggregates card -->
+          <div class="bg-gradient-to-br from-indigo-50/40 via-slate-50/60 to-slate-50 border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4 font-sans mt-4">
+            <div class="flex items-center gap-2 border-b border-indigo-100/80 pb-2.5">
+              <i data-lucide="calculator" class="w-4 h-4 text-indigo-600"></i>
+              <h4 class="text-[10px] font-black text-indigo-600 uppercase tracking-widest font-sans">Ringkasan Nilai Nota</h4>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-semibold text-slate-600">
+              <div class="space-y-1">
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block font-sans">Total Item</span>
+                <span class="font-extrabold text-slate-800 font-mono text-sm block">${totalItems} Macam</span>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block font-sans">Total Qty</span>
+                <span class="font-extrabold text-slate-800 font-mono text-sm block">${totalQty} Pcs</span>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block font-sans">Total Est. Profit</span>
+                <span class="font-black text-emerald-600 font-mono text-sm block">${formatIDR(totalProfit)}</span>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block font-sans">Grand Total</span>
+                <span class="font-black text-indigo-600 font-mono text-sm block">${formatIDR(grandTotal)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons Area -->
+          <div class="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <button type="button" onclick="downloadPembelianPDF('${showId}')" class="py-3.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100/50 text-emerald-700 hover:text-emerald-800 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+              <i data-lucide="download" class="w-4 h-4"></i> Download PDF
+            </button>
+            <button type="button" onclick="copyPembelianWhatsApp('${showId}')" class="py-3.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100/50 text-indigo-700 hover:text-indigo-800 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+              <i data-lucide="copy" class="w-4 h-4"></i> Copy WA
+            </button>
+            <button type="button" onclick="sharePembelianWhatsApp('${showId}')" class="py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow shadow-emerald-600/10">
+              <i data-lucide="share" class="w-4 h-4"></i> Share WA
+            </button>
+          </div>
+
+          <!-- Close Modal Block -->
+          <div class="pt-1.5 flex gap-3">
+            <button type="button" onclick="closePembelianBarangDetailModal()" class="flex-1 py-4 bg-slate-900 hover:bg-slate-850 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 cursor-pointer text-center">
+              TUTUP MODAL
+            </button>
+          </div>
+        `;
+
+        document.getElementById("detail-pb-content-container").innerHTML = containerHtml;
 
         // Show Modal
         const modal = document.getElementById("pembelianBarangDetailModal");
@@ -9450,6 +9536,389 @@
         modal.classList.add("hidden");
         modal.classList.remove("flex");
         document.body.classList.remove("overflow-hidden");
+      }
+
+      function getFormattedPembelianTextOnly(orderId) {
+        const transactionItems = rawPembelianBarangData.filter(x => String(x.idPembelianBrg) === String(orderId));
+        if (transactionItems.length === 0) return "";
+        
+        const first = transactionItems[0];
+        const rawDate = first.tanggalPembelian || "";
+        const formattedDate = rawDate ? formatDateIndo(rawDate) : "-";
+        const supplierNama = first.namaSupplier || "-";
+        const paymentStatus = (first.status || "Hutang").toUpperCase();
+        
+        let lines = [];
+        lines.push(`*TOKO WINA*`);
+        lines.push(`Nota Pembelian ${orderId}`);
+        lines.push(``);
+        lines.push(`Tanggal: ${formattedDate}`);
+        lines.push(`Supplier: ${supplierNama}`);
+        lines.push(``);
+
+        let grandTotal = 0;
+        transactionItems.forEach(x => {
+          const qty = Number(x.qtyPembelian) || 0;
+          const modal = Number(x.hargaModal) || 0;
+          const sub = x.subtotal !== undefined && x.subtotal !== "" ? Number(x.subtotal) : (qty * modal);
+          grandTotal += sub;
+          
+          lines.push(`• ${x.namaBarang} ${x.satuan}`);
+          lines.push(`  ${qty} x ${formatIDR(modal)}`);
+          lines.push(``);
+        });
+
+        lines.push(`Total:`);
+        lines.push(`${formatIDR(grandTotal)}`);
+        lines.push(``);
+        lines.push(`Status:`);
+        lines.push(`${paymentStatus}`);
+
+        return lines.join("\n");
+      }
+
+      function copyPembelianWhatsApp(orderId) {
+        const txt = getFormattedPembelianTextOnly(orderId);
+        if (!txt) {
+          showToast("Gagal memformat teks nota pembelian.", "error");
+          return;
+        }
+
+        navigator.clipboard.writeText(txt)
+          .then(() => showToast("Teks nota pembelian WhatsApp berhasil disalin", "success"))
+          .catch(err => {
+            console.error("Clipboard Copy Error:", err);
+            showToast("Gagal menyalin teks", "error");
+          });
+      }
+
+      function sharePembelianWhatsApp(orderId) {
+        const txt = getFormattedPembelianTextOnly(orderId);
+        if (!txt) {
+          showToast("Gagal memformat teks nota pembelian.", "error");
+          return;
+        }
+
+        const transactionItems = rawPembelianBarangData.filter(x => String(x.idPembelianBrg) === String(orderId));
+        let phoneNum = "";
+        if (transactionItems.length > 0) {
+          const supplierId = transactionItems[0].idSupplier;
+          if (supplierId) {
+            const supplierObj = rawDataSupplierData.find(s => s.idSupplier === supplierId);
+            if (supplierObj && supplierObj.kontak) {
+              phoneNum = String(supplierObj.kontak).replace(/\D/g, "");
+              if (phoneNum.startsWith("0")) {
+                phoneNum = "62" + phoneNum.slice(1);
+              }
+            }
+          }
+        }
+
+        const url = `https://wa.me/${phoneNum}?text=${encodeURIComponent(txt)}`;
+        window.open(url, "_blank");
+      }
+
+      function downloadPembelianPDF(orderId) {
+        const transactionItems = rawPembelianBarangData.filter(x => String(x.idPembelianBrg) === String(orderId));
+        if (transactionItems.length === 0) {
+          showToast("Data transaksi tidak ditemukan.", "error");
+          return;
+        }
+
+        const first = transactionItems[0];
+        const rawDate = first.tanggalPembelian || "";
+        const formattedDate = rawDate ? formatDateIndo(rawDate) : "-";
+        const supplierNama = first.namaSupplier || "-";
+        const supplierId = first.idSupplier || "-";
+        const notes = first.keterangan || "-";
+        const paymentStatus = (first.status || "Hutang").toUpperCase();
+
+        const totalItems = transactionItems.length;
+        const totalQty = transactionItems.reduce((acc, x) => acc + (Number(x.qtyPembelian) || 0), 0);
+        
+        let grandTotal = 0;
+        let totalProfit = 0;
+        
+        let rowsHtml = "";
+        transactionItems.forEach((x, idx) => {
+          const qty = Number(x.qtyPembelian) || 0;
+          const modal = Number(x.hargaModal) || 0;
+          const sub = x.subtotal !== undefined && x.subtotal !== "" ? Number(x.subtotal) : (qty * modal);
+          grandTotal += sub;
+
+          const unitRecord = rawSatuanBarangData.find(s => 
+            String(s.idBarang) === String(x.idBarang) && 
+            String(s.satuan).toUpperCase() === String(x.satuan).toUpperCase()
+          );
+          const tSatuan = unitRecord ? (unitRecord.tipeSatuan || x.tipeSatuan || "KEDUANYA") : (x.tipeSatuan || "KEDUANYA");
+          const isBeli = String(tSatuan).toUpperCase() === "BELI";
+          const sellingPrice = isBeli ? 0 : (x.hargaJual !== undefined && x.hargaJual !== "" ? Number(x.hargaJual) : 0);
+          const rawProfit = isBeli ? 0 : (sellingPrice - modal);
+          const itemProfit = isBeli ? 0 : (rawProfit * qty);
+          totalProfit += itemProfit;
+
+          rowsHtml += `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 12px 8px; text-align: center; font-size: 11px; font-weight: bold; color: #64748b;">${idx + 1}</td>
+              <td style="padding: 12px 8px; font-size: 11px;">
+                <div style="font-weight: 800; color: #1e293b;">${x.namaBarang}</div>
+                <div style="font-size: 9px; color: #64748b; font-family: monospace; margin-top: 2px;">Barcode: ${x.barcode || "N/A"} | ID: ${x.idBarang || "N/A"}</div>
+              </td>
+              <td style="padding: 12px 8px; font-size: 11px; font-weight: 800; text-align: center; color: #047857; text-transform: uppercase;">${x.satuan}</td>
+              <td style="padding: 12px 8px; font-size: 11px; text-align: center; font-weight: bold; color: #334155;">${qty}</td>
+              <td style="padding: 12px 8px; font-size: 11px; text-align: right; font-family: monospace; font-weight: bold; color: #334155;">${formatIDR(modal)}</td>
+              <td style="padding: 12px 8px; font-size: 11px; text-align: right; font-family: monospace; font-weight: bold; color: #334155;">${isBeli ? "Rp -" : formatIDR(sellingPrice)}</td>
+              <td style="padding: 12px 8px; font-size: 11px; text-align: right; font-family: monospace; font-weight: bold; color: #047857;">${isBeli ? "Rp -" : formatIDR(rawProfit * qty)}</td>
+              <td style="padding: 12px 8px; font-size: 11px; text-align: right; font-family: monospace; font-weight: 800; color: #4f46e5;">${formatIDR(sub)}</td>
+            </tr>
+          `;
+        });
+
+        const printContent = `
+          <html>
+            <head>
+              <title>Nota Pembelian ${orderId} - Toko Wina</title>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+                body {
+                  font-family: 'Inter', sans-serif;
+                  color: #1e293b;
+                  background-color: #ffffff;
+                  margin: 0;
+                  padding: 40px;
+                }
+                .invoice-card {
+                  max-width: 800px;
+                  margin: 0 auto;
+                }
+                .header-table {
+                  width: 100%;
+                  margin-bottom: 30px;
+                  border-collapse: collapse;
+                }
+                .title-area {
+                  font-size: 26px;
+                  font-weight: 900;
+                  color: #0f172a;
+                  letter-spacing: -0.025em;
+                }
+                .badge {
+                  display: inline-block;
+                  padding: 6px 12px;
+                  font-size: 10px;
+                  font-weight: 900;
+                  text-transform: uppercase;
+                  border-radius: 8px;
+                  letter-spacing: 0.05em;
+                }
+                .badge-lunas {
+                  background-color: #ecfdf5;
+                  color: #059669;
+                  border: 1px solid #a7f3d0;
+                }
+                .badge-hutang {
+                  background-color: #fff1f2;
+                  color: #e11d48;
+                  border: 1px solid #fecdd3;
+                }
+                .info-grid {
+                  display: grid;
+                  grid-template-cols: 1fr 1fr;
+                  gap: 20px;
+                  background-color: #f8fafc;
+                  border: 1px solid #f1f5f9;
+                  border-radius: 16px;
+                  padding: 20px;
+                  font-size: 12px;
+                  margin-bottom: 30px;
+                }
+                .info-label {
+                  font-size: 9px;
+                  font-weight: 900;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  letter-spacing: 0.1em;
+                  margin-bottom: 4px;
+                }
+                .info-value {
+                  font-weight: 700;
+                  color: #334155;
+                }
+                .items-table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-bottom: 30px;
+                }
+                .items-table th {
+                  background-color: #f1f5f9;
+                  padding: 10px 8px;
+                  font-size: 9px;
+                  font-weight: 900;
+                  color: #64748b;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  border-bottom: 2px solid #e2e8f0;
+                }
+                .summary-table {
+                  width: 280px;
+                  margin-left: auto;
+                  border-collapse: collapse;
+                  font-size: 12px;
+                }
+                .summary-table td {
+                  padding: 6px 8px;
+                }
+                .summary-label {
+                  color: #64748b;
+                  font-weight: 600;
+                }
+                .summary-value {
+                  text-align: right;
+                  font-weight: 700;
+                  font-family: 'JetBrains Mono', monospace;
+                }
+                .grand-total {
+                  font-size: 14px;
+                  color: #4f46e5;
+                  font-weight: 900;
+                }
+                .footer {
+                  margin-top: 50px;
+                  border-top: 1px solid #e2e8f0;
+                  padding-top: 20px;
+                  text-align: center;
+                  font-size: 10px;
+                  color: #94a3b8;
+                  font-weight: 600;
+                }
+                @media print {
+                  body {
+                    padding: 0;
+                  }
+                  .no-print {
+                    display: none;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="invoice-card">
+                <!-- Top Brand Table -->
+                <table class="header-table">
+                  <tr>
+                    <td>
+                      <div class="title-area">TOKO WINA</div>
+                      <div style="font-size: 11px; font-weight: 600; color: #64748b; margin-top: 2px;">Sistem Kasir & Management Stok</div>
+                    </td>
+                    <td style="text-align: right;">
+                      <div style="font-size: 14px; font-weight: 900; color: #1e293b; letter-spacing: -0.0125em;">NOTA PEMBELIAN</div>
+                      <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #4f46e5; margin-top: 4px;">#${orderId}</div>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Info Block -->
+                <div class="info-grid">
+                  <div>
+                    <div style="margin-bottom: 12px;">
+                      <div class="info-label">Supplier</div>
+                      <div class="info-value" style="font-size: 13px;">${supplierNama}</div>
+                      <div style="color: #64748b; font-family: 'JetBrains Mono', monospace; font-weight: bold; margin-top: 2px; font-size: 10px;">ID: ${supplierId}</div>
+                    </div>
+                    <div>
+                      <div class="info-label">Keterangan Nota</div>
+                      <div class="info-value" style="font-style: italic; font-weight: 500; color: #475569;">${notes}</div>
+                    </div>
+                  </div>
+                  <div style="text-align: right; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
+                    <div style="margin-bottom: 12px;">
+                      <div class="info-label">Tanggal Transaksi</div>
+                      <div class="info-value" style="font-size: 13px;">${formattedDate}</div>
+                    </div>
+                    <div>
+                      <div class="info-label">Status Pembayaran</div>
+                      <span class="badge ${paymentStatus === 'LUNAS' ? 'badge-lunas' : 'badge-hutang'}">${paymentStatus}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Items Details Title -->
+                <div style="font-size: 10px; font-weight: 900; color: #4f46e5; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">Daftar Barang Nota</div>
+
+                <!-- Items Table -->
+                <table class="items-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px; text-align: center;">No</th>
+                      <th style="text-align: left;">Nama & ID Barang</th>
+                      <th style="width: 70px; text-align: center;">Satuan</th>
+                      <th style="width: 50px; text-align: center;">Qty</th>
+                      <th style="width: 95px; text-align: right;">Modal</th>
+                      <th style="width: 95px; text-align: right;">Jual Baru</th>
+                      <th style="width: 95px; text-align: right;">Est. Profit</th>
+                      <th style="width: 100px; text-align: right;">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rowsHtml}
+                  </tbody>
+                </table>
+
+                <!-- Summary Right Column Block -->
+                <table class="summary-table">
+                  <tr>
+                    <td class="summary-label">Total Macam Item:</td>
+                    <td class="summary-value" style="color: #334155;">${totalItems}</td>
+                  </tr>
+                  <tr>
+                    <td class="summary-label">Total Qty Barang:</td>
+                    <td class="summary-value" style="color: #334155;">${totalQty} pcs</td>
+                  </tr>
+                  <tr style="border-top: 1px dashed #cbd5e1; border-bottom: 1px dashed #cbd5e1;">
+                    <td class="summary-label" style="padding: 10px 8px; color: #047857;">Est. Total Profit:</td>
+                    <td class="summary-value" style="padding: 10px 8px; color: #047857; font-weight: 800;">${formatIDR(totalProfit)}</td>
+                  </tr>
+                  <tr>
+                    <td class="summary-label grand-total" style="padding: 12px 8px 0 8px;">GRAND TOTAL:</td>
+                    <td class="summary-value grand-total" style="padding: 12px 8px 0 8px;">${formatIDR(grandTotal)}</td>
+                  </tr>
+                </table>
+
+                <!-- Footer Signatures -->
+                <div class="footer">
+                  <p>Dicetak otomatis oleh Sistem Kasir - TOKO WINA pada ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                  <p style="margin-top: 4px; font-size: 8.5px; opacity: 0.65;">Invoice ini sah dan diproses secara komputerisasi.</p>
+                </div>
+              </div>
+
+              <!-- Inline Auto Trigger for System Print PDF selection -->
+              <script>
+                window.onload = function() {
+                  setTimeout(function() {
+                    window.print();
+                  }, 300);
+                }
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.bottom = '0';
+        iframe.style.right = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(printContent);
+        iframe.contentWindow.document.close();
+
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 120000);
       }
 
       // Generate exact formatted copy message

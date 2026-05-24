@@ -366,13 +366,6 @@
         >
           Processing System...
         </p>
-        <button 
-          id="btn_cancel_loading" 
-          onclick="handleFallbackDemoModeManual()" 
-          class="hidden px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 border border-slate-200"
-        >
-          Batalkan & Gunakan Mode Demo
-        </button>
       </div>
     </div>
 
@@ -3194,24 +3187,12 @@
       }
 
       let loadingCount = 0;
-      let cancelBtnTimeout = null;
-
-      function handleFallbackDemoModeManual() {
-        showLoading(false);
-        loadingCount = 0;
-        const overlay = document.getElementById("loadingOverlay");
-        if (overlay) overlay.classList.remove("active");
-        
-        useFallbackDemoData();
-        showToast("Beralih ke Mode Demo secara manual.", "info");
-      }
 
       function showLoading(show, message = "Processing System...") {
         const overlay = document.getElementById("loadingOverlay");
         if (!overlay) return;
         
         const textEl = overlay.querySelector("#loadingText") || overlay.querySelector("p");
-        const cancelBtn = document.getElementById("btn_cancel_loading");
         
         if (show) {
           if (textEl && message) {
@@ -3219,25 +3200,10 @@
           }
           loadingCount++;
           overlay.classList.add("active");
-          
-          if (cancelBtn) {
-            cancelBtn.classList.add("hidden");
-            if (cancelBtnTimeout) clearTimeout(cancelBtnTimeout);
-            cancelBtnTimeout = setTimeout(() => {
-              if (loadingCount > 0) {
-                cancelBtn.classList.remove("hidden");
-              }
-            }, 3500); // Tunjukkan opsi batal setelah 3.5 detik memuat
-          }
         } else {
           loadingCount = Math.max(0, loadingCount - 1);
           if (loadingCount === 0) {
             overlay.classList.remove("active");
-            if (cancelBtnTimeout) {
-              clearTimeout(cancelBtnTimeout);
-              cancelBtnTimeout = null;
-            }
-            if (cancelBtn) cancelBtn.classList.add("hidden");
           }
         }
       }

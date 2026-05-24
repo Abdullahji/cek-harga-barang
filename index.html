@@ -7754,20 +7754,29 @@
           // Populate cart items from all rows sharing same idPembelianBrg
           const transactionItems = rawPembelianBarangData.filter(x => x.idPembelianBrg === data.idPembelianBrg);
           
-          pembelianCartItems = transactionItems.map(item => ({
-            id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '_' + item.row,
-            row: item.row,
-            barcode: item.barcode || "",
-            idBarang: item.idBarang,
-            namaBarang: item.namaBarang,
-            satuan: item.satuan,
-            qtyPembelian: Number(item.qtyPembelian) || 1,
-            hargaModal: Number(item.hargaModal) || 0,
-            hargaJual: Number(item.hargaJual) || 0,
-            hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
-            hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
-            tanggalExpired: item.tanggalExpired || ""
-          }));
+          pembelianCartItems = transactionItems.map(item => {
+            const unitRecord = rawSatuanBarangData.find(s => 
+              String(s.idBarang) === String(item.idBarang) && 
+              String(s.satuan).toUpperCase() === String(item.satuan).toUpperCase()
+            );
+            const tSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
+            const isBeli = String(tSatuan).toUpperCase() === "BELI";
+            return {
+              id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + '_' + item.row,
+              row: item.row,
+              barcode: item.barcode || "",
+              idBarang: item.idBarang,
+              namaBarang: item.namaBarang,
+              satuan: item.satuan,
+              tipeSatuan: tSatuan,
+              qtyPembelian: Number(item.qtyPembelian) || 1,
+              hargaModal: Number(item.hargaModal) || 0,
+              hargaJual: (item.hargaJual === "" || item.hargaJual === null || item.hargaJual === undefined) ? "" : Number(item.hargaJual),
+              hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
+              hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
+              tanggalExpired: item.tanggalExpired || ""
+            };
+          });
         } else {
           title.innerText = "Tambah Transaksi Baru";
           document.getElementById("form-pembelianRow").value = "";
@@ -7871,9 +7880,10 @@
           idBarang: existingData ? (existingData.idBarang || "") : "",
           namaBarang: existingData ? (existingData.namaBarang || "") : "",
           satuan: existingData ? (existingData.satuan || "") : "",
+          tipeSatuan: existingData ? (existingData.tipeSatuan || "KEDUANYA") : "KEDUANYA",
           qtyPembelian: existingData ? (Number(existingData.qtyPembelian) || 1) : 1,
           hargaModal: existingData ? (Number(existingData.hargaModal) || 0) : 0,
-          hargaJual: existingData ? (Number(existingData.hargaJual) || 0) : 0,
+          hargaJual: existingData ? (existingData.hargaJual === "" || existingData.hargaJual === undefined ? "" : Number(existingData.hargaJual)) : 0,
           hargaModalSebelumnya: existingData ? (existingData.hargaModalSebelumnya !== undefined ? existingData.hargaModalSebelumnya : "") : "",
           hargaJualSebelumnya: existingData ? (existingData.hargaJualSebelumnya !== undefined ? existingData.hargaJualSebelumnya : "") : "",
           tanggalExpired: existingData ? (existingData.tanggalExpired || "") : ""
@@ -7923,9 +7933,10 @@
         }
 
         container.innerHTML = pembelianCartItems.map((item, index) => {
+          const isBeli = String(item.tipeSatuan || "").toUpperCase() === "BELI";
           const formattedModal = item.hargaModal ? "Rp " + formatIDRVal(item.hargaModal) : "";
-          const formattedJual = item.hargaJual ? "Rp " + formatIDRVal(item.hargaJual) : "";
-          const profit = item.hargaJual - item.hargaModal;
+          const formattedJual = isBeli ? "" : (item.hargaJual ? "Rp " + formatIDRVal(item.hargaJual) : "");
+          const profit = isBeli ? "" : (item.hargaJual - item.hargaModal);
           const subtotal = item.hargaModal * item.qtyPembelian;
           
           const modalPrevVal = item.hargaModalSebelumnya ? formatIDR(item.hargaModalSebelumnya) : '-';
@@ -7934,15 +7945,40 @@
           const jualPrevVal = item.hargaJualSebelumnya ? formatIDR(item.hargaJualSebelumnya) : '-';
           const jualPrevSpan = `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded font-black font-mono">Jual Sblmnya: ${jualPrevVal}</span>`;
 
+          // Generate Satuan dropdown HTML filtered to only BELI & KEDUANYA (exclude JUAL)
+          let selectSatuanHtml = "";
+          if (item.idBarang) {
+            const unitsForBarang = rawSatuanBarangData.filter(s => 
+              String(s.idBarang) === String(item.idBarang) &&
+              String(s.status).toUpperCase() === "AKTIF" &&
+              String(s.tipeSatuan || "").toUpperCase() !== "JUAL"
+            );
+            if (unitsForBarang.length > 0) {
+              selectSatuanHtml = `
+                <select onchange="handleCartItemSatuanChange('${item.id}', this.value)" class="px-2.5 py-1 text-[10px] font-black text-slate-700 bg-white border border-slate-200 rounded-lg outline-none cursor-pointer hover:border-slate-300">
+                  ${unitsForBarang.map(u => `
+                    <option value="${u.satuan}" ${String(u.satuan).toUpperCase() === String(item.satuan).toUpperCase() ? "selected" : ""}>${u.satuan}</option>
+                  `).join("")}
+                </select>
+              `;
+            } else {
+              selectSatuanHtml = `<span class="font-extrabold text-slate-800 font-mono text-[10.5px]">${item.satuan}</span>`;
+            }
+          }
+
           const itemSelectedHTML = item.idBarang ? `
-            <div class="bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs font-sans">
+            <div class="bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50 grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-sans items-center">
               <div class="space-y-1">
                 <span class="text-[8px] font-black uppercase tracking-widest text-slate-400 block font-sans">Barcode / ID</span>
                 <span class="font-extrabold text-slate-700 font-mono text-[10px] truncate block">${item.barcode || item.idBarang}</span>
               </div>
-              <div class="space-y-1 col-span-2">
-                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400 block font-sans">Nama & Satuan</span>
-                <span class="font-black text-slate-800 text-[11px] truncate block">${item.namaBarang} (${item.satuan})</span>
+              <div class="space-y-1 md:col-span-2">
+                <span class="text-[8px] font-black uppercase tracking-widest text-slate-400 block font-sans">Nama Barang</span>
+                <span class="font-black text-slate-800 text-[11px] truncate block leading-none mb-1">${item.namaBarang}</span>
+                <div class="flex items-center gap-1.5 mt-1.5">
+                  <span class="text-[8px] font-black uppercase tracking-widest text-slate-400">Satuan Pembelian:</span>
+                  ${selectSatuanHtml}
+                </div>
               </div>
               <div class="space-y-1 flex flex-col justify-center items-end text-right">
                 <button type="button" onclick="resetCartProduct('${item.id}')" class="text-[9px] font-black uppercase tracking-wider text-rose-500 hover:text-rose-700 transition-colors cursor-pointer">
@@ -7970,6 +8006,12 @@
             </div>
           `;
 
+          const requiredAttr = isBeli ? "" : "required";
+          const disabledAttr = isBeli ? "disabled" : "";
+          const bgInputStyle = isBeli 
+            ? "bg-slate-100 border-slate-100 cursor-not-allowed opacity-60 text-slate-400" 
+            : "bg-slate-50 border-slate-100 text-slate-850 focus:ring-emerald-100/50";
+
           return `
             <div class="bg-white p-6 rounded-[2.2rem] border border-slate-200/80 shadow-sm space-y-5 transition-all relative group hover:border-slate-300">
               <div class="flex items-center justify-between font-sans">
@@ -7989,7 +8031,7 @@
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Beli</label>
                   <div class="relative flex items-center w-full">
-                    <input type="number" id="cart-qty-${item.id}" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-800 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
+                    <input type="number" id="cart-qty-${item.id}" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-880 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
@@ -8003,7 +8045,7 @@
                       <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
                   </div>
-                  <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
+                  <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed font-sans">
                     ${modalPrevSpan}
                     ${getModalTrendHTML(item)}
                   </div>
@@ -8011,15 +8053,21 @@
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Baru</label>
                   <div class="relative flex items-center w-full">
-                    <input type="text" id="cart-hargaJual-${item.id}" value="${formattedJual}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaJual', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-850 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Rp 0" required />
+                    <input type="text" id="cart-hargaJual-${item.id}" value="${formattedJual}" oninput="formatCartInputRupiah(this); updateCartItemPropertyValue('${item.id}', 'hargaJual', this.value)" class="w-full pl-4 pr-10 py-3 text-xs ${bgInputStyle} rounded-xl font-bold outline-none focus:ring-4 shadow-inner font-mono" placeholder="${isBeli ? "Tidak digunakan" : "Rp 0"}" ${requiredAttr} ${disabledAttr} />
+                    ${!isBeli ? `
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
+                    ` : ""}
                   </div>
-                  <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed">
-                    ${jualPrevSpan}
-                    ${getJualTrendHTML(item)}
-                  </div>
+                  ${isBeli ? `
+                    <div class="text-[8.5px] font-extrabold text-amber-600 mt-1 shrink-0 font-sans tracking-tight">⚠️ Tidak digunakan untuk satuan BELI</div>
+                  ` : `
+                    <div class="text-[8px] flex flex-wrap gap-1 mt-1 font-semibold leading-relaxed font-sans">
+                      ${jualPrevSpan}
+                      ${getJualTrendHTML(item)}
+                    </div>
+                  `}
                 </div>
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Tgl Expired</label>
@@ -8035,8 +8083,8 @@
               <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-between text-xs border border-slate-150/40 font-sans">
                 <div class="flex flex-col">
                   <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest block">Profit / Pcs</span>
-                  <span class="font-extrabold ${profit < 0 ? 'text-rose-500 animate-pulse' : 'text-emerald-600'} font-mono text-[11px] mt-0.5">
-                    ${formatIDR(profit)}
+                  <span class="font-extrabold ${!isBeli && profit < 0 ? 'text-rose-500 animate-pulse' : 'text-emerald-600'} font-mono text-[11px] mt-0.5">
+                    ${isBeli ? "Rp -" : formatIDR(profit)}
                   </span>
                 </div>
                 <div class="flex flex-col text-right">
@@ -8108,8 +8156,15 @@
 
         if (prop === 'qtyPembelian') {
           item.qtyPembelian = Math.max(1, parseInt(rawVal) || 1);
-        } else if (prop === 'hargaModal' || prop === 'hargaJual') {
+        } else if (prop === 'hargaModal') {
           item[prop] = parseFloat(rawVal.replace(/\D/g, "")) || 0;
+        } else if (prop === 'hargaJual') {
+          const valClean = rawVal.replace(/\D/g, "");
+          if (valClean === "") {
+            item[prop] = "";
+          } else {
+            item[prop] = parseFloat(valClean) || 0;
+          }
         } else if (prop === 'tanggalExpired') {
           item.tanggalExpired = rawVal;
         }
@@ -8221,16 +8276,53 @@
         const item = pembelianCartItems.find(item => item.id === itemId);
         if (!item) return;
 
-        item.barcode = barcode || "";
+        const unitRecord = rawSatuanBarangData.find(s => 
+          String(s.idBarang) === String(idBarang) && 
+          String(s.satuan).toUpperCase() === String(satuan).toUpperCase()
+        );
+
+        item.barcode = barcode || (unitRecord ? unitRecord.barcode : "") || "";
         item.idBarang = idBarang;
         item.namaBarang = namaBarang;
         item.satuan = satuan;
-        item.hargaJual = hargaJualVal || 0;
+        item.tipeSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
 
-        const prevPrices = findPreviousPrices(idBarang, satuan, barcode);
+        const prevPrices = findPreviousPrices(idBarang, satuan, item.barcode);
         item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
         item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || hargaJualVal || "";
         item.hargaModal = prevPrices.hargaModalSebelumnya || 0;
+
+        if (String(item.tipeSatuan).toUpperCase() === "BELI") {
+          item.hargaJual = "";
+        } else {
+          item.hargaJual = hargaJualVal || (unitRecord ? unitRecord.hargaJual : 0) || 0;
+        }
+
+        renderPembelianCart();
+      }
+
+      function handleCartItemSatuanChange(itemId, newSatuan) {
+        const item = pembelianCartItems.find(x => x.id === itemId);
+        if (!item) return;
+
+        const unitRecord = rawSatuanBarangData.find(s => 
+          String(s.idBarang) === String(item.idBarang) && 
+          String(s.satuan).toUpperCase() === String(newSatuan).toUpperCase()
+        );
+
+        item.satuan = newSatuan;
+        item.barcode = unitRecord ? (unitRecord.barcode || "") : "";
+        item.tipeSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
+
+        const prevPrices = findPreviousPrices(item.idBarang, newSatuan, item.barcode);
+        item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
+        item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || (unitRecord ? unitRecord.hargaJual : "") || "";
+
+        if (String(item.tipeSatuan).toUpperCase() === "BELI") {
+          item.hargaJual = "";
+        } else {
+          item.hargaJual = (unitRecord ? unitRecord.hargaJual : 0) || 0;
+        }
 
         renderPembelianCart();
       }
@@ -8264,6 +8356,18 @@
           return;
         }
 
+        // Validate that Harga Jual Baru is filled when Tipe_Satuan is KEDUANYA (or not BELI)
+        const emptyHargaJualItem = pembelianCartItems.find(item => {
+          const isBeli = String(item.tipeSatuan || "").toUpperCase() === "BELI";
+          if (isBeli) return false;
+          const hJual = String(item.hargaJual || "").trim();
+          return hJual === "" || Number(hJual) <= 0;
+        });
+        if (emptyHargaJualItem) {
+          showAlert("Peringatan", `Harga Jual Baru wajib diisi untuk ${emptyHargaJualItem.namaBarang} (${emptyHargaJualItem.satuan}) karena bertipe KEDUANYA.`, "warning");
+          return;
+        }
+
         const payload = {
           row: document.getElementById("form-pembelianRow").value,
           idPembelianBrg: document.getElementById("form-pembelianId").value,
@@ -8272,19 +8376,22 @@
           namaSupplier: namaSupplier,
           status: document.getElementById("form-pembelianStatus").value,
           keterangan: document.getElementById("form-pembelianKeterangan").value,
-          items: pembelianCartItems.map(item => ({
-            row: item.row || "",
-            barcode: item.barcode || "",
-            idBarang: item.idBarang,
-            namaBarang: item.namaBarang,
-            satuan: item.satuan,
-            qtyPembelian: Number(item.qtyPembelian) || 0,
-            hargaModal: Number(item.hargaModal) || 0,
-            hargaJual: Number(item.hargaJual) || 0,
-            hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
-            hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
-            tanggalExpired: item.tanggalExpired || ""
-          }))
+          items: pembelianCartItems.map(item => {
+            const isBeli = String(item.tipeSatuan || "").toUpperCase() === "BELI";
+            return {
+              row: item.row || "",
+              barcode: item.barcode || "",
+              idBarang: item.idBarang,
+              namaBarang: item.namaBarang,
+              satuan: item.satuan,
+              qtyPembelian: Number(item.qtyPembelian) || 0,
+              hargaModal: Number(item.hargaModal) || 0,
+              hargaJual: isBeli ? "" : (Number(item.hargaJual) || 0),
+              hargaModalSebelumnya: item.hargaModalSebelumnya !== undefined ? item.hargaModalSebelumnya : "",
+              hargaJualSebelumnya: item.hargaJualSebelumnya !== undefined ? item.hargaJualSebelumnya : "",
+              tanggalExpired: item.tanggalExpired || ""
+            };
+          })
         };
 
         showLoading(true);

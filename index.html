@@ -3492,6 +3492,14 @@
           }
         } else if (type === 'satuan-barang') {
           let filtered = rawSatuanBarangData.filter(item => {
+             // Guard against empty rows from ARRAYFORMULA or invalid data
+             const checkId = String(item.idBarang || "").trim();
+             const checkNama = String(item.namaBarang || "").trim();
+             const checkBarcode = String(item.barcode || "").trim();
+             if (checkId === "" && checkNama === "" && checkBarcode === "") {
+               return false;
+             }
+
              const search = satuanBarangSearchTerm.toLowerCase();
              const matchesSearch = (
                (item.namaBarang || "").toLowerCase().includes(search) ||
@@ -5543,6 +5551,14 @@
         updateSatuanControlUI();
 
         let filtered = rawSatuanBarangData.filter(item => {
+           // Guard against empty rows from ARRAYFORMULA or invalid data
+           const checkId = String(item.idBarang || "").trim();
+           const checkNama = String(item.namaBarang || "").trim();
+           const checkBarcode = String(item.barcode || "").trim();
+           if (checkId === "" && checkNama === "" && checkBarcode === "") {
+             return false;
+           }
+
            const search = satuanBarangSearchTerm.toLowerCase();
            const matchesSearch = (
              (item.namaBarang || "").toLowerCase().includes(search) ||

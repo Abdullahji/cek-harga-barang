@@ -926,15 +926,23 @@
                     <p class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest font-sans">Masukkan PIN Verifikasi</p>
                   </div>
                   
-                  <div class="py-4">
+                  <div class="py-4 relative">
                     <input 
                       type="password" 
                       id="pinInput" 
                       maxlength="10" 
                       placeholder="Masukkan PIN" 
-                      class="w-full tracking-[0.5em] text-center font-bold text-2xl py-4 rounded-2xl bg-slate-50 border-none outline-none focus:ring-4 focus:ring-amber-100 shadow-inner" 
+                      class="w-full tracking-[0.5em] text-center font-bold text-2xl py-4 pr-12 rounded-2xl bg-slate-50 border-none outline-none focus:ring-4 focus:ring-amber-100 shadow-inner" 
                       onkeyup="if (event.key === 'Enter') checkPriceCheckPin();"
                     />
+                    <button 
+                      type="button" 
+                      onclick="togglePinVisibility()" 
+                      class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-600 focus:outline-none transition-all active:scale-95 flex items-center justify-center cursor-pointer"
+                      title="Lihat PIN"
+                    >
+                      <i id="pinToggleIcon" data-lucide="eye" class="w-5 h-5"></i>
+                    </button>
                   </div>
 
                   <div class="flex gap-3">
@@ -4593,12 +4601,37 @@
         }
       }
 
+      function togglePinVisibility() {
+        const pinInput = document.getElementById("pinInput");
+        const toggleIcon = document.getElementById("pinToggleIcon");
+        if (!pinInput || !toggleIcon) return;
+        
+        if (pinInput.type === "password") {
+          pinInput.type = "text";
+          toggleIcon.setAttribute("data-lucide", "eye-off");
+        } else {
+          pinInput.type = "password";
+          toggleIcon.setAttribute("data-lucide", "eye");
+        }
+        lucide.createIcons();
+      }
+
       function promptAdminPriceCheckMode() {
-        document.getElementById("pinInput").value = "";
+        const pinInput = document.getElementById("pinInput");
+        if (pinInput) {
+          pinInput.value = "";
+          pinInput.type = "password";
+        }
+        const toggleIcon = document.getElementById("pinToggleIcon");
+        if (toggleIcon) {
+          toggleIcon.setAttribute("data-lucide", "eye");
+          lucide.createIcons();
+        }
+        
         const modal = document.getElementById("pinAdminModal");
         if (modal) {
           modal.classList.replace("hidden", "flex");
-          document.getElementById("pinInput").focus();
+          if (pinInput) pinInput.focus();
         }
       }
 
@@ -5736,6 +5769,7 @@
         } catch (err) {
           showLoading(false);
           console.error("handleSimpanBarang Error:", err);
+          showToast("Gagal menyimpan data barang", "error");
         }
       }
 
@@ -7092,6 +7126,48 @@
             showToast("Semua data satuan berhasil disimpan!", "success");
             closeSatuanBarangModal();
             fetchSatuanBarangData();
+          } else if (!res) {
+            // Local Demo Simulation for Satuan Barang
+            satuanList.forEach(item => {
+              if (item.row) {
+                const existingIdx = rawSatuanBarangData.findIndex(s => s.row == item.row);
+                if (existingIdx !== -1) {
+                  rawSatuanBarangData[existingIdx] = {
+                    ...rawSatuanBarangData[existingIdx],
+                    barcode: item.barcode,
+                    satuan: item.satuan,
+                    tipeSatuan: item.tipeSatuan,
+                    qtyInputKonversi: item.qtyInputKonversi,
+                    qtySatuan: item.qtySatuan,
+                    hargaJual: item.hargaJual,
+                    status: item.status,
+                    gambar: item.gambar,
+                    levelSatuan: item.levelSatuan
+                  };
+                }
+              } else {
+                const newRow = Date.now() + Math.floor(Math.random() * 1000);
+                rawSatuanBarangData.push({
+                  no: rawSatuanBarangData.length + 1,
+                  row: newRow,
+                  barcode: item.barcode,
+                  idBarang: item.idBarang,
+                  namaBarang: item.namaBarang,
+                  levelSatuan: item.levelSatuan,
+                  satuan: item.satuan,
+                  tipeSatuan: item.tipeSatuan,
+                  qtyInputKonversi: item.qtyInputKonversi,
+                  qtySatuan: item.qtySatuan,
+                  hargaJual: item.hargaJual,
+                  status: item.status,
+                  gambar: item.gambar
+                });
+              }
+            });
+            showLoading(false);
+            showToast("Semua data satuan berhasil disimpan secara lokal (Mode Demo)", "success");
+            closeSatuanBarangModal();
+            renderSatuanBarangData();
           } else {
             console.warn("simpanGrupSatuanBarang returned fail status or is unsupported. Executing item-by-item fallback.", res);
             
@@ -7427,6 +7503,45 @@
             fetchDataSupplierData();
           } else if (res) {
             showToast(res.pesan, "error");
+          } else {
+            // Local Demo mode Simulation for Supplier
+            if (payload.row) {
+              const rowIndex = parseInt(payload.row);
+              const targetIdx = rawDataSupplierData.findIndex(s => s.row === rowIndex);
+              if (targetIdx !== -1) {
+                rawDataSupplierData[targetIdx] = {
+                  ...rawDataSupplierData[targetIdx],
+                  namaSupplier: payload.namaSupplier,
+                  kontak: payload.kontak,
+                  alamat: payload.alamat,
+                  keterangan: payload.keterangan,
+                  status: payload.status
+                };
+              }
+              showToast("Data supplier diperbarui (Mode Demo)", "success");
+            } else {
+              let maxNum = 0;
+              rawDataSupplierData.forEach(s => {
+                if (s.idSupplier && s.idSupplier.startsWith("SUP-")) {
+                  const num = parseInt(s.idSupplier.replace("SUP-", ""));
+                  if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+              });
+              const newId = "SUP-" + String(maxNum + 1).padStart(3, '0');
+              const newRow = Date.now();
+              rawDataSupplierData.push({
+                row: newRow,
+                idSupplier: newId,
+                namaSupplier: payload.namaSupplier,
+                kontak: payload.kontak,
+                alamat: payload.alamat,
+                keterangan: payload.keterangan,
+                status: payload.status
+              });
+              showToast("Supplier berhasil ditambahkan (Mode Demo)", "success");
+            }
+            closeDataSupplierModal();
+            renderDataSupplierData();
           }
         } catch (err) {
           showLoading(false);
@@ -7450,7 +7565,19 @@
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
             fetchDataSupplierData();
           } else {
-            showToast(res.pesan, "error");
+            if (!res) {
+              // Local update for Demo mode
+              const targetIdx = rawDataSupplierData.findIndex(s => s.row == row);
+              if (targetIdx !== -1) {
+                rawDataSupplierData[targetIdx].status = newStatus;
+                renderDataSupplierData();
+                showToast(`Status berhasil diubah ke ${newStatus} (Mode Demo)`, "success");
+              } else {
+                showToast("Gagal mengubah status (Supplier tidak ditemukan)", "error");
+              }
+            } else {
+              showToast(res.pesan || "Gagal mengubah status", "error");
+            }
           }
         } catch (err) {
           showLoading(false);
@@ -9031,7 +9158,12 @@
           } else if (!res) {
             const idx = rawPembelianBarangData.findIndex(item => item.row == row);
             if (idx !== -1) {
-               rawPembelianBarangData[idx].status = newStatus;
+               const targetId = rawPembelianBarangData[idx].idPembelianBrg;
+               rawPembelianBarangData.forEach(item => {
+                 if (item.idPembelianBrg === targetId) {
+                   item.status = newStatus;
+                 }
+               });
                showToast(`Status diperbarui secara lokal ke ${newStatus} (Demo)`, "success");
                renderPembelianBarangData();
             }

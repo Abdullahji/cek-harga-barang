@@ -2701,6 +2701,7 @@
       let currentPriceCheckIdBarang = "";
       let currentPriceCheckUnits = [];
       let currentActivePriceCheckSatuan = "";
+      let currentPriceCheckMatchedRow = null;
       let isAdminPriceCheckMode = false;
       let referensiSearchTerm = "";
       let barangSearchTerm = "";
@@ -2787,15 +2788,53 @@
       ];
 
       const DEMO_DATA_SATUAN = [
-        { row: 2, barcode: "899123456701", idBarang: "ID-0001", namaBarang: "Mouse Wireless (Demo)", satuan: "Pcs", qtySatuan: 1, hargaJual: 150000, status: "Aktif" },
-        { row: 3, barcode: "899123456702", idBarang: "ID-0002", namaBarang: "Kertas A4 (Demo)", satuan: "Rim", qtySatuan: 1, hargaJual: 55000, status: "Aktif" }
+        { 
+          row: 2, 
+          barcode: "899123456701", 
+          idBarang: "ID-0001", 
+          namaBarang: "Mouse Wireless (Demo)", 
+          satuan: "Pcs", 
+          qtySatuan: 1, 
+          hargaJual: 150000, 
+          status: "Aktif",
+          hargaModal: 120000,
+          profit: 30000,
+          hargaModalLama: 115000,
+          hargaJualLama: 145000,
+          statusModal: "NAIK",
+          selisihModal: 5000,
+          statusJual: "NAIK",
+          selisihJual: 5000,
+          tipeSatuan: "KEDUANYA",
+          gambar: ""
+        },
+        { 
+          row: 3, 
+          barcode: "899123456702", 
+          idBarang: "ID-0002", 
+          namaBarang: "Kertas A4 (Demo)", 
+          satuan: "Rim", 
+          qtySatuan: 1, 
+          hargaJual: 55000, 
+          status: "Aktif",
+          hargaModal: 45000,
+          profit: 10000,
+          hargaModalLama: 45000,
+          hargaJualLama: 55000,
+          statusModal: "TETAP",
+          selisihModal: 0,
+          statusJual: "TETAP",
+          selisihJual: 0,
+          tipeSatuan: "KEDUANYA",
+          gambar: ""
+        }
       ];
 
       const DEMO_DATA_REFERENSI = [
-        { row: 2, satuan: "Pcs", kategoriBarang: "Aksesori", statusOrder: "Pending" },
-        { row: 3, satuan: "Rim", kategoriBarang: "ATK", statusOrder: "Diproses" },
-        { row: 4, satuan: "Box", kategoriBarang: "Elektronik", statusOrder: "Selesai" },
-        { row: 5, satuan: "Sachet", kategoriBarang: "Sembako", statusOrder: "Batal" }
+        { row: 2, satuan: "Pcs", kategoriBarang: "Aksesori", statusOrder: "Pending", adminPin: "1234" },
+        { row: 3, satuan: "Rim", kategoriBarang: "ATK", statusOrder: "Diproses", adminPin: "1234" },
+        { row: 4, satuan: "Box", kategoriBarang: "Elektronik", statusOrder: "Selesai", adminPin: "1234" },
+        { row: 5, satuan: "Sachet", kategoriBarang: "Sembako", statusOrder: "Batal", adminPin: "1234" }
       ];
 
       const DEMO_DATA_PEMBELIAN = [
@@ -3194,7 +3233,14 @@
       }
 
       function renderDashboard() {
-        const totalProduk = rawCekHargaData.length;
+        // Count unique ID_Barang in rawSatuanBarangData for actual active master products
+        const seenIds = new Set();
+        if (Array.isArray(rawSatuanBarangData)) {
+          rawSatuanBarangData.forEach(item => {
+            if (item.idBarang) seenIds.add(item.idBarang);
+          });
+        }
+        const totalProduk = seenIds.size > 0 ? seenIds.size : (rawCekHargaData ? rawCekHargaData.length : 0);
         const totalSupplier = rawDataSupplierData.length;
   
         document.getElementById("stat-total-produk").innerText = totalProduk;
@@ -4118,7 +4164,9 @@
         try {
           await Promise.all([
             fetchDataSupplierData(), 
-            fetchCekHargaData()
+            fetchCekHargaData(),
+            fetchSatuanBarangData(),
+            fetchReferensiData()
           ]);
           
           if (document.getElementById("section-dashboard")?.classList.contains("active")) {
@@ -4188,7 +4236,7 @@
         }
       }
 
-       function isBeliOnlyBarcode(barcode) {
+      function isBeliOnlyBarcode(barcode) {
         if (!barcode) return false;
         const satObj = rawSatuanBarangData.find(s => s.barcode && String(s.barcode).trim() === String(barcode).trim());
         return satObj && String(satObj.tipeSatuan || "").toUpperCase() === "BELI";
@@ -4219,18 +4267,25 @@
 
         let targetIdBarang = null;
         let autoSelectSatuan = null;
+        let matchedRow = null;
 
+        // 1. First, search by EXACT barcode match (case-insensitive)
         const matchedItemByBarcode = rawSatuanBarangData.find(u => u.barcode && String(u.barcode).trim().toLowerCase() === query.toLowerCase());
 
         if (matchedItemByBarcode) {
           targetIdBarang = matchedItemByBarcode.idBarang;
           autoSelectSatuan = matchedItemByBarcode.satuan;
+          matchedRow = matchedItemByBarcode;
         } else {
+          // 2. Next, search by EXACT ID_Barang match (case-insensitive)
           const matchedItemById = rawSatuanBarangData.find(u => String(u.idBarang).trim().toLowerCase() === query.toLowerCase());
           if (matchedItemById) {
             targetIdBarang = matchedItemById.idBarang;
             autoSelectSatuan = matchedItemById.satuan;
+            matchedRow = matchedItemById;
           } else {
+            // 3. Next, search by Nama_Barang word matching
+            // We only look at items that are JUAL or KEDUANYA or empty
             const eligibleUnits = rawSatuanBarangData.filter(u => {
               const tipe = String(u.tipeSatuan || "").toUpperCase();
               return tipe === "JUAL" || tipe === "KEDUANYA" || tipe === "";
@@ -4239,8 +4294,10 @@
             const queryLower = query.toLowerCase();
             const queryWords = queryLower.split(/\s+/).filter(Boolean);
 
+            // Check exact full name first
             let found = eligibleUnits.find(u => String(u.namaBarang).toLowerCase().trim() === queryLower);
             if (!found) {
+              // Word-by-word search (all words must be matched)
               found = eligibleUnits.find(u => {
                 const nameLower = String(u.namaBarang || "").toLowerCase();
                 return queryWords.every(word => nameLower.includes(word));
@@ -4250,11 +4307,13 @@
             if (found) {
               targetIdBarang = found.idBarang;
               autoSelectSatuan = found.satuan;
+              matchedRow = found;
             }
           }
         }
 
         if (targetIdBarang) {
+          currentPriceCheckMatchedRow = matchedRow;
           const allSiblingUnits = rawSatuanBarangData.filter(u => String(u.idBarang) === String(targetIdBarang));
           
           const unitsToDisplay = allSiblingUnits.filter(u => {
@@ -4370,11 +4429,18 @@
         updateSmartPriceDisplay();
       }
 
+      function getAdminPin() {
+        if (!Array.isArray(rawReferensiData)) return "1234";
+        const foundRef = rawReferensiData.find(item => item.adminPin && String(item.adminPin).trim() !== "");
+        return foundRef ? String(foundRef.adminPin).trim() : "1234";
+      }
+
       function updateSmartPriceDisplay() {
         const unit = currentPriceCheckUnits.find(u => u.satuan === currentActivePriceCheckSatuan);
         const detailDisplayEl = document.getElementById("smartPriceDetails");
         if (!unit || !detailDisplayEl) return;
 
+        // 1. Update Chip Styles
         document.querySelectorAll(".satuan-chip-btn").forEach(btn => {
           const btnSat = btn.getAttribute("data-satuan");
           if (btnSat === currentActivePriceCheckSatuan) {
@@ -4385,6 +4451,31 @@
             btn.classList.add("bg-slate-100", "text-slate-600", "border-slate-200");
           }
         });
+
+        // 2. Resolve Dynamic image display under strict prioritisation:
+        //    Prioritas 1: gambar satuan terpilih
+        //    Prioritas 2: gambar pertama valid dalam grup ID_Barang
+        //    Prioritas 3: placeholder image
+        const imageContainerEl = document.getElementById("priceCheckImageContainer");
+        if (imageContainerEl) {
+          let chosenImage = "";
+          if (unit.gambar && String(unit.gambar).trim() !== "") {
+            chosenImage = unit.gambar;
+          } else {
+            const firstValidInGroup = currentPriceCheckUnits.find(u => u.gambar && String(u.gambar).trim() !== "");
+            if (firstValidInGroup) {
+              chosenImage = firstValidInGroup.gambar;
+            }
+          }
+
+          let finalImageUrl = convertGoogleDriveUrl(chosenImage || "");
+          if (chosenImage && String(chosenImage).trim() !== "") {
+            imageContainerEl.innerHTML = `<img src="${finalImageUrl}" referrerpolicy="no-referrer" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(unit.namaBarang)}&background=F1F5F9&color=94A3B8&size=512'" />`;
+          } else {
+            imageContainerEl.innerHTML = `<div class="text-slate-200 flex flex-col items-center"><i data-lucide="image" class="w-16 h-16 opacity-20"></i><span class="text-[9px] font-black mt-3 opacity-30 uppercase tracking-[0.1em]">Produk Belum Ada Gambar</span></div>`;
+            lucide.createIcons();
+          }
+        }
 
         const formattedPrice = formatIDR(unit.hargaJual || 0);
 
@@ -4520,7 +4611,8 @@
 
       function checkPriceCheckPin() {
         const pinInput = document.getElementById("pinInput").value;
-        if (pinInput === "1234") {
+        const correctPin = getAdminPin();
+        if (pinInput === correctPin) {
           isAdminPriceCheckMode = true;
           closePinAdminModal();
           showToast("Akses Admin Aktif!", "success");
@@ -4554,11 +4646,6 @@
 
         if (!units || units.length === 0) return;
         const firstUnit = units[0];
-
-        let imageUrl = convertGoogleDriveUrl(firstUnit.gambar || "");
-        const imageHtml = firstUnit.gambar
-          ? `<img src="${imageUrl}" referrerpolicy="no-referrer" class="w-full h-full object-contain" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(firstUnit.namaBarang)}&background=F1F5F9&color=94A3B8&size=512'" />`
-          : `<div class="text-slate-200 flex flex-col items-center"><i data-lucide="image" class="w-16 h-16 opacity-20"></i><span class="text-[9px] font-black mt-3 opacity-30 uppercase tracking-[0.1em]">Produk Belum Ada Gambar</span></div>`;
 
         const chipsHtml = units.map(u => `
           <button 
@@ -4602,8 +4689,8 @@
               <p class="text-[10px] font-black text-slate-400 mt-3 bg-slate-50 px-5 py-1.5 rounded-full uppercase tracking-[0.2em] border border-slate-100">${barcodeDisplay}</p>
             </div>
 
-            <div class="bg-slate-50 aspect-video rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-slate-100 flex items-center justify-center relative shadow-inner mx-auto max-w-md">
-              ${imageHtml}
+            <div id="priceCheckImageContainer" class="bg-slate-50 aspect-video rounded-[2rem] md:rounded-[3rem] overflow-hidden border border-slate-100 flex items-center justify-center relative shadow-inner mx-auto max-w-md">
+              <!-- Dynamically populated in updateSmartPriceDisplay -->
             </div>
 
             <div class="space-y-2">

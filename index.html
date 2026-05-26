@@ -1092,6 +1092,12 @@
                     class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
                     Tipe Satuan <span id="count-ref-tipe_satuan"></span>
                   </button>
+                  <button 
+                    onclick="switchReferensiTab('merk')" 
+                    id="tab-ref-merk"
+                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    Merk <span id="count-ref-merk"></span>
+                  </button>
                 </div>
               </div>
 
@@ -1223,6 +1229,15 @@
                       </button>
                     </div>
                   </div>
+                  <div id="modal-ref-merk-group" class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk / Brand</label>
+                    <div class="relative flex items-center w-full">
+                      <input type="text" id="form-ref-merk" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: AQUA" />
+                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
                   <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer">
                     <i data-lucide="save" class="w-4 h-4"></i>
                     <span>SIMPAN</span>
@@ -1254,14 +1269,19 @@
                   </button>
                 </div>
               </div>
-
-              <!-- FILTER & SORT PANELS -->
+               <!-- FILTER & SORT PANELS -->
               <div id="barang-filters-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
-                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div class="space-y-3">
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Kategori</label>
                     <select id="filter-barang-kategori" onchange="applyBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
                       <option value="all">Semua Kategori</option>
+                    </select>
+                  </div>
+                  <div class="space-y-3">
+                    <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Filter Merk</label>
+                    <select id="filter-barang-merk" onchange="applyBarangFilters()" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                      <option value="all">Semua Merk</option>
                     </select>
                   </div>
                   <div class="space-y-3">
@@ -1273,7 +1293,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>>
 
               <div id="barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
@@ -2205,12 +2225,9 @@
                         </div>
                         <div class="space-y-3">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk / Brand</label>
-                            <div class="relative flex items-center w-full">
-                              <input type="text" id="form-barangMerk" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Glico" />
-                              <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                                <i data-lucide="x" class="w-4 h-4"></i>
-                              </button>
-                            </div>
+                            <select id="form-barangMerk" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
+                                <option value="">Pilih Merk...</option>
+                            </select>
                         </div>
                       </div>
 
@@ -2383,15 +2400,14 @@
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
                         <th class="px-6 py-7 w-12 text-center">No.</th>
-                        <th class="px-6 py-7 w-32">Barcode</th>
                         <th class="px-6 py-7">Barang</th>
-                        <th class="px-6 py-7 w-16 text-center">Level</th>
-                        <th class="px-6 py-7 w-20">Satuan</th>
+                        <th class="px-6 py-7 w-24 text-center whitespace-nowrap">Level</th>
+                        <th class="px-6 py-7 w-24">Satuan</th>
                         <th class="px-6 py-7 w-24 text-center">Qty Konv</th>
                         <th class="px-6 py-7 w-24 text-center">Qty Satuan</th>
                         <th class="px-6 py-7 w-32 text-right">Harga Jual</th>
                         <th class="px-6 py-7 w-24 text-center">Status</th>
-                        <th class="px-6 py-7 w-28 text-center">Aksi</th>
+                        <th class="px-6 py-7 w-40 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="satuanBarangTableBody" class="divide-y divide-slate-50">
@@ -2837,6 +2853,7 @@
       let barangFilterStatus = "all";
       let satuanBarangFilterStatus = "all";
       let barangFilterKategori = "all";
+      let barangFilterMerk = "all";
       let satuanBarangFilterSatuan = "all";
       let currentReferensiTab = 'satuan'; // 'satuan', 'kategori', 'status'
       let barangCurrentPage = 1;
@@ -2955,10 +2972,10 @@
       ];
 
       const DEMO_DATA_REFERENSI = [
-        { row: 2, satuan: "Pcs", kategoriBarang: "Aksesori", statusOrder: "Pending", adminPin: "1234" },
-        { row: 3, satuan: "Rim", kategoriBarang: "ATK", statusOrder: "Diproses", adminPin: "1234" },
-        { row: 4, satuan: "Box", kategoriBarang: "Elektronik", statusOrder: "Selesai", adminPin: "1234" },
-        { row: 5, satuan: "Sachet", kategoriBarang: "Sembako", statusOrder: "Batal", adminPin: "1234" }
+        { row: 2, satuan: "Pcs", kategoriBarang: "Aksesori", statusOrder: "Pending", adminPin: "1234", merk: "Logitech" },
+        { row: 3, satuan: "Rim", kategoriBarang: "ATK", statusOrder: "Diproses", adminPin: "1234", merk: "PaperOne" },
+        { row: 4, satuan: "Box", kategoriBarang: "Elektronik", statusOrder: "Selesai", adminPin: "1234", merk: "Canon" },
+        { row: 5, satuan: "Sachet", kategoriBarang: "Sembako", statusOrder: "Batal", adminPin: "1234", merk: "Indomie" }
       ];
 
       const DEMO_DATA_PEMBELIAN = [
@@ -3625,6 +3642,185 @@
 
 
 
+      function getFilteredBarang() {
+        if (!rawBarangData) return [];
+        return rawBarangData.filter(item => {
+           const search = (barangSearchTerm || "").trim().toLowerCase();
+           
+           let barcodeMatches = false;
+           if (search !== "" && typeof rawSatuanBarangData !== 'undefined' && Array.isArray(rawSatuanBarangData)) {
+             barcodeMatches = rawSatuanBarangData.some(unit => 
+               String(unit.idBarang || "").trim().toLowerCase() === String(item.idBarang || "").trim().toLowerCase() &&
+               String(unit.barcode || "").trim().toLowerCase().includes(search)
+             );
+           }
+
+           const matchesSearch = search === "" || (
+             (item.namaBarang || "").toLowerCase().includes(search) ||
+             (item.merk || "").toLowerCase().includes(search) ||
+             (item.idBarang || "").toLowerCase().includes(search) ||
+             barcodeMatches
+           );
+
+           const matchesStatus = barangFilterStatus === 'all' || 
+             String(item.status || "").trim().toLowerCase() === String(barangFilterStatus).trim().toLowerCase();
+
+           const matchesKategori = barangFilterKategori === 'all' || 
+             String(item.kategoriBarang || "").trim().toLowerCase() === String(barangFilterKategori).trim().toLowerCase();
+
+           return matchesSearch && matchesStatus && matchesKategori && (barangFilterMerk === 'all' || String(item.merk || "").trim().toLowerCase() === String(barangFilterMerk).trim().toLowerCase());
+        });
+      }
+
+      function getFilteredSatuanBarangGroups() {
+        if (!rawSatuanBarangData) return [];
+        const groupsMap = {};
+        rawSatuanBarangData.forEach(item => {
+           const checkId = String(item.idBarang || "").trim();
+           const checkNama = String(item.namaBarang || "").trim();
+           const checkBarcode = String(item.barcode || "").trim();
+           if (checkId === "" && checkNama === "" && checkBarcode === "") {
+             return;
+           }
+           const id = item.idBarang || "UNKNOWN";
+           if (!groupsMap[id]) {
+             groupsMap[id] = {
+               idBarang: id,
+               namaBarang: item.namaBarang || "Tidak Ada Nama",
+               units: []
+             };
+           }
+           groupsMap[id].units.push(item);
+        });
+
+        Object.values(groupsMap).forEach(g => {
+           g.units.sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
+        });
+
+        let exactBarcodeGroup = null;
+        let exactBarcodeRow = null;
+        const cleanSearch = (satuanBarangSearchTerm || "").trim().toLowerCase();
+        if (cleanSearch !== "") {
+          const exactMatch = rawSatuanBarangData.find(item => 
+            String(item.barcode || "").trim().toLowerCase() === cleanSearch
+          );
+          if (exactMatch) {
+            exactBarcodeGroup = exactMatch.idBarang;
+            exactBarcodeRow = exactMatch.row;
+            if (!window.selectedSatuanUnitByGroup) {
+              window.selectedSatuanUnitByGroup = {};
+            }
+            window.selectedSatuanUnitByGroup[exactMatch.idBarang] = exactMatch.row;
+          }
+        }
+
+        let filteredGroups = Object.values(groupsMap).filter(group => {
+           const search = (satuanBarangSearchTerm || "").toLowerCase().trim();
+           let matchesSearch = true;
+           if (search !== "") {
+             const groupBarcodeMatches = group.units.some(u => String(u.barcode || "").toLowerCase().includes(search));
+             const groupNameMatches = String(group.namaBarang || "").toLowerCase().includes(search);
+             const groupIdMatches = String(group.idBarang || "").toLowerCase().includes(search);
+             
+             // Look up Merk from rawBarangData for this idBarang
+             let groupMerkMatches = false;
+             if (typeof rawBarangData !== 'undefined' && Array.isArray(rawBarangData)) {
+               const mainProduct = rawBarangData.find(b => String(b.idBarang || "").trim().toLowerCase() === String(group.idBarang || "").trim().toLowerCase());
+               if (mainProduct && String(mainProduct.merk || "").toLowerCase().includes(search)) {
+                 groupMerkMatches = true;
+               }
+             }
+             // Also check group units merk directly
+             const unitMerkMatches = group.units.some(u => String(u.merk || "").toLowerCase().includes(search));
+
+             matchesSearch = groupBarcodeMatches || groupNameMatches || groupIdMatches || groupMerkMatches || unitMerkMatches;
+           }
+
+           let matchesStatus = true;
+           if (satuanBarangFilterStatus !== 'all') {
+             matchesStatus = group.units.some(u => String(u.status || "").trim().toLowerCase() === String(satuanBarangFilterStatus).trim().toLowerCase());
+           }
+
+           let matchesSatuan = true;
+           if (satuanBarangFilterSatuan !== 'all') {
+             matchesSatuan = group.units.some(u => String(u.satuan || "").trim().toLowerCase() === String(satuanBarangFilterSatuan).trim().toLowerCase());
+           }
+
+           return matchesSearch && matchesStatus && matchesSatuan;
+        });
+
+        filteredGroups.forEach(group => {
+           let activeUnit = null;
+           
+           if (exactBarcodeGroup === group.idBarang && exactBarcodeRow !== null) {
+              activeUnit = group.units.find(u => u.row == exactBarcodeRow);
+           }
+
+           if (!activeUnit && satuanBarangFilterSatuan !== 'all') {
+              activeUnit = group.units.find(u => String(u.satuan || "").trim().toLowerCase() === String(satuanBarangFilterSatuan).trim().toLowerCase());
+           }
+
+           if (!activeUnit && satuanBarangFilterStatus !== 'all') {
+              activeUnit = group.units.find(u => String(u.status || "").trim().toLowerCase() === String(satuanBarangFilterStatus).trim().toLowerCase());
+           }
+
+           if (!activeUnit) {
+              if (!window.selectedSatuanUnitByGroup) {
+                window.selectedSatuanUnitByGroup = {};
+              }
+              const selectedRow = window.selectedSatuanUnitByGroup[group.idBarang];
+              activeUnit = group.units.find(u => u.row == selectedRow);
+           }
+
+           if (!activeUnit) {
+              activeUnit = group.units[0];
+           }
+
+           if (activeUnit) {
+              if (!window.selectedSatuanUnitByGroup) {
+                window.selectedSatuanUnitByGroup = {};
+              }
+              window.selectedSatuanUnitByGroup[group.idBarang] = activeUnit.row;
+           }
+        });
+
+        filteredGroups.sort((groupA, groupB) => {
+           const activeRowA = (window.selectedSatuanUnitByGroup ? window.selectedSatuanUnitByGroup[groupA.idBarang] : null);
+           const activeA = groupA.units.find(u => u.row == activeRowA) || groupA.units[0];
+           const activeRowB = (window.selectedSatuanUnitByGroup ? window.selectedSatuanUnitByGroup[groupB.idBarang] : null);
+           const activeB = groupB.units.find(u => u.row == activeRowB) || groupB.units[0];
+
+           if (satuanBarangSortBy === 'namaBarang') {
+              const nameA = String(groupA.namaBarang || "").trim().toLowerCase();
+              const nameB = String(groupB.namaBarang || "").trim().toLowerCase();
+              if (nameA !== nameB) {
+                const comp = nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+                return satuanBarangSortOrder === 'asc' ? comp : -comp;
+              }
+              return 0;
+           } else {
+              let valA = activeA[satuanBarangSortBy];
+              let valB = activeB[satuanBarangSortBy];
+
+              if (satuanBarangSortBy === 'hargaJual') {
+                 const numA = Number(valA) || 0;
+                 const numB = Number(valB) || 0;
+                 return satuanBarangSortOrder === 'asc' ? numA - numB : numB - numA;
+              } else {
+                 valA = String(valA || "").trim().toLowerCase();
+                 valB = String(valB || "").trim().toLowerCase();
+                 if (valA !== valB) {
+                   const comp = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
+                   return satuanBarangSortOrder === 'asc' ? comp : -comp;
+                 }
+                 return 0;
+              }
+           }
+        });
+
+        return filteredGroups;
+      }
+
       function updatePaginationButtons(type, current, total) {
         const prevBtn = document.getElementById(`prevBtn-${type}`);
         const nextBtn = document.getElementById(`nextBtn-${type}`);
@@ -3671,32 +3867,13 @@
             renderReferensiData();
           }
         } else if (type === 'barang') {
-          const totalPages = Math.ceil(rawBarangData.length / barangItemsPerPage);
+          const totalPages = Math.ceil(getFilteredBarang().length / barangItemsPerPage);
           if (barangCurrentPage < totalPages) {
             barangCurrentPage++;
             renderBarangData();
           }
         } else if (type === 'satuan-barang') {
-          let filtered = rawSatuanBarangData.filter(item => {
-             // Guard against empty rows from ARRAYFORMULA or invalid data
-             const checkId = String(item.idBarang || "").trim();
-             const checkNama = String(item.namaBarang || "").trim();
-             const checkBarcode = String(item.barcode || "").trim();
-             if (checkId === "" && checkNama === "" && checkBarcode === "") {
-               return false;
-             }
-
-             const search = satuanBarangSearchTerm.toLowerCase();
-             const matchesSearch = (
-               (item.namaBarang || "").toLowerCase().includes(search) ||
-               (item.idBarang || "").toLowerCase().includes(search) ||
-               (item.barcode || "").toLowerCase().includes(search)
-             );
-             const matchesStatus = satuanBarangFilterStatus === 'all' || item.status === satuanBarangFilterStatus;
-             const matchesSatuan = satuanBarangFilterSatuan === 'all' || item.satuan === satuanBarangFilterSatuan;
-             return matchesSearch && matchesStatus && matchesSatuan;
-          });
-          const totalPages = Math.ceil(filtered.length / satuanBarangItemsPerPage);
+          const totalPages = Math.ceil(getFilteredSatuanBarangGroups().length / satuanBarangItemsPerPage);
           if (satuanBarangCurrentPage < totalPages) {
             satuanBarangCurrentPage++;
             renderSatuanBarangData();
@@ -3830,7 +4007,7 @@
         referensiCurrentPage = 1;
         
         // Update UI classes
-        const tabs = ['satuan', 'kategori', 'status', 'tipe_satuan'];
+        const tabs = ['satuan', 'kategori', 'status', 'tipe_satuan', 'merk'];
         tabs.forEach(t => {
           const btn = document.getElementById(`tab-ref-${t}`);
           if (!btn) return;
@@ -3847,7 +4024,8 @@
           'satuan': 'Satuan',
           'kategori': 'Kategori Barang',
           'status': 'Status Order',
-          'tipe_satuan': 'Tipe Satuan'
+          'tipe_satuan': 'Tipe Satuan',
+          'merk': 'Merk'
         };
         const th = document.getElementById('th-referensi-label');
         if (th) th.innerText = labels[tab];
@@ -3928,12 +4106,14 @@
         document.getElementById("modal-ref-kategori-group").classList.add("hidden");
         document.getElementById("modal-ref-status-group").classList.add("hidden");
         document.getElementById("modal-ref-tipe_satuan-group").classList.add("hidden");
+        document.getElementById("modal-ref-merk-group").classList.add("hidden");
 
         const tabLabels = {
           'satuan': 'Satuan',
           'kategori': 'Kategori Barang',
           'status': 'Status Order',
-          'tipe_satuan': 'Tipe Satuan'
+          'tipe_satuan': 'Tipe Satuan',
+          'merk': 'Merk'
         };
 
         if (data) {
@@ -3944,10 +4124,12 @@
           document.getElementById("form-ref-status").value = data.statusOrder || "";
           document.getElementById("form-ref-tipe-satuan").value = data.tipeSatuan || "KEDUANYA";
           document.getElementById("form-ref-tipe-satuan-option").value = data.tipeSatuanOption || "";
+          document.getElementById("form-ref-merk").value = data.merk || "";
         } else {
           title.innerText = "Tambah " + tabLabels[currentReferensiTab];
           document.getElementById("form-ref-tipe-satuan").value = "KEDUANYA";
           document.getElementById("form-ref-tipe-satuan-option").value = "";
+          document.getElementById("form-ref-merk").value = "";
         }
         
         // Only show the group corresponding to active tab
@@ -3971,6 +4153,7 @@
         const statusOrder = document.getElementById("form-ref-status").value.trim().toUpperCase();
         const tipeSatuanOption = document.getElementById("form-ref-tipe-satuan-option").value.trim().toUpperCase();
         const tipeSatuan = document.getElementById("form-ref-tipe-satuan").value;
+        const merk = document.getElementById("form-ref-merk").value.trim().toUpperCase();
 
         const tab = currentReferensiTab;
         let val = "";
@@ -3978,6 +4161,7 @@
         else if (tab === 'kategori') val = kategoriBarang;
         else if (tab === 'status') val = statusOrder;
         else if (tab === 'tipe_satuan') val = tipeSatuanOption;
+        else if (tab === 'merk') val = merk;
 
         if (!val) {
           showAlert("Peringatan", "Input tidak boleh kosong.", "warning");
@@ -3986,7 +4170,7 @@
 
         showLoading(true);
         try {
-          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tipeSatuan, tipeSatuanOption, tab });
+          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tipeSatuan, tipeSatuanOption, merk, tab });
           
           // Apply local change to rawReferensiData immediately
           if (!Array.isArray(rawReferensiData)) {
@@ -4000,14 +4184,16 @@
               else if (tab === 'kategori') targetItem.kategoriBarang = kategoriBarang || "";
               else if (tab === 'status') targetItem.statusOrder = statusOrder || "";
               else if (tab === 'tipe_satuan') targetItem.tipeSatuanOption = tipeSatuanOption || "";
+              else if (tab === 'merk') targetItem.merk = merk || "";
             }
           } else {
             const newId = "R-" + (rawReferensiData.length + 2);
-            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuanOption: "" };
+            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuanOption: "", merk: "" };
             if (tab === 'satuan') newItem.satuan = satuan || "";
             else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
             else if (tab === 'status') newItem.statusOrder = statusOrder || "";
             else if (tab === 'tipe_satuan') newItem.tipeSatuanOption = tipeSatuanOption || "";
+            else if (tab === 'merk') newItem.merk = merk || "";
             rawReferensiData.push(newItem);
           }
 
@@ -4016,13 +4202,15 @@
           const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
           const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
           const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
+          const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
 
           sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
           tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
 
-          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length);
+          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
           const newRawData = [];
           for (let i = 0; i < maxLen; i++) {
             newRawData.push({
@@ -4030,7 +4218,8 @@
               satuan: sList[i] || "",
               kategoriBarang: kList[i] || "",
               statusOrder: oList[i] || "",
-              tipeSatuanOption: tList[i] || ""
+              tipeSatuanOption: tList[i] || "",
+              merk: mList[i] || ""
             });
           }
           rawReferensiData = newRawData;
@@ -4062,7 +4251,7 @@
       }
 
       async function handleHapusReferensi(id) {
-        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order', 'tipe_satuan': 'Tipe Satuan' };
+        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order', 'tipe_satuan': 'Tipe Satuan', 'merk': 'Merk' };
         showConfirm("Hapus?", `Hapus item ${tabLabels[currentReferensiTab]} ini?`, async () => {
           showLoading(true);
           try {
@@ -4142,16 +4331,19 @@
           const countKategori = rawReferensiData.filter(item => !!item.kategoriBarang).length;
           const countStatus = rawReferensiData.filter(item => !!item.statusOrder).length;
           const countTipeSatuan = rawReferensiData.filter(item => !!item.tipeSatuanOption).length;
+          const countMerk = rawReferensiData.filter(item => !!item.merk).length;
           
           const elSatuan = document.getElementById("count-ref-satuan");
           const elKategori = document.getElementById("count-ref-kategori");
           const elStatus = document.getElementById("count-ref-status");
           const elTipeSatuan = document.getElementById("count-ref-tipe_satuan");
+          const elMerk = document.getElementById("count-ref-merk");
           
           if (elSatuan) elSatuan.innerText = `(${countSatuan})`;
           if (elKategori) elKategori.innerText = `(${countKategori})`;
           if (elStatus) elStatus.innerText = `(${countStatus})`;
           if (elTipeSatuan) elTipeSatuan.innerText = `(${countTipeSatuan})`;
+          if (elMerk) elMerk.innerText = `(${countMerk})`;
 
           if (!Array.isArray(rawReferensiData) || rawReferensiData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
@@ -4168,6 +4360,7 @@
             else if (currentReferensiTab === 'kategori') val = item.kategoriBarang || "";
             else if (currentReferensiTab === 'status') val = item.statusOrder || "";
             else if (currentReferensiTab === 'tipe_satuan') val = item.tipeSatuanOption || "";
+            else if (currentReferensiTab === 'merk') val = item.merk || "";
             
             if (!val && !referensiSearchTerm) return false; // Hide empty rows in tabs unless searching? Actually, usually independent.
             
@@ -4183,6 +4376,7 @@
              else if (currentReferensiTab === 'kategori') { valA = a.kategoriBarang || ""; valB = b.kategoriBarang || ""; }
              else if (currentReferensiTab === 'status') { valA = a.statusOrder || ""; valB = b.statusOrder || ""; }
              else if (currentReferensiTab === 'tipe_satuan') { valA = a.tipeSatuanOption || ""; valB = b.tipeSatuanOption || ""; }
+             else if (currentReferensiTab === 'merk') { valA = a.merk || ""; valB = b.merk || ""; }
              return valA.localeCompare(valB);
           });
 
@@ -4218,6 +4412,7 @@
             else if (currentReferensiTab === 'kategori') { displayVal = item.kategoriBarang; fieldLabel = "Kategori"; }
             else if (currentReferensiTab === 'status') { displayVal = item.statusOrder; fieldLabel = "Status"; }
             else if (currentReferensiTab === 'tipe_satuan') { displayVal = item.tipeSatuanOption; fieldLabel = "Tipe Satuan"; }
+            else if (currentReferensiTab === 'merk') { displayVal = item.merk; fieldLabel = "Merk"; }
 
             // Desktop Row
             const tr = document.createElement("tr");
@@ -4364,8 +4559,8 @@
 
       function isBeliOnlyBarcode(barcode) {
         if (!barcode) return false;
-        const satObj = rawSatuanBarangData.find(s => s.barcode && String(s.barcode).trim() === String(barcode).trim());
-        return satObj && String(satObj.tipeSatuan || "").toUpperCase() === "BELI";
+        const satObj = rawSatuanBarangData.find(s => s.barcode && isEqualNormalized(s.barcode, barcode));
+        return satObj && isEqualNormalized(satObj.tipeSatuan, "BELI");
       }
 
       let isSearchingBarang = false;
@@ -4396,7 +4591,7 @@
         let matchedRow = null;
 
         // 1. First, search by EXACT barcode match (case-insensitive)
-        const matchedItemByBarcode = rawSatuanBarangData.find(u => u.barcode && String(u.barcode).trim().toLowerCase() === query.toLowerCase());
+        const matchedItemByBarcode = rawSatuanBarangData.find(u => u.barcode && isEqualNormalized(u.barcode, query));
 
         if (matchedItemByBarcode) {
           targetIdBarang = matchedItemByBarcode.idBarang;
@@ -4404,7 +4599,7 @@
           matchedRow = matchedItemByBarcode;
         } else {
           // 2. Next, search by EXACT ID_Barang match (case-insensitive)
-          const matchedItemById = rawSatuanBarangData.find(u => String(u.idBarang).trim().toLowerCase() === query.toLowerCase());
+          const matchedItemById = rawSatuanBarangData.find(u => isEqualNormalized(u.idBarang, query));
           if (matchedItemById) {
             targetIdBarang = matchedItemById.idBarang;
             autoSelectSatuan = matchedItemById.satuan;
@@ -4414,14 +4609,14 @@
             // We only look at items that are JUAL or KEDUANYA or empty
             const eligibleUnits = rawSatuanBarangData.filter(u => {
               const tipe = String(u.tipeSatuan || "").toUpperCase();
-              return tipe === "JUAL" || tipe === "KEDUANYA" || tipe === "";
+              return isEqualNormalized(tipe, "JUAL") || isEqualNormalized(tipe, "KEDUANYA") || tipe === "";
             });
 
             const queryLower = query.toLowerCase();
             const queryWords = queryLower.split(/\s+/).filter(Boolean);
 
             // Check exact full name first
-            let found = eligibleUnits.find(u => String(u.namaBarang).toLowerCase().trim() === queryLower);
+            let found = eligibleUnits.find(u => isEqualNormalized(u.namaBarang, query));
             if (!found) {
               // Word-by-word search (all words must be matched)
               found = eligibleUnits.find(u => {
@@ -4440,11 +4635,11 @@
 
         if (targetIdBarang) {
           currentPriceCheckMatchedRow = matchedRow;
-          const allSiblingUnits = rawSatuanBarangData.filter(u => String(u.idBarang) === String(targetIdBarang));
+          const allSiblingUnits = rawSatuanBarangData.filter(u => isEqualNormalized(u.idBarang, targetIdBarang));
           
           const unitsToDisplay = allSiblingUnits.filter(u => {
             const tipe = String(u.tipeSatuan || "").toUpperCase();
-            return tipe === "JUAL" || tipe === "KEDUANYA" || tipe === "";
+            return isEqualNormalized(tipe, "JUAL") || isEqualNormalized(tipe, "KEDUANYA") || tipe === "";
           });
 
           if (unitsToDisplay.length === 0) {
@@ -4455,7 +4650,7 @@
 
           unitsToDisplay.sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
           
-          if (!unitsToDisplay.some(u => u.satuan === autoSelectSatuan)) {
+          if (!unitsToDisplay.some(u => isEqualNormalized(u.satuan, autoSelectSatuan))) {
             autoSelectSatuan = unitsToDisplay[0].satuan;
           }
 
@@ -4497,8 +4692,8 @@
         const queryWords = query.split(/\s+/).filter(Boolean);
 
         const eligibleItems = rawSatuanBarangData.filter(item => {
-          const tipeSatuan = String(item.tipeSatuan || "").toUpperCase();
-          const isEligible = (tipeSatuan === "JUAL" || tipeSatuan === "KEDUANYA" || tipeSatuan === "");
+          const tipeSatuan = String(item.tipeSatuan || "");
+          const isEligible = isEqualNormalized(tipeSatuan, "JUAL") || isEqualNormalized(tipeSatuan, "KEDUANYA") || tipeSatuan === "";
           
           const isBarcodeMatch = item.barcode && String(item.barcode).toLowerCase().includes(query);
           
@@ -4607,9 +4802,9 @@
 
         if (!isAdminPriceCheckMode) {
           const activePromos = (rawHargaPromoData || []).filter(p => 
-            p.status === 'Aktif' && 
-            String(p.idBarang) === String(unit.idBarang) && 
-            String(p.satuan).toUpperCase() === String(unit.satuan).toUpperCase()
+            isEqualNormalized(p.status, 'Aktif') && 
+            isEqualNormalized(p.idBarang, unit.idBarang) && 
+            isEqualNormalized(p.satuan, unit.satuan)
           );
 
           let promoSectionHtml = "";
@@ -5107,6 +5302,7 @@
           if (searchInput) searchInput.value = "";
           barangFilterStatus = "all";
           barangFilterKategori = "all";
+          barangFilterMerk = "all";
           barangCurrentPage = 1;
           showToast("Memperbarui data barang...", "info");
         }
@@ -5167,11 +5363,11 @@
           let list = [];
           
           if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
-            list = [...new Set(rawReferensiData.map(item => item.kategoriBarang || item.Kategori_Barang || item.Ketegori_Barang || item.kategori || item.namaKategori).filter(Boolean))];
+            list = rawReferensiData.map(item => item.kategoriBarang || item.Kategori_Barang || item.Ketegori_Barang || item.kategori || item.namaKategori).filter(Boolean);
           }
           
           if (list.length === 0) {
-            const fromItems = [...new Set(rawBarangData.map(b => b.kategoriBarang).filter(Boolean))];
+            const fromItems = rawBarangData.map(b => b.kategoriBarang).filter(Boolean);
             if (fromItems.length > 0) list = fromItems;
           }
 
@@ -5180,8 +5376,7 @@
           }
           
           // Clean empty values and sort alphabetically
-          list = list.filter(Boolean).map(cat => String(cat).trim());
-          list = [...new Set(list)].sort((a, b) => a.localeCompare(b));
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
           
           const select = document.getElementById("form-barangKategori");
           const filterSelect = document.getElementById("filter-barang-kategori");
@@ -5201,8 +5396,55 @@
             filterSelect.value = barangFilterKategori;
           }
           try { populateSatuanDasarDropdown(); } catch (e) {}
+          try { populateMerkDropdown(); } catch (e) {}
         } catch (err) {
           console.error("populateKategoriDropdown Error:", err);
+        }
+      }
+
+      async function populateMerkDropdown() {
+        try {
+          let list = [];
+          
+          if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+            list = rawReferensiData.map(item => item.merk).filter(Boolean);
+          }
+          
+          if (list.length === 0) {
+            const fromItems = rawBarangData.map(b => b.merk).filter(Boolean);
+            if (fromItems.length > 0) list = fromItems;
+          }
+
+          if (list.length === 0) {
+            list = ["Logitech", "PaperOne", "Canon", "Indomie", "Glico", "Aqua"];
+          }
+          
+          // Clean empty values and sort alphabetically
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+          
+          const select = document.getElementById("form-barangMerk");
+          const filterSelect = document.getElementById("filter-barang-merk");
+
+          if (select) {
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">Pilih Merk...</option>';
+            list.forEach(m => {
+               select.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+            if (currentVal) {
+              setSelectValueCaseInsensitive("form-barangMerk", currentVal);
+            }
+          }
+
+          if (filterSelect) {
+            filterSelect.innerHTML = '<option value="all">Semua Merk</option>';
+            list.forEach(m => {
+               filterSelect.innerHTML += `<option value="${m}">${m}</option>`;
+            });
+            filterSelect.value = barangFilterMerk;
+          }
+        } catch (err) {
+          console.error("populateMerkDropdown Error:", err);
         }
       }
 
@@ -5214,18 +5456,17 @@
           
           let list = [];
           if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
-            list = [...new Set(rawReferensiData.map(item => item.satuan || item.Satuan).filter(Boolean))];
+            list = rawReferensiData.map(item => item.satuan || item.Satuan).filter(Boolean);
           }
           if (list.length === 0) {
-            const fromItems = [...new Set(rawBarangData.map(b => b.satuanDasar).filter(Boolean))];
+            const fromItems = rawBarangData.map(b => b.satuanDasar).filter(Boolean);
             if (fromItems.length > 0) list = fromItems;
           }
           if (list.length === 0) {
             list = ["Pcs", "Box", "Pack", "Rim", "Sachet", "Botol", "Dus", "Lusin", "Kg", "Gram", "Liter"];
           }
           
-          list = list.filter(Boolean).map(s => String(s).trim());
-          list = [...new Set(list)].sort((a, b) => a.localeCompare(b));
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
           
           select.innerHTML = '<option value="">Pilih Satuan Dasar...</option>';
           list.forEach(s => {
@@ -5241,14 +5482,13 @@
       function getOrderStatusList() {
         let list = [];
         if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
-          list = [...new Set(rawReferensiData.map(item => item.statusOrder || item.Status_Order || item.status_order || item.status).filter(Boolean))];
+          list = rawReferensiData.map(item => item.statusOrder || item.Status_Order || item.status_order || item.status).filter(Boolean);
         }
         if (list.length === 0) {
           list = ["Pending", "Diproses", "Selesai", "Batal"];
         }
         // Trim, filter, and sort alphabetically
-        const cleanList = list.filter(Boolean).map(st => String(st).trim());
-        return [...new Set(cleanList)].sort((a, b) => a.localeCompare(b));
+        return getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
       }
 
       function populateOrderStatusDropdown() {
@@ -5344,19 +5584,7 @@
         
         updateBarangControlUI();
 
-        let filtered = rawBarangData.filter(item => {
-           const search = barangSearchTerm.toLowerCase();
-           const matchesSearch = (
-             (item.namaBarang || "").toLowerCase().includes(search) ||
-             (item.merk || "").toLowerCase().includes(search) ||
-             (item.idBarang || "").toLowerCase().includes(search)
-           );
-
-           const matchesStatus = barangFilterStatus === 'all' || item.status === barangFilterStatus;
-           const matchesKategori = barangFilterKategori === 'all' || item.kategoriBarang === barangFilterKategori;
-
-           return matchesSearch && matchesStatus && matchesKategori;
-        });
+        let filtered = getFilteredBarang();
 
         // Dynamic Sort
         filtered.sort((a, b) => {
@@ -5387,7 +5615,7 @@
         } else {
            paginated.forEach((item, idx) => {
              const rowIdx = start + idx + 1;
-             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+             const statusClass = isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
              
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
@@ -5411,10 +5639,10 @@
                        </button>
                         <!-- Toggle Status Switch -->
                         <button onclick="handleToggleStatusBarang(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
-                          title="Ubah Status: ${item.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
+                          title="Ubah Status: ${isEqualNormalized(item.status, 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                     </div>
@@ -5457,9 +5685,9 @@
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusBarang(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                      </div>
@@ -5498,6 +5726,7 @@
 
       function applyBarangFilters() {
         barangFilterKategori = document.getElementById('filter-barang-kategori').value;
+        barangFilterMerk = document.getElementById('filter-barang-merk')?.value || "all";
         barangCurrentPage = 1;
         renderBarangData();
       }
@@ -5775,12 +6004,13 @@
           document.getElementById("form-barangRow").value = data.row;
           document.getElementById("form-barangId").value = data.idBarang;
           document.getElementById("form-barangNama").value = data.namaBarang;
-          document.getElementById("form-barangKategori").value = data.kategoriBarang;
-          document.getElementById("form-barangMerk").value = data.merk;
+          setSelectValueCaseInsensitive("form-barangKategori", data.kategoriBarang);
+          try { populateMerkDropdown(); } catch(e) {}
+          setSelectValueCaseInsensitive("form-barangMerk", data.merk);
           
           populateSatuanDasarDropdown();
-          document.getElementById("form-barangSatuanDasar").value = data.satuanDasar || "";
-          document.getElementById("form-barangStatus").value = data.status;
+          setSelectValueCaseInsensitive("form-barangSatuanDasar", data.satuanDasar);
+          setSelectValueCaseInsensitive("form-barangStatus", data.status);
 
           document.getElementById("section-barang-variasi").classList.add("hidden");
         } else {
@@ -6016,8 +6246,8 @@
       }
 
       async function handleToggleStatusBarang(row, currentStatus) {
-        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
-        const msg = newStatus === "Aktif" ? "Aktifkan barang ini?" : "Nonaktifkan barang ini?";
+        const newStatus = isEqualNormalized(currentStatus, 'Aktif') ? "Nonaktif" : "Aktif";
+        const msg = isEqualNormalized(newStatus, 'Aktif') ? "Aktifkan barang ini?" : "Nonaktifkan barang ini?";
         
         const konfirmasi = await showKonfirmasi(msg, `Status barang akan diubah menjadi ${newStatus}.`);
         if (!konfirmasi) return;
@@ -6239,128 +6469,7 @@
           window.selectedSatuanUnitByGroup = {};
         }
 
-        const groupsMap = {};
-        rawSatuanBarangData.forEach(item => {
-           const checkId = String(item.idBarang || "").trim();
-           const checkNama = String(item.namaBarang || "").trim();
-           const checkBarcode = String(item.barcode || "").trim();
-           if (checkId === "" && checkNama === "" && checkBarcode === "") {
-             return;
-           }
-           const id = item.idBarang || "UNKNOWN";
-           if (!groupsMap[id]) {
-             groupsMap[id] = {
-               idBarang: id,
-               namaBarang: item.namaBarang || "Tidak Ada Nama",
-               units: []
-             };
-           }
-           groupsMap[id].units.push(item);
-        });
-
-        Object.values(groupsMap).forEach(g => {
-           g.units.sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
-        });
-
-        let exactBarcodeGroup = null;
-        let exactBarcodeRow = null;
-        const cleanSearch = (satuanBarangSearchTerm || "").trim().toLowerCase();
-        if (cleanSearch !== "") {
-          const exactMatch = rawSatuanBarangData.find(item => 
-            String(item.barcode || "").trim().toLowerCase() === cleanSearch
-          );
-          if (exactMatch) {
-            exactBarcodeGroup = exactMatch.idBarang;
-            exactBarcodeRow = exactMatch.row;
-            window.selectedSatuanUnitByGroup[exactMatch.idBarang] = exactMatch.row;
-          }
-        }
-
-        let filteredGroups = Object.values(groupsMap).filter(group => {
-           const search = (satuanBarangSearchTerm || "").toLowerCase().trim();
-           let matchesSearch = true;
-           if (search !== "") {
-             const groupBarcodeMatches = group.units.some(u => String(u.barcode || "").toLowerCase().includes(search));
-             const groupNameMatches = String(group.namaBarang).toLowerCase().includes(search);
-             const groupIdMatches = String(group.idBarang).toLowerCase().includes(search);
-             matchesSearch = groupBarcodeMatches || groupNameMatches || groupIdMatches;
-           }
-
-           let matchesStatus = true;
-           if (satuanBarangFilterStatus !== 'all') {
-             matchesStatus = group.units.some(u => u.status === satuanBarangFilterStatus);
-           }
-
-           let matchesSatuan = true;
-           if (satuanBarangFilterSatuan !== 'all') {
-             matchesSatuan = group.units.some(u => u.satuan === satuanBarangFilterSatuan);
-           }
-
-           return matchesSearch && matchesStatus && matchesSatuan;
-        });
-
-        filteredGroups.forEach(group => {
-           let activeUnit = null;
-           
-           if (exactBarcodeGroup === group.idBarang && exactBarcodeRow !== null) {
-              activeUnit = group.units.find(u => u.row == exactBarcodeRow);
-           }
-
-           if (!activeUnit && satuanBarangFilterSatuan !== 'all') {
-              activeUnit = group.units.find(u => u.satuan === satuanBarangFilterSatuan);
-           }
-
-           if (!activeUnit && satuanBarangFilterStatus !== 'all') {
-              activeUnit = group.units.find(u => u.status === satuanBarangFilterStatus);
-           }
-
-           if (!activeUnit) {
-              const selectedRow = window.selectedSatuanUnitByGroup[group.idBarang];
-              activeUnit = group.units.find(u => u.row == selectedRow);
-           }
-
-           if (!activeUnit) {
-              activeUnit = group.units[0];
-           }
-
-           if (activeUnit) {
-              window.selectedSatuanUnitByGroup[group.idBarang] = activeUnit.row;
-           }
-        });
-
-        filteredGroups.sort((groupA, groupB) => {
-           const activeRowA = window.selectedSatuanUnitByGroup[groupA.idBarang];
-           const activeA = groupA.units.find(u => u.row == activeRowA) || groupA.units[0];
-           const activeRowB = window.selectedSatuanUnitByGroup[groupB.idBarang];
-           const activeB = groupB.units.find(u => u.row == activeRowB) || groupB.units[0];
-
-           if (satuanBarangSortBy === 'namaBarang') {
-              const nameA = String(groupA.namaBarang || "").trim().toLowerCase();
-              const nameB = String(groupB.namaBarang || "").trim().toLowerCase();
-              if (nameA !== nameB) {
-                const comp = nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
-                return satuanBarangSortOrder === 'asc' ? comp : -comp;
-              }
-              return 0;
-           } else {
-              let valA = activeA[satuanBarangSortBy];
-              let valB = activeB[satuanBarangSortBy];
-
-              if (satuanBarangSortBy === 'hargaJual') {
-                 const numA = Number(valA) || 0;
-                 const numB = Number(valB) || 0;
-                 return satuanBarangSortOrder === 'asc' ? numA - numB : numB - numA;
-              } else {
-                 valA = String(valA || "").trim().toLowerCase();
-                 valB = String(valB || "").trim().toLowerCase();
-                 if (valA !== valB) {
-                   const comp = valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
-                   return satuanBarangSortOrder === 'asc' ? comp : -comp;
-                 }
-                 return 0;
-              }
-           }
-        });
+        const filteredGroups = getFilteredSatuanBarangGroups();
 
         const total = filteredGroups.length;
         const totalPages = Math.ceil(total / satuanBarangItemsPerPage) || 1;
@@ -6371,7 +6480,7 @@
         const paginatedGroups = filteredGroups.slice(start, end);
 
         if (paginatedGroups.length === 0) {
-           tbody.innerHTML = '<tr><td colspan="10" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
+           tbody.innerHTML = '<tr><td colspan="9" class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</td></tr>';
            cardContainer.innerHTML = '<div class="px-8 py-20 text-center font-bold text-slate-400 italic">Data tidak ditemukan.</div>';
         } else {
            paginatedGroups.forEach((group, idx) => {
@@ -6379,23 +6488,23 @@
               const activeRow = window.selectedSatuanUnitByGroup[group.idBarang];
               const activeUnit = group.units.find(u => u.row == activeRow) || group.units[0];
               
-              const statusClass = activeUnit.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+              const statusClass = isEqualNormalized(activeUnit.status, 'Aktif') ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
               
               let displayImgUrl = getGroupImageUrl(group, activeUnit);
               const imgHtml = displayImgUrl 
                 ? `<img src="${displayImgUrl}" referrerpolicy="no-referrer" class="w-12 h-12 rounded-xl object-cover border border-slate-100 shadow-sm" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(group.namaBarang)}&background=F1F5F9&color=94A3B8&size=100'"/>` 
                 : `<div class="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-6 h-6"></i></div>`;
 
-              const tipeSatuanBadge = activeUnit.tipeSatuan === 'BELI' 
+              const tipeSatuanBadge = isEqualNormalized(activeUnit.tipeSatuan, 'BELI') 
                 ? '<span class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 text-[9px] font-black rounded-md uppercase tracking-wider">BELI</span>'
-                : (activeUnit.tipeSatuan === 'JUAL'
+                : (isEqualNormalized(activeUnit.tipeSatuan, 'JUAL')
                   ? '<span class="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-100 text-[9px] font-black rounded-md uppercase tracking-wider">JUAL</span>'
                   : '<span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-100 text-[9px] font-black rounded-md uppercase tracking-wider">KEDUANYA</span>');
 
               const activePromosForUnit = (rawHargaPromoData || []).filter(promo => 
-                promo.status === 'Aktif' && 
-                String(promo.idBarang) === String(group.idBarang) && 
-                String(promo.satuan).toUpperCase() === String(activeUnit.satuan).toUpperCase()
+                isEqualNormalized(promo.status, 'Aktif') && 
+                isEqualNormalized(promo.idBarang, group.idBarang) && 
+                isEqualNormalized(promo.satuan, activeUnit.satuan)
               );
               const hasActivePromo = activePromosForUnit.length > 0;
               const activePromosCount = activePromosForUnit.length;
@@ -6406,14 +6515,17 @@
               tbody.innerHTML += `
                 <tr class="hover:bg-slate-50/80 transition-colors group">
                   <td class="px-6 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
-                  <td class="px-6 py-6 font-mono text-slate-700 text-xs">${activeUnit.barcode || "-"}</td>
                   <td class="px-6 py-6 font-sans">
-                     <div class="flex items-center gap-3">
+                     <div class="flex items-center gap-4">
                         ${imgHtml}
                         <div class="flex flex-col min-w-0">
-                          <span class="font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors truncate max-w-[250px]">${group.namaBarang}</span>
-                          <span class="text-[10px] font-bold text-slate-400">${group.idBarang}</span>
-                          <div class="flex flex-wrap gap-1 mt-1.5">
+                          <span class="font-black text-slate-800 text-sm italic group-hover:text-emerald-600 transition-colors truncate max-w-[280px]">${group.namaBarang}</span>
+                          <span class="text-[10px] font-bold text-slate-400 mt-0.5">ID: ${group.idBarang}</span>
+                          <span class="text-[11px] font-semibold text-indigo-600 font-mono mt-0.5 flex items-center gap-1">
+                            <i data-lucide="scan-barcode" class="w-3.5 h-3.5 text-indigo-400"></i>
+                            ${activeUnit.barcode || "-"}
+                          </span>
+                          <div class="flex flex-wrap gap-1 mt-2">
                              ${group.units.map(u => `
                                <button onclick="selectGroupUnit('${group.idBarang}', ${u.row})" class="px-2 py-0.5 text-[9px] font-black rounded-md border transition-all cursor-pointer ${u.row == activeUnit.row ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm' : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'}">
                                  ${u.satuan}
@@ -6423,8 +6535,8 @@
                         </div>
                      </div>
                   </td>
-                  <td class="px-6 py-6 text-center">
-                     <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${String(activeUnit.levelSatuan || "1").replace(/level/i, "").trim()}</span>
+                  <td class="px-6 py-6 text-center whitespace-nowrap font-black text-slate-700 text-xs border-l border-r border-slate-100/40">
+                     Level ${String(activeUnit.levelSatuan || "1").replace(/level/i, "").trim()}
                   </td>
                   <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase font-sans">
                      <div class="flex flex-col gap-1 items-start">
@@ -6437,28 +6549,36 @@
                   </td>
                   <td class="px-6 py-6 text-center font-black text-slate-900 text-xs">${activeUnit.qtyInputKonversi || 1}</td>
                   <td class="px-6 py-6 text-center font-black text-emerald-600 text-xs">${activeUnit.qtySatuan || 1}</td>
-                  <td class="px-6 py-6 text-right font-black text-slate-900 text-sm whitespace-nowrap">Rp ${Number(activeUnit.hargaJual || 0).toLocaleString('id-ID')}</td>
+                  <td class="px-6 py-6 text-right font-black ${!activeUnit.hargaJual || Number(activeUnit.hargaJual) === 0 ? 'text-slate-400 italic text-xs font-normal' : 'text-slate-900 text-sm'} whitespace-nowrap">
+                    ${!activeUnit.hargaJual || Number(activeUnit.hargaJual) === 0 ? 'Belum ada' : 'Rp ' + Number(activeUnit.hargaJual).toLocaleString('id-ID')}
+                  </td>
                   <td class="px-6 py-6 text-center">
                      <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${activeUnit.status}</span>
                   </td>
                   <td class="px-6 py-6 whitespace-nowrap">
                      <div class="flex items-center justify-center gap-2">
-                        <button onclick="openKelolaPromo('${group.idBarang}', '${activeUnit.satuan}')" class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl border border-amber-100 px-3 transition-all active:scale-90 flex items-center gap-1 shrink-0 cursor-pointer" title="Kelola Promo">
-                           <i data-lucide="tag" class="w-3.5 h-3.5 text-amber-500"></i>
-                           <span class="text-[9px] font-black uppercase tracking-wider">Promo</span>
+                        <!-- Kelola Promo: Promo + tag icon -->
+                        <button onclick="openKelolaPromo('${group.idBarang}', '${activeUnit.satuan}')" class="p-2 py-1 bg-amber-50 hover:bg-amber-100/90 text-amber-700 rounded-lg border border-amber-100 px-2.5 transition-all active:scale-90 flex items-center gap-1 shrink-0 cursor-pointer" title="Kelola Promo">
+                           <i data-lucide="tag" class="w-2.5 h-2.5 text-amber-500 font-bold"></i>
+                           <span class="text-[8px] font-black uppercase tracking-wider">Promo</span>
                         </button>
-                        <button onclick="openSatuanBarangDetailByRow(${activeUnit.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 focus:outline-none transition-all active:scale-90" title="Analisis Harga">
-                           <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
+                        
+                        <!-- Analisis: icon only + Lihat Analisis tooltip -->
+                        <button onclick="openSatuanBarangDetailByRow(${activeUnit.row})" class="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 focus:outline-none transition-all active:scale-90 cursor-pointer" title="Lihat Analisis">
+                           <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button onclick="openSatuanBarangEditByRow(${activeUnit.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90" title="Edit Data">
-                           <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        
+                        <!-- Edit: icon only + Edit Data tooltip -->
+                        <button onclick="openSatuanBarangEditByRow(${activeUnit.row})" class="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-emerald-50 hover:text-emerald-600 transition-all active:scale-90 cursor-pointer" title="Edit Data">
+                           <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                         </button>
+                        <!-- Status Toggle: check existing -->
                         <button onclick="handleToggleStatusSatuanBarang(${activeUnit.row}, '${activeUnit.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${activeUnit.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
-                          title="Ubah Status: ${activeUnit.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${activeUnit.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${activeUnit.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${activeUnit.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
-                          </span>
+                           class="relative inline-flex h-5 w-10 items-center rounded-full transition-all focus:outline-none cursor-pointer ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.3)]'}"
+                           title="Ubah Status: ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'}">
+                           <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'translate-x-5' : 'translate-x-1'}">
+                             <i data-lucide="${isEqualNormalized(activeUnit.status, 'Aktif') ? 'check' : 'x'}" class="w-2 h-2 ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                           </span>
                         </button>
                      </div>
                   </td>
@@ -6530,9 +6650,9 @@
                     </div>
                   </div>
 
-                  <div class="${isDetailOpen ? 'hidden' : 'block'} text-center bg-emerald-50/10 px-4 py-3 rounded-2xl border border-emerald-100/30">
-                      <p class="text-[9px] font-black text-slate-450 uppercase tracking-widest mb-1 leading-none">Harga Jual (${activeUnit.satuan})</p>
-                      <p class="font-black text-2xl text-emerald-600 font-mono tracking-tight leading-none">${formatValueCompact(activeUnit.hargaJual)}</p>
+                  <div class="${isDetailOpen ? 'hidden' : 'block'} text-center bg-emerald-50/10 px-4 py-2 border border-emerald-100/20 rounded-2xl">
+                      <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 leading-none">HARGA JUAL (${activeUnit.satuan.toUpperCase()})</p>
+                      <p class="font-black text-[1.75rem] text-emerald-600 font-mono tracking-tight leading-none">${formatValueCompact(activeUnit.hargaJual)}</p>
                   </div>
 
                   <!-- Toggle Detail Internal Section -->
@@ -6574,9 +6694,9 @@
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusSatuanBarang(${activeUnit.row}, '${activeUnit.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${activeUnit.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${activeUnit.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${activeUnit.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${activeUnit.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(activeUnit.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(activeUnit.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                      </div>
@@ -6659,7 +6779,8 @@
         } else {
            paginated.forEach((item, idx) => {
               const rowIdx = start + idx + 1;
-              const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+              const isItemActive = isEqualNormalized(item.status, 'Aktif');
+              const statusClass = isItemActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
               
               // Google Drive Image URL Fix
               let displayImgUrl = convertGoogleDriveUrl(item.gambar || "");
@@ -6687,8 +6808,8 @@
                        </div>
                     </div>
                  </td>
-                 <td class="px-6 py-6 text-center">
-                    <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${item.levelSatuan || "1"}</span>
+                 <td class="px-6 py-6 text-center whitespace-nowrap">
+                    <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg whitespace-nowrap inline-block">Level ${item.levelSatuan || "1"}</span>
                  </td>
                  <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">
                     <div class="flex flex-col gap-1 items-start">
@@ -6712,10 +6833,10 @@
                        </button>
                         <!-- Toggle Status Switch -->
                         <button onclick="handleToggleStatusSatuanBarang(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
-                          title="Ubah Status: ${item.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}"
+                          title="Ubah Status: ${isEqualNormalized(item.status, 'Aktif') ? 'Nonaktifkan' : 'Aktifkan'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                     </div>
@@ -6802,9 +6923,9 @@
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusSatuanBarang(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                      </div>
@@ -6859,6 +6980,62 @@
           input.dispatchEvent(changeEvent);
           input.focus();
         }
+      }
+
+      function setSelectValueCaseInsensitive(selectId, targetValue) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        if (!targetValue) {
+          select.value = "";
+          return;
+        }
+        const cleanTarget = String(targetValue).trim().toLowerCase();
+        
+        let foundValue = "";
+        for (const option of select.options) {
+          if (String(option.value).trim().toLowerCase() === cleanTarget) {
+            foundValue = option.value;
+            break;
+          }
+        }
+        
+        if (foundValue) {
+          select.value = foundValue;
+        } else {
+          select.value = "";
+        }
+      }
+
+      function safeString(val) {
+        if (val === undefined || val === null) return "";
+        return String(val).trim();
+      }
+
+      function normalizeString(val) {
+        return safeString(val).toLowerCase();
+      }
+
+      function isEqualNormalized(val1, val2) {
+        return normalizeString(val1) === normalizeString(val2);
+      }
+
+      function isContainsNormalized(mainVal, searchVal) {
+        return normalizeString(mainVal).includes(normalizeString(searchVal));
+      }
+
+      function getUniqueCaseInsensitive(arr) {
+        if (!Array.isArray(arr)) return [];
+        const seen = new Set();
+        const result = [];
+        arr.forEach(val => {
+          const clean = String(val).trim();
+          const key = clean.toLowerCase();
+          if (clean && !seen.has(key)) {
+            seen.add(key);
+            result.push(clean);
+          }
+        });
+        return result;
       }
 
       function convertGoogleDriveUrl(url) {
@@ -7017,7 +7194,7 @@
         const q = val.toLowerCase().trim();
         const matches = rawBarangData.filter(item => {
           const inVariasi = (item.variasiSatuan || []).some(v => (v.barcode || "").toLowerCase().includes(q));
-          return item.status === "Aktif" && (
+          return isEqualNormalized(item.status, "Aktif") && (
             (item.namaBarang || "").toLowerCase().includes(q) ||
             (item.idBarang || "").toLowerCase().includes(q) ||
             (item.barcode || "").toLowerCase().includes(q) ||
@@ -7057,10 +7234,10 @@
 
       function getSatuanOptionsSelectHtml(selectedValue = "") {
         if (!rawReferensiData) return '<option value="">Pilih Satuan...</option>';
-        const satuanList = [...new Set(rawReferensiData.filter(r => r.satuan).map(r => r.satuan))];
+        const satuanList = getUniqueCaseInsensitive(rawReferensiData.filter(r => r.satuan).map(r => r.satuan));
         let html = '<option value="">Pilih Satuan...</option>';
         satuanList.forEach(s => {
-          const selected = s.trim().toUpperCase() === selectedValue.trim().toUpperCase() ? "selected" : "";
+          const selected = isEqualNormalized(s, selectedValue) ? "selected" : "";
           html += `<option value="${s}" ${selected}>${s}</option>`;
         });
         return html;
@@ -7071,7 +7248,7 @@
         if (typeof rawReferensiData !== 'undefined' && Array.isArray(rawReferensiData)) {
           rawReferensiData.forEach(item => {
             const v = String(item.tipeSatuanOption || "").trim();
-            if (v && !list.includes(v)) {
+            if (v) {
               list.push(v);
             }
           });
@@ -7081,11 +7258,9 @@
         }
         const standard = ["BELI", "JUAL", "KEDUANYA"];
         standard.forEach(s => {
-          if (!list.includes(s)) {
-            list.push(s);
-          }
+          list.push(s);
         });
-        return list;
+        return getUniqueCaseInsensitive(list);
       }
 
       function getTipeSatuanSelectOptionsHtml(selected = "KEDUANYA") {
@@ -7484,7 +7659,7 @@
             <div class="space-y-1.5">
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
               <select id="edit-satuan-status" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" onchange="handleInputBlurRecalculate()">
-                <option value="Aktif" ${currentUnit.status === 'Aktif' ? 'selected' : ''}>Aktif</option>
+                <option value="Aktif" ${isEqualNormalized(currentUnit.status, 'Aktif') ? 'selected' : ''}>Aktif</option>
                 <option value="Nonaktif" ${currentUnit.status === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option>
               </select>
             </div>
@@ -7781,8 +7956,8 @@
         const targetSat = window.activePromoUnit.satuan;
 
         const promos = (rawHargaPromoData || []).filter(p => 
-          String(p.idBarang) === String(targetId) && 
-          String(p.satuan).toUpperCase() === String(targetSat).toUpperCase()
+          isEqualNormalized(p.idBarang, targetId) && 
+          isEqualNormalized(p.satuan, targetSat)
         );
 
         if (promos.length === 0) {
@@ -7806,7 +7981,7 @@
             label = `Beli ${min}+`;
           }
 
-          const statusClass = p.status === 'Aktif' 
+          const statusClass = isEqualNormalized(p.status, 'Aktif') 
             ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
             : 'bg-slate-100 text-slate-400 border-slate-200';
 
@@ -8338,7 +8513,7 @@
           }
  
           let lvl = 99;
-          if (finalStatusVal === "Aktif") {
+          if (isEqualNormalized(finalStatusVal, 'Aktif')) {
             lvl = activeLevel++;
           }
  
@@ -8578,7 +8753,7 @@
                                 id.includes(search) ||
                                 name.includes(search) ||
                                 addr.includes(search);
-           const matchesStatus = dataSupplierFilterStatus === 'all' || item.status === dataSupplierFilterStatus;
+           const matchesStatus = isEqualNormalized(dataSupplierFilterStatus, 'all') || isEqualNormalized(item.status, dataSupplierFilterStatus);
            return matchesSearch && matchesStatus;
         });
 
@@ -8607,7 +8782,7 @@
 
           tbody.innerHTML = paginated.map((item, idx) => {
              const rowIdx = start + idx + 1;
-             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
+             const statusClass = isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600';
              
              return `
                <tr class="hover:bg-slate-50/50 transition-colors group">
@@ -8627,9 +8802,9 @@
                        
                         <!-- Toggle Status Switch -->
                         <button onclick="handleToggleStatusDataSupplier(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500' : 'bg-rose-500'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500' : 'bg-rose-500'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                     </div>
@@ -8640,7 +8815,7 @@
 
           cardContainer.innerHTML = paginated.map((item, idx) => {
              const rowIdx = start + idx + 1;
-             const statusClass = item.status === 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
+             const statusClass = isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500';
              return `
                <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]">
                   <div class="flex justify-between items-start">
@@ -8672,9 +8847,9 @@
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusDataSupplier(${item.row}, '${item.status}')" 
-                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${item.status === 'Aktif' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
-                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${item.status === 'Aktif' ? 'translate-x-6' : 'translate-x-1'}">
-                            <i data-lucide="${item.status === 'Aktif' ? 'check' : 'x'}" class="w-2.5 h-2.5 ${item.status === 'Aktif' ? 'text-emerald-600' : 'text-rose-600'}"></i>
+                          class="relative inline-flex h-6 w-11 items-center rounded-full transition-all focus:outline-none ${isEqualNormalized(item.status, 'Aktif') ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'}">
+                          <span class="inline-block h-4 w-4 transform rounded-full bg-white transition-all flex items-center justify-center ${isEqualNormalized(item.status, 'Aktif') ? 'translate-x-6' : 'translate-x-1'}">
+                            <i data-lucide="${isEqualNormalized(item.status, 'Aktif') ? 'check' : 'x'}" class="w-2.5 h-2.5 ${isEqualNormalized(item.status, 'Aktif') ? 'text-emerald-600' : 'text-rose-600'}"></i>
                           </span>
                         </button>
                      </div>
@@ -8717,7 +8892,7 @@
           document.getElementById("form-dataSupplierKontak").value = data.kontak;
           document.getElementById("form-dataSupplierAlamat").value = data.alamat;
           document.getElementById("form-dataSupplierKeterangan").value = data.keterangan;
-          document.getElementById("form-dataSupplierStatus").value = data.status;
+          setSelectValueCaseInsensitive("form-dataSupplierStatus", data.status);
         } else {
           title.innerText = "Tambah Supplier Baru";
           document.getElementById("form-dataSupplierRow").value = "";
@@ -8803,8 +8978,8 @@
       }
 
       async function handleToggleStatusDataSupplier(row, currentStatus) {
-        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
-        const msg = newStatus === "Aktif" ? "Aktifkan supplier ini?" : "Nonaktifkan supplier ini?";
+        const newStatus = isEqualNormalized(currentStatus, 'Aktif') ? "Nonaktif" : "Aktif";
+        const msg = isEqualNormalized(newStatus, 'Aktif') ? "Aktifkan supplier ini?" : "Nonaktifkan supplier ini?";
         
         const konfirmasi = await showKonfirmasi(msg, `Status supplier akan diubah menjadi ${newStatus}.`);
         if (!konfirmasi) return;
@@ -8909,11 +9084,11 @@
       }
 
       async function handleToggleStatusSatuanBarang(row, currentStatus) {
-        const newStatus = currentStatus === "Aktif" ? "Nonaktif" : "Aktif";
+        const newStatus = isEqualNormalized(currentStatus, 'Aktif') ? "Nonaktif" : "Aktif";
         
         // Find local item and check if parent is Nonaktif
         const localItem = rawSatuanBarangData.find(item => item.row === row);
-        if (localItem && newStatus === "Aktif") {
+        if (localItem && isEqualNormalized(newStatus, 'Aktif')) {
           const parentBarangObj = rawBarangData.find(b => String(b.idBarang) === String(localItem.idBarang));
           if (parentBarangObj && parentBarangObj.status === "Nonaktif") {
             showToast("Gagal: Induk Data Barang berstatus Nonaktif", "error");
@@ -8921,7 +9096,7 @@
           }
         }
 
-        const msg = newStatus === "Aktif" ? "Aktifkan satuan barang ini?" : "Nonaktifkan satuan barang ini?";
+        const msg = isEqualNormalized(newStatus, 'Aktif') ? "Aktifkan satuan barang ini?" : "Nonaktifkan satuan barang ini?";
         
         const konfirmasi = await showKonfirmasi(msg, `Status satuan akan diubah menjadi ${newStatus}.`);
         if (!konfirmasi) return;
@@ -9699,7 +9874,7 @@
           document.getElementById("form-pembelianIdSupplier").value = data.idSupplier;
           document.getElementById("form-pembelianNamaSupplier").value = data.namaSupplier;
           
-          document.getElementById("form-pembelianStatus").value = data.status || "Lunas";
+          setSelectValueCaseInsensitive("form-pembelianStatus", data.status || "Lunas");
           document.getElementById("form-pembelianKeterangan").value = data.keterangan || "";
           
           // Populate cart items from all rows sharing same idPembelianBrg
@@ -9766,7 +9941,7 @@
         
         const q = val.toLowerCase();
         const matches = rawDataSupplierData.filter(item => 
-          item.status === "Aktif" && (
+          isEqualNormalized(item.status, "Aktif") && (
             (item.namaSupplier || "").toLowerCase().includes(q) ||
             (item.idSupplier || "").toLowerCase().includes(q)
           )
@@ -10177,7 +10352,7 @@
 
         const q = val.toLowerCase().trim();
         const matches = rawSatuanBarangData.filter(item => 
-          item.status === "Aktif" && 
+          isEqualNormalized(item.status, 'Aktif') && 
           String(item.tipeSatuan || "").toUpperCase() !== "JUAL" && (
             (item.namaBarang || "").toLowerCase().includes(q) ||
             (item.idBarang || "").toLowerCase().includes(q) ||

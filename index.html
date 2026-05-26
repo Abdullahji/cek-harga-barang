@@ -130,7 +130,7 @@
       }
       #sidebar.collapsed .sidebar-text, 
       #sidebar.collapsed .sidebar-header-text,
-      #sidebar.collapsed #submenu-master,
+      #sidebar.collapsed [id^="submenu-"],
       #sidebar.collapsed .sidebar-footer-text,
       #sidebar.collapsed .nav-btn:not(.nav-btn-dot) span,
       #sidebar.collapsed .sidebar-group-header span:first-child,
@@ -150,7 +150,7 @@
       #sidebar.collapsed .sidebar-group-container {
         position: relative;
       }
-      #sidebar.collapsed #submenu-master {
+      #sidebar.collapsed [id^="submenu-"] {
         position: absolute;
         left: 100%;
         top: 0;
@@ -165,7 +165,7 @@
         z-index: 100;
         padding-left: 1.25rem !important;
       }
-      #sidebar.collapsed #submenu-master.show-popup {
+      #sidebar.collapsed [id^="submenu-"].show-popup {
         display: block !important;
         animation: slideInLeft 0.2s ease-out;
       }
@@ -1053,10 +1053,10 @@
             <!-- SECTION: REFERENSI -->
             <section
               id="section-referensi"
-              class="page-section max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
+              class="page-section w-full max-w-[1400px] box-border mx-auto px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
             >
               <div
-                class="bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-4 sm:gap-6 relative overflow-hidden"
+                class="w-full max-w-full box-border bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-4 sm:gap-6 relative overflow-hidden"
               >
                 <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="w-full flex flex-col lg:flex-row justify-between items-center gap-6">
@@ -1076,41 +1076,41 @@
                 </div>
 
                 <!-- TABS REFERENSI -->
-                <div class="w-full max-w-full min-w-0 flex p-1.5 bg-slate-100 rounded-2xl overflow-x-auto whitespace-nowrap scrollbar-none scroll-smooth flex-nowrap shrink-0 snap-x">
+                <div class="w-full max-w-lg min-w-0 flex items-center gap-1 p-1 bg-slate-100 rounded-xl overflow-x-auto whitespace-nowrap scrollbar-none scroll-smooth flex-nowrap shrink-0 snap-x justify-start md:justify-center mx-auto">
                   <button 
                     onclick="switchReferensiTab('satuan')" 
                     id="tab-ref-satuan"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     Satuan <span id="count-ref-satuan"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('kategori')" 
                     id="tab-ref-kategori"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     Kategori <span id="count-ref-kategori"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('status')" 
                     id="tab-ref-status"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     Status <span id="count-ref-status"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('tipe_satuan')" 
                     id="tab-ref-tipe_satuan"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     Tipe <span id="count-ref-tipe_satuan"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('admin_pin')" 
                     id="tab-ref-admin_pin"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     PIN <span id="count-ref-admin_pin"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('merk')" 
                     id="tab-ref-merk"
-                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    class="flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px]">
                     Merk <span id="count-ref-merk"></span>
                   </button>
                 </div>
@@ -3665,7 +3665,13 @@
             if (err.name === 'AbortError') {
               throw new Error(`Koneksi ke Google Sheets / GAS timeout (melebihi ${timeoutMs / 1000} detik).`);
             }
-            return { sukses: false, pesan: `Fetch Error: ${err.message || 'Koneksi gagal'}. Periksa URL & akses 'Anyone'.` };
+            let userFriendlyMsg = err.message || 'Koneksi gagal';
+            if (userFriendlyMsg.includes("Failed to fetch") || userFriendlyMsg.includes("failed to fetch")) {
+              userFriendlyMsg = "Gagal menghubungi database Google Sheets (Failed to fetch). Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Browser / web sandbox tidak memblokir akses CORS.";
+            } else {
+              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa URL & akses 'Anyone'.`;
+            }
+            return { sukses: false, pesan: userFriendlyMsg };
           }
         }
       }
@@ -4554,9 +4560,9 @@
             const btn = document.getElementById(`tab-ref-${t}`);
             if (btn) {
               if (t === currentReferensiTab) {
-                btn.className = "flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px] bg-white text-emerald-600 shadow-sm";
+                btn.className = "flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px] bg-white text-emerald-600 shadow-sm";
               } else {
-                btn.className = "flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px] text-slate-400 hover:text-slate-600";
+                btn.className = "flex-none shrink-0 py-2 px-3 rounded-lg font-bold text-[10px] uppercase tracking-wider transition-all min-w-[72px] text-slate-400 hover:text-slate-600";
               }
             }
           });
@@ -4890,48 +4896,70 @@
 
         const formattedPrice = formatIDR(unit.hargaJual || 0);
 
-        if (!isAdminPriceCheckMode) {
-          const activePromos = (rawHargaPromoData || []).filter(p => 
-            isEqualNormalized(p.status, 'Aktif') && 
-            isEqualNormalized(p.idBarang, unit.idBarang) && 
-            isEqualNormalized(p.satuan, unit.satuan)
-          );
+        const activePromos = (rawHargaPromoData || []).filter(p => 
+          isEqualNormalized(p.status, 'Aktif') && 
+          isEqualNormalized(p.idBarang, unit.idBarang) && 
+          isEqualNormalized(p.satuan, unit.satuan)
+        );
 
-          let promoSectionHtml = "";
-          if (activePromos.length > 0) {
-            // Sort by minQty
-            activePromos.sort((a, b) => (Number(a.minQty) || 0) - (Number(b.minQty) || 0));
-            
-            promoSectionHtml = `
-              <div class="mt-4 p-5 bg-amber-50/85 border border-amber-200/70 rounded-[2rem] text-left space-y-3 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-                <div class="flex items-center gap-1.5 text-amber-800">
+        let promoSectionHtml = "";
+        if (activePromos.length > 0) {
+          // Sort by minQty
+          activePromos.sort((a, b) => (Number(a.minQty) || 0) - (Number(b.minQty) || 0));
+          
+          promoSectionHtml = `
+            <div class="mt-4 p-5 bg-amber-50/85 border border-amber-200/70 rounded-[2rem] text-left space-y-3 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+              <div class="flex items-center justify-between gap-2 text-amber-800">
+                <div class="flex items-center gap-1.5">
                   <i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
                   <span class="text-[10px] font-black uppercase tracking-widest">Tersedia Harga Promo Grosir</span>
                 </div>
-                <div class="divide-y divide-amber-200/40">
-                  ${activePromos.map(promo => {
-                    const min = Number(promo.minQty) || 1;
-                    const max = promo.maxQty;
-                    let label = "";
-                    if (min === 1 && (max === 1 || max === "1")) {
-                      label = "Beli 1 Pcs";
-                    } else if (max !== null && max !== undefined && String(max).trim() !== "") {
-                      label = `Beli ${min}-${max} ${promo.satuan}`;
+                ${isAdminPriceCheckMode ? `
+                  <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[8px] font-black uppercase tracking-wider">Mode Admin</span>
+                ` : ''}
+              </div>
+              <div class="divide-y divide-amber-200/40">
+                ${activePromos.map(promo => {
+                  const min = Number(promo.minQty) || 1;
+                  const maxStr = String(promo.maxQty || "").trim();
+                  const hasMax = maxStr !== "" && maxStr !== "0";
+                  const max = hasMax ? Number(maxStr) : null;
+
+                  let label = "";
+                  if (max !== null && !isNaN(max)) {
+                    if (min === max) {
+                      label = `Beli ${min} ${promo.satuan}`;
+                    } else if (min < max) {
+                      label = `Beli ${min}–${max} ${promo.satuan}`;
                     } else {
                       label = `Beli ${min}+ ${promo.satuan}`;
                     }
-                    return `
-                      <div class="py-2.5 flex justify-between items-center text-xs">
-                        <span class="font-extrabold text-slate-705">${label}</span>
-                        <span class="font-black text-rose-600 font-mono text-sm sm:text-base">Rp ${Number(promo.hargaJual || 0).toLocaleString("id-ID")}</span>
-                      </div>
-                    `;
-                  }).join("")}
-                </div>
-              </div>
-            `;
-          }
+                  } else {
+                    label = `Beli ${min}+ ${promo.satuan}`;
+                  }
+                  
+                  const adminMeta = isAdminPriceCheckMode && promo.idPromo ? `
+                    <div class="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider font-mono">
+                      ID: ${promo.idPromo} ${promo.row ? `| Sheet Row: ${promo.row}` : ''}
+                    </div>
+                  ` : '';
 
+                  return `
+                    <div class="py-2.5 flex justify-between items-center text-xs">
+                      <div>
+                        <span class="font-extrabold text-slate-705">${label}</span>
+                        ${adminMeta}
+                      </div>
+                      <span class="font-black text-rose-600 font-mono text-sm sm:text-base">Rp ${Number(promo.hargaJual || 0).toLocaleString("id-ID")}</span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (!isAdminPriceCheckMode) {
           detailDisplayEl.innerHTML = `
             <div class="space-y-1">
               <div class="mt-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-center relative overflow-hidden group">
@@ -4943,10 +4971,6 @@
               ${promoSectionHtml}
             </div>
           `;
-          
-          if (typeof lucide !== 'undefined' && lucide.createIcons) {
-               try { lucide.createIcons(); } catch(e) {}
-          }
         } else {
           const hModalNum = Number(unit.hargaModal) || 0;
           const hJualNum = Number(unit.hargaJual) || 0;
@@ -5020,6 +5044,8 @@
                 </div>
               </div>
 
+              ${promoSectionHtml}
+
               <div class="bg-slate-50/50 p-6 rounded-[2.2rem] border border-slate-100/50 space-y-4 text-left">
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] mb-2 leading-none text-center">ANALISIS INTERNAL HARGA</p>
                 
@@ -5049,6 +5075,10 @@
               </div>
             </div>
           `;
+        }
+
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+             try { lucide.createIcons(); } catch(e) {}
         }
       }
 
@@ -5210,6 +5240,10 @@
       // --- GLOBAL SCANNER LOGIC ---
       let globalScanner = null;
       let activeScannerTargetId = null;
+
+      function startGlobalScanner(targetId) {
+        startSupplierScan(targetId);
+      }
 
       function startSupplierScan(targetId) {
         const modal = document.getElementById("scannerModal");

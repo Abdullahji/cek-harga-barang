@@ -2223,11 +2223,17 @@
                                 <option value="">Pilih Kategori...</option>
                             </select>
                         </div>
-                        <div class="space-y-3">
+                        <div class="space-y-3 relative">
                             <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Merk / Brand</label>
-                            <select id="form-barangMerk" class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner appearance-none transition-all">
-                                <option value="">Pilih Merk...</option>
-                            </select>
+                            <div class="relative flex items-center w-full">
+                              <input type="text" id="form-barangMerk" oninput="autocompleteMerk(this.value)" onfocus="autocompleteMerk(this.value)" autocomplete="off" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner text-xs sm:text-sm" placeholder="Ketik/Cari Merk..." />
+                              <button type="button" onclick="clearInlineInput(this); autocompleteMerk('');" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                              </button>
+                            </div>
+                            <div id="form-barangMerkSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                              <!-- Suggestions -->
+                            </div>
                         </div>
                       </div>
 
@@ -4226,6 +4232,8 @@
 
           try { populateKategoriDropdown(); } catch(e) {}
           try { populateOrderStatusDropdown(); } catch(e) {}
+          try { populateMerkDropdown(); } catch(e) {}
+          try { populateSatuanDasarDropdown(); } catch(e) {}
 
           if (res && res.sukses) {
             showAlert("Sukses", id ? "Data berhasil diperbarui!" : "Data berhasil ditambahkan!", "success");
@@ -4265,6 +4273,7 @@
                 else if (currentReferensiTab === 'kategori') targetItem.kategoriBarang = "";
                 else if (currentReferensiTab === 'status') targetItem.statusOrder = "";
                 else if (currentReferensiTab === 'tipe_satuan') targetItem.tipeSatuanOption = "";
+                else if (currentReferensiTab === 'merk') targetItem.merk = "";
               }
 
               // Pack and sort columns
@@ -4272,13 +4281,15 @@
               const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
               const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
               const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
+              const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
 
               sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
               tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+              mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
 
-              const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length);
+              const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
               const newRawData = [];
               for (let i = 0; i < maxLen; i++) {
                 newRawData.push({
@@ -4286,7 +4297,8 @@
                   satuan: sList[i] || "",
                   kategoriBarang: kList[i] || "",
                   statusOrder: oList[i] || "",
-                  tipeSatuanOption: tList[i] || ""
+                  tipeSatuanOption: tList[i] || "",
+                  merk: mList[i] || ""
                 });
               }
               rawReferensiData = newRawData;
@@ -4294,6 +4306,8 @@
 
             try { populateKategoriDropdown(); } catch(e) {}
             try { populateOrderStatusDropdown(); } catch(e) {}
+            try { populateMerkDropdown(); } catch(e) {}
+            try { populateSatuanDasarDropdown(); } catch(e) {}
 
             if (res && res.sukses) {
               showAlert("Terhapus", "Data berhasil dihapus.", "success");
@@ -5427,10 +5441,6 @@
 
           if (select) {
             const currentVal = select.value;
-            select.innerHTML = '<option value="">Pilih Merk...</option>';
-            list.forEach(m => {
-               select.innerHTML += `<option value="${m}">${m}</option>`;
-            });
             if (currentVal) {
               setSelectValueCaseInsensitive("form-barangMerk", currentVal);
             }
@@ -5445,6 +5455,176 @@
           }
         } catch (err) {
           console.error("populateMerkDropdown Error:", err);
+        }
+      }
+
+      function autocompleteMerk(val) {
+        const container = document.getElementById("form-barangMerkSuggestions");
+        if (!container) return;
+
+        let list = [];
+        if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+          list = rawReferensiData.map(item => item.merk).filter(Boolean);
+        }
+        if (list.length === 0) {
+          const fromItems = rawBarangData.map(b => b.merk).filter(Boolean);
+          if (fromItems.length > 0) list = fromItems;
+        }
+        if (list.length === 0) {
+          list = ["Logitech", "PaperOne", "Canon", "Indomie", "Glico", "Aqua"];
+        }
+
+        // Clean empty values and sort alphabetically
+        list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+
+        const q = (val || "").toLowerCase().trim();
+        let matches = list;
+        if (q.length > 0) {
+          matches = list.filter(item => String(item).toLowerCase().includes(q));
+        }
+
+        if (matches.length === 0) {
+          if (val && val.trim().length > 0) {
+            container.innerHTML = `
+              <button type="button" onclick="tambahMerkBaruKeReferensi('${val.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50 text-emerald-600 transition-colors flex items-center gap-2 font-sans font-black text-xs cursor-pointer">
+                 <i data-lucide="plus" class="w-4 h-4"></i>
+                 <span>Tambah Merk "${val.trim()}"</span>
+              </button>
+            `;
+          } else {
+            container.innerHTML = `<div class="p-4 text-xs font-bold text-slate-400 italic font-sans">Ketik untuk mencari merk...</div>`;
+          }
+        } else {
+          let html = matches.map(item => `
+            <button type="button" onclick="pilihMerkAutocomplete('${item.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors flex flex-col gap-1 font-sans cursor-pointer">
+              <span class="font-black text-slate-800 text-xs">${item}</span>
+            </button>
+          `).join("");
+
+          // Show additional "Tambah brand" option if there's no exact match
+          const hasExactMatch = matches.some(item => String(item).toLowerCase().trim() === q);
+          if (q.length > 0 && !hasExactMatch) {
+            html += `
+              <button type="button" onclick="tambahMerkBaruKeReferensi('${val.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-emerald-50 border-t border-slate-100 text-emerald-600 transition-colors flex items-center gap-2 font-sans font-black text-xs border-dashed cursor-pointer">
+                 <i data-lucide="plus" class="w-4 h-4"></i>
+                 <span>Tambah Merk "${val.trim()}"</span>
+              </button>
+            `;
+          }
+          container.innerHTML = html;
+        }
+
+        container.classList.remove("hidden");
+        // Re-generate lucide icons inside container
+        if (window.lucide) {
+          window.lucide.createIcons({
+            attrs: {
+              class: ["w-4", "h-4"]
+            },
+            nameAttr: "data-lucide"
+          });
+        }
+      }
+
+      function pilihMerkAutocomplete(val) {
+        const input = document.getElementById("form-barangMerk");
+        if (input) {
+          input.value = val;
+        }
+        const container = document.getElementById("form-barangMerkSuggestions");
+        if (container) {
+          container.classList.add("hidden");
+        }
+      }
+
+      async function tambahMerkBaruKeReferensi(namaMerk) {
+        if (!namaMerk || !namaMerk.trim()) return;
+        const brandClean = namaMerk.trim();
+
+        // 1. Get existing brand list
+        let existingList = [];
+        if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+          existingList = rawReferensiData.map(item => item.merk).filter(Boolean);
+        }
+        if (existingList.length === 0) {
+          existingList = rawBarangData.map(b => b.merk).filter(Boolean);
+        }
+
+        // 2. Duplicate prevention (trim + case insensitive compare)
+        const isDuplicate = existingList.some(item => String(item).trim().toLowerCase() === brandClean.toLowerCase());
+        if (isDuplicate) {
+          const existingExact = existingList.find(item => String(item).trim().toLowerCase() === brandClean.toLowerCase());
+          document.getElementById("form-barangMerk").value = existingExact;
+          document.getElementById("form-barangMerkSuggestions").classList.add("hidden");
+          return;
+        }
+
+        showLoading(true);
+        try {
+          // 3. Save new merk to Referensi sheet (tab="merk")
+          const res = await callGAS("simpanReferensi", {
+            id: "",
+            satuan: "",
+            kategoriBarang: "",
+            statusOrder: "",
+            tipeSatuan: "",
+            tipeSatuanOption: "",
+            merk: brandClean.toUpperCase(), 
+            tab: "merk"
+          });
+
+          // 4. Update rawReferensiData immediately
+          if (!Array.isArray(rawReferensiData)) {
+            rawReferensiData = [];
+          }
+
+          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
+          const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
+          const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
+          const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
+          const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
+
+          const brandToAdd = brandClean.toUpperCase();
+          if (!mList.some(brand => brand.trim().toLowerCase() === brandToAdd.toLowerCase())) {
+            mList.push(brandToAdd);
+          }
+
+          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+          mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
+
+          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
+          const newRawData = [];
+          for (let i = 0; i < maxLen; i++) {
+            newRawData.push({
+              id: "R-" + (i + 2),
+              satuan: sList[i] || "",
+              kategoriBarang: kList[i] || "",
+              statusOrder: oList[i] || "",
+              tipeSatuanOption: tList[i] || "",
+              merk: mList[i] || ""
+            });
+          }
+          rawReferensiData = newRawData;
+
+          // 5. Repopulate all dependent dropdowns and filters
+          try { populateKategoriDropdown(); } catch(e) {}
+          try { populateOrderStatusDropdown(); } catch(e) {}
+          try { populateMerkDropdown(); } catch(e) {}
+          try { populateSatuanDasarDropdown(); } catch(e) {}
+
+          // 6. Select the newly added brand and hide suggestions
+          document.getElementById("form-barangMerk").value = brandToAdd;
+          document.getElementById("form-barangMerkSuggestions").classList.add("hidden");
+          
+          showToast("Merk baru berhasil disimpan ke Referensi!", "success");
+        } catch (error) {
+          console.error("Gagal menyimpan merk baru:", error);
+          showToast("Gagal menyimpan merk baru", "error");
+        } finally {
+          showLoading(false);
         }
       }
 
@@ -6991,6 +7171,30 @@
         }
         const cleanTarget = String(targetValue).trim().toLowerCase();
         
+        // If it's an input element (like our new Merk autocomplete input)
+        if (select.tagName === "INPUT") {
+          let list = [];
+          if (Array.isArray(rawReferensiData) && rawReferensiData.length > 0) {
+            list = rawReferensiData.map(item => item.merk).filter(Boolean);
+          }
+          if (list.length === 0) {
+            const fromItems = rawBarangData.map(b => b.merk).filter(Boolean);
+            if (fromItems.length > 0) list = fromItems;
+          }
+          if (list.length === 0) {
+            list = ["Logitech", "PaperOne", "Canon", "Indomie", "Glico", "Aqua"];
+          }
+          let matchedBrand = "";
+          for (const item of list) {
+            if (String(item).trim().toLowerCase() === cleanTarget) {
+              matchedBrand = String(item).trim();
+              break;
+            }
+          }
+          select.value = matchedBrand || targetValue;
+          return;
+        }
+
         let foundValue = "";
         for (const option of select.options) {
           if (String(option.value).trim().toLowerCase() === cleanTarget) {
@@ -7002,7 +7206,21 @@
         if (foundValue) {
           select.value = foundValue;
         } else {
-          select.value = "";
+          // If no option starts with that exact case-insensitive value,
+          // for selects that contain options with slightly different spaces or suffixes,
+          // try checking if we can find any option matching after a trim.
+          let alternativeValue = "";
+          for (const option of select.options) {
+            if (String(option.value).trim().toLowerCase().replace(/level/i, "").trim() === cleanTarget.replace(/level/i, "").trim()) {
+              alternativeValue = option.value;
+              break;
+            }
+          }
+          if (alternativeValue) {
+            select.value = alternativeValue;
+          } else {
+            select.value = "";
+          }
         }
       }
 
@@ -12537,6 +12755,12 @@
         const satInput = document.getElementById("form-satuanSearchBarang");
         if (satSuggestions && !satSuggestions.contains(e.target) && e.target !== satInput) {
           satSuggestions.classList.add("hidden");
+        }
+
+        const brandSuggestions = document.getElementById("form-barangMerkSuggestions");
+        const brandInput = document.getElementById("form-barangMerk");
+        if (brandSuggestions && !brandSuggestions.contains(e.target) && e.target !== brandInput) {
+          brandSuggestions.classList.add("hidden");
         }
       });
     </script>

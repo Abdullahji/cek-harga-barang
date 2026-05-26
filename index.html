@@ -2512,6 +2512,123 @@
       </div>
     </div>
 
+            <!-- MODAL KELOLA PROMO -->
+            <div id="promoModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePromoModal()"></div>
+              <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-200">
+                
+                <!-- HEADER -->
+                <div class="flex justify-between items-center mb-6">
+                  <div>
+                    <h3 class="text-xl font-black text-slate-900 flex items-center gap-1.5">
+                      <i data-lucide="tag" class="w-5 h-5 text-amber-500"></i>
+                      <span>Kelola Promo</span>
+                    </h3>
+                    <p class="text-[10px] text-slate-400 font-extrabold mt-1 uppercase tracking-widest leading-normal">
+                      Atur harga grosir berdasarkan kuantitas
+                    </p>
+                  </div>
+                  <button onclick="closePromoModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all focus:outline-none">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                  </button>
+                </div>
+
+                <!-- TARGET IDENTIFIER -->
+                <div class="bg-amber-50 border border-amber-100/50 p-5 rounded-[1.5rem] mb-6">
+                  <p class="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-1.5">Promo untuk barang:</p>
+                  <h4 id="promoTargetNamaBarang" class="font-black text-slate-800 text-sm italic leading-snug">Nama Barang</h4>
+                  <div class="flex gap-2 mt-2 flex-wrap">
+                    <span id="promoTargetSatuan" class="text-[9px] font-black bg-white px-2 py-0.5 rounded-md border border-amber-100 uppercase text-amber-700">PCS</span>
+                    <span id="promoTargetHargaNormal" class="text-[9px] font-black bg-white px-2 py-0.5 rounded-md border border-amber-100 text-amber-700">Normal: Rp 0</span>
+                  </div>
+                </div>
+
+                <!-- MAIN VIEW: DAFTAR PROMO -->
+                <div id="promoListView" class="space-y-4">
+                  <div class="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden bg-slate-50/20 max-h-[300px] overflow-y-auto custom-scrollbar" id="promoListContainer">
+                    <!-- Dynamic list contents -->
+                  </div>
+
+                  <div class="pt-2">
+                    <button onclick="showPromoAddForm()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:scale-95 transition-all text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-500/15">
+                      <i data-lucide="plus" class="w-4 h-4"></i>
+                      <span>Tambah Promo Baru</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- SECONDARY VIEW: FORM ADD/EDIT -->
+                <div id="promoFormView" class="hidden space-y-4 animate-in slide-in-from-bottom-2 duration-200">
+                  <form id="promoForm" onsubmit="handleSavePromo(event)" class="space-y-4">
+                    <input type="hidden" id="form-promoRow" />
+                    <input type="hidden" id="form-promoId" />
+
+                    <!-- Read-only inputs -->
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-1.5">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Barang</label>
+                        <input type="text" id="form-promoBarangRead" readonly class="w-full px-5 py-3.5 rounded-xl bg-slate-100 border border-slate-100 font-bold outline-none text-xs text-slate-400" />
+                      </div>
+                      <div class="space-y-1.5">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Satuan</label>
+                        <input type="text" id="form-promoSatuanRead" readonly class="w-full px-5 py-3.5 rounded-xl bg-slate-100 border border-slate-100 font-bold outline-none text-xs text-slate-400" />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-1.5">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Min Qty <span class="text-rose-500">*</span></label>
+                        <div class="relative flex items-center w-full">
+                          <input type="number" id="form-promoMinQty" required min="1" step="1" class="w-full pl-5 pr-10 py-3.5 rounded-xl bg-slate-50 border border-slate-100 font-semibold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" placeholder="0" />
+                          <button type="button" onclick="clearInlineInput(document.getElementById('form-promoMinQty'))" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="space-y-1.5">
+                        <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Max Qty (Opsional)</label>
+                        <div class="relative flex items-center w-full">
+                          <input type="number" id="form-promoMaxQty" min="1" step="1" class="w-full pl-5 pr-10 py-3.5 rounded-xl bg-slate-50 border border-slate-100 font-semibold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" placeholder="Kosong = +" />
+                          <button type="button" onclick="clearInlineInput(document.getElementById('form-promoMaxQty'))" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                      <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Promo <span class="text-rose-500">*</span></label>
+                      <div class="relative flex items-center w-full">
+                        <input type="text" id="form-promoHargaJual" required oninput="formatCartInputRupiah(this)" class="w-full pl-5 pr-10 py-3.5 rounded-xl bg-slate-50 border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner" placeholder="Rp 0" />
+                        <button type="button" onclick="clearInlineInput(this)" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                          <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                      <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
+                      <select id="form-promoStatus" class="w-full px-5 py-3.5 rounded-xl bg-slate-50 border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all">
+                        <option value="Aktif">Aktif</option>
+                        <option value="Nonaktif">Nonaktif</option>
+                      </select>
+                    </div>
+
+                    <!-- FORM BUTTONS -->
+                    <div class="flex gap-3 pt-2">
+                      <button type="button" onclick="cancelPromoForm()" class="flex-1 py-3.5 bg-slate-100 text-slate-500 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                        Batal
+                      </button>
+                      <button type="submit" class="flex-1 py-3.5 bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/15">
+                        Simpan Promo
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+              </div>
+            </div>
+
             <!-- MODAL SATUAN BARANG -->
             <div id="satuanBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSatuanBarangModal()"></div>
@@ -2629,6 +2746,7 @@
       let rawReferensiData = [];
       let rawBarangData = [];
       let rawSatuanBarangData = [];
+      let rawHargaPromoData = [];
       let rawPembelianBarangData = [];
       function sanitizePembelianBarangData(data) {
         if (!Array.isArray(data)) return [];
@@ -2887,6 +3005,7 @@
         rawDataSupplierData = DEMO_DATA_SUPPLIER;
         rawBarangData = DEMO_DATA_BARANG;
         rawSatuanBarangData = DEMO_DATA_SATUAN;
+        rawHargaPromoData = [];
         rawReferensiData = DEMO_DATA_REFERENSI;
         rawPembelianBarangData = sanitizePembelianBarangData(DEMO_DATA_PEMBELIAN);
         rawCekHargaData = [];
@@ -2928,6 +3047,7 @@
             rawReferensiData = res.referensi || [];
             rawBarangData = res.barang || [];
             rawSatuanBarangData = res.satuanBarang || [];
+            rawHargaPromoData = res.hargaPromo || [];
             rawDataSupplierData = res.masterSupplier || [];
             rawPembelianBarangData = sanitizePembelianBarangData(res.pembelianBarang || []);
             
@@ -4486,14 +4606,62 @@
         const formattedPrice = formatIDR(unit.hargaJual || 0);
 
         if (!isAdminPriceCheckMode) {
-          detailDisplayEl.innerHTML = `
-            <div class="mt-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-center relative overflow-hidden group">
-              <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2 leading-none">HARGA JUAL</p>
-              <div class="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-600 tracking-tight leading-none overflow-visible whitespace-nowrap">
-                ${formattedPrice}
+          const activePromos = (rawHargaPromoData || []).filter(p => 
+            p.status === 'Aktif' && 
+            String(p.idBarang) === String(unit.idBarang) && 
+            String(p.satuan).toUpperCase() === String(unit.satuan).toUpperCase()
+          );
+
+          let promoSectionHtml = "";
+          if (activePromos.length > 0) {
+            // Sort by minQty
+            activePromos.sort((a, b) => (Number(a.minQty) || 0) - (Number(b.minQty) || 0));
+            
+            promoSectionHtml = `
+              <div class="mt-4 p-5 bg-amber-50/85 border border-amber-200/70 rounded-[2rem] text-left space-y-3 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+                <div class="flex items-center gap-1.5 text-amber-800">
+                  <i data-lucide="tag" class="w-4 h-4 text-amber-600"></i>
+                  <span class="text-[10px] font-black uppercase tracking-widest">Tersedia Harga Promo Grosir</span>
+                </div>
+                <div class="divide-y divide-amber-200/40">
+                  ${activePromos.map(promo => {
+                    const min = Number(promo.minQty) || 1;
+                    const max = promo.maxQty;
+                    let label = "";
+                    if (min === 1 && (max === 1 || max === "1")) {
+                      label = "Beli 1 Pcs";
+                    } else if (max !== null && max !== undefined && String(max).trim() !== "") {
+                      label = `Beli ${min}-${max} ${promo.satuan}`;
+                    } else {
+                      label = `Beli ${min}+ ${promo.satuan}`;
+                    }
+                    return `
+                      <div class="py-2.5 flex justify-between items-center text-xs">
+                        <span class="font-extrabold text-slate-705">${label}</span>
+                        <span class="font-black text-rose-600 font-mono text-sm sm:text-base">Rp ${Number(promo.hargaJual || 0).toLocaleString("id-ID")}</span>
+                      </div>
+                    `;
+                  }).join("")}
+                </div>
               </div>
+            `;
+          }
+
+          detailDisplayEl.innerHTML = `
+            <div class="space-y-1">
+              <div class="mt-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100 text-center relative overflow-hidden group">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2 leading-none">HARGA JUAL NORMAL</p>
+                <div class="text-3xl sm:text-4xl md:text-5xl font-black text-emerald-600 tracking-tight leading-none overflow-visible whitespace-nowrap">
+                  ${formattedPrice}
+                </div>
+              </div>
+              ${promoSectionHtml}
             </div>
           `;
+          
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+               try { lucide.createIcons(); } catch(e) {}
+          }
         } else {
           const hModalNum = Number(unit.hargaModal) || 0;
           const hJualNum = Number(unit.hargaJual) || 0;
@@ -5682,6 +5850,26 @@
           payload.variasiSatuan = variasiSatuan;
         }
 
+        const isInsert = !rowVal;
+        let firstSatuan = "PCS"; 
+        if (payload.variasiSatuan && payload.variasiSatuan.length > 0) {
+          firstSatuan = payload.variasiSatuan[0].satuan || "PCS";
+        } else if (payload.satuanDasar) {
+          firstSatuan = payload.satuanDasar;
+        }
+
+        let generatedIdForPromo = "";
+        if (!rowVal) {
+          let maxNum = 0;
+          rawBarangData.forEach(b => {
+            if (b.idBarang && b.idBarang.startsWith('BRG-')) {
+              const num = parseInt(b.idBarang.replace('BRG-', ''));
+              if (!isNaN(num) && num > maxNum) maxNum = num;
+            }
+          });
+          generatedIdForPromo = "BRG-" + String(maxNum + 1).padStart(3, '0');
+        }
+
         showLoading(true);
         try {
           const res = await callGAS("simpanBarang", { ...payload, sheetName: "Data_Barang" });
@@ -5709,14 +5897,7 @@
               }
             }
           } else {
-            let maxNum = 0;
-            rawBarangData.forEach(b => {
-              if (b.idBarang && b.idBarang.startsWith('BRG-')) {
-                const num = parseInt(b.idBarang.replace('BRG-', ''));
-                if (!isNaN(num) && num > maxNum) maxNum = num;
-              }
-            });
-            const newId = "BRG-" + String(maxNum + 1).padStart(3, '0');
+            const newId = generatedIdForPromo;
             const newRow = rawBarangData.length + 2;
             
             rawBarangData.push({
@@ -5754,6 +5935,12 @@
             closeBarangModal();
             fetchBarangData();
             fetchSatuanBarangData();
+            const targetId = res.idBarang || generatedIdForPromo;
+            if (isInsert && targetId) {
+              setTimeout(() => {
+                showPromoShortcutPrompt(targetId, firstSatuan);
+              }, 650);
+            }
           } else {
             closeBarangModal();
             renderBarangData();
@@ -5762,6 +5949,12 @@
               showToast(res.pesan, "error");
             } else {
               showToast("Berhasil disimpan (Mode Demo)", "success");
+              const targetId = generatedIdForPromo;
+              if (isInsert && targetId) {
+                setTimeout(() => {
+                  showPromoShortcutPrompt(targetId, firstSatuan);
+                }, 650);
+              }
             }
           }
         } catch (err) {
@@ -5769,6 +5962,57 @@
           console.error("handleSimpanBarang Error:", err);
           showToast("Gagal menyimpan data barang", "error");
         }
+      }
+
+      function showPromoShortcutPrompt(idBarang, firstSatuan) {
+        return new Promise((resolve) => {
+          const dialog = document.getElementById("customDialog");
+          const t = document.getElementById("dialogTitle");
+          const m = document.getElementById("dialogMessage");
+          const c = document.getElementById("dialogContent");
+          const btnConfirm = document.getElementById("dialogConfirmBtn");
+          const btnCancel = document.getElementById("dialogCancelBtn");
+
+          c.parentElement.className =
+            "fixed inset-0 z-[9999] items-center justify-center p-6 flex dialog-success";
+          t.innerText = "Kelola Promo?";
+          m.className = "text-slate-500 font-sans mt-2 text-sm";
+          m.innerText = "Barang baru berhasil ditambahkan! Apakah Anda ingin langsung mengelola promo grosir untuk satuan pertama (" + firstSatuan + ")?";
+          btnCancel.classList.remove("hidden");
+
+          const originalConfirmText = btnConfirm.innerHTML;
+          const originalCancelText = btnCancel.innerHTML;
+
+          btnConfirm.innerHTML = `
+            <i data-lucide="tag" class="w-4 h-4 mr-1.5 text-emerald-100"></i>
+            <span>Kelola Promo Sekarang</span>
+          `;
+          btnCancel.innerHTML = `
+            <span>Skip</span>
+          `;
+
+          btnConfirm.onclick = () => {
+            dialog.classList.add("hidden");
+            btnConfirm.innerHTML = originalConfirmText;
+            btnCancel.innerHTML = originalCancelText;
+            openKelolaPromo(idBarang, firstSatuan);
+            resolve(true);
+          };
+          btnCancel.onclick = () => {
+            dialog.classList.add("hidden");
+            btnConfirm.innerHTML = originalConfirmText;
+            btnCancel.innerHTML = originalCancelText;
+            resolve(false);
+          };
+
+          document
+            .getElementById("iconTarget")
+            .setAttribute("data-lucide", "sparkles");
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+               try { lucide.createIcons(); } catch(e) {}
+          }
+          dialog.classList.remove("hidden");
+        });
       }
 
       async function handleToggleStatusBarang(row, currentStatus) {
@@ -6148,6 +6392,17 @@
                   ? '<span class="px-2 py-0.5 bg-purple-50 text-purple-700 border border-purple-100 text-[9px] font-black rounded-md uppercase tracking-wider">JUAL</span>'
                   : '<span class="px-2 py-0.5 bg-amber-50 text-amber-700 border border-amber-100 text-[9px] font-black rounded-md uppercase tracking-wider">KEDUANYA</span>');
 
+              const activePromosForUnit = (rawHargaPromoData || []).filter(promo => 
+                promo.status === 'Aktif' && 
+                String(promo.idBarang) === String(group.idBarang) && 
+                String(promo.satuan).toUpperCase() === String(activeUnit.satuan).toUpperCase()
+              );
+              const hasActivePromo = activePromosForUnit.length > 0;
+              const activePromosCount = activePromosForUnit.length;
+              const promoBadge = hasActivePromo 
+                ? '<span class="px-1.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-100 text-[8px] font-black rounded-md uppercase tracking-wider inline-flex items-center gap-0.5 mt-1" title="Ada Promo Aktif"><i data-lucide="tag" class="w-2.5 h-2.5 shrink-0 text-amber-500"></i>Promo</span>' 
+                : '';
+
               tbody.innerHTML += `
                 <tr class="hover:bg-slate-50/80 transition-colors group">
                   <td class="px-6 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
@@ -6169,12 +6424,15 @@
                      </div>
                   </td>
                   <td class="px-6 py-6 text-center">
-                     <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${activeUnit.levelSatuan || "1"}</span>
+                     <span class="px-2 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[10px] font-black rounded-lg">Level ${String(activeUnit.levelSatuan || "1").replace(/level/i, "").trim()}</span>
                   </td>
-                  <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase">
+                  <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase font-sans">
                      <div class="flex flex-col gap-1 items-start">
-                       <span>${activeUnit.satuan}</span>
-                       ${tipeSatuanBadge}
+                       <span class="font-bold text-slate-700 text-xs">${activeUnit.satuan}</span>
+                       <div class="flex flex-col gap-1 items-start mt-0.5">
+                          ${tipeSatuanBadge}
+                          ${promoBadge}
+                       </div>
                      </div>
                   </td>
                   <td class="px-6 py-6 text-center font-black text-slate-900 text-xs">${activeUnit.qtyInputKonversi || 1}</td>
@@ -6185,6 +6443,10 @@
                   </td>
                   <td class="px-6 py-6 whitespace-nowrap">
                      <div class="flex items-center justify-center gap-2">
+                        <button onclick="openKelolaPromo('${group.idBarang}', '${activeUnit.satuan}')" class="p-2.5 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl border border-amber-100 px-3 transition-all active:scale-90 flex items-center gap-1 shrink-0 cursor-pointer" title="Kelola Promo">
+                           <i data-lucide="tag" class="w-3.5 h-3.5 text-amber-500"></i>
+                           <span class="text-[9px] font-black uppercase tracking-wider">Promo</span>
+                        </button>
                         <button onclick="openSatuanBarangDetailByRow(${activeUnit.row})" class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-slate-200 focus:outline-none transition-all active:scale-90" title="Analisis Harga">
                            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-600"></i>
                         </button>
@@ -6215,7 +6477,7 @@
               const profitClass = isProfitEmpty ? 'text-slate-400 font-bold font-mono' : (profitVal < 0 ? 'text-rose-600 font-extrabold font-mono' : 'text-emerald-600 font-black font-mono');
 
               cardContainer.innerHTML += `
-               <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all">
+               <div class="w-full p-4 sm:p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-3.5 group transition-all">
                   <div class="flex justify-between items-start gap-2">
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-1.5 flex-wrap mb-1.5">
@@ -6226,6 +6488,7 @@
                             ID: ${group.idBarang}
                           </span>
                           ${tipeSatuanBadge}
+                          ${promoBadge}
                         </div>
                         <h4 class="font-black text-slate-800 italic group-hover:text-emerald-600 transition-colors truncate text-base leading-snug">${group.namaBarang}</h4>
                     </div>
@@ -6255,36 +6518,29 @@
                     </div>
                     <div>
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Level</p>
-                        <p class="text-[11px] font-black text-emerald-600">Level ${activeUnit.levelSatuan || "1"}</p>
+                        <p class="text-[11px] font-black text-emerald-600">Level ${String(activeUnit.levelSatuan || "1").replace(/level/i, "").trim()}</p>
                     </div>
                     <div class="border-t border-slate-200/40 pt-2">
                         <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty Konv</p>
                         <p class="text-[11px] font-bold text-slate-700">${activeUnit.qtyInputKonversi || 1}</p>
                     </div>
                     <div class="border-t border-slate-200/40 pt-2">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty Satuan (Total)</p>
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Qty Total</p>
                         <p class="text-[11px] font-bold text-slate-700">${activeUnit.qtySatuan || 1}</p>
                     </div>
                   </div>
 
-                  <div class="${isDetailOpen ? 'hidden' : 'flex'} justify-between items-center bg-emerald-50/10 px-4 py-3 rounded-2xl border border-emerald-100/30 text-xs gap-3">
-                      <div class="flex flex-col">
-                         <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Satuan Aktif</span>
-                         <span class="font-bold text-slate-700 text-xs">${activeUnit.satuan}</span>
-                      </div>
-                      <div class="flex flex-col text-right">
-                         <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Harga Jual</span>
-                         <span class="font-extrabold text-[13px] text-emerald-600">${formatValueCompact(activeUnit.hargaJual)}</span>
-                      </div>
+                  <div class="${isDetailOpen ? 'hidden' : 'block'} text-center bg-emerald-50/10 px-4 py-3 rounded-2xl border border-emerald-100/30">
+                      <p class="text-[9px] font-black text-slate-450 uppercase tracking-widest mb-1 leading-none">Harga Jual (${activeUnit.satuan})</p>
+                      <p class="font-black text-2xl text-emerald-600 font-mono tracking-tight leading-none">${formatValueCompact(activeUnit.hargaJual)}</p>
                   </div>
 
                   <!-- Toggle Detail Internal Section -->
-                  <div class="pt-0.5">
-                     <button type="button" onclick="toggleDetailInternal('${group.idBarang}')" class="w-full flex items-center justify-between px-4 py-2 bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-150 border border-slate-200/50 cursor-pointer">
-                        <span class="text-[10px] font-black uppercase tracking-wider flex items-center gap-1">
-                           <span>${isDetailOpen ? '▲' : '▼'} DETAIL INTERNAL</span>
+                  <div>
+                     <button type="button" onclick="toggleDetailInternal('${group.idBarang}')" class="w-full flex items-center justify-center px-4 py-2 bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-150 border border-slate-200/50 cursor-pointer">
+                        <span class="text-[10px] font-black uppercase tracking-widest">
+                           ${isDetailOpen ? '▲ SEMBUNYIKAN DETAIL' : '▼ DETAIL INTERNAL'}
                         </span>
-                        <span class="text-[9px] font-bold text-slate-400 font-mono uppercase">${isDetailOpen ? 'TUTUP' : 'LIHAT'}</span>
                      </button>
                   </div>
 
@@ -6302,6 +6558,14 @@
                         <span class="text-slate-400 font-bold text-[10px] uppercase tracking-wider">Profit</span>
                         <span class="${profitClass}">${formatValueCompact(activeUnit.profit)}</span>
                      </div>
+                  </div>
+
+                  <!-- KELOLA PROMO BUTTON -->
+                  <div>
+                     <button type="button" onclick="openKelolaPromo('${group.idBarang}', '${activeUnit.satuan}')" class="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-amber-50 hover:bg-amber-100/80 text-amber-700 border border-amber-200/60 rounded-xl transition-all duration-150 cursor-pointer shadow-sm">
+                        <i data-lucide="tag" class="w-4 h-4 text-amber-500"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest">KELOLA PROMO ${activePromosCount > 0 ? `(${activePromosCount})` : ''}</span>
+                     </button>
                   </div>
 
                   <div class="flex items-center gap-3 pt-1">
@@ -7471,6 +7735,318 @@
           openSatuanBarangModal(item);
         } else {
           showToast("Data barang tidak ditemukan secara lokal.", "error");
+        }
+      }
+
+      // --- KELOLA PROMO FRONTEND FUNCTIONS ---
+      function openKelolaPromo(idBarang, satuan) {
+        const units = rawSatuanBarangData.filter(u => String(u.idBarang) === String(idBarang));
+        const matchedUnit = units.find(u => String(u.satuan).toUpperCase() === String(satuan).toUpperCase());
+        
+        if (!matchedUnit) {
+          showToast("Data satuan barang tidak ditemukan secara lokal.", "error");
+          return;
+        }
+
+        window.activePromoUnit = {
+          idBarang: idBarang,
+          namaBarang: matchedUnit.namaBarang || "Nama Barang",
+          satuan: satuan,
+          hargaJualNormal: Number(matchedUnit.hargaJual) || 0
+        };
+
+        document.getElementById("promoTargetNamaBarang").textContent = window.activePromoUnit.namaBarang;
+        document.getElementById("promoTargetSatuan").textContent = window.activePromoUnit.satuan;
+        document.getElementById("promoTargetHargaNormal").textContent = "Normal: Rp " + window.activePromoUnit.hargaJualNormal.toLocaleString("id-ID");
+
+        document.getElementById("promoListView").classList.remove("hidden");
+        document.getElementById("promoFormView").classList.add("hidden");
+
+        const modal = document.getElementById("promoModal");
+        modal.classList.replace("hidden", "flex");
+        
+        renderPromoList();
+        
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          try { lucide.createIcons(); } catch(e) {}
+        }
+      }
+
+      function renderPromoList() {
+        const container = document.getElementById("promoListContainer");
+        if (!container) return;
+        container.innerHTML = "";
+
+        const targetId = window.activePromoUnit.idBarang;
+        const targetSat = window.activePromoUnit.satuan;
+
+        const promos = (rawHargaPromoData || []).filter(p => 
+          String(p.idBarang) === String(targetId) && 
+          String(p.satuan).toUpperCase() === String(targetSat).toUpperCase()
+        );
+
+        if (promos.length === 0) {
+          container.innerHTML = `
+            <div class="px-6 py-8 text-center text-slate-400 font-bold text-xs uppercase tracking-wider">
+              Belum ada promo untuk satuan ini.
+            </div>
+          `;
+          return;
+        }
+
+        promos.forEach(p => {
+          const min = Number(p.minQty) || 1;
+          const max = p.maxQty;
+          let label = "";
+          if (min === 1 && (max === 1 || max === "1")) {
+            label = "Beli 1";
+          } else if (max !== "" && max !== null && max !== undefined) {
+            label = `Beli ${min}-${max}`;
+          } else {
+            label = `Beli ${min}+`;
+          }
+
+          const statusClass = p.status === 'Aktif' 
+            ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
+            : 'bg-slate-100 text-slate-400 border-slate-200';
+
+          container.innerHTML += `
+            <div class="px-5 py-4 flex items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+              <div class="flex flex-col gap-1 min-w-0 text-left">
+                <div class="flex items-center gap-2">
+                  <span class="font-extrabold text-slate-700 text-xs">${label}</span>
+                  <span class="px-1.5 py-0.5 border text-[8px] font-black rounded uppercase tracking-widest ${statusClass}">
+                    ${p.status || 'Aktif'}
+                  </span>
+                </div>
+                <span class="font-black text-rose-500 text-[13px] font-mono leading-none mt-1 block">
+                  Rp ${Number(p.hargaJual || 0).toLocaleString("id-ID")}
+                </span>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <button onclick="showPromoEditForm('${p.idPromo}')" class="p-2 bg-slate-100 hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 rounded-lg transition-all focus:outline-none cursor-pointer" title="Edit Promo">
+                  <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                </button>
+                <button onclick="handleDeletePromo('${p.idPromo}')" class="p-2 bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 rounded-lg transition-all focus:outline-none cursor-pointer" title="Hapus Promo">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          try { lucide.createIcons(); } catch(e) {}
+        }
+      }
+
+      function showPromoAddForm() {
+        document.getElementById("promoForm").reset();
+        document.getElementById("form-promoRow").value = "";
+        document.getElementById("form-promoId").value = "";
+
+        document.getElementById("form-promoBarangRead").value = window.activePromoUnit.namaBarang;
+        document.getElementById("form-promoSatuanRead").value = window.activePromoUnit.satuan;
+        document.getElementById("form-promoStatus").value = "Aktif";
+
+        document.getElementById("promoListView").classList.add("hidden");
+        document.getElementById("promoFormView").classList.remove("hidden");
+      }
+
+      function showPromoEditForm(idPromo) {
+        const promo = rawHargaPromoData.find(p => String(p.idPromo) === String(idPromo));
+        if (!promo) {
+          showToast("Data promo tidak ditemukan.", "error");
+          return;
+        }
+
+        document.getElementById("form-promoRow").value = promo.row || "";
+        document.getElementById("form-promoId").value = promo.idPromo || "";
+        document.getElementById("form-promoBarangRead").value = window.activePromoUnit.namaBarang;
+        document.getElementById("form-promoSatuanRead").value = window.activePromoUnit.satuan;
+
+        document.getElementById("form-promoMinQty").value = promo.minQty || "";
+        document.getElementById("form-promoMaxQty").value = promo.maxQty !== undefined ? promo.maxQty : "";
+        
+        const promoHargaJualPr = promo.hargaJual || "";
+        document.getElementById("form-promoHargaJual").value = promoHargaJualPr ? "Rp " + formatIDRVal(promoHargaJualPr) : "";
+        document.getElementById("form-promoStatus").value = promo.status || "Aktif";
+
+        document.getElementById("promoListView").classList.add("hidden");
+        document.getElementById("promoFormView").classList.remove("hidden");
+      }
+
+      function cancelPromoForm() {
+        document.getElementById("promoListView").classList.remove("hidden");
+        document.getElementById("promoFormView").classList.add("hidden");
+      }
+
+      function closePromoModal() {
+        document.getElementById("promoModal").classList.replace("flex", "hidden");
+      }
+
+      async function handleSavePromo(event) {
+        if (event) event.preventDefault();
+
+        const row = document.getElementById("form-promoRow").value;
+        const idPromo = document.getElementById("form-promoId").value;
+        const minQty = Number(document.getElementById("form-promoMinQty").value) || 0;
+        const maxQtyRaw = document.getElementById("form-promoMaxQty").value;
+        const maxQty = maxQtyRaw !== "" ? Number(maxQtyRaw) : "";
+        
+        const rawHargaJual = document.getElementById("form-promoHargaJual").value || "";
+        const hargaJual = Number(rawHargaJual.replace(/\D/g, "")) || 0;
+        const status = document.getElementById("form-promoStatus").value || "Aktif";
+
+        if (minQty <= 0) {
+          showToast("Min Qty wajib berupa angka lebih besar dari 0.", "error");
+          return;
+        }
+
+        if (maxQtyRaw !== "" && maxQty < minQty) {
+          showToast("Max Qty harus lebih besar atau sama dengan Min Qty.", "error");
+          return;
+        }
+
+        if (hargaJual <= 0) {
+          showToast("Harga Jual wajib berupa angka lebih besar dari 0.", "error");
+          return;
+        }
+
+        const normalPrice = window.activePromoUnit.hargaJualNormal;
+        if (hargaJual > normalPrice) {
+          showToast(`Harga promo (Rp ${hargaJual.toLocaleString("id-ID")}) tidak boleh lebih besar dari harga jual normal (Rp ${normalPrice.toLocaleString("id-ID")})`, "error");
+          return;
+        }
+
+        showLoading(true);
+        showToast("Sedang menyimpan promo...", "info");
+
+        const payload = {
+          row: row,
+          idPromo: idPromo,
+          idBarang: window.activePromoUnit.idBarang,
+          namaBarang: window.activePromoUnit.namaBarang,
+          satuan: window.activePromoUnit.satuan,
+          minQty: minQty,
+          maxQty: maxQty,
+          hargaJual: hargaJual,
+          status: status
+        };
+
+        try {
+          const res = await callGAS("simpanHargaPromo", payload);
+          showLoading(false);
+
+          if (res && res.sukses) {
+            showToast("Harga Promo berhasil disimpan!", "success");
+            
+            if (row) {
+              const itemIdx = rawHargaPromoData.findIndex(p => Number(p.row) === Number(row));
+              if (itemIdx !== -1) {
+                rawHargaPromoData[itemIdx] = {
+                  row: Number(row),
+                  idPromo: idPromo,
+                  idBarang: payload.idBarang,
+                  namaBarang: payload.namaBarang,
+                  satuan: payload.satuan,
+                  minQty: minQty,
+                  maxQty: maxQty,
+                  hargaJual: hargaJual,
+                  status: status
+                };
+              }
+            } else {
+              const newRow = res.row || (rawHargaPromoData.length + 2);
+              const generatedId = res.idPromo || ("PRM-" + Math.floor(100000 + Math.random() * 900000));
+              rawHargaPromoData.push({
+                row: Number(newRow),
+                idPromo: generatedId,
+                idBarang: payload.idBarang,
+                namaBarang: payload.namaBarang,
+                satuan: payload.satuan,
+                minQty: minQty,
+                maxQty: maxQty,
+                hargaJual: hargaJual,
+                status: status
+              });
+            }
+
+            cancelPromoForm();
+            renderPromoList();
+            
+            try { renderSatuanBarangData(); } catch(err) {}
+
+          } else {
+            showAlert("Gagal menyimpan promo", res ? res.pesan : "Koneksi terganggu.", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("Save promo error:", err);
+          
+          // Graceful simulated offline backup
+          const generatedId = idPromo || ("PRM-" + Math.floor(100000 + Math.random() * 900000));
+          const mockRow = row ? Number(row) : (rawHargaPromoData.length + 2);
+
+          const promoObj = {
+            row: Number(mockRow),
+            idPromo: generatedId,
+            idBarang: payload.idBarang,
+            namaBarang: payload.namaBarang,
+            satuan: payload.satuan,
+            minQty: minQty,
+            maxQty: maxQty,
+            hargaJual: hargaJual,
+            status: status
+          };
+
+          if (row) {
+            const itemIdx = rawHargaPromoData.findIndex(p => Number(p.row) === Number(row));
+            if (itemIdx !== -1) rawHargaPromoData[itemIdx] = promoObj;
+          } else {
+            rawHargaPromoData.push(promoObj);
+          }
+
+          showToast("Harga Promo berhasil disimpan (Local Mode).", "success");
+          cancelPromoForm();
+          renderPromoList();
+          try { renderSatuanBarangData(); } catch(e) {}
+        }
+      }
+
+      async function handleDeletePromo(idPromo) {
+        if (!confirm("Apakah Anda yakin ingin menghapus promo ini?")) return;
+
+        const promo = rawHargaPromoData.find(p => String(p.idPromo) === String(idPromo));
+        if (!promo) return;
+
+        showLoading(true);
+        showToast("Sedang menghapus promo...", "info");
+
+        try {
+          const res = await callGAS("hapusHargaPromo", {
+            row: promo.row,
+            idPromo: idPromo
+          });
+          showLoading(false);
+
+          if (res && res.sukses) {
+            showToast("Promo berhasil dihapus!", "success");
+            
+            rawHargaPromoData = rawHargaPromoData.filter(p => String(p.idPromo) !== String(idPromo));
+            renderPromoList();
+            try { renderSatuanBarangData(); } catch(err) {}
+          } else {
+            showAlert("Gagal menghapus promo", res ? res.pesan : "Koneksi terganggu.", "error");
+          }
+        } catch (err) {
+          showLoading(false);
+          console.error("Delete promo error:", err);
+          
+          rawHargaPromoData = rawHargaPromoData.filter(p => String(p.idPromo) !== String(idPromo));
+          showToast("Promo berhasil dihapus (Local Mode).", "success");
+          renderPromoList();
+          try { renderSatuanBarangData(); } catch(e) {}
         }
       }
 

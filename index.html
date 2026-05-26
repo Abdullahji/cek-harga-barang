@@ -37,6 +37,15 @@
       .dark aside { background-color: #020617 !important; border-color: #0f172a !important; }
       .dark #dialogContent { background-color: #0f172a !important; }
 
+      /* Hide scrollbar utility */
+      .scrollbar-none::-webkit-scrollbar {
+        display: none !important;
+      }
+      .scrollbar-none {
+        -ms-overflow-style: none !important;  /* IE and Edge */
+        scrollbar-width: none !important;  /* Firefox */
+      }
+
       .custom-scrollbar::-webkit-scrollbar {
         width: 4px;
       }
@@ -1044,10 +1053,10 @@
             <!-- SECTION: REFERENSI -->
             <section
               id="section-referensi"
-              class="page-section max-w-[1400px] mx-auto space-y-6 pb-14 hidden opacity-0 translate-y-4"
+              class="page-section max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 space-y-6 pb-14 hidden opacity-0 translate-y-4"
             >
               <div
-                class="bg-white p-6 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-6 relative overflow-hidden"
+                class="bg-white p-4 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border border-slate-100 shadow-sm flex flex-col items-center gap-4 sm:gap-6 relative overflow-hidden"
               >
                 <div class="absolute top-0 left-0 w-2.5 h-full bg-emerald-500"></div>
                 <div class="w-full flex flex-col lg:flex-row justify-between items-center gap-6">
@@ -1067,42 +1076,48 @@
                 </div>
 
                 <!-- TABS REFERENSI -->
-                <div class="w-full flex p-1.5 bg-slate-100 rounded-2xl">
+                <div class="w-full max-w-full min-w-0 flex p-1.5 bg-slate-100 rounded-2xl overflow-x-auto whitespace-nowrap scrollbar-none scroll-smooth flex-nowrap shrink-0 snap-x">
                   <button 
                     onclick="switchReferensiTab('satuan')" 
                     id="tab-ref-satuan"
-                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
                     Satuan <span id="count-ref-satuan"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('kategori')" 
                     id="tab-ref-kategori"
-                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
-                    Kategori Barang <span id="count-ref-kategori"></span>
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    Kategori <span id="count-ref-kategori"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('status')" 
                     id="tab-ref-status"
-                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
-                    Status Order <span id="count-ref-status"></span>
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    Status <span id="count-ref-status"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('tipe_satuan')" 
                     id="tab-ref-tipe_satuan"
-                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
-                    Tipe Satuan <span id="count-ref-tipe_satuan"></span>
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    Tipe <span id="count-ref-tipe_satuan"></span>
+                  </button>
+                  <button 
+                    onclick="switchReferensiTab('admin_pin')" 
+                    id="tab-ref-admin_pin"
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
+                    PIN <span id="count-ref-admin_pin"></span>
                   </button>
                   <button 
                     onclick="switchReferensiTab('merk')" 
                     id="tab-ref-merk"
-                    class="flex-1 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all">
+                    class="flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px]">
                     Merk <span id="count-ref-merk"></span>
                   </button>
                 </div>
               </div>
 
                 <!-- SEARCH & FILTER REFERENSI -->
-                <div class="flex items-center gap-2 w-full overflow-hidden mb-6">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full mb-6">
                   <div class="flex-1 relative group min-w-0">
                     <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-emerald-500 transition-colors"></i>
                     <input
@@ -1116,9 +1131,10 @@
                       <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                   </div>
-                  <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
+                  <div class="flex items-center justify-between sm:justify-start gap-2 shrink-0">
                     <!-- Rows per page -->
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest sm:hidden">Baris:</span>
                       <select onchange="changeItemsPerPage('referensi', this.value)" class="py-2.5 px-3 bg-white rounded-xl border border-slate-100 shadow-sm text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
                         <option value="10">10</option>
                         <option value="25">25</option>
@@ -1150,12 +1166,12 @@
                 </div>
 
                 <!-- Mobile Card View -->
-                <div id="referensiCardContainer" class="block md:hidden space-y-3 p-2 bg-slate-100/30">
+                <div id="referensiCardContainer" class="block md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-slate-100/30 w-full max-w-full overflow-hidden">
                   <!-- Rendered by JS -->
                 </div>
 
                 <!-- Pagination Referensi -->
-                <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="px-4 py-4 sm:px-8 sm:py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <p id="referensiPaginationInfo" class="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     SHOWING 0 TO 0 OF 0 DATA
                   </p>
@@ -1213,17 +1229,25 @@
                   </div>
                   <div id="modal-ref-status-group" class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Order</label>
-                    <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-status" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: AKTIF / NON-AKTIF" />
-                      <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                      </button>
-                    </div>
+                    <select id="form-ref-status" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
+                      <option value="PENDING">PENDING</option>
+                      <option value="DIPROSES">DIPROSES</option>
+                      <option value="SELESAI">SELESAI</option>
+                      <option value="BATAL">BATAL</option>
+                    </select>
                   </div>
                   <div id="modal-ref-tipe_satuan-group" class="space-y-2">
-                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan Option</label>
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan</label>
+                    <select id="form-ref-tipe-satuan-option" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner appearance-none transition-all">
+                      <option value="BELI">BELI</option>
+                      <option value="JUAL">JUAL</option>
+                      <option value="KEDUANYA">KEDUANYA</option>
+                    </select>
+                  </div>
+                  <div id="modal-ref-admin_pin-group" class="space-y-2">
+                    <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Admin PIN</label>
                     <div class="relative flex items-center w-full">
-                      <input type="text" id="form-ref-tipe-satuan-option" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Contoh: BELI / JUAL / KEDUANYA" />
+                      <input type="password" id="form-ref-admin_pin" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner" placeholder="Masukkan PIN Admin" />
                       <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
@@ -1293,7 +1317,7 @@
                     </div>
                   </div>
                 </div>
-              </div>>
+              </div>
 
               <div id="barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
@@ -1373,17 +1397,17 @@
 
               <div class="bg-white rounded-[2rem] lg:rounded-[3rem] border border-slate-100 overflow-hidden shadow-sm">
                 <div class="hidden md:block overflow-x-auto custom-scrollbar">
-                  <table class="w-full text-left min-w-[1700px]">
+                  <table class="w-full text-left min-w-[1200px]">
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
-                        <th class="px-6 py-7 w-20 text-center">No.</th>
-                        <th class="px-8 py-7 w-64">ID Barang</th>
-                        <th class="px-8 py-7 w-[500px]">Nama Barang</th>
-                        <th class="px-8 py-7 w-64">Kategori</th>
-                        <th class="px-8 py-7 w-64">Merk</th>
-                        <th class="px-8 py-7 w-44 text-center">Satuan Dasar</th>
-                        <th class="px-8 py-7 w-44 text-center">Status</th>
-                        <th class="px-8 py-7 w-48 text-center">Aksi</th>
+                        <th class="px-4 py-4.5 w-16 text-center">No.</th>
+                        <th class="px-4 py-4.5 w-40">ID Barang</th>
+                        <th class="px-4 py-4.5 w-[42%]">Nama Barang</th>
+                        <th class="px-4 py-4.5 w-48">Kategori</th>
+                        <th class="px-4 py-4.5 w-48">Merk</th>
+                        <th class="px-4 py-4.5 w-36 text-center">Satuan Dasar</th>
+                        <th class="px-4 py-4.5 w-32 text-center">Status</th>
+                        <th class="px-4 py-4.5 w-36 text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="barangTableBody" class="divide-y divide-slate-50">
@@ -3648,33 +3672,66 @@
 
 
 
+      function getObjVal(obj, keys) {
+        if (!obj) return "";
+        for (const k of keys) {
+          if (obj[k] !== undefined && obj[k] !== null) {
+            return String(obj[k]).trim();
+          }
+        }
+        const lowerKeys = keys.map(k => k.toLowerCase());
+        for (const k in obj) {
+          if (lowerKeys.includes(k.toLowerCase()) && obj[k] !== undefined && obj[k] !== null) {
+            return String(obj[k]).trim();
+          }
+        }
+        return "";
+      }
+
       function getFilteredBarang() {
         if (!rawBarangData) return [];
         return rawBarangData.filter(item => {
            const search = (barangSearchTerm || "").trim().toLowerCase();
            
+           // Robust value getters
+           const namaBarang = getObjVal(item, ['namaBarang', 'NamaBarang', 'nama_barang', 'Nama_Barang', 'namabarang', 'name']).toLowerCase();
+           const idBarang = getObjVal(item, ['idBarang', 'IDBarang', 'id_barang', 'ID_Barang', 'idbarang', 'id']).toLowerCase();
+           const merk = getObjVal(item, ['merk', 'Merk', 'brand', 'Brand', 'merkBarang', 'MerkBarang', 'merk_barang', 'Merk_Barang']).toLowerCase();
+           const kategori = getObjVal(item, ['kategoriBarang', 'KategoriBarang', 'kategori_barang', 'Kategori_Barang', 'kategoribarang', 'kategori', 'Kategori']).toLowerCase();
+           const itemBarcode = getObjVal(item, ['barcode', 'Barcode', 'bar_code', 'Bar_Code']).toLowerCase();
+
            let barcodeMatches = false;
-           if (search !== "" && typeof rawSatuanBarangData !== 'undefined' && Array.isArray(rawSatuanBarangData)) {
-             barcodeMatches = rawSatuanBarangData.some(unit => 
-               String(unit.idBarang || "").trim().toLowerCase() === String(item.idBarang || "").trim().toLowerCase() &&
-               String(unit.barcode || "").trim().toLowerCase().includes(search)
-             );
+           if (itemBarcode.includes(search)) {
+             barcodeMatches = true;
+           }
+
+           if (!barcodeMatches && search !== "" && typeof rawSatuanBarangData !== 'undefined' && Array.isArray(rawSatuanBarangData)) {
+             barcodeMatches = rawSatuanBarangData.some(unit => {
+               const unitId = getObjVal(unit, ['idBarang', 'IDBarang', 'id_barang', 'ID_Barang', 'idbarang', 'id']).toLowerCase();
+               const unitBarcode = getObjVal(unit, ['barcode', 'Barcode', 'bar_code', 'Bar_Code']).toLowerCase();
+               return unitId === idBarang && unitBarcode.includes(search);
+             });
            }
 
            const matchesSearch = search === "" || (
-             (item.namaBarang || "").toLowerCase().includes(search) ||
-             (item.merk || "").toLowerCase().includes(search) ||
-             (item.idBarang || "").toLowerCase().includes(search) ||
+             namaBarang.includes(search) ||
+             idBarang.includes(search) ||
+             merk.includes(search) ||
+             kategori.includes(search) ||
              barcodeMatches
            );
 
+           const statusVal = getObjVal(item, ['status', 'Status']).toLowerCase();
            const matchesStatus = barangFilterStatus === 'all' || 
-             String(item.status || "").trim().toLowerCase() === String(barangFilterStatus).trim().toLowerCase();
+             statusVal === String(barangFilterStatus).trim().toLowerCase();
 
            const matchesKategori = barangFilterKategori === 'all' || 
-             String(item.kategoriBarang || "").trim().toLowerCase() === String(barangFilterKategori).trim().toLowerCase();
+             kategori === String(barangFilterKategori).trim().toLowerCase();
 
-           return matchesSearch && matchesStatus && matchesKategori && (barangFilterMerk === 'all' || String(item.merk || "").trim().toLowerCase() === String(barangFilterMerk).trim().toLowerCase());
+           const matchesMerk = barangFilterMerk === 'all' || 
+             merk === String(barangFilterMerk).trim().toLowerCase();
+
+           return matchesSearch && matchesStatus && matchesKategori && matchesMerk;
         });
       }
 
@@ -4013,7 +4070,7 @@
         referensiCurrentPage = 1;
         
         // Update UI classes
-        const tabs = ['satuan', 'kategori', 'status', 'tipe_satuan', 'merk'];
+        const tabs = ['satuan', 'kategori', 'status', 'tipe_satuan', 'admin_pin', 'merk'];
         tabs.forEach(t => {
           const btn = document.getElementById(`tab-ref-${t}`);
           if (!btn) return;
@@ -4031,6 +4088,7 @@
           'kategori': 'Kategori Barang',
           'status': 'Status Order',
           'tipe_satuan': 'Tipe Satuan',
+          'admin_pin': 'Admin PIN',
           'merk': 'Merk'
         };
         const th = document.getElementById('th-referensi-label');
@@ -4112,6 +4170,7 @@
         document.getElementById("modal-ref-kategori-group").classList.add("hidden");
         document.getElementById("modal-ref-status-group").classList.add("hidden");
         document.getElementById("modal-ref-tipe_satuan-group").classList.add("hidden");
+        document.getElementById("modal-ref-admin_pin-group").classList.add("hidden");
         document.getElementById("modal-ref-merk-group").classList.add("hidden");
 
         const tabLabels = {
@@ -4119,6 +4178,7 @@
           'kategori': 'Kategori Barang',
           'status': 'Status Order',
           'tipe_satuan': 'Tipe Satuan',
+          'admin_pin': 'Admin PIN',
           'merk': 'Merk'
         };
 
@@ -4127,14 +4187,15 @@
           document.getElementById("form-referensiId").value = data.id;
           document.getElementById("form-ref-satuan").value = data.satuan || "";
           document.getElementById("form-ref-kategori").value = data.kategoriBarang || "";
-          document.getElementById("form-ref-status").value = data.statusOrder || "";
-          document.getElementById("form-ref-tipe-satuan").value = data.tipeSatuan || "KEDUANYA";
-          document.getElementById("form-ref-tipe-satuan-option").value = data.tipeSatuanOption || "";
+          document.getElementById("form-ref-status").value = data.statusOrder || "PENDING";
+          document.getElementById("form-ref-tipe-satuan-option").value = data.tipeSatuanOption || "KEDUANYA";
+          document.getElementById("form-ref-admin_pin").value = data.adminPin || "";
           document.getElementById("form-ref-merk").value = data.merk || "";
         } else {
           title.innerText = "Tambah " + tabLabels[currentReferensiTab];
-          document.getElementById("form-ref-tipe-satuan").value = "KEDUANYA";
-          document.getElementById("form-ref-tipe-satuan-option").value = "";
+          document.getElementById("form-ref-status").value = "PENDING";
+          document.getElementById("form-ref-tipe-satuan-option").value = "KEDUANYA";
+          document.getElementById("form-ref-admin_pin").value = "";
           document.getElementById("form-ref-merk").value = "";
         }
         
@@ -4151,15 +4212,32 @@
         modal.classList.remove("flex");
       }
 
+      function toTitleCase(str) {
+        if (!str) return "";
+        const clean = str.trim();
+        if (clean === "") return "";
+        return clean.split(/\s+/).map(word => {
+          if (!word) return "";
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }).join(" ");
+      }
+
       async function handleSimpanReferensi(e) {
         e.preventDefault();
         const id = document.getElementById("form-referensiId").value;
-        const satuan = document.getElementById("form-ref-satuan").value.trim().toUpperCase();
-        const kategoriBarang = document.getElementById("form-ref-kategori").value.trim().toUpperCase();
-        const statusOrder = document.getElementById("form-ref-status").value.trim().toUpperCase();
-        const tipeSatuanOption = document.getElementById("form-ref-tipe-satuan-option").value.trim().toUpperCase();
-        const tipeSatuan = document.getElementById("form-ref-tipe-satuan").value;
-        const merk = document.getElementById("form-ref-merk").value.trim().toUpperCase();
+        const rawSatuan = (document.getElementById("form-ref-satuan").value || "").trim();
+        const rawKategoriBarang = (document.getElementById("form-ref-kategori").value || "").trim();
+        const rawStatusOrder = (document.getElementById("form-ref-status").value || "").trim();
+        const rawTipeSatuanOption = (document.getElementById("form-ref-tipe-satuan-option").value || "").trim();
+        const rawAdminPin = (document.getElementById("form-ref-admin_pin").value || "").trim();
+        const rawMerk = (document.getElementById("form-ref-merk").value || "").trim();
+
+        const satuan = rawSatuan.toUpperCase();
+        const kategoriBarang = toTitleCase(rawKategoriBarang);
+        const statusOrder = toTitleCase(rawStatusOrder);
+        const tipeSatuanOption = rawTipeSatuanOption.toUpperCase();
+        const adminPin = rawAdminPin;
+        const merk = toTitleCase(rawMerk);
 
         const tab = currentReferensiTab;
         let val = "";
@@ -4167,6 +4245,7 @@
         else if (tab === 'kategori') val = kategoriBarang;
         else if (tab === 'status') val = statusOrder;
         else if (tab === 'tipe_satuan') val = tipeSatuanOption;
+        else if (tab === 'admin_pin') val = adminPin;
         else if (tab === 'merk') val = merk;
 
         if (!val) {
@@ -4174,11 +4253,32 @@
           return;
         }
 
+        // Duplicate prevention check (case insensitive & trimming)
+        const valClean = val.toLowerCase().trim();
+        const isDuplicate = (rawReferensiData || []).some(item => {
+          if (id && item.id === id) return false;
+          let currentVal = "";
+          if (tab === 'satuan') currentVal = item.satuan || "";
+          else if (tab === 'kategori') currentVal = item.kategoriBarang || "";
+          else if (tab === 'status') currentVal = item.statusOrder || "";
+          else if (tab === 'tipe_satuan') currentVal = item.tipeSatuanOption || "";
+          else if (tab === 'admin_pin') currentVal = item.adminPin || "";
+          else if (tab === 'merk') currentVal = item.merk || "";
+
+          return currentVal.toLowerCase().trim() === valClean;
+        });
+
+        if (isDuplicate) {
+          showAlert("Data sudah ada", "Data sudah ada", "error");
+          showToast("Data sudah ada", "error");
+          return;
+        }
+
         showLoading(true);
         try {
-          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, tipeSatuan, tipeSatuanOption, merk, tab });
+          const res = await callGAS("simpanReferensi", { id, satuan, kategoriBarang, statusOrder, adminPin, tipeSatuanOption, merk, tab });
           
-          // Apply local change to rawReferensiData immediately
+          // Apply local change to rawReferensiData immediately for demo mode
           if (!Array.isArray(rawReferensiData)) {
             rawReferensiData = [];
           }
@@ -4190,45 +4290,31 @@
               else if (tab === 'kategori') targetItem.kategoriBarang = kategoriBarang || "";
               else if (tab === 'status') targetItem.statusOrder = statusOrder || "";
               else if (tab === 'tipe_satuan') targetItem.tipeSatuanOption = tipeSatuanOption || "";
+              else if (tab === 'admin_pin') targetItem.adminPin = adminPin || "";
               else if (tab === 'merk') targetItem.merk = merk || "";
             }
           } else {
-            const newId = "R-" + (rawReferensiData.length + 2);
-            const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuanOption: "", merk: "" };
-            if (tab === 'satuan') newItem.satuan = satuan || "";
-            else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
-            else if (tab === 'status') newItem.statusOrder = statusOrder || "";
-            else if (tab === 'tipe_satuan') newItem.tipeSatuanOption = tipeSatuanOption || "";
-            else if (tab === 'merk') newItem.merk = merk || "";
-            rawReferensiData.push(newItem);
+            let occupied = false;
+            for (let item of rawReferensiData) {
+              if (tab === 'satuan' && !item.satuan) { item.satuan = satuan; occupied = true; break; }
+              else if (tab === 'kategori' && !item.kategoriBarang) { item.kategoriBarang = kategoriBarang; occupied = true; break; }
+              else if (tab === 'status' && !item.statusOrder) { item.statusOrder = statusOrder; occupied = true; break; }
+              else if (tab === 'tipe_satuan' && !item.tipeSatuanOption) { item.tipeSatuanOption = tipeSatuanOption; occupied = true; break; }
+              else if (tab === 'admin_pin' && !item.adminPin) { item.adminPin = adminPin; occupied = true; break; }
+              else if (tab === 'merk' && !item.merk) { item.merk = merk; occupied = true; break; }
+            }
+            if (!occupied) {
+              const newId = "R-" + (rawReferensiData.length + 2);
+              const newItem = { id: newId, satuan: "", kategoriBarang: "", statusOrder: "", tipeSatuanOption: "", adminPin: "", merk: "" };
+              if (tab === 'satuan') newItem.satuan = satuan || "";
+              else if (tab === 'kategori') newItem.kategoriBarang = kategoriBarang || "";
+              else if (tab === 'status') newItem.statusOrder = statusOrder || "";
+              else if (tab === 'tipe_satuan') newItem.tipeSatuanOption = tipeSatuanOption || "";
+              else if (tab === 'admin_pin') newItem.adminPin = adminPin || "";
+              else if (tab === 'merk') newItem.merk = merk || "";
+              rawReferensiData.push(newItem);
+            }
           }
-
-          // Clean, pack and sort column columns to mirror Spreadsheet's alphabetical alignment
-          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
-          const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
-          const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
-          const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
-          const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
-
-          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-
-          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
-          const newRawData = [];
-          for (let i = 0; i < maxLen; i++) {
-            newRawData.push({
-              id: "R-" + (i + 2),
-              satuan: sList[i] || "",
-              kategoriBarang: kList[i] || "",
-              statusOrder: oList[i] || "",
-              tipeSatuanOption: tList[i] || "",
-              merk: mList[i] || ""
-            });
-          }
-          rawReferensiData = newRawData;
 
           try { populateKategoriDropdown(); } catch(e) {}
           try { populateOrderStatusDropdown(); } catch(e) {}
@@ -4259,7 +4345,7 @@
       }
 
       async function handleHapusReferensi(id) {
-        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order', 'tipe_satuan': 'Tipe Satuan', 'merk': 'Merk' };
+        const tabLabels = { 'satuan': 'Satuan', 'kategori': 'Kategori Barang', 'status': 'Status Order', 'tipe_satuan': 'Tipe Satuan', 'admin_pin': 'Admin PIN', 'merk': 'Merk' };
         showConfirm("Hapus?", `Hapus item ${tabLabels[currentReferensiTab]} ini?`, async () => {
           showLoading(true);
           try {
@@ -4273,35 +4359,9 @@
                 else if (currentReferensiTab === 'kategori') targetItem.kategoriBarang = "";
                 else if (currentReferensiTab === 'status') targetItem.statusOrder = "";
                 else if (currentReferensiTab === 'tipe_satuan') targetItem.tipeSatuanOption = "";
+                else if (currentReferensiTab === 'admin_pin') targetItem.adminPin = "";
                 else if (currentReferensiTab === 'merk') targetItem.merk = "";
               }
-
-              // Pack and sort columns
-              const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
-              const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
-              const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
-              const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
-              const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
-
-              sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-              kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-              oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-              tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-              mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-
-              const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
-              const newRawData = [];
-              for (let i = 0; i < maxLen; i++) {
-                newRawData.push({
-                  id: "R-" + (i + 2),
-                  satuan: sList[i] || "",
-                  kategoriBarang: kList[i] || "",
-                  statusOrder: oList[i] || "",
-                  tipeSatuanOption: tList[i] || "",
-                  merk: mList[i] || ""
-                });
-              }
-              rawReferensiData = newRawData;
             }
 
             try { populateKategoriDropdown(); } catch(e) {}
@@ -4341,23 +4401,26 @@
           cardContainer.innerHTML = "";
 
           // Update Counts on Tabs
-          const countSatuan = rawReferensiData.filter(item => !!item.satuan).length;
-          const countKategori = rawReferensiData.filter(item => !!item.kategoriBarang).length;
-          const countStatus = rawReferensiData.filter(item => !!item.statusOrder).length;
-          const countTipeSatuan = rawReferensiData.filter(item => !!item.tipeSatuanOption).length;
-          const countMerk = rawReferensiData.filter(item => !!item.merk).length;
+          const countSatuan = (rawReferensiData || []).filter(item => !!item.satuan).length;
+          const countKategori = (rawReferensiData || []).filter(item => !!item.kategoriBarang).length;
+          const countStatus = (rawReferensiData || []).filter(item => !!item.statusOrder).length;
+          const countTipeSatuan = (rawReferensiData || []).filter(item => !!item.tipeSatuanOption).length;
+          const countAdminPin = (rawReferensiData || []).filter(item => !!item.adminPin).length;
+          const countMerk = (rawReferensiData || []).filter(item => !!item.merk).length;
           
           const elSatuan = document.getElementById("count-ref-satuan");
           const elKategori = document.getElementById("count-ref-kategori");
           const elStatus = document.getElementById("count-ref-status");
           const elTipeSatuan = document.getElementById("count-ref-tipe_satuan");
+          const elAdminPin = document.getElementById("count-ref-admin_pin");
           const elMerk = document.getElementById("count-ref-merk");
           
-          if (elSatuan) elSatuan.innerText = `(${countSatuan})`;
-          if (elKategori) elKategori.innerText = `(${countKategori})`;
-          if (elStatus) elStatus.innerText = `(${countStatus})`;
-          if (elTipeSatuan) elTipeSatuan.innerText = `(${countTipeSatuan})`;
-          if (elMerk) elMerk.innerText = `(${countMerk})`;
+          if (elSatuan) elSatuan.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countSatuan}]</span>`;
+          if (elKategori) elKategori.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countKategori}]</span>`;
+          if (elStatus) elStatus.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countStatus}]</span>`;
+          if (elTipeSatuan) elTipeSatuan.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countTipeSatuan}]</span>`;
+          if (elAdminPin) elAdminPin.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countAdminPin}]</span>`;
+          if (elMerk) elMerk.innerHTML = ` <span class="opacity-75 text-[9px] font-black">[${countMerk}]</span>`;
 
           if (!Array.isArray(rawReferensiData) || rawReferensiData.length === 0) {
             tbody.innerHTML = `<tr><td colspan="3" class="px-8 py-20 text-center text-slate-400 font-bold italic">Belum ada data referensi.</td></tr>`;
@@ -4374,9 +4437,10 @@
             else if (currentReferensiTab === 'kategori') val = item.kategoriBarang || "";
             else if (currentReferensiTab === 'status') val = item.statusOrder || "";
             else if (currentReferensiTab === 'tipe_satuan') val = item.tipeSatuanOption || "";
+            else if (currentReferensiTab === 'admin_pin') val = item.adminPin || "";
             else if (currentReferensiTab === 'merk') val = item.merk || "";
             
-            if (!val && !referensiSearchTerm) return false; // Hide empty rows in tabs unless searching? Actually, usually independent.
+            if (!val && !referensiSearchTerm) return false;
             
             const matchSearch = !referensiSearchTerm || val.toLowerCase().includes(referensiSearchTerm);
             return !!val && matchSearch;
@@ -4390,8 +4454,9 @@
              else if (currentReferensiTab === 'kategori') { valA = a.kategoriBarang || ""; valB = b.kategoriBarang || ""; }
              else if (currentReferensiTab === 'status') { valA = a.statusOrder || ""; valB = b.statusOrder || ""; }
              else if (currentReferensiTab === 'tipe_satuan') { valA = a.tipeSatuanOption || ""; valB = b.tipeSatuanOption || ""; }
+             else if (currentReferensiTab === 'admin_pin') { valA = a.adminPin || ""; valB = b.adminPin || ""; }
              else if (currentReferensiTab === 'merk') { valA = a.merk || ""; valB = b.merk || ""; }
-             return valA.localeCompare(valB);
+             return valA.localeCompare(valB, undefined, { numeric: true, sensitivity: 'base' });
           });
 
           const totalData = filteredData.length;
@@ -4413,65 +4478,70 @@
           }
 
           paginatedData.forEach((item, idx) => {
-            const displayIdx = startIndex + idx + 1;
-            let displayVal = "";
-            let fieldLabel = "";
-            let badgeHtml = "";
-            
-            if (currentReferensiTab === 'satuan') { 
-              displayVal = item.satuan; 
-              fieldLabel = "Satuan"; 
-              badgeHtml = "";
-            }
-            else if (currentReferensiTab === 'kategori') { displayVal = item.kategoriBarang; fieldLabel = "Kategori"; }
-            else if (currentReferensiTab === 'status') { displayVal = item.statusOrder; fieldLabel = "Status"; }
-            else if (currentReferensiTab === 'tipe_satuan') { displayVal = item.tipeSatuanOption; fieldLabel = "Tipe Satuan"; }
-            else if (currentReferensiTab === 'merk') { displayVal = item.merk; fieldLabel = "Merk"; }
+             const displayIdx = startIndex + idx + 1;
+             let displayVal = "";
+             let fieldLabel = "";
+             let badgeHtml = "";
+             
+             if (currentReferensiTab === 'satuan') { 
+               displayVal = item.satuan; 
+               fieldLabel = "Satuan"; 
+               badgeHtml = "";
+             }
+             else if (currentReferensiTab === 'kategori') { displayVal = item.kategoriBarang; fieldLabel = "Kategori"; }
+             else if (currentReferensiTab === 'status') { displayVal = item.statusOrder; fieldLabel = "Status"; }
+             else if (currentReferensiTab === 'tipe_satuan') { displayVal = item.tipeSatuanOption; fieldLabel = "Tipe Satuan"; }
+             else if (currentReferensiTab === 'admin_pin') { displayVal = item.adminPin; fieldLabel = "Admin PIN"; }
+             else if (currentReferensiTab === 'merk') { displayVal = item.merk; fieldLabel = "Merk"; }
 
-            // Desktop Row
-            const tr = document.createElement("tr");
-            tr.className = "hover:bg-slate-50 transition-colors group";
-            tr.innerHTML = `
-              <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-emerald-500 transition-colors">${displayIdx}</td>
-              <td class="px-8 py-6 font-bold text-slate-700">
-                <div class="flex items-center gap-2">
-                  <span>${displayVal || "-"}</span>
-                  ${badgeHtml}
-                </div>
-              </td>
-              <td class="px-8 py-6">
-                <div class="flex items-center justify-center gap-2">
-                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all" title="Edit">
-                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                  </button>
-                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all" title="Hapus">
-                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                  </button>
-                </div>
-              </td>
-            `;
-            tbody.appendChild(tr);
+             // Desktop Row
+             const tr = document.createElement("tr");
+             tr.className = "hover:bg-slate-50 transition-colors group";
+             tr.innerHTML = `
+               <td class="px-8 py-6 text-center font-black text-slate-300 group-hover:text-emerald-500 transition-colors">${displayIdx}</td>
+               <td class="px-8 py-6 font-bold text-slate-700">
+                 <div class="flex items-center gap-2">
+                   <span>${displayVal || "-"}</span>
+                   ${badgeHtml}
+                 </div>
+               </td>
+               <td class="px-8 py-6">
+                 <div class="flex items-center justify-center gap-2">
+                   <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl hover:bg-emerald-600 hover:text-white transition-all" title="Edit">
+                     <i data-lucide="edit-3" class="w-4 h-4"></i>
+                   </button>
+                   <button onclick="handleHapusReferensi('${item.id}')" class="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all" title="Hapus">
+                     <i data-lucide="trash-2" class="w-4 h-4"></i>
+                   </button>
+                 </div>
+               </td>
+             `;
+             tbody.appendChild(tr);
 
-            // Mobile Card
-            const card = document.createElement("div");
-            card.className = "w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all active:scale-[0.98]";
-            card.innerHTML = `
-              <div class="flex justify-between items-start">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600 font-black text-xs">#${displayIdx}</div>
-                <div class="flex gap-2">
-                  <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                  <button onclick="handleHapusReferensi('${item.id}')" class="p-2 bg-red-50 text-red-600 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                </div>
-              </div>
-              <div>
-                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest">${fieldLabel}</p>
-                <div class="flex items-center gap-2 mt-1">
-                  <span class="text-xs font-bold text-slate-700">${displayVal || "-"}</span>
-                  ${badgeHtml}
-                </div>
-              </div>
-            `;
-            cardContainer.appendChild(card);
+             // Mobile Card
+             const card = document.createElement("div");
+             card.className = "px-3.5 py-2.5 bg-white rounded-xl border border-slate-100 shadow-sm flex items-center justify-between gap-2.5 group transition-all active:scale-[0.98]";
+             card.innerHTML = `
+               <div class="flex items-center gap-2.5 min-w-0">
+                 <div class="w-6 h-6 flex-shrink-0 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 font-black text-[10px]">#${displayIdx}</div>
+                 <div class="min-w-0">
+                   <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none mb-0.5">${fieldLabel}</p>
+                   <div class="flex items-center gap-1 min-w-0">
+                     <span class="text-xs font-bold text-slate-700 truncate">${displayVal || "-"}</span>
+                     ${badgeHtml}
+                   </div>
+                 </div>
+               </div>
+               <div class="flex items-center gap-1.5 flex-shrink-0">
+                 <button onclick='openReferensiModal(${JSON.stringify(item)})' class="p-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-lg transition-colors cursor-pointer" title="Edit">
+                   <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                 </button>
+                 <button onclick="handleHapusReferensi('${item.id}')" class="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-colors cursor-pointer" title="Hapus">
+                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                 </button>
+               </div>
+             `;
+             cardContainer.appendChild(card);
           });
 
           document.getElementById("referensiPaginationInfo").innerText = `MENAMPILKAN ${startIndex + 1} SAMPAI ${endIndex} DARI ${totalData} DATA`;
@@ -4479,11 +4549,17 @@
           lucide.createIcons();
           
           // Initial tab activation highlight
-          const activeTabBtn = document.getElementById(`tab-ref-${currentReferensiTab}`);
-          if (activeTabBtn) {
-            activeTabBtn.classList.add('bg-white', 'text-emerald-600', 'shadow-sm');
-            activeTabBtn.classList.remove('text-slate-400');
-          }
+          const refTabs = ['satuan', 'kategori', 'status', 'tipe_satuan', 'admin_pin', 'merk'];
+          refTabs.forEach(t => {
+            const btn = document.getElementById(`tab-ref-${t}`);
+            if (btn) {
+              if (t === currentReferensiTab) {
+                btn.className = "flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px] bg-white text-emerald-600 shadow-sm";
+              } else {
+                btn.className = "flex-1 shrink-0 py-3 px-4 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all min-w-[95px] text-slate-400 hover:text-slate-600";
+              }
+            }
+          });
         } catch (e) {
           console.error("renderReferensiData Error:", e);
         }
@@ -5569,7 +5645,7 @@
             statusOrder: "",
             tipeSatuan: "",
             tipeSatuanOption: "",
-            merk: brandClean.toUpperCase(), 
+            merk: toTitleCase(brandClean), 
             tab: "merk"
           });
 
@@ -5578,36 +5654,31 @@
             rawReferensiData = [];
           }
 
-          const sList = rawReferensiData.map(r => r.satuan).filter(Boolean);
-          const kList = rawReferensiData.map(r => r.kategoriBarang).filter(Boolean);
-          const oList = rawReferensiData.map(r => r.statusOrder).filter(Boolean);
-          const tList = rawReferensiData.map(r => r.tipeSatuanOption).filter(Boolean);
-          const mList = rawReferensiData.map(r => r.merk).filter(Boolean);
-
-          const brandToAdd = brandClean.toUpperCase();
-          if (!mList.some(brand => brand.trim().toLowerCase() === brandToAdd.toLowerCase())) {
-            mList.push(brandToAdd);
+          const brandToAdd = toTitleCase(brandClean);
+          let occupied = false;
+          for (let item of rawReferensiData) {
+            if (!item.merk) {
+              item.merk = brandToAdd;
+              occupied = true;
+              break;
+            }
           }
-
-          sList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          kList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          oList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          tList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-          mList.sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' }));
-
-          const maxLen = Math.max(sList.length, kList.length, oList.length, tList.length, mList.length);
-          const newRawData = [];
-          for (let i = 0; i < maxLen; i++) {
-            newRawData.push({
-              id: "R-" + (i + 2),
-              satuan: sList[i] || "",
-              kategoriBarang: kList[i] || "",
-              statusOrder: oList[i] || "",
-              tipeSatuanOption: tList[i] || "",
-              merk: mList[i] || ""
+          if (!occupied) {
+            const newId = "R-" + (rawReferensiData.length + 2);
+            rawReferensiData.push({
+              id: newId,
+              satuan: "",
+              kategoriBarang: "",
+              statusOrder: "",
+              tipeSatuanOption: "",
+              adminPin: "",
+              merk: brandToAdd
             });
           }
-          rawReferensiData = newRawData;
+
+          if (res && res.sukses) {
+            await fetchReferensiData();
+          }
 
           // 5. Repopulate all dependent dropdowns and filters
           try { populateKategoriDropdown(); } catch(e) {}
@@ -5799,22 +5870,22 @@
              
              tbody.innerHTML += `
                <tr class="hover:bg-slate-50/80 transition-colors group">
-                 <td class="px-8 py-6 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
-                 <td class="px-8 py-6 font-black text-slate-800 text-sm whitespace-nowrap">${item.idBarang}</td>
-                 <td class="px-8 py-6">
+                 <td class="px-4 py-4 text-center font-black text-slate-400 text-xs">${rowIdx}</td>
+                 <td class="px-4 py-4 font-black text-slate-700 text-sm whitespace-nowrap">${item.idBarang}</td>
+                 <td class="px-4 py-4">
                     <div class="flex flex-col">
-                      <span class="font-black text-slate-800 text-sm italic group-hover:text-orange-600 transition-colors">${item.namaBarang}</span>
+                      <span class="font-extrabold text-slate-950 text-sm md:text-base group-hover:text-orange-600 transition-colors tracking-tight leading-snug">${item.namaBarang}</span>
                     </div>
                  </td>
-                 <td class="px-8 py-6 font-bold text-slate-800 text-sm uppercase">${item.kategoriBarang || "-"}</td>
-                 <td class="px-8 py-6 font-bold text-slate-800 text-sm capitalize">${item.merk || "-"}</td>
-                 <td class="px-8 py-6 text-center font-bold text-slate-800 text-sm uppercase whitespace-nowrap">${item.satuanDasar || "-"}</td>
-                 <td class="px-8 py-6 text-center">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
-                 </td>
-                 <td class="px-8 py-6">
+                 <td class="px-4 py-4 font-semibold text-slate-500 text-xs md:text-sm uppercase">${item.kategoriBarang || "-"}</td>
+                 <td class="px-4 py-4 font-semibold text-slate-500 text-xs md:text-sm capitalize">${item.merk || "-"}</td>
+                 <td class="px-4 py-4 text-center font-bold text-slate-700 text-xs md:text-sm uppercase whitespace-nowrap">${item.satuanDasar || "-"}</td>
+                 <td class="px-4 py-4 text-center">
+                    <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest ${statusClass}">${item.status}</span>
+                  </td>
+                  <td class="px-4 py-4">
                     <div class="flex items-center justify-center gap-2">
-                       <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2.5 bg-slate-100 text-slate-500 rounded-xl hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-90">
+                       <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-95" title="Edit">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
                        </button>
                         <!-- Toggle Status Switch -->
@@ -8278,6 +8349,23 @@
         document.getElementById("promoModal").classList.replace("flex", "hidden");
       }
 
+      function generateNextPromoId() {
+        let maxNum = 0;
+        if (Array.isArray(rawHargaPromoData)) {
+          rawHargaPromoData.forEach(p => {
+            const match = String(p.idPromo || "").match(/^PRM-(\d+)$/i);
+            if (match) {
+              const num = parseInt(match[1], 10);
+              if (num > maxNum) {
+                maxNum = num;
+              }
+            }
+          });
+        }
+        const nextNum = maxNum + 1;
+        return "PRM-" + String(nextNum).padStart(3, '0');
+      }
+
       async function handleSavePromo(event) {
         if (event) event.preventDefault();
 
@@ -8307,8 +8395,9 @@
         }
 
         const normalPrice = window.activePromoUnit.hargaJualNormal;
-        if (hargaJual > normalPrice) {
-          showToast(`Harga promo (Rp ${hargaJual.toLocaleString("id-ID")}) tidak boleh lebih besar dari harga jual normal (Rp ${normalPrice.toLocaleString("id-ID")})`, "error");
+        const normalTotal = normalPrice * minQty;
+        if (hargaJual > normalTotal) {
+          showToast("Harga promo tidak boleh lebih besar dari total harga normal untuk qty minimum", "error");
           return;
         }
 
@@ -8351,7 +8440,7 @@
               }
             } else {
               const newRow = res.row || (rawHargaPromoData.length + 2);
-              const generatedId = res.idPromo || ("PRM-" + Math.floor(100000 + Math.random() * 900000));
+              const generatedId = res.idPromo || generateNextPromoId();
               rawHargaPromoData.push({
                 row: Number(newRow),
                 idPromo: generatedId,
@@ -8378,7 +8467,7 @@
           console.error("Save promo error:", err);
           
           // Graceful simulated offline backup
-          const generatedId = idPromo || ("PRM-" + Math.floor(100000 + Math.random() * 900000));
+          const generatedId = idPromo || generateNextPromoId();
           const mockRow = row ? Number(row) : (rawHargaPromoData.length + 2);
 
           const promoObj = {
@@ -8408,39 +8497,39 @@
       }
 
       async function handleDeletePromo(idPromo) {
-        if (!confirm("Apakah Anda yakin ingin menghapus promo ini?")) return;
+        showConfirm("Hapus Promo?", "Apakah Anda yakin ingin menghapus promo ini?", async () => {
+          const promo = rawHargaPromoData.find(p => String(p.idPromo) === String(idPromo));
+          if (!promo) return;
 
-        const promo = rawHargaPromoData.find(p => String(p.idPromo) === String(idPromo));
-        if (!promo) return;
+          showLoading(true);
+          showToast("Sedang menghapus promo...", "info");
 
-        showLoading(true);
-        showToast("Sedang menghapus promo...", "info");
+          try {
+            const res = await callGAS("hapusHargaPromo", {
+              row: promo.row,
+              idPromo: idPromo
+            });
+            showLoading(false);
 
-        try {
-          const res = await callGAS("hapusHargaPromo", {
-            row: promo.row,
-            idPromo: idPromo
-          });
-          showLoading(false);
-
-          if (res && res.sukses) {
-            showToast("Promo berhasil dihapus!", "success");
+            if (res && res.sukses) {
+              showToast("Promo berhasil dihapus!", "success");
+              
+              rawHargaPromoData = rawHargaPromoData.filter(p => String(p.idPromo) !== String(idPromo));
+              renderPromoList();
+              try { renderSatuanBarangData(); } catch(err) {}
+            } else {
+              showAlert("Gagal menghapus promo", res ? res.pesan : "Koneksi terganggu.", "error");
+            }
+          } catch (err) {
+            showLoading(false);
+            console.error("Delete promo error:", err);
             
             rawHargaPromoData = rawHargaPromoData.filter(p => String(p.idPromo) !== String(idPromo));
+            showToast("Promo berhasil dihapus (Local Mode).", "success");
             renderPromoList();
-            try { renderSatuanBarangData(); } catch(err) {}
-          } else {
-            showAlert("Gagal menghapus promo", res ? res.pesan : "Koneksi terganggu.", "error");
+            try { renderSatuanBarangData(); } catch(e) {}
           }
-        } catch (err) {
-          showLoading(false);
-          console.error("Delete promo error:", err);
-          
-          rawHargaPromoData = rawHargaPromoData.filter(p => String(p.idPromo) !== String(idPromo));
-          showToast("Promo berhasil dihapus (Local Mode).", "success");
-          renderPromoList();
-          try { renderSatuanBarangData(); } catch(e) {}
-        }
+        });
       }
 
       function buildAnalysisModalTabs() {

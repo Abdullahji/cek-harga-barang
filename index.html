@@ -4920,23 +4920,7 @@
               </div>
               <div class="divide-y divide-amber-200/40">
                 ${activePromos.map(promo => {
-                  const min = Number(promo.minQty) || 1;
-                  const maxStr = String(promo.maxQty || "").trim();
-                  const hasMax = maxStr !== "" && maxStr !== "0";
-                  const max = hasMax ? Number(maxStr) : null;
-
-                  let label = "";
-                  if (max !== null && !isNaN(max)) {
-                    if (min === max) {
-                      label = `Beli ${min} ${promo.satuan}`;
-                    } else if (min < max) {
-                      label = `Beli ${min}–${max} ${promo.satuan}`;
-                    } else {
-                      label = `Beli ${min}+ ${promo.satuan}`;
-                    }
-                  } else {
-                    label = `Beli ${min}+ ${promo.satuan}`;
-                  }
+                  const label = formatPromoLabel(promo.minQty, promo.maxQty, promo.satuan);
                   
                   const adminMeta = isAdminPriceCheckMode && promo.idPromo ? `
                     <div class="text-[8px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider font-mono">
@@ -5309,6 +5293,30 @@
           currency: "IDR",
           maximumFractionDigits: 0,
         }).format(n || 0);
+      }
+
+      function formatPromoLabel(minQty, maxQty, satuan) {
+        const min = Number(minQty) || 1;
+        let max = null;
+        if (maxQty !== undefined && maxQty !== null) {
+          const maxStr = String(maxQty).trim();
+          if (maxStr !== "" && maxStr !== "0" && maxStr !== "null" && maxStr !== "undefined") {
+            max = Number(maxStr);
+          }
+        }
+        const unit = satuan ? " " + String(satuan).trim() : "";
+
+        if (max !== null && !isNaN(max)) {
+          if (min === max) {
+            return `Beli ${min}${unit}`;
+          } else if (min < max) {
+            return `Beli ${min}-${max}${unit}`;
+          } else {
+            return `Beli ${min}+${unit}`;
+          }
+        } else {
+          return `Beli ${min}+${unit}`;
+        }
       }
 
       function toggleSidebarCollapse() {
@@ -8293,16 +8301,7 @@
         }
 
         promos.forEach(p => {
-          const min = Number(p.minQty) || 1;
-          const max = p.maxQty;
-          let label = "";
-          if (min === 1 && (max === 1 || max === "1")) {
-            label = "Beli 1";
-          } else if (max !== "" && max !== null && max !== undefined) {
-            label = `Beli ${min}-${max}`;
-          } else {
-            label = `Beli ${min}+`;
-          }
+          const label = formatPromoLabel(p.minQty, p.maxQty, p.satuan);
 
           const statusClass = isEqualNormalized(p.status, 'Aktif') 
             ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' 
@@ -8841,10 +8840,28 @@
           const statusVal = item.status || "Aktif";
           const gambarVal = item.gambar || "";
  
-          const hargaJual = String(item.hargaJual || "").replace(/\D/g, "");
- 
-          if (!satuanVal || qtyInputVal === "" || qtyInputVal === undefined || qtyVal === "" || qtyVal === undefined || !hargaJual) {
-             hasEmptyFields = true;
+          // Strip format currency before validation
+          const rawHargaJualStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
+          const hargaJualClean = rawHargaJualStr.replace(/[^\d]/g, "");
+
+          if (statusVal !== "Nonaktif") {
+            // 1. Satuan: cek value aktual
+            const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
+            
+            // 2. Qty Konversi & Qty Satuan: cek numeric valid
+            const parsedQtyInput = Number(qtyInputVal);
+            const isQtyInputInvalid = qtyInputVal === "" || qtyInputVal === undefined || qtyInputVal === null || isNaN(parsedQtyInput) || parsedQtyInput <= 0;
+            
+            const parsedQtyVal = Number(qtyVal);
+            const isQtyValInvalid = qtyVal === "" || qtyVal === undefined || qtyVal === null || isNaN(parsedQtyVal) || parsedQtyVal <= 0;
+
+            // 3. Harga Jual: strip format currency sebelum validasi, harus valid number >= 0
+            const parsedHargaJualClean = Number(hargaJualClean);
+            const isHargaJualInvalid = hargaJualClean === "" || isNaN(parsedHargaJualClean) || parsedHargaJualClean < 0;
+
+            if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
+              hasEmptyFields = true;
+            }
           }
  
           const parentBarangObj = rawBarangData.find(b => String(b.idBarang) === String(idBarang));
@@ -8868,7 +8885,7 @@
             tipeSatuan: tipeSatuanVal,
             qtyInputKonversi: qtyInputVal,
             qtySatuan: qtyVal,
-            hargaJual: hargaJual,
+            hargaJual: hargaJualClean,
             status: finalStatusVal,
             gambar: gambarVal
           });

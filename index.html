@@ -1020,10 +1020,14 @@
                   <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Google Apps Script Web App URL</label>
                     <div class="relative flex items-center w-full">
-                      <input type="url" id="form-databaseUrl" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-xs font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="https://script.google.com/macros/s/..." required />
-                      <button type="button" onclick="document.getElementById('form-databaseUrl').value = ''" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                      <input type="url" id="form-databaseUrl" oninput="validateDatabaseUrlInput(this.value)" class="w-full pl-6 pr-12 py-4 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-xs font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="https://script.google.com/macros/s/..." required />
+                      <button type="button" onclick="document.getElementById('form-databaseUrl').value = ''; validateDatabaseUrlInput('')" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                         <i data-lucide="x" class="w-4 h-4"></i>
                       </button>
+                    </div>
+                    <div id="url-validation-warning" class="text-[11px] font-semibold text-rose-600 bg-rose-50 border border-rose-100 p-3 rounded-2xl hidden leading-relaxed"></div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-1 leading-relaxed">
+                      * Pastikan URL diakhiri dengan <span class="font-mono font-black text-slate-600">/exec</span> dan Anda mendeploy ulang (New version) setelah mengubah code.gs.
                     </div>
                   </div>
 
@@ -3608,38 +3612,69 @@
       // 3. Paste URL-nya di sini:
       const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzh1fQOnYWDaOEJu9Nis9tKKOYI7AdRAjsZYn8nZ5sqyzIzDXBAEF_5oEw3VIsZbL61hw/exec"; 
 
+      // Helper function to wait for Google Apps Script script object to load and initialize (in iframe)
+      function waitForGoogleScriptRun(timeout = 3000) {
+        return new Promise((resolve) => {
+          if (typeof window !== "undefined" && window.google && window.google.script && window.google.script.run) {
+            resolve(true);
+            return;
+          }
+          let elapsed = 0;
+          const interval = setInterval(() => {
+            elapsed += 100;
+            if (typeof window !== "undefined" && window.google && window.google.script && window.google.script.run) {
+              clearInterval(interval);
+              resolve(true);
+            } else if (elapsed >= timeout) {
+              clearInterval(interval);
+              resolve(false);
+            }
+          }, 100);
+        });
+      }
+
       // --- BRIDGE COMMUNICATION ---
       async function callGAS(action, payload = null, timeoutMs = 25000) {
-        // Deteksi apakah sedang di dalam Google Apps Script Environment
-        const isGAS = typeof window !== "undefined" && window.google && window.google.script && window.google.script.run;
+        // Deteksi apakah sedang di dalam Google Apps Script Environment (baik langsung atau di dalam iframe GAS)
+        const isGASDomain = typeof window !== "undefined" && (
+          window.location.hostname.includes("googleusercontent.com") || 
+          window.location.hostname.includes("script.google.com") ||
+          (window.google && window.google.script && window.google.script.run)
+        );
         
-        if (isGAS) {
-          return new Promise((resolve, reject) => {
-            const timer = setTimeout(() => {
-              reject(new Error("Timeout koneksi Google Apps Script"));
-            }, timeoutMs);
+        if (isGASDomain) {
+          const isReady = await waitForGoogleScriptRun(3500);
+          if (isReady) {
+            return new Promise((resolve, reject) => {
+              const timer = setTimeout(() => {
+                reject(new Error("Timeout koneksi Google Apps Script"));
+              }, timeoutMs);
 
-            window.google.script.run
-              .withSuccessHandler(res => {
-                clearTimeout(timer);
-                console.log(`GAS Response [${action}]:`, res);
-                resolve(res);
-              })
-              .withFailureHandler(err => {
-                clearTimeout(timer);
-                console.error(`GAS Error [${action}]:`, err);
-                reject(err);
-              })
-              .dispatchAction({ action, payload });
-          });
-        } else {
-          // Fetch from custom local storage URL first, with fallback to hardcoded default
-          const activeUrl = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
-
-          if (!activeUrl || activeUrl.length < 20 || activeUrl.includes("script.google.com") === false) {
-            console.warn("GAS_WEBAPP_URL kustom/bawaan belum diatur atau tidak valid. Menjalankan mode DEMO.");
-            return null; 
+              window.google.script.run
+                .withSuccessHandler(res => {
+                  clearTimeout(timer);
+                  console.log(`GAS Response [${action}]:`, res);
+                  resolve(res);
+                })
+                .withFailureHandler(err => {
+                  clearTimeout(timer);
+                  console.error(`GAS Error [${action}]:`, err);
+                  reject(err);
+                })
+                .dispatchAction({ action, payload });
+            });
+          } else {
+            console.warn("Mendeteksi domain Google Apps Script, tetapi google.script.run gagal dimuat dalam 3.5 detik. Mencoba fallback ke HTTP Fetch...");
           }
+        }
+
+        // Fetch from custom local storage URL first, with fallback to hardcoded default
+        const activeUrl = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
+
+        if (!activeUrl || activeUrl.length < 20 || activeUrl.includes("script.google.com") === false) {
+          console.warn("GAS_WEBAPP_URL kustom/bawaan belum diatur atau tidak valid. Menjalankan mode DEMO.");
+          return null; 
+        }
           
           const controller = new AbortController();
           const timerId = setTimeout(() => controller.abort(), timeoutMs);
@@ -3995,6 +4030,44 @@
         }
       }
 
+      function validateDatabaseUrlInput(url) {
+        const warningEl = document.getElementById("url-validation-warning");
+        if (!warningEl) return true;
+
+        const u = String(url).trim();
+        if (!u) {
+          warningEl.classList.add("hidden");
+          return true;
+        }
+
+        if (u.includes("docs.google.com/spreadsheets")) {
+          warningEl.innerHTML = "⚠️ <b>SALAH ALAMAT:</b> Ini adalah URL spreadsheet Google Sheets Anda. Anda wajib memasukkan <b>URL Web App (Deployment URL)</b> dari editor Google Apps Script.";
+          warningEl.classList.remove("hidden");
+          return false;
+        }
+
+        if (!u.startsWith("https://script.google.com/")) {
+          warningEl.innerHTML = "⚠️ <b>URL TIDAK VALID:</b> Harus diawali dengan <br><span class='font-mono text-[10px] break-all'>https://script.google.com/</span>";
+          warningEl.classList.remove("hidden");
+          return false;
+        }
+
+        if (u.includes("/edit") || u.includes("/home") || u.includes("/projects/")) {
+          warningEl.innerHTML = "⚠️ <b>INI URL EDITOR:</b> Anda memasukkan URL halaman editor script Anda sendiri. Anda wajib mengklik tombol <b>Deploy &gt; New Deployment</b>, pilih jenis <b>Web app</b>, lalu salin URL Web App yang bertuliskan <i>URL</i> di bagian bawah dan diakhiri dengan <b>/exec</b>.";
+          warningEl.classList.remove("hidden");
+          return false;
+        }
+
+        if (!u.includes("/macros/s/") || !u.includes("/exec")) {
+          warningEl.innerHTML = "⚠️ <b>BUKAN URL WEB APP:</b> URL yang benar wajib memiliki unsur <span class='font-mono text-[10px]'>/macros/s/</span> dan diakhiri dengan <span class='font-mono text-[10px] font-black'>/exec</span>.";
+          warningEl.classList.remove("hidden");
+          return false;
+        }
+
+        warningEl.classList.add("hidden");
+        return true;
+      }
+
       function openDatabaseSettingsModal() {
         const modal = document.getElementById("databaseSettingsModal");
         if (modal) {
@@ -4002,6 +4075,7 @@
           const input = document.getElementById("form-databaseUrl");
           if (input) {
             input.value = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
+            validateDatabaseUrlInput(input.value);
           }
           if (typeof lucide !== 'undefined' && lucide.createIcons) {
             try { lucide.createIcons(); } catch(e) {}
@@ -4013,6 +4087,8 @@
         const modal = document.getElementById("databaseSettingsModal");
         if (modal) {
           modal.classList.replace("flex", "hidden");
+          const warningEl = document.getElementById("url-validation-warning");
+          if (warningEl) warningEl.classList.add("hidden");
         }
       }
 
@@ -4023,13 +4099,15 @@
           showToast("Masukkan URL Google Apps Script terlebih dahulu!", "warning");
           return;
         }
-        if (!inputUrl.startsWith("https://script.google.com/")) {
-          showToast("Format URL tidak valid! Harus diawali dengan https://script.google.com/", "error");
+        
+        const isValid = validateDatabaseUrlInput(inputUrl);
+        if (!isValid) {
+          showAlert("Format URL Salah", "URL yang dimasukkan bukan URL Web App (Deployment). Silakan baca petunjuk di atas modal dengan teliti.", "error");
           return;
         }
 
         showLoading(true);
-        showToast("Sedang menguji koneksi ke database...", "info");
+        showToast("Sedang menguji koneksi (bisa butuh waktu jika cold-start)...", "info");
         
         try {
           // Temporarily set custom GAS URL in localStorage so callGAS can use it to test
@@ -4038,7 +4116,7 @@
 
           const res = await callGAS("ambilInisialisasiData", {
             sheets: ["Data_Barang"]
-          }, 8000); // 8 seconds timeout for test
+          }, 20000); // 20 seconds timeout to accommodate Google Apps Script cold starts!
 
           showLoading(false);
           // Restore previous URL as we haven't hit Save yet
@@ -4053,12 +4131,12 @@
             showToast("Uji koneksi berhasil!", "success");
             updateDatabaseStatusIndicator("connected");
           } else {
-            showAlert("Gagal Terhubung", "Google Apps Script terpanggil tapi Sheets Anda mengembalikan respon error: " + (res ? res.pesan : "Respon kosong"), "error");
+            showAlert("Gagal Terhubung", "Google Apps Script terpanggil tapi Sheets Anda mengembalikan respon error: " + (res ? res.pesan : "Respon kosong.\n\nPastikan Anda sudah mengklik Authorize Access saat deploying."), "error");
             showToast("Uji koneksi gagal.", "error");
           }
         } catch (err) {
           showLoading(false);
-          showAlert("Timeout / Error", "Gagal menghubungi URL Web App. " + err.message + "\n\nPastikan:\n1. Anda sudah mendeploy sebagai Web App.\n2. Execute as dirancang ke 'Me'.\n3. Who has access diset ke 'Anyone'.\n4. Browser Anda tidak memblokir CORS.", "error");
+          showAlert("Timeout / Koneksi Gagal", "Gagal menghubungi URL Web App. " + err.message + "\n\nPastikan:\n1. Anda mendeploy sebagai Web App dengan benar.\n2. Execute as diset ke 'Me' (Email Anda).\n3. Who has access diset ke 'Anyone' (Siapa saja).\n4. Anda sudah mengotorisasi akses izin google account Anda.", "error");
           showToast("Uji koneksi gagal.", "error");
         }
       }
@@ -4084,6 +4162,12 @@
         if (e) e.preventDefault();
         const inputUrl = document.getElementById("form-databaseUrl").value.trim();
         if (!inputUrl) return;
+
+        const isValid = validateDatabaseUrlInput(inputUrl);
+        if (!isValid) {
+          showAlert("Gagal Menyimpan", "URL tidak valid. Silakan perbaiki URL kustom Anda terlebih dahulu sebelum disimpan.", "error");
+          return;
+        }
 
         localStorage.setItem("CUSTOM_GAS_URL", inputUrl);
         showToast("URL kustom disimpan! Memuat ulang data...", "success");

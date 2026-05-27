@@ -8985,6 +8985,9 @@
         if (window.modalEditingGroupUnits && window.modalEditingGroupUnits.length > 0) {
           window.modalEditingGroupUnits.forEach((item, idx) => {
             if (idx !== window.activeEditingUnitIdx) {
+              if (item.row && item.row !== "") {
+                return; // Jangan pernah menonaktifkan baris yang sudah terdaftar di sheet
+              }
               const rawS = String(item.satuan || "").trim();
               const rawHJStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
               const rawHJ = rawHJStr.replace(/[^\d]/g, "");
@@ -9120,6 +9123,10 @@
             lvl = activeLevel++;
           }
 
+          const hargaModalVal = (item.hargaModal !== undefined && item.hargaModal !== null) ? String(item.hargaModal).replace(/[^\d]/g, "") : "";
+          const hargaModalLamaVal = (item.hargaModalLama !== undefined && item.hargaModalLama !== null) ? String(item.hargaModalLama).replace(/[^\d]/g, "") : "";
+          const hargaJualLamaVal = (item.hargaJualLama !== undefined && item.hargaJualLama !== null) ? String(item.hargaJualLama).replace(/[^\d]/g, "") : "";
+
           satuanList.push({
             row: rowVal,
             barcode: barcodeVal,
@@ -9130,6 +9137,9 @@
             tipeSatuan: tipeSatuanVal,
             qtyInputKonversi: qtyInputVal,
             qtySatuan: qtyVal,
+            hargaModal: hargaModalVal,
+            hargaModalLama: hargaModalLamaVal,
+            hargaJualLama: hargaJualLamaVal,
             hargaJual: hargaJualClean,
             status: finalStatusVal,
             gambar: gambarVal

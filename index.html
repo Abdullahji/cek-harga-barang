@@ -3088,10 +3088,16 @@
             el.textContent = new Date().getFullYear();
           });
 
-          // Optimized Initial Fetch with generous timeout (30,000ms) to allow Google Sheets load
+          // Optimized Initial Fetch with responsive timeout to avoid long hanging times
+          let fetchTimeout = 5500;
+          const hasCustomUrl = !!localStorage.getItem("CUSTOM_GAS_URL");
+          if (hasCustomUrl) {
+            fetchTimeout = 12000; // 12 seconds for custom URL cold-starts
+          }
+
           const res = await callGAS("ambilInisialisasiData", {
             sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier", "Pembelian_Barang"]
-          }, 30000);
+          }, fetchTimeout);
           
           if (res && res.sukses) {
             rawCekHargaData = res.cekHarga || [];
@@ -3121,6 +3127,28 @@
           } else {
             console.warn("GAS connection failed or returned error. Using demo data.");
             useFallbackDemoData();
+            
+            // Show helpful onboarding dialog if no custom URL is defined yet
+            if (!hasCustomUrl) {
+              setTimeout(() => {
+                showAlert(
+                  "Selamat Datang di Toko Wina",
+                  "Aplikasi sedang berjalan dalam Mode Demo (Offline). Untuk menghubungkan dengan database Google Sheets Anda secara riil, silakan klik tombol Pengaturan Database di pojok kanan atas layar Anda.",
+                  "warning",
+                  () => { openDatabaseSettingsModal(); }
+                );
+              }, 1500);
+            } else {
+              // If they have custom URL but it failed
+              setTimeout(() => {
+                showAlert(
+                  "Gagal Menghubungkan Google Sheets",
+                  "Aplikasi gagal memuat data dari Web App Google Sheets kustom Anda (bisa karena timeout atau setelan deploy). Untuk sementara berjalan dalam Mode Demo. Klik Pengaturan untuk memeriksa URL.",
+                  "error",
+                  () => { openDatabaseSettingsModal(); }
+                );
+              }, 1500);
+            }
           }
         } catch (err) {
           console.error("Critical error connecting to GAS, falling back to demo data:", err);

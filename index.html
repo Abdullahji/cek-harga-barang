@@ -9014,7 +9014,11 @@
         console.log("=== DEBUG VALIDASI SATUAN BARANG ===");
         console.log("Data modalEditingGroupUnits:", JSON.stringify(window.modalEditingGroupUnits));
 
+        // 1. VALIDASI QTY SATUAN HANYA UNTUK ROW YANG SEDANG AKTIF SAJA
         window.modalEditingGroupUnits.forEach((item, idx) => {
+          if (idx !== window.activeEditingUnitIdx) {
+            return; // Hanya validasi row aktif/visible yang sedang diedit
+          }
           if (!isEqualNormalized(item.status, "Nonaktif")) {
             const rawS = String(item.satuan || "").trim();
             const rawHJ = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim().replace(/[^\d]/g, "");
@@ -9040,25 +9044,58 @@
           showToast("Harap isi Qty Satuan dengan angka bulat yang valid (minimal 1) untuk semua satuan aktif.", "error");
           return;
         }
- 
+
         const satuanList = [];
         let hasEmptyFields = false;
         let activeLevel = 1;
 
         window.modalEditingGroupUnits.forEach((item, idx) => {
+          // Rule PRESERVE ROW LAIN / SELAIN ROW YANG SEDANG DI-EDIT:
+          // Agar database tidak mengubah/mengoverwrite level/status row PAK/BALL saat kita edit BKS.
+          // Kita hanya memasukkan row aktif (yang sedang diedit) ATAU baris baru (yang belum punya row ID).
+          const isEditMode = window.modalEditingGroupUnits.some(u => u.row && u.row !== "");
+          const isNewRow = !item.row || item.row === "";
+          const isActiveRow = idx === window.activeEditingUnitIdx;
+
+          if (isEditMode) {
+            if (!isActiveRow && !isNewRow) {
+              console.log(`[Save - Row ${idx}] Omitted dari payload untuk melestarikan baris background di Google Spreadsheet.`);
+              return;
+            }
+          }
+
           const rowVal = item.row || "";
-          const barcodeVal = item.barcode || "";
-          const satuanVal = item.satuan || "";
-          const tipeSatuanVal = item.tipeSatuan || "KEDUANYA";
+          let barcodeVal = item.barcode || "";
+          let satuanVal = item.satuan || "";
+          let tipeSatuanVal = item.tipeSatuan || "KEDUANYA";
           
           // Pastikan membaca field yang benar dari state dengan fallback yang valid
-          const qtyInputVal = (item.qtyInputKonversi !== undefined && item.qtyInputKonversi !== null && item.qtyInputKonversi !== "") ? Number(item.qtyInputKonversi) : 1;
-          const qtyVal = (item.qtySatuan !== undefined && item.qtySatuan !== null && item.qtySatuan !== "") ? Number(item.qtySatuan) : qtyInputVal;
-          const statusVal = item.status || "Aktif";
-          const gambarVal = item.gambar || "";
- 
-          // Strip format currency sebelum validasi
-          const rawHargaJualStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
+          let qtyInputVal = (item.qtyInputKonversi !== undefined && item.qtyInputKonversi !== null && item.qtyInputKonversi !== "") ? Number(item.qtyInputKonversi) : 1;
+          let qtyVal = (item.qtySatuan !== undefined && item.qtySatuan !== null && item.qtySatuan !== "") ? Number(item.qtySatuan) : qtyInputVal;
+          let statusVal = item.status || "Aktif";
+          let gambarVal = item.gambar || "";
+          let rawHargaJualStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
+
+          // Rule 2: FIELD SELECTOR - Baca langsung dari DOM jika ini adalah row aktif/visible yang sedang diedit
+          if (isActiveRow) {
+            const domBarcode = document.getElementById("edit-satuan-barcode");
+            const domSatuan = document.getElementById("edit-satuan-name");
+            const domTipe = document.getElementById("edit-satuan-tipe");
+            const domQtyKonv = document.getElementById("edit-satuan-qty-konv");
+            const domQtyTotal = document.getElementById("edit-satuan-qty-total");
+            const domHargaJual = document.getElementById("edit-satuan-harga-jual");
+            const domStatus = document.getElementById("edit-satuan-status");
+
+            if (domBarcode) barcodeVal = domBarcode.value.trim();
+            if (domSatuan) satuanVal = domSatuan.value.trim();
+            if (domTipe) tipeSatuanVal = domTipe.value;
+            if (domQtyKonv) qtyInputVal = Number(domQtyKonv.value) || 1;
+            if (domQtyTotal) qtyVal = Number(domQtyTotal.value) || 1;
+            if (domHargaJual) rawHargaJualStr = domHargaJual.value.trim();
+            if (domStatus) statusVal = domStatus.value;
+          }
+
+          // Rule 3: HARGA FORMAT RUPIAH - parse numeric sebelum validasi
           const hargaJualClean = rawHargaJualStr.replace(/[^\d]/g, "");
 
           console.log(`[Validation - Row ${idx}]:`, {
@@ -9070,45 +9107,50 @@
             hargaJualClean
           });
 
-          if (!isEqualNormalized(statusVal, "Nonaktif")) {
-            // Rule 1: Jika empty template row, abaikan
-            const isBlankTemplate = (satuanVal === "" || satuanVal === "Pcs") && hargaJualClean === "" && barcodeVal === "" && (!rowVal || rowVal === "") && window.modalEditingGroupUnits.length > 1;
-            if (isBlankTemplate) {
-              console.log(`[Validation - Row ${idx}] Diabaikan sebagai template/empty row.`);
-              return;
-            }
+          // Rule 1: VALIDASI HANYA ROW AKTIF SAJA yang sedang diedit/visible
+          if (isActiveRow) {
+            if (!isEqualNormalized(statusVal, "Nonaktif")) {
+              // 1. Satuan: cek value aktual
+              const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
+              
+              // 2. Qty Konversi & Qty Satuan: cek numeric valid
+              const parsedQtyInput = Number(qtyInputVal);
+              const isQtyInputInvalid = isNaN(parsedQtyInput) || parsedQtyInput <= 0;
+              
+              const parsedQtyVal = Number(qtyVal);
+              const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
 
-            // 1. Satuan: cek value aktual
-            const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
-            
-            // 2. Qty Konversi & Qty Satuan: cek numeric valid
-            const parsedQtyInput = Number(qtyInputVal);
-            const isQtyInputInvalid = isNaN(parsedQtyInput) || parsedQtyInput <= 0;
-            
-            const parsedQtyVal = Number(qtyVal);
-            const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
+              // 3. Harga Jual: strip format currency, harus numeric valid > 0
+              const parsedHargaJualClean = Number(hargaJualClean) || 0;
+              const isHargaJualInvalid = hargaJualClean === "" || isNaN(parsedHargaJualClean) || parsedHargaJualClean <= 0;
 
-            // 3. Harga Jual: strip format currency sebelum validasi, harus valid number >= 0
-            const parsedHargaJualClean = Number(hargaJualClean);
-            const isHargaJualInvalid = hargaJualClean === "" || isNaN(parsedHargaJualClean) || parsedHargaJualClean < 0;
+              // Rule 5: DEBUG LOGS UNTUK ANALISIS FIELD KOSONG/INVALID
+              const debugMsgs = [];
+              debugMsgs.push(isSatuanEmpty ? "[-] Satuan: KOSONG" : `[+] Satuan: OK (${satuanVal})`);
+              debugMsgs.push(isQtyInputInvalid ? "[-] Qty Konversi: INVALID (<=0)" : `[+] Qty Konversi: OK (${qtyInputVal})`);
+              debugMsgs.push(isQtyValInvalid ? "[-] Qty Satuan: INVALID (<=0)" : `[+] Qty Satuan: OK (${qtyVal})`);
+              debugMsgs.push(isHargaJualInvalid ? `[-] Harga Jual: INVALID (<=0) (raw: '${rawHargaJualStr}', parsed: ${parsedHargaJualClean})` : `[+] Harga Jual: OK (${parsedHargaJualClean})`);
+              
+              console.warn(`[DEBUG VALIDASI SAVE] Row ${idx} (${satuanVal}): ` + debugMsgs.join(" | "));
 
-            if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
-              console.warn(`[Validation - Row ${idx}] GAGAL VALIDASI detail:`, {
-                isSatuanEmpty,
-                isQtyInputInvalid,
-                isQtyValInvalid,
-                isHargaJualInvalid,
-                detailValues: {
-                  satuanVal,
-                  qtyInputVal,
-                  qtyVal,
-                  hargaJualClean,
-                  rawHargaJual: item.hargaJual
-                }
-              });
-              hasEmptyFields = true;
-            } else {
-              console.log(`[Validation - Row ${idx}] Lolos.`);
+              if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
+                console.warn(`[Validation - Row ${idx}] GAGAL VALIDASI detail:`, {
+                  isSatuanEmpty,
+                  isQtyInputInvalid,
+                  isQtyValInvalid,
+                  isHargaJualInvalid,
+                  detailValues: {
+                    satuanVal,
+                    qtyInputVal,
+                    qtyVal,
+                    hargaJualClean,
+                    rawHargaJualStr
+                  }
+                });
+                hasEmptyFields = true;
+              } else {
+                console.log(`[Validation - Row ${idx}] Lolos.`);
+              }
             }
           }
 
@@ -9118,14 +9160,18 @@
             finalStatusVal = "Nonaktif";
           }
 
-          let lvl = 99;
-          if (isEqualNormalized(finalStatusVal, 'Aktif')) {
-            lvl = activeLevel++;
-          }
+          // Gunakan original levelSatuan agar tidak tereset tidak menentu
+          let lvl = item.levelSatuan || 1;
 
           const hargaModalVal = (item.hargaModal !== undefined && item.hargaModal !== null) ? String(item.hargaModal).replace(/[^\d]/g, "") : "";
           const hargaModalLamaVal = (item.hargaModalLama !== undefined && item.hargaModalLama !== null) ? String(item.hargaModalLama).replace(/[^\d]/g, "") : "";
           const hargaJualLamaVal = (item.hargaJualLama !== undefined && item.hargaJualLama !== null) ? String(item.hargaJualLama).replace(/[^\d]/g, "") : "";
+
+          // Rule 4: Case-insensitive matching dari referensi satuan untuk menyamakan casing
+          const matchingSatuanOption = rawReferensiData && rawReferensiData.find(r => r.satuan && isEqualNormalized(r.satuan, satuanVal));
+          if (matchingSatuanOption) {
+            satuanVal = matchingSatuanOption.satuan;
+          }
 
           satuanList.push({
             row: rowVal,

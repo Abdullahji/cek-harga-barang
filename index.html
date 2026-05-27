@@ -3645,16 +3645,41 @@
           const timerId = setTimeout(() => controller.abort(), timeoutMs);
 
           try {
-            const resp = await fetch("/api/gas-proxy", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                targetUrl: activeUrl,
-                action: action,
-                payload: payload
-              }),
-              signal: controller.signal
-            });
+            let resp;
+            let useDirectFallback = false;
+            
+            try {
+              // 1. Coba hubungi proxy backend server (/api/gas-proxy) terlebih dahulu
+              resp = await fetch("/api/gas-proxy", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  targetUrl: activeUrl,
+                  action: action,
+                  payload: payload
+                }),
+                signal: controller.signal
+              });
+              
+              // Jika server mengembalikan 404 (tidak ditemukan), berarti berjalan di environment statis (seperti Vercel)
+              if (resp.status === 404) {
+                useDirectFallback = true;
+              }
+            } catch (proxyErr) {
+              console.warn("Proxy backend server tidak tersedia (kemungkinan dideploy di Vercel / serverless). Mencoba koneksi langsung ke Google Apps Script Web App...", proxyErr);
+              useDirectFallback = true;
+            }
+
+            if (useDirectFallback) {
+              // 2. Koneksi LANGSUNG ke Google Apps Script (Sangat cocok untuk Vercel / hosting statis)
+              resp = await fetch(activeUrl, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: action, payload: payload }),
+                signal: controller.signal
+              });
+            }
+
             clearTimeout(timerId);
             if (!resp.ok) {
               console.error(`HTTP Error: ${resp.status} ${resp.statusText}`);
@@ -3671,9 +3696,9 @@
             }
             let userFriendlyMsg = err.message || 'Koneksi gagal';
             if (userFriendlyMsg.includes("Failed to fetch") || userFriendlyMsg.includes("failed to fetch")) {
-              userFriendlyMsg = "Gagal menghubungi database Google Sheets melalui proxy server. Pastikan:\n1. Server backend berjalan normal.\n2. URL Web App Apps Script sudah benar.\n3. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).";
+              userFriendlyMsg = "Gagal menghubungi database Google Sheets. Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Opsi deployment Anda sudah dideploy sebagai New Version di Google Apps Script.";
             } else {
-              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa URL kustom & status backend server.`;
+              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa kembali URL Web App kustom Anda.`;
             }
             return { sukses: false, pesan: userFriendlyMsg };
           }

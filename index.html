@@ -3088,11 +3088,11 @@
             el.textContent = new Date().getFullYear();
           });
 
-          // Optimized Initial Fetch with responsive timeout to avoid long hanging times
-          let fetchTimeout = 5500;
+          // Optimized Initial Fetch with responsive timeout to accommodate Google Apps Script cold-starts
+          let fetchTimeout = 15000; // 15 seconds by default to accommodate initial Google Apps Script cold-starts!
           const hasCustomUrl = !!localStorage.getItem("CUSTOM_GAS_URL");
           if (hasCustomUrl) {
-            fetchTimeout = 12000; // 12 seconds for custom URL cold-starts
+            fetchTimeout = 25000; // 25 seconds for custom URL cold-starts
           }
 
           const res = await callGAS("ambilInisialisasiData", {
@@ -3704,69 +3704,101 @@
           return null; 
         }
           
-          const controller = new AbortController();
-          const timerId = setTimeout(() => controller.abort(), timeoutMs);
+        const startTime = Date.now();
+        
+        // Helper to check if we have timed out and return remaining budget
+        function getRemainingTimeout() {
+          const elapsed = Date.now() - startTime;
+          if (elapsed >= timeoutMs) {
+            throw new DOMException("Aborted", "AbortError");
+          }
+          return Math.max(1000, timeoutMs - elapsed);
+        }
+
+        let resp;
+        let useDirectFallback = false;
+
+        try {
+          const remaining = getRemainingTimeout();
+          const proxyController = new AbortController();
+          const pTimerId = setTimeout(() => proxyController.abort(), remaining);
 
           try {
-            let resp;
-            let useDirectFallback = false;
+            // 1. Coba hubungi proxy backend server (/api/gas-proxy) terlebih dahulu
+            resp = await fetch("/api/gas-proxy", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                targetUrl: activeUrl,
+                action: action,
+                payload: payload
+              }),
+              signal: proxyController.signal
+            });
+            clearTimeout(pTimerId);
             
-            try {
-              // 1. Coba hubungi proxy backend server (/api/gas-proxy) terlebih dahulu
-              resp = await fetch("/api/gas-proxy", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  targetUrl: activeUrl,
-                  action: action,
-                  payload: payload
-                }),
-                signal: controller.signal
-              });
-              
-              // Jika server mengembalikan 404 (tidak ditemukan), berarti berjalan di environment statis (seperti Vercel)
-              if (resp.status === 404) {
-                useDirectFallback = true;
-              }
-            } catch (proxyErr) {
-              console.warn("Proxy backend server tidak tersedia (kemungkinan dideploy di Vercel / serverless). Mencoba koneksi langsung ke Google Apps Script Web App...", proxyErr);
+            // Jika server mengembalikan 404 (tidak ditemukan), berarti berjalan di environment statis (seperti Vercel)
+            if (resp.status === 404) {
               useDirectFallback = true;
             }
+          } catch (proxyErr) {
+            clearTimeout(pTimerId);
+            if (proxyController.signal.aborted || Date.now() - startTime >= timeoutMs) {
+              throw proxyErr; // Rethrow actual timeout
+            }
+            console.warn("Proxy backend server tidak tersedia (kemungkinan dideploy di Vercel / serverless). Mencoba koneksi langsung ke Google Apps Script Web App...", proxyErr);
+            useDirectFallback = true;
+          }
+        } catch (outerProxyErr) {
+          if (outerProxyErr.name === 'AbortError' || Date.now() - startTime >= timeoutMs) {
+            return { sukses: false, pesan: `Koneksi ke Google Sheets / GAS timeout (melebihi ${timeoutMs / 1000} detik).` };
+          }
+          let userMsg = outerProxyErr.message || 'Koneksi gagal';
+          if (userMsg.includes("Failed to fetch") || userMsg.includes("failed to fetch")) {
+            userMsg = "Gagal menghubungi database Google Sheets. Pastikan URL Web App Apps Script sudah benar.";
+          }
+          return { sukses: false, pesan: userMsg };
+        }
 
-            if (useDirectFallback) {
-              // 2. Koneksi LANGSUNG ke Google Apps Script (Sangat cocok untuk Vercel / hosting statis)
-              resp = await fetch(activeUrl, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify({ action: action, payload: payload }),
-                signal: controller.signal
-              });
-            }
+        if (useDirectFallback) {
+          try {
+            const remaining = getRemainingTimeout();
+            const directController = new AbortController();
+            const dTimerId = setTimeout(() => directController.abort(), remaining);
 
-            clearTimeout(timerId);
-            if (!resp.ok) {
-              console.error(`HTTP Error: ${resp.status} ${resp.statusText}`);
-              return { sukses: false, pesan: `Server Error: ${resp.status}` };
+            resp = await fetch(activeUrl, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify({ action: action, payload: payload }),
+              signal: directController.signal
+            });
+            clearTimeout(dTimerId);
+          } catch (directErr) {
+            if (directErr.name === 'AbortError' || Date.now() - startTime >= timeoutMs) {
+              return { sukses: false, pesan: `Koneksi ke Google Sheets / GAS-Direct timeout (melebihi ${timeoutMs / 1000} detik).` };
             }
-            const data = await resp.json();
-            console.log(`Fetch Response [${action}]:`, data);
-            return data;
-          } catch (err) {
-            clearTimeout(timerId);
-            console.error("Fetch Error:", err);
-            if (err.name === 'AbortError') {
-              throw new Error(`Koneksi ke Google Sheets / GAS timeout (melebihi ${timeoutMs / 1000} detik).`);
+            let userMsg = directErr.message || 'Koneksi langsung gagal';
+            if (userMsg.includes("Failed to fetch") || userMsg.includes("failed to fetch")) {
+              userMsg = "Gagal menghubungi database Google Sheets secara langsung. Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Opsi deployment Anda sudah dideploy sebagai New Version di Google Apps Script.";
             }
-            let userFriendlyMsg = err.message || 'Koneksi gagal';
-            if (userFriendlyMsg.includes("Failed to fetch") || userFriendlyMsg.includes("failed to fetch")) {
-              userFriendlyMsg = "Gagal menghubungi database Google Sheets. Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Opsi deployment Anda sudah dideploy sebagai New Version di Google Apps Script.";
-            } else {
-              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa kembali URL Web App kustom Anda.`;
-            }
-            return { sukses: false, pesan: userFriendlyMsg };
+            return { sukses: false, pesan: userMsg };
           }
         }
-      }
+
+        if (!resp || !resp.ok) {
+          console.error(`HTTP Error: ${resp ? resp.status : 'No Response'}`);
+          return { sukses: false, pesan: `Server Error: ${resp ? resp.status : 'No Response'}` };
+        }
+
+        try {
+          const data = await resp.json();
+          console.log(`Fetch Response [${action}]:`, data);
+          return data;
+        } catch (jsonErr) {
+          console.error("Gagal parse JSON:", jsonErr);
+          return { sukses: false, pesan: "Format respon dari Google Apps Script tidak valid (Bukan JSON)." };
+        }
+        }
 
 
 

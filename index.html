@@ -3645,10 +3645,14 @@
           const timerId = setTimeout(() => controller.abort(), timeoutMs);
 
           try {
-            const resp = await fetch(activeUrl, {
+            const resp = await fetch("/api/gas-proxy", {
               method: "POST",
-              headers: { "Content-Type": "text/plain;charset=utf-8" },
-              body: JSON.stringify({ action, payload }),
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                targetUrl: activeUrl,
+                action: action,
+                payload: payload
+              }),
               signal: controller.signal
             });
             clearTimeout(timerId);
@@ -3667,9 +3671,9 @@
             }
             let userFriendlyMsg = err.message || 'Koneksi gagal';
             if (userFriendlyMsg.includes("Failed to fetch") || userFriendlyMsg.includes("failed to fetch")) {
-              userFriendlyMsg = "Gagal menghubungi database Google Sheets (Failed to fetch). Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Browser / web sandbox tidak memblokir akses CORS.";
+              userFriendlyMsg = "Gagal menghubungi database Google Sheets melalui proxy server. Pastikan:\n1. Server backend berjalan normal.\n2. URL Web App Apps Script sudah benar.\n3. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).";
             } else {
-              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa URL & akses 'Anyone'.`;
+              userFriendlyMsg = `Fetch Error: ${userFriendlyMsg}. Periksa URL kustom & status backend server.`;
             }
             return { sukses: false, pesan: userFriendlyMsg };
           }
@@ -7803,8 +7807,8 @@
         const activeUnitRow = window.modalEditingGroupUnits[window.activeEditingUnitIdx]?.row;
         const activeUnitSatuan = window.modalEditingGroupUnits[window.activeEditingUnitIdx]?.satuan;
         
-        let activeUnits = window.modalEditingGroupUnits.filter(u => u.status !== 'Nonaktif');
-        let inactiveUnits = window.modalEditingGroupUnits.filter(u => u.status === 'Nonaktif');
+        let activeUnits = window.modalEditingGroupUnits.filter(u => !isEqualNormalized(u.status, 'Nonaktif'));
+        let inactiveUnits = window.modalEditingGroupUnits.filter(u => isEqualNormalized(u.status, 'Nonaktif'));
         
         activeUnits.sort((a, b) => {
           const qtyA = Number(a.qtySatuan) || 0;
@@ -7991,7 +7995,7 @@
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Status</label>
               <select id="edit-satuan-status" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner appearance-none transition-all" onchange="handleInputBlurRecalculate()">
                 <option value="Aktif" ${isEqualNormalized(currentUnit.status, 'Aktif') ? 'selected' : ''}>Aktif</option>
-                <option value="Nonaktif" ${currentUnit.status === 'Nonaktif' ? 'selected' : ''}>Nonaktif</option>
+                <option value="Nonaktif" ${isEqualNormalized(currentUnit.status, 'Nonaktif') ? 'selected' : ''}>Nonaktif</option>
               </select>
             </div>
           </div>
@@ -8805,6 +8809,29 @@
         // Save current active tab input fields back to state first
         saveActiveFormFieldsToState();
         recalculateLevelsAndSort();
+
+        // SILENT BACKGROUND CLEANUP:
+        // Deactivate background items (not currently selected) that have incomplete core fields,
+        // so corrupt or empty secondary items in the group do not block saving the active item.
+        if (window.modalEditingGroupUnits && window.modalEditingGroupUnits.length > 0) {
+          window.modalEditingGroupUnits.forEach((item, idx) => {
+            if (idx !== window.activeEditingUnitIdx) {
+              const rawS = String(item.satuan || "").trim();
+              const rawHJStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
+              const rawHJ = rawHJStr.replace(/[^\d]/g, "");
+              
+              const isDefaultEmptyPcsAndNoPrice = (rawS === "" || rawS === "Pcs") && rawHJ === "";
+              const isMissingRequiredFields = rawS === "" || rawHJ === "";
+              
+              if (isDefaultEmptyPcsAndNoPrice || isMissingRequiredFields) {
+                console.log(`[Validation Cleanup - Row ${idx}] Automatically deactivating empty/corrupt background unit (${rawS || 'Empty'}).`);
+                item.status = "Nonaktif";
+              }
+            }
+          });
+          // Re-sort and sync to make sure everything lines up properly
+          recalculateLevelsAndSort();
+        }
  
         if (!window.modalEditingGroupUnits || window.modalEditingGroupUnits.length === 0) {
           showToast("Harap tambahkan setidaknya satu baris satuan.", "warning");
@@ -8812,10 +8839,26 @@
         }
 
         let isQtySatuanInvalid = false;
-        window.modalEditingGroupUnits.forEach(item => {
-          if (item.status !== "Nonaktif") {
-            const qtyValNum = Number(item.qtySatuan);
-            if (isNaN(qtyValNum) || qtyValNum <= 0 || item.qtySatuan === "" || item.qtySatuan === null || item.qtySatuan === undefined) {
+        console.log("=== DEBUG VALIDASI SATUAN BARANG ===");
+        console.log("Data modalEditingGroupUnits:", JSON.stringify(window.modalEditingGroupUnits));
+
+        window.modalEditingGroupUnits.forEach((item, idx) => {
+          if (!isEqualNormalized(item.status, "Nonaktif")) {
+            const rawS = String(item.satuan || "").trim();
+            const rawHJ = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim().replace(/[^\d]/g, "");
+            const rawB = String(item.barcode || "").trim();
+            
+            // Rule 1: Jika empty template row, abaikan
+            const isBlankTemplate = (rawS === "" || rawS === "Pcs") && rawHJ === "" && rawB === "" && (!item.row || item.row === "") && window.modalEditingGroupUnits.length > 1;
+            if (isBlankTemplate) {
+              console.log(`[Loop 1 - Row ${idx}] Diabaikan sebagai template/empty row kosong.`);
+              return;
+            }
+
+            const qtyVal = (item.qtySatuan !== undefined && item.qtySatuan !== null && item.qtySatuan !== "") ? item.qtySatuan : ((item.qtyInputKonversi !== undefined && item.qtyInputKonversi !== null && item.qtyInputKonversi !== "") ? item.qtyInputKonversi : 1);
+            const qtyValNum = Number(qtyVal);
+            if (isNaN(qtyValNum) || qtyValNum <= 0) {
+              console.warn(`[Loop 1 - Row ${idx}] Qty Satuan Invalid:`, { qtyVal, qtyValNum });
               isQtySatuanInvalid = true;
             }
           }
@@ -8829,52 +8872,85 @@
         const satuanList = [];
         let hasEmptyFields = false;
         let activeLevel = 1;
- 
-        window.modalEditingGroupUnits.forEach(item => {
+
+        window.modalEditingGroupUnits.forEach((item, idx) => {
           const rowVal = item.row || "";
           const barcodeVal = item.barcode || "";
           const satuanVal = item.satuan || "";
           const tipeSatuanVal = item.tipeSatuan || "KEDUANYA";
-          const qtyInputVal = item.qtyInputKonversi;
-          const qtyVal = item.qtySatuan;
+          
+          // Pastikan membaca field yang benar dari state dengan fallback yang valid
+          const qtyInputVal = (item.qtyInputKonversi !== undefined && item.qtyInputKonversi !== null && item.qtyInputKonversi !== "") ? Number(item.qtyInputKonversi) : 1;
+          const qtyVal = (item.qtySatuan !== undefined && item.qtySatuan !== null && item.qtySatuan !== "") ? Number(item.qtySatuan) : qtyInputVal;
           const statusVal = item.status || "Aktif";
           const gambarVal = item.gambar || "";
  
-          // Strip format currency before validation
+          // Strip format currency sebelum validasi
           const rawHargaJualStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
           const hargaJualClean = rawHargaJualStr.replace(/[^\d]/g, "");
 
-          if (statusVal !== "Nonaktif") {
+          console.log(`[Validation - Row ${idx}]:`, {
+            satuanVal,
+            qtyInputVal,
+            qtyVal,
+            statusVal,
+            rawHargaJualStr,
+            hargaJualClean
+          });
+
+          if (!isEqualNormalized(statusVal, "Nonaktif")) {
+            // Rule 1: Jika empty template row, abaikan
+            const isBlankTemplate = (satuanVal === "" || satuanVal === "Pcs") && hargaJualClean === "" && barcodeVal === "" && (!rowVal || rowVal === "") && window.modalEditingGroupUnits.length > 1;
+            if (isBlankTemplate) {
+              console.log(`[Validation - Row ${idx}] Diabaikan sebagai template/empty row.`);
+              return;
+            }
+
             // 1. Satuan: cek value aktual
             const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
             
             // 2. Qty Konversi & Qty Satuan: cek numeric valid
             const parsedQtyInput = Number(qtyInputVal);
-            const isQtyInputInvalid = qtyInputVal === "" || qtyInputVal === undefined || qtyInputVal === null || isNaN(parsedQtyInput) || parsedQtyInput <= 0;
+            const isQtyInputInvalid = isNaN(parsedQtyInput) || parsedQtyInput <= 0;
             
             const parsedQtyVal = Number(qtyVal);
-            const isQtyValInvalid = qtyVal === "" || qtyVal === undefined || qtyVal === null || isNaN(parsedQtyVal) || parsedQtyVal <= 0;
+            const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
 
             // 3. Harga Jual: strip format currency sebelum validasi, harus valid number >= 0
             const parsedHargaJualClean = Number(hargaJualClean);
             const isHargaJualInvalid = hargaJualClean === "" || isNaN(parsedHargaJualClean) || parsedHargaJualClean < 0;
 
             if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
+              console.warn(`[Validation - Row ${idx}] GAGAL VALIDASI detail:`, {
+                isSatuanEmpty,
+                isQtyInputInvalid,
+                isQtyValInvalid,
+                isHargaJualInvalid,
+                detailValues: {
+                  satuanVal,
+                  qtyInputVal,
+                  qtyVal,
+                  hargaJualClean,
+                  rawHargaJual: item.hargaJual
+                }
+              });
               hasEmptyFields = true;
+            } else {
+              console.log(`[Validation - Row ${idx}] Lolos.`);
             }
           }
- 
+
           const parentBarangObj = rawBarangData.find(b => String(b.idBarang) === String(idBarang));
           let finalStatusVal = statusVal;
           if (parentBarangObj && parentBarangObj.status === "Nonaktif") {
             finalStatusVal = "Nonaktif";
           }
- 
+
           let lvl = 99;
           if (isEqualNormalized(finalStatusVal, 'Aktif')) {
             lvl = activeLevel++;
           }
- 
+
           satuanList.push({
             row: rowVal,
             barcode: barcodeVal,
@@ -8890,7 +8966,7 @@
             gambar: gambarVal
           });
         });
- 
+
         if (hasEmptyFields) {
           showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual (Harga Jual wajib diisi).", "warning");
           return;

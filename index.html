@@ -3786,8 +3786,23 @@
         }
 
         if (!resp || !resp.ok) {
-          console.error(`HTTP Error: ${resp ? resp.status : 'No Response'}`);
-          return { sukses: false, pesan: `Server Error: ${resp ? resp.status : 'No Response'}` };
+          const statusVal = resp ? resp.status : 'No Response';
+          console.error(`HTTP Error: ${statusVal}`);
+          
+          if (resp) {
+            try {
+              const contentType = resp.headers.get("content-type") || "";
+              if (contentType.includes("application/json")) {
+                const errData = await resp.json();
+                if (errData && errData.pesan) {
+                  return { sukses: false, pesan: `Database Error: ${errData.pesan}` };
+                }
+              }
+            } catch (jsonErr) {
+              // Ignore and use default
+            }
+          }
+          return { sukses: false, pesan: `Server Error: ${statusVal}. Pastikan URL Web App diisi benar.` };
         }
 
         try {

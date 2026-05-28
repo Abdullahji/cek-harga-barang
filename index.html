@@ -6258,12 +6258,13 @@
               </button>
             </div>
 
-            <!-- Form inputs in 2 columns -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Form inputs in 3 columns -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Barcode Optional -->
               <div class="space-y-2">
-                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode</label>
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode (Optional)</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" id="variasi-barcode-input-${rowId}" class="variasi-barcode w-full pl-5 pr-20 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." required />
+                  <input type="text" id="variasi-barcode-input-${rowId}" class="variasi-barcode w-full pl-5 pr-20 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." />
                   <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <button type="button" onclick="clearInlineInput(this)" class="text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
@@ -6275,6 +6276,7 @@
                 </div>
               </div>
 
+              <!-- Satuan Dropdown -->
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
                 <select class="variasi-satuan w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
@@ -6282,20 +6284,43 @@
                 </select>
               </div>
 
+              <!-- Tipe Satuan -->
               <div class="space-y-2">
-                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Satuan</label>
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan</label>
+                <select class="variasi-tipe w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                  <option value="KEDUANYA" selected>KEDUANYA</option>
+                  <option value="BELI">BELI</option>
+                  <option value="JUAL">JUAL</option>
+                </select>
+              </div>
+
+              <!-- Qty Input Konversi -->
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Input Konversi</label>
                 <div class="relative flex items-center w-full">
-                  <input type="number" class="variasi-qty w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
+                  <input type="number" class="variasi-qty-konv w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
                 </div>
               </div>
 
+              <!-- Harga Modal -->
+              <div class="space-y-2">
+                <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal</label>
+                <div class="relative flex items-center w-full">
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-modal w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                  <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Harga Jual -->
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-jual w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -6387,11 +6412,19 @@
         const file = input.files[0];
         if (!file) return;
 
+        // Validasi: Hanya png, jpg, jpeg, dan webp
+        const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.webp)$/i;
+        if (!allowedExtensions.exec(file.name)) {
+          showToast("Format file tidak valid! Gunakan hanya JPG, JPEG, PNG, atau WEBP.", "error");
+          input.value = "";
+          return;
+        }
+
         const spinner = document.getElementById(`variasi-spinner-${rowId}`);
         if (spinner) spinner.classList.remove("hidden");
 
         try {
-          // Compress the image down first for efficiency and reliability
+          // Compress image
           const compressed = await compressAndResizeImg(file);
           if (!compressed) {
             showToast("Gagal membaca file gambar.", "error");
@@ -6403,7 +6436,7 @@
             const res = await callGAS("uploadKeDrive", {
               base64Data: compressed,
               fileName: file.name,
-              mimeType: "image/jpeg"
+              mimeType: file.type || "image/jpeg"
             });
 
             if (res && res.sukses) {
@@ -6414,22 +6447,25 @@
               }
               showToast("Gambar berhasil di-upload ke Google Drive!", "success");
               uploadSucceeded = true;
+            } else {
+              showToast("Gagal upload gambar: " + (res?.pesan || "Terjadi kesalahan di server"), "error");
             }
           } catch (gasErr) {
-            console.warn("GAS Drive upload connection failed, falling back to local base64 storage:", gasErr);
+            console.error("GAS Drive upload connection failed:", gasErr);
+            showToast("Terjadi kesalahan koneksi dengan server saat mengunggah.", "error");
           }
 
           if (!uploadSucceeded) {
+            // Bersihkan input url bila bukan url HTTP yang valid
             const urlInput = document.getElementById(`variasi-gambar-${rowId}`);
-            if (urlInput) {
-              urlInput.value = compressed;
-              updateVariasiPreview(rowId, compressed);
+            if (urlInput && !urlInput.value.startsWith("http")) {
+              urlInput.value = "";
+              updateVariasiPreview(rowId, "");
             }
-            showToast("Gambar berhasil disimpan!", "success");
           }
         } catch (err) {
           console.error("Upload error:", err);
-          showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
+          showToast("Terjadi kesalahan saat memproses gambar.", "error");
         } finally {
           if (spinner) spinner.classList.add("hidden");
           input.value = "";
@@ -6542,22 +6578,37 @@
           }
 
           const variasiSatuan = [];
-          for (const row of variasiRows) {
-            const barcode = row.querySelector(".variasi-barcode").value;
-            const satuan = row.querySelector(".variasi-satuan").value;
-            const qtySatuan = row.querySelector(".variasi-qty").value;
-            const hargaJual = (row.querySelector(".variasi-harga").value || "").replace(/\D/g, "");
-            const gambar = row.querySelector(".variasi-gambar").value;
+          let accumulatedQty = 1;
+
+          variasiRows.forEach((row, index) => {
+            const barcode = (row.querySelector(".variasi-barcode")?.value || "").trim();
+            const satuan = row.querySelector(".variasi-satuan")?.value || "";
+            const tipeSatuan = row.querySelector(".variasi-tipe")?.value || "KEDUANYA";
+            const qtyInputKonversi = Number(row.querySelector(".variasi-qty-konv")?.value) || 1;
+            const hargaModal = (row.querySelector(".variasi-harga-modal")?.value || "").replace(/\D/g, "");
+            const hargaJual = (row.querySelector(".variasi-harga-jual")?.value || "").replace(/\D/g, "");
+            const gambar = (row.querySelector(".variasi-gambar")?.value || "").trim();
+
+            if (index === 0) {
+              accumulatedQty = 1;
+            } else {
+              accumulatedQty = qtyInputKonversi * accumulatedQty;
+            }
 
             variasiSatuan.push({
               barcode: barcode,
               satuan: satuan,
-              qtySatuan: qtySatuan,
+              tipeSatuan: tipeSatuan,
+              qtyInputKonversi: index === 0 ? 1 : qtyInputKonversi,
+              qtySatuan: accumulatedQty,
+              hargaModal: hargaModal,
               hargaJual: hargaJual,
               gambar: gambar,
-              status: "Aktif"
+              status: "Aktif",
+              levelSatuan: index + 1
             });
-          }
+          });
+
           payload.variasiSatuan = variasiSatuan;
         }
 
@@ -6630,8 +6681,12 @@
                   barcode: v.barcode,
                   idBarang: newId,
                   namaBarang: payload.namaBarang,
+                  levelSatuan: v.levelSatuan,
                   satuan: v.satuan,
+                  tipeSatuan: v.tipeSatuan,
+                  qtyInputKonversi: v.qtyInputKonversi,
                   qtySatuan: v.qtySatuan,
+                  hargaModal: v.hargaModal,
                   hargaJual: v.hargaJual,
                   status: finalStatus,
                   gambar: v.gambar,
@@ -7640,6 +7695,14 @@
         const file = input.files[0];
         if (!file) return;
 
+        // Validasi: Hanya png, jpg, jpeg, dan webp
+        const allowedExtensions = /(\.jpg|\.jpeg|\.png|\.webp)$/i;
+        if (!allowedExtensions.exec(file.name)) {
+          showToast("Format file tidak valid! Gunakan hanya JPG, JPEG, PNG, atau WEBP.", "error");
+          input.value = "";
+          return;
+        }
+
         const spinner = document.getElementById(`group-spinner-${uniqueId}`);
         if (spinner) spinner.classList.remove("hidden");
 
@@ -7660,7 +7723,7 @@
             const res = await callGAS("uploadKeDrive", {
               base64Data: compressed,
               fileName: file.name,
-              mimeType: "image/jpeg"
+              mimeType: file.type || "image/jpeg"
             });
 
             if (res && res.sukses) {
@@ -7673,22 +7736,24 @@
               uploadSucceeded = true;
             } else {
               console.warn("Upload response unsuccessful:", res);
+              showToast("Gagal upload gambar: " + (res?.pesan || "Terjadi kesalahan di server"), "error");
             }
           } catch (gasErr) {
-            console.warn("GAS Drive upload connection failed, falling back to local base64 storage:", gasErr);
+            console.error("GAS Drive upload connection failed:", gasErr);
+            showToast("Terjadi kesalahan koneksi dengan server saat mengunggah.", "error");
           }
 
           if (!uploadSucceeded) {
+            // Bersihkan input url bila bukan url HTTP yang valid
             const urlInput = document.getElementById(`group-gambar-${uniqueId}`);
-            if (urlInput) {
-              urlInput.value = compressed;
-              updateGroupPreview(uniqueId, compressed);
+            if (urlInput && !urlInput.value.startsWith("http")) {
+              urlInput.value = "";
+              updateGroupPreview(uniqueId, "");
             }
-            showToast("Gambar berhasil disimpan!", "success");
           }
         } catch (err) {
           console.error("Upload error:", err);
-          showToast("Terjadi kesalahan koneksi saat mengunggah gambar.", "error");
+          showToast("Terjadi kesalahan saat memproses gambar.", "error");
         } finally {
           if (spinner) spinner.classList.add("hidden");
           input.value = ""; // reset file input value

@@ -3072,6 +3072,7 @@
       }
 
       window.onload = async () => {
+        const _startupStart = performance.now();
         try {
           // Load Dark Mode Preference
           if (localStorage.getItem('theme') === 'dark' || 
@@ -3095,35 +3096,35 @@
             fetchTimeout = 25000; // 25 seconds for custom URL cold-starts
           }
 
-          const res = await callGAS("ambilInisialisasiData", {
-            sheets: ["Data_Barang", "Satuan_Barang", "Suppliers", "Referensi", "Data_Supplier", "Pembelian_Barang"]
-          }, fetchTimeout);
+          // LAZY LOADING OPTIMIZATION: Keep details empty to be loaded only when menu is opened
+          rawCekHargaData = [];
+          rawBarangData = [];
+          rawSatuanBarangData = [];
+          rawHargaPromoData = [];
+          rawDataSupplierData = [];
+          rawPembelianBarangData = [];
+          rawOrderHeaders = [];
+          rawOrderDetails = [];
+
+          const res = await callGAS("ambilInisialisasiData", {}, fetchTimeout);
           
           if (res && res.sukses) {
-            rawCekHargaData = res.cekHarga || [];
             rawReferensiData = res.referensi || [];
-            rawBarangData = res.barang || [];
-            rawSatuanBarangData = res.satuanBarang || [];
-            rawHargaPromoData = res.hargaPromo || [];
-            rawDataSupplierData = res.masterSupplier || [];
-            rawPembelianBarangData = sanitizePembelianBarangData(res.pembelianBarang || []);
             
-            // Check if database is truly empty
-            if (rawDataSupplierData.length === 0 && rawBarangData.length === 0 && rawPembelianBarangData.length === 0) {
-              console.info("Database empty, using demo data.");
-              useFallbackDemoData();
-            } else {
-              console.info("Data loaded successfully from GAS.");
-              updateDatabaseStatusIndicator("connected");
-              
-              try { renderDashboard(); } catch(e) { console.error("renderDashboard failed:", e); }
-              try { populateSatuanDropdowns(); } catch(e) { console.error("populateSatuanDropdowns failed:", e); }
-              try { populateKategoriDropdown(); } catch(e) { console.error("populateKategoriDropdown failed:", e); }
-              try { populateOrderStatusDropdown(); } catch(e) { console.error("populateOrderStatusDropdown failed:", e); }
-              try { populatePembelianSupplierFilter(); } catch(e) { console.error("populatePembelianSupplierFilter failed:", e); }
-              
-              showToast("Sinkronisasi data berhasil", "success");
+            if (res.dashboardStats && res.dashboardStats.sukses) {
+              window.rawDashboardStats = res.dashboardStats;
             }
+            
+            console.info("Metadata and fast dashboard loaded successfully from GAS.");
+            updateDatabaseStatusIndicator("connected");
+            
+            try { renderDashboard(); } catch(e) { console.error("renderDashboard failed:", e); }
+            try { populateSatuanDropdowns(); } catch(e) { console.error("populateSatuanDropdowns failed:", e); }
+            try { populateKategoriDropdown(); } catch(e) { console.error("populateKategoriDropdown failed:", e); }
+            try { populateOrderStatusDropdown(); } catch(e) { console.error("populateOrderStatusDropdown failed:", e); }
+            try { populatePembelianSupplierFilter(); } catch(e) { console.error("populatePembelianSupplierFilter failed:", e); }
+            
+            showToast("Sinkronisasi data awal berhasil", "success");
           } else {
             console.warn("GAS connection failed or returned error. Using demo data.");
             useFallbackDemoData();
@@ -3166,6 +3167,7 @@
             }
           }
           if (typeof showLoading === 'function') showLoading(false);
+          logPerf("Startup App", performance.now() - _startupStart);
         }
       };
 
@@ -3438,51 +3440,66 @@
       }
 
       function renderDashboard() {
-        // Count unique ID_Barang in rawSatuanBarangData for actual active master products
-        const seenIds = new Set();
-        if (Array.isArray(rawSatuanBarangData)) {
-          rawSatuanBarangData.forEach(item => {
-            if (item.idBarang) seenIds.add(item.idBarang);
-          });
+        const _start = performance.now();
+        let totalProduk = 0;
+        let totalSupplier = 0;
+        let latest = [];
+
+        if (window.rawDashboardStats && window.rawDashboardStats.sukses) {
+          totalProduk = window.rawDashboardStats.totalProduk || 0;
+          totalSupplier = window.rawDashboardStats.totalSupplier || 0;
+          latest = window.rawDashboardStats.recentSuppliers || [];
+        } else {
+          // Fallback to local array details if already fetched
+          const seenIds = new Set();
+          if (Array.isArray(rawSatuanBarangData)) {
+            rawSatuanBarangData.forEach(item => {
+              if (item.idBarang) seenIds.add(item.idBarang);
+            });
+          }
+          totalProduk = seenIds.size > 0 ? seenIds.size : (rawCekHargaData ? rawCekHargaData.length : 0);
+          totalSupplier = rawDataSupplierData.length;
+          latest = [...rawDataSupplierData].reverse().slice(0, 5);
         }
-        const totalProduk = seenIds.size > 0 ? seenIds.size : (rawCekHargaData ? rawCekHargaData.length : 0);
-        const totalSupplier = rawDataSupplierData.length;
   
-        document.getElementById("stat-total-produk").innerText = totalProduk;
-        document.getElementById("stat-total-supplier").innerText = totalSupplier;
+        const totalProdukEl = document.getElementById("stat-total-produk");
+        if (totalProdukEl) totalProdukEl.innerText = totalProduk;
+        const totalSupplierEl = document.getElementById("stat-total-supplier");
+        if (totalSupplierEl) totalSupplierEl.innerText = totalSupplier;
   
         const recentList = document.getElementById("recent-entries-list");
-        recentList.innerHTML = "";
+        if (recentList) {
+          recentList.innerHTML = "";
+    
+          if (latest.length === 0) {
+            recentList.innerHTML = `<div class="p-8 text-center text-slate-400 font-bold text-xs border-2 border-dashed border-slate-100 rounded-3xl uppercase tracking-widest">Belum ada data supplier.</div>`;
+          } else {
+            latest.forEach(item => {
+              const div = document.createElement("div");
+              div.className = "flex items-center gap-4 p-4 hover:bg-slate-50 rounded-[1.5rem] transition-all group cursor-pointer";
+              div.onclick = () => { switchPage('supplier'); };
+              
+              const nama = item.namaSupplier || item.NamaSupplier || item.Nama || "N/A";
+              const detail = item.kota || item.Kota || item.alamat || "No address";
+              const idSupplier = item.idSupplier || item.IdSupplier || item.id || "?";
+              const idDisplay = String(idSupplier).replace('SUP-', '');
   
-        const latest = [...rawDataSupplierData].reverse().slice(0, 5);
-  
-        if (latest.length === 0) {
-          recentList.innerHTML = `<div class="p-8 text-center text-slate-400 font-bold text-xs border-2 border-dashed border-slate-100 rounded-3xl uppercase tracking-widest">Belum ada data supplier.</div>`;
-        } else {
-          latest.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "flex items-center gap-4 p-4 hover:bg-slate-50 rounded-[1.5rem] transition-all group cursor-pointer";
-            div.onclick = () => { switchPage('supplier'); };
-            
-            const nama = item.namaSupplier || item.NamaSupplier || item.Nama || "N/A";
-            const detail = item.kota || item.Kota || item.alamat || "No address";
-            const idSupplier = item.idSupplier || item.IdSupplier || item.id || "?";
-            const idDisplay = String(idSupplier).replace('SUP-', '');
-
-            div.innerHTML = `
-              <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
-                #${idDisplay}
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase truncate mb-0.5">${nama}</p>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter truncate">${detail}</p>
-              </div>
-              <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors"></i>
-            `;
-            recentList.appendChild(div);
-          });
+              div.innerHTML = `
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 font-black text-xs shrink-0 group-hover:scale-110 transition-transform">
+                  #${idDisplay}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors uppercase truncate mb-0.5">${nama}</p>
+                  <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter truncate">${detail}</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500 transition-colors"></i>
+              `;
+              recentList.appendChild(div);
+            });
+          }
         }
         lucide.createIcons();
+        logPerf("Render Dashboard Panel", performance.now() - _start);
       }
 
       let loadingCount = 0;
@@ -3662,7 +3679,52 @@
       }
 
       // --- BRIDGE COMMUNICATION ---
+      // Performance logging utility for bottleneck identification
+      function logPerf(label, durationMs) {
+        console.warn(`[PERF_LOG] ⏱️ ${label}: ${durationMs.toFixed(1)}ms`);
+      }
+
       async function callGAS(action, payload = null, timeoutMs = 25000) {
+        const maxRetries = 2; // Retry up to 2 times for transient network/Google Sheets cold start failures
+        let attempt = 0;
+        
+        while (attempt <= maxRetries) {
+          attempt++;
+          const startTime = performance.now();
+          try {
+            const res = await callGASAttempt(action, payload, timeoutMs);
+            const duration = performance.now() - startTime;
+            
+            // Check if connection succeeded or returned failure response from inner GAS execution
+            if (res && res.sukses !== false) {
+              logPerf(`GAS [${action}] (Attempt ${attempt}/${maxRetries + 1})`, duration);
+              return res;
+            } else {
+              // If it failed on inner side but still connected, check if we need to retry
+              console.warn(`GAS [${action}] returned unsuccessful response on attempt ${attempt}.`, res);
+              if (attempt > maxRetries) {
+                logPerf(`GAS [${action}] (Attempt ${attempt}/${maxRetries + 1} - failed)`, duration);
+                return res; // Return the failure response on final attempt
+              }
+            }
+          } catch (err) {
+            const duration = performance.now() - startTime;
+            console.error(`Attempt ${attempt}/${maxRetries + 1} failed for ${action} (${duration.toFixed(1)}ms):`, err);
+            
+            if (attempt > maxRetries) {
+              logPerf(`GAS [${action}] (All ${maxRetries + 1} attempts failed)`, duration);
+              return { sukses: false, pesan: `Koneksi database gagal atau timeout setelah beberapa kali percobaan. Silakan coba beberapa saat lagi.` };
+            }
+          }
+          
+          // Transient failure detected, wait with backoff before retry
+          const backoffDelay = 1000 * attempt;
+          console.warn(`[RETRY] Action [${action}] failed. Retrying in ${backoffDelay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        }
+      }
+
+      async function callGASAttempt(action, payload = null, timeoutMs = 25000) {
         // Deteksi apakah sedang di dalam Google Apps Script Environment (baik langsung atau di dalam iframe GAS)
         const isGASDomain = typeof window !== "undefined" && (
           window.location.hostname.includes("googleusercontent.com") || 
@@ -3751,13 +3813,9 @@
           }
         } catch (outerProxyErr) {
           if (outerProxyErr.name === 'AbortError' || Date.now() - startTime >= timeoutMs) {
-            return { sukses: false, pesan: `Koneksi ke Google Sheets / GAS timeout (melebihi ${timeoutMs / 1000} detik).` };
+            throw new Error(`Timeout koneksi ke Google Sheets kustom.`);
           }
-          let userMsg = outerProxyErr.message || 'Koneksi gagal';
-          if (userMsg.includes("Failed to fetch") || userMsg.includes("failed to fetch")) {
-            userMsg = "Gagal menghubungi database Google Sheets. Pastikan URL Web App Apps Script sudah benar.";
-          }
-          return { sukses: false, pesan: userMsg };
+          throw outerProxyErr;
         }
 
         if (useDirectFallback) {
@@ -3775,13 +3833,9 @@
             clearTimeout(dTimerId);
           } catch (directErr) {
             if (directErr.name === 'AbortError' || Date.now() - startTime >= timeoutMs) {
-              return { sukses: false, pesan: `Koneksi ke Google Sheets / GAS-Direct timeout (melebihi ${timeoutMs / 1000} detik).` };
+              throw new Error(`Timeout koneksi Google Sheets.`);
             }
-            let userMsg = directErr.message || 'Koneksi langsung gagal';
-            if (userMsg.includes("Failed to fetch") || userMsg.includes("failed to fetch")) {
-              userMsg = "Gagal menghubungi database Google Sheets secara langsung. Pastikan:\n1. URL Web App Apps Script sudah benar.\n2. Opsi deployment 'Who has access' diatur ke 'Anyone' (Siapa saja).\n3. Opsi deployment Anda sudah dideploy sebagai New Version di Google Apps Script.";
-            }
-            return { sukses: false, pesan: userMsg };
+            throw directErr;
           }
         }
 
@@ -3813,7 +3867,7 @@
           console.error("Gagal parse JSON:", jsonErr);
           return { sukses: false, pesan: "Format respon dari Google Apps Script tidak valid (Bukan JSON)." };
         }
-        }
+      }
 
 
 
@@ -6054,6 +6108,7 @@
       }
 
       function renderBarangData() {
+        const _start = performance.now();
         const tbody = document.getElementById("barangTableBody");
         const cardContainer = document.getElementById("barangCardContainer");
         const info = document.getElementById("barangPaginationInfo");
@@ -6182,6 +6237,7 @@
         document.getElementById("prevBtn-barang").disabled = barangCurrentPage === 1;
         document.getElementById("nextBtn-barang").disabled = barangCurrentPage >= totalPages;
         lucide.createIcons();
+        logPerf("Render Table Barang", performance.now() - _start);
       }
 
       // --- BARANG ACTIONS ---
@@ -6992,6 +7048,7 @@
       }
 
       function renderSatuanBarangDataGrouped() {
+        const _start = performance.now();
         const tbody = document.getElementById("satuanBarangTableBody");
         const cardContainer = document.getElementById("satuanBarangCardContainer");
         const info = document.getElementById("satuanBarangPaginationInfo");
@@ -7246,6 +7303,7 @@
         document.getElementById("prevBtn-satuan-barang").disabled = satuanBarangCurrentPage === 1;
         document.getElementById("nextBtn-satuan-barang").disabled = satuanBarangCurrentPage >= totalPages;
         lucide.createIcons();
+        logPerf("Render Table Satuan Barang Grouped", performance.now() - _start);
       }
 
 

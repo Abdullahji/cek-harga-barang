@@ -1005,8 +1005,16 @@
                   <ol class="text-xs text-slate-600 space-y-2 list-decimal list-inside leading-relaxed font-semibold">
                     <li>Buat spreadsheet baru di Google Drive Anda.</li>
                     <li>Buka menu: <span class="bg-slate-200 px-1 rounded">Extensions</span> &gt; <span class="bg-slate-200 px-1 rounded">Apps Script</span>.</li>
-                    <li>Buka tab <span class="font-bold">code.gs</span> dari file project ini, lalu salin seluruh kodenya.</li>
-                    <li>Hapus semua kode bawaan di editor Apps Script Anda, dan Paste (Tempel) kode tersebut.</li>
+                    <li>
+                      Salin kode Apps Script (code.gs) terbaru dengan klik tombol di bawah ini:
+                      <div class="my-2.5">
+                        <button type="button" id="btn-copy-appsscript" onclick="copyAppsScriptToClipboard()" class="w-full flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 py-2.5 px-4 rounded-xl font-bold text-xs transition-all duration-200 shadow-sm active:scale-98 cursor-pointer">
+                          <i data-lucide="copy" class="w-4 h-4 text-emerald-600"></i>
+                          Salin Kode Apps Script (code.gs) Terbaru
+                        </button>
+                      </div>
+                    </li>
+                    <li>Hapus semua kode bawaan di editor Apps Script Anda, lalu Paste (Tempel) kode yang sudah disalin tersebut.</li>
                     <li>Klik opsi simpan (ikon disket).</li>
                     <li>Klik <span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded text-[10px] inline-block font-sans">Deploy</span> &gt; <span class="font-bold">New deployment</span>.</li>
                     <li>Pilih jenis (Type) <span class="font-bold">Web app</span>.</li>
@@ -3546,6 +3554,34 @@
         }
       }
 
+      async function copyAppsScriptToClipboard() {
+        const btn = document.getElementById("btn-copy-appsscript");
+        const originalHtml = btn ? btn.innerHTML : `<i data-lucide="copy" class="w-4 h-4 text-emerald-600"></i> Salin Kode Apps Script (code.gs) Terbaru`;
+        try {
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin text-emerald-600"></i> Mengambil Kode...`;
+            if (typeof lucide !== "undefined") lucide.createIcons();
+          }
+          const res = await fetch("/api/get-code-gs");
+          if (!res.ok) {
+            throw new Error(`Gagal mengambil file code.gs dari server: ${res.statusText}`);
+          }
+          const text = await res.text();
+          await navigator.clipboard.writeText(text);
+          showToast("Kode Apps Script (code.gs) berhasil disalin!", "success");
+        } catch (err) {
+          console.error("Gagal menyalin Kode Apps Script:", err);
+          showToast("Gagal menyalin: " + err.toString(), "error");
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+            if (typeof lucide !== "undefined") lucide.createIcons();
+          }
+        }
+      }
+
       function showToast(message, type = "info") {
         const container = document.getElementById("toast-container");
         if (!container) return;
@@ -3660,7 +3696,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzcPoAWHibXaF7AjxQ_8bxdsbT6U2NaH7juWHPgMv-xQa_yAMqqUavQL1gZ9aQu4ALd2w/exec"; 
+      const GAS_WEBAPP_URL = ""; 
 
       // Helper function to wait for Google Apps Script script object to load and initialize (in iframe)
       function waitForGoogleScriptRun(timeout = 3000) {

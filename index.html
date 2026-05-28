@@ -6309,7 +6309,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-modal w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-modal w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -6320,7 +6320,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-jual w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" required />
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-jual w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -9200,16 +9200,16 @@
               const parsedQtyVal = Number(qtyVal);
               const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
 
-              // 3. Harga Jual: strip format currency, harus numeric valid > 0
+              // 3. Harga Jual: strip format currency, harus numeric valid > 0 (jika diisi)
               const parsedHargaJualClean = Number(hargaJualClean) || 0;
-              const isHargaJualInvalid = hargaJualClean === "" || isNaN(parsedHargaJualClean) || parsedHargaJualClean <= 0;
+              const isHargaJualInvalid = hargaJualClean !== "" && (isNaN(parsedHargaJualClean) || parsedHargaJualClean <= 0);
 
               // Rule 5: DEBUG LOGS UNTUK ANALISIS FIELD KOSONG/INVALID
               const debugMsgs = [];
               debugMsgs.push(isSatuanEmpty ? "[-] Satuan: KOSONG" : `[+] Satuan: OK (${satuanVal})`);
               debugMsgs.push(isQtyInputInvalid ? "[-] Qty Konversi: INVALID (<=0)" : `[+] Qty Konversi: OK (${qtyInputVal})`);
               debugMsgs.push(isQtyValInvalid ? "[-] Qty Satuan: INVALID (<=0)" : `[+] Qty Satuan: OK (${qtyVal})`);
-              debugMsgs.push(isHargaJualInvalid ? `[-] Harga Jual: INVALID (<=0) (raw: '${rawHargaJualStr}', parsed: ${parsedHargaJualClean})` : `[+] Harga Jual: OK (${parsedHargaJualClean})`);
+              debugMsgs.push(isHargaJualInvalid ? `[-] Harga Jual: INVALID (<=0) (raw: '${rawHargaJualStr}', parsed: ${parsedHargaJualClean})` : `[+] Harga Jual: OK (${hargaJualClean || "KOSONG"})`);
               
               console.warn(`[DEBUG VALIDASI SAVE] Row ${idx} (${satuanVal}): ` + debugMsgs.join(" | "));
 
@@ -9273,7 +9273,7 @@
         });
 
         if (hasEmptyFields) {
-          showToast("Harap isi semua kolom Satuan, Qty Konversi, dan Harga Jual (Harga Jual wajib diisi).", "warning");
+          showToast("Harap isi semua kolom Satuan dan Qty Konversi dengan valid.", "warning");
           return;
         }
  

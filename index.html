@@ -2785,6 +2785,122 @@
               </div>
             </div>
 
+          <!-- MODAL PROMO SHORTCUT FLOW -->
+          <div id="promoShortcutModal" class="fixed inset-0 z-[7000] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePromoShortcutModal()"></div>
+            <div class="relative bg-white w-full max-w-md rounded-[2.5rem] p-8 sm:p-10 shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-200">
+              
+              <!-- STEP 1: Tanya "Tambah promo sekarang?" -->
+              <div id="promoShortcutStep1" class="space-y-6">
+                <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center bg-amber-50 border border-amber-100/50">
+                  <i data-lucide="tag" class="w-8 h-8 text-amber-500"></i>
+                </div>
+                <div class="text-center space-y-2">
+                  <h3 class="text-xl font-black text-slate-900">Tambah promo sekarang?</h3>
+                  <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest leading-normal">
+                    Kelola harga promo grosir untuk barang yang baru disimpan
+                  </p>
+                </div>
+                <div class="flex gap-3 pt-2">
+                  <button type="button" onclick="handlePromoShortcutYes()" class="flex-grow py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all shadow-md shadow-emerald-500/15 cursor-pointer">
+                    Ya, Tambah Promo
+                  </button>
+                  <button type="button" onclick="closePromoShortcutModal()" class="flex-grow py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 cursor-pointer">
+                    Nanti Saja
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 2: Pilih Satuan Aktif -->
+              <div id="promoShortcutStep2" class="hidden space-y-6">
+                <div class="text-center space-y-2">
+                  <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">Langkah 2 dari 3</span>
+                  <h3 class="text-lg font-black text-slate-900">Pilih Satuan Barang</h3>
+                  <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest leading-normal">
+                    Pilih satuan aktif untuk diberi harga promo
+                  </p>
+                </div>
+                
+                <!-- List of active units -->
+                <div id="promoShortcutUnitList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar p-1">
+                  <!-- Dynamic active units items -->
+                </div>
+
+                <div class="flex gap-3 pt-2">
+                  <button type="button" onclick="closePromoShortcutModal()" class="w-full py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 cursor-pointer">
+                    Batal
+                  </button>
+                </div>
+              </div>
+
+              <!-- STEP 3: Form Promo -->
+              <div id="promoShortcutStep3" class="hidden space-y-5">
+                <div class="text-center space-y-2">
+                  <span class="text-[9px] font-black text-amber-600 uppercase tracking-widest">Langkah 3 dari 3</span>
+                  <h3 class="text-lg font-black text-slate-900" id="promoShortcutFormTitle">Promo untuk Barang</h3>
+                  <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest leading-normal">
+                    Satuan: <span id="promoShortcutSelectedSatuan" class="text-slate-800 underline font-black">BKS</span>
+                  </p>
+                  <div class="text-center">
+                    <span class="bg-amber-50 px-3 py-1 text-[10px] text-amber-600 font-black rounded-lg border border-amber-100/50 block w-fit mx-auto" id="promoShortcutNormalPriceText">Normal: Rp 0</span>
+                  </div>
+                </div>
+
+                <form id="promoShortcutForm" onsubmit="handleSavePromoShortcut(event)" class="space-y-4">
+                  <input type="hidden" id="form-promoShortcutRow" />
+                  <input type="hidden" id="form-promoShortcutId" />
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1.5">
+                      <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Min Qty <span class="text-rose-500">*</span></label>
+                      <input type="number" id="form-promoShortcutMinQty" required min="1" step="1" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 font-semibold outline-none focus:ring-4 focus:ring-amber-100/40 text-xs shadow-inner" placeholder="0" />
+                    </div>
+                    <div class="space-y-1.5">
+                      <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Max Qty (Opsional)</label>
+                      <input type="number" id="form-promoShortcutMaxQty" min="1" step="1" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 font-semibold outline-none focus:ring-4 focus:ring-amber-100/40 text-xs shadow-inner" placeholder="Kosong = +" />
+                    </div>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Promo <span class="text-rose-500">*</span></label>
+                    <input type="text" id="form-promoShortcutHargaJual" required oninput="formatCartInputRupiah(this)" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-amber-100/40 text-xs shadow-inner" placeholder="Rp 0" />
+                  </div>
+
+                  <!-- FORM BUTTONS -->
+                  <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="goBackToStep2()" class="flex-1 py-3 bg-slate-100 text-slate-500 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95">
+                      Kembali
+                    </button>
+                    <button type="submit" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-600 transition-all active:scale-95 shadow-md shadow-emerald-500/15">
+                      Simpan Promo
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- STEP 4: Tanya "Tambah promo satuan lain?" -->
+              <div id="promoShortcutStep4" class="hidden space-y-6">
+                <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center bg-emerald-100">
+                  <i data-lucide="check" class="w-8 h-8 text-emerald-600"></i>
+                </div>
+                <div class="text-center space-y-2">
+                  <h3 class="text-xl font-black text-slate-900">Promo Berhasil Disimpan!</h3>
+                  <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest leading-normal">
+                    Apakah Anda ingin menambah promo untuk satuan lain pada barang ini?
+                  </p>
+                </div>
+                <div class="flex gap-3 pt-2">
+                  <button type="button" onclick="handlePromoShortcutAnotherYes()" class="flex-grow py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all shadow-md shadow-emerald-500/15 cursor-pointer">
+                    Ya, Tambah Lainnya
+                  </button>
+                  <button type="button" onclick="closePromoShortcutModal()" class="flex-grow py-4 bg-slate-100 text-slate-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 transition-all active:scale-95 cursor-pointer">
+                    Selesai / Tutup
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
           <!-- Footer -->
           <footer class="mt-auto py-10 bg-white border-t border-slate-100">
             <div class="flex flex-col items-center justify-center gap-4 px-6">
@@ -3696,7 +3812,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwWonwzaC-bEPqEszbgtQVf8E_HUlrGwIpaP5zlIQWiIcigyRsc5b9Xm9kh7OomaLgvow/exec"; 
+      const GAS_WEBAPP_URL = ""; 
 
       // Helper function to wait for Google Apps Script script object to load and initialize (in iframe)
       function waitForGoogleScriptRun(timeout = 3000) {
@@ -6491,12 +6607,38 @@
             return;
           }
 
+          let idBarang = document.getElementById("form-barangId")?.value || "";
+          if (!idBarang || idBarang === "Generated After Save") {
+            let maxNum = 0;
+            if (typeof rawBarangData !== 'undefined' && Array.isArray(rawBarangData)) {
+              rawBarangData.forEach(b => {
+                if (b.idBarang && b.idBarang.startsWith('BRG-')) {
+                  const num = parseInt(b.idBarang.replace('BRG-', ''));
+                  if (!isNaN(num) && num > maxNum) maxNum = num;
+                }
+              });
+            }
+            idBarang = "BRG-" + String(maxNum + 1).padStart(3, '0');
+          }
+          const namaBarang = document.getElementById("form-barangNama")?.value || "Barang_Baru";
+          let satuan = "";
+          const rowEl = document.getElementById(`variasi-row-${rowId}`);
+          if (rowEl) {
+            const satSelect = rowEl.querySelector(".variasi-satuan");
+            if (satSelect) {
+              satuan = satSelect.value || "PCS";
+            }
+          }
+
           let uploadSucceeded = false;
           try {
             const res = await callGAS("uploadKeDrive", {
               base64Data: compressed,
               fileName: file.name,
-              mimeType: file.type || "image/jpeg"
+              mimeType: file.type || "image/jpeg",
+              idBarang: idBarang,
+              namaBarang: namaBarang,
+              satuan: satuan
             });
 
             if (res && res.sukses) {
@@ -6759,12 +6901,14 @@
           if (res && res.sukses) {
             showToast("Berhasil disimpan", "success");
             closeBarangModal();
-            fetchBarangData();
-            fetchSatuanBarangData();
+            showLoading(true);
+            await fetchBarangData();
+            await fetchSatuanBarangData();
+            showLoading(false);
             const targetId = res.idBarang || generatedIdForPromo;
             if (isInsert && targetId) {
               setTimeout(() => {
-                showPromoShortcutPrompt(targetId, firstSatuan);
+                showPromoShortcutPrompt(targetId);
               }, 650);
             }
           } else {
@@ -6778,7 +6922,7 @@
               const targetId = generatedIdForPromo;
               if (isInsert && targetId) {
                 setTimeout(() => {
-                  showPromoShortcutPrompt(targetId, firstSatuan);
+                  showPromoShortcutPrompt(targetId);
                 }, 650);
               }
             }
@@ -6790,55 +6934,218 @@
         }
       }
 
-      function showPromoShortcutPrompt(idBarang, firstSatuan) {
-        return new Promise((resolve) => {
-          const dialog = document.getElementById("customDialog");
-          const t = document.getElementById("dialogTitle");
-          const m = document.getElementById("dialogMessage");
-          const c = document.getElementById("dialogContent");
-          const btnConfirm = document.getElementById("dialogConfirmBtn");
-          const btnCancel = document.getElementById("dialogCancelBtn");
+      function showPromoShortcutPrompt(idBarang) {
+        const product = rawBarangData.find(b => String(b.idBarang) === String(idBarang));
+        window.currentPromoShortcutIdBarang = idBarang;
+        window.currentPromoShortcutNamaBarang = product ? product.namaBarang : "Barang Baru";
 
-          c.parentElement.className =
-            "fixed inset-0 z-[9999] items-center justify-center p-6 flex dialog-success";
-          t.innerText = "Kelola Promo?";
-          m.className = "text-slate-500 font-sans mt-2 text-sm";
-          m.innerText = "Barang baru berhasil ditambahkan! Apakah Anda ingin langsung mengelola promo grosir untuk satuan pertama (" + firstSatuan + ")?";
-          btnCancel.classList.remove("hidden");
+        const form = document.getElementById("promoShortcutForm");
+        if (form) form.reset();
 
-          const originalConfirmText = btnConfirm.innerHTML;
-          const originalCancelText = btnCancel.innerHTML;
+        document.getElementById("promoShortcutStep1").classList.remove("hidden");
+        document.getElementById("promoShortcutStep2").classList.add("hidden");
+        document.getElementById("promoShortcutStep3").classList.add("hidden");
+        document.getElementById("promoShortcutStep4").classList.add("hidden");
 
-          btnConfirm.innerHTML = `
-            <i data-lucide="tag" class="w-4 h-4 mr-1.5 text-emerald-100"></i>
-            <span>Kelola Promo Sekarang</span>
+        const modal = document.getElementById("promoShortcutModal");
+        modal.classList.replace("hidden", "flex");
+
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          try { lucide.createIcons(); } catch(e) {}
+        }
+      }
+
+      function closePromoShortcutModal() {
+        const modal = document.getElementById("promoShortcutModal");
+        if (modal) modal.classList.replace("flex", "hidden");
+      }
+
+      function handlePromoShortcutYes() {
+        showPromoShortcutStep2();
+      }
+
+      function showPromoShortcutStep2() {
+        const idBarang = window.currentPromoShortcutIdBarang;
+        
+        const units = rawSatuanBarangData.filter(u => 
+          String(u.idBarang) === String(idBarang) && 
+          isEqualNormalized(u.status, 'Aktif')
+        );
+
+        const listContainer = document.getElementById("promoShortcutUnitList");
+        if (!listContainer) return;
+        listContainer.innerHTML = "";
+
+        if (units.length === 0) {
+          listContainer.innerHTML = `
+            <div class="p-4 border border-dashed border-rose-200 bg-rose-50 text-rose-700 text-center rounded-xl text-xs font-bold font-sans">
+              Tidak ada satuan aktif ditemukan untuk barang ini.<br>Format Satuan mungkin belum tersinkronisasi.
+            </div>
           `;
-          btnCancel.innerHTML = `
-            <span>Skip</span>
-          `;
+        } else {
+          units.forEach(u => {
+            const hNormal = Number(u.hargaJual) || 0;
+            listContainer.innerHTML += `
+              <button type="button" onclick="selectPromoShortcutUnit('${u.satuan}', ${hNormal})" class="w-full p-4 bg-slate-50 hover:bg-amber-50 border border-slate-100 hover:border-amber-200 rounded-xl font-bold text-xs text-slate-700 flex justify-between items-center transition-all cursor-pointer">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-lg bg-white border border-slate-100 flex items-center justify-center font-mono text-[10px] text-slate-500 font-extrabold">${u.satuan}</div>
+                  <span class="font-extrabold text-slate-800">${u.satuan}</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-[10px] text-slate-400 block font-normal leading-none mb-1">Normal</span>
+                  <span class="font-mono text-xs font-black text-amber-600">Rp ${hNormal.toLocaleString('id-ID')}</span>
+                </div>
+              </button>
+            `;
+          });
+        }
 
-          btnConfirm.onclick = () => {
-            dialog.classList.add("hidden");
-            btnConfirm.innerHTML = originalConfirmText;
-            btnCancel.innerHTML = originalCancelText;
-            openKelolaPromo(idBarang, firstSatuan);
-            resolve(true);
-          };
-          btnCancel.onclick = () => {
-            dialog.classList.add("hidden");
-            btnConfirm.innerHTML = originalConfirmText;
-            btnCancel.innerHTML = originalCancelText;
-            resolve(false);
-          };
+        document.getElementById("promoShortcutStep1").classList.add("hidden");
+        document.getElementById("promoShortcutStep2").classList.remove("hidden");
+        document.getElementById("promoShortcutStep3").classList.add("hidden");
+        document.getElementById("promoShortcutStep4").classList.add("hidden");
 
-          document
-            .getElementById("iconTarget")
-            .setAttribute("data-lucide", "sparkles");
-          if (typeof lucide !== 'undefined' && lucide.createIcons) {
-               try { lucide.createIcons(); } catch(e) {}
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+          try { lucide.createIcons(); } catch(e) {}
+        }
+      }
+
+      function selectPromoShortcutUnit(satuan, normalPrice) {
+        window.currentPromoShortcutSelectedUnit = {
+          satuan: satuan,
+          hargaJualNormal: normalPrice
+        };
+
+        document.getElementById("promoShortcutFormTitle").innerText = `Promo untuk ${window.currentPromoShortcutNamaBarang}`;
+        document.getElementById("promoShortcutSelectedSatuan").innerText = satuan;
+        document.getElementById("promoShortcutNormalPriceText").innerText = `Normal: Rp ${normalPrice.toLocaleString('id-ID')}`;
+
+        document.getElementById("form-promoShortcutMinQty").value = "";
+        document.getElementById("form-promoShortcutMaxQty").value = "";
+        document.getElementById("form-promoShortcutHargaJual").value = "";
+
+        document.getElementById("promoShortcutStep1").classList.add("hidden");
+        document.getElementById("promoShortcutStep2").classList.add("hidden");
+        document.getElementById("promoShortcutStep3").classList.remove("hidden");
+        document.getElementById("promoShortcutStep4").classList.add("hidden");
+      }
+
+      function goBackToStep2() {
+        showPromoShortcutStep2();
+      }
+
+      async function handleSavePromoShortcut(e) {
+        e.preventDefault();
+
+        const minQty = Number(document.getElementById("form-promoShortcutMinQty").value) || 0;
+        const maxQtyRaw = document.getElementById("form-promoShortcutMaxQty").value;
+        const maxQty = maxQtyRaw !== "" ? Number(maxQtyRaw) : "";
+        const rawHargaJual = document.getElementById("form-promoShortcutHargaJual").value || "";
+        const hargaJual = Number(rawHargaJual.replace(/\D/g, "")) || 0;
+
+        if (minQty <= 0) {
+          showToast("Min Qty wajib berupa angka lebih besar dari 0.", "error");
+          return;
+        }
+
+        if (maxQtyRaw !== "" && maxQty < minQty) {
+          showToast("Max Qty harus lebih besar atau sama dengan Min Qty.", "error");
+          return;
+        }
+
+        if (hargaJual <= 0) {
+          showToast("Harga Jual wajib berupa angka lebih besar dari 0.", "error");
+          return;
+        }
+
+        const normalPrice = window.currentPromoShortcutSelectedUnit.hargaJualNormal;
+        const normalTotal = normalPrice * minQty;
+        if (normalPrice > 0 && hargaJual > normalTotal) {
+          showToast("Harga promo tidak boleh lebih besar dari total harga normal untuk qty minimum", "error");
+          return;
+        }
+
+        showLoading(true);
+        showToast("Sedang menyimpan promo...", "info");
+
+        const payload = {
+          row: "",
+          idPromo: "",
+          idBarang: window.currentPromoShortcutIdBarang,
+          namaBarang: window.currentPromoShortcutNamaBarang,
+          satuan: window.currentPromoShortcutSelectedUnit.satuan,
+          minQty: minQty,
+          maxQty: maxQty,
+          hargaJual: hargaJual,
+          status: "Aktif"
+        };
+
+        try {
+          const res = await callGAS("simpanHargaPromo", payload);
+          showLoading(false);
+
+          if (res && res.sukses) {
+            showToast("Harga Promo berhasil disimpan!", "success");
+            
+            const newRow = res.row || (rawHargaPromoData.length + 2);
+            const generatedId = res.idPromo || generateNextPromoId();
+            rawHargaPromoData.push({
+              row: Number(newRow),
+              idPromo: generatedId,
+              idBarang: payload.idBarang,
+              namaBarang: payload.namaBarang,
+              satuan: payload.satuan,
+              minQty: minQty,
+              maxQty: maxQty,
+              hargaJual: hargaJual,
+              status: "Aktif"
+            });
+
+            document.getElementById("promoShortcutStep1").classList.add("hidden");
+            document.getElementById("promoShortcutStep2").classList.add("hidden");
+            document.getElementById("promoShortcutStep3").classList.add("hidden");
+            document.getElementById("promoShortcutStep4").classList.remove("hidden");
+
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+              try { lucide.createIcons(); } catch(e) {}
+            }
+          } else {
+            showAlert("Gagal menyimpan promo", res ? res.pesan : "Koneksi terganggu.", "error");
           }
-          dialog.classList.remove("hidden");
-        });
+        } catch (err) {
+          showLoading(false);
+          console.error("Save promo shortcut error:", err);
+
+          const generatedId = generateNextPromoId();
+          const mockRow = rawHargaPromoData.length + 2;
+
+          rawHargaPromoData.push({
+            row: Number(mockRow),
+            idPromo: generatedId,
+            idBarang: payload.idBarang,
+            namaBarang: payload.namaBarang,
+            satuan: payload.satuan,
+            minQty: minQty,
+            maxQty: maxQty,
+            hargaJual: hargaJual,
+            status: "Aktif"
+          });
+
+          showToast("Harga Promo berhasil disimpan (Local Mode).", "success");
+
+          document.getElementById("promoShortcutStep1").classList.add("hidden");
+          document.getElementById("promoShortcutStep2").classList.add("hidden");
+          document.getElementById("promoShortcutStep3").classList.add("hidden");
+          document.getElementById("promoShortcutStep4").classList.remove("hidden");
+
+          if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            try { lucide.createIcons(); } catch(e) {}
+          }
+        }
+      }
+
+      function handlePromoShortcutAnotherYes() {
+        showPromoShortcutStep2();
       }
 
       async function handleToggleStatusBarang(row, currentStatus) {
@@ -7778,12 +8085,22 @@
 
           if (statusText) statusText.innerText = "Mengunggah...";
 
+          const idBarang = document.getElementById("form-satuanIdBarang")?.value || "";
+          const namaBarang = document.getElementById("form-satuanNamaBarang")?.value || "Barang_Baru";
+          let satuan = "";
+          if (uniqueId === "active_satuan") {
+            satuan = document.getElementById("edit-satuan-name")?.value || "PCS";
+          }
+
           let uploadSucceeded = false;
           try {
             const res = await callGAS("uploadKeDrive", {
               base64Data: compressed,
               fileName: file.name,
-              mimeType: file.type || "image/jpeg"
+              mimeType: file.type || "image/jpeg",
+              idBarang: idBarang,
+              namaBarang: namaBarang,
+              satuan: satuan
             });
 
             if (res && res.sukses) {
@@ -8328,7 +8645,7 @@
 
             <div class="space-y-1.5">
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Baru</label>
-              <input type="text" id="edit-satuan-harga-jual" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" required value="${currentUnit.hargaJual || ''}" />
+              <input type="text" id="edit-satuan-harga-jual" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" value="${currentUnit.hargaJual || ''}" />
             </div>
 
             <div class="space-y-1.5 md:col-span-2 lg:col-span-1">
@@ -9135,8 +9452,8 @@
               const rawHJStr = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim();
               const rawHJ = rawHJStr.replace(/[^\d]/g, "");
               
-              const isDefaultEmptyPcsAndNoPrice = (rawS === "" || rawS === "Pcs") && rawHJ === "";
-              const isMissingRequiredFields = rawS === "" || rawHJ === "";
+              const isDefaultEmptyPcsAndNoPrice = (rawS === "" || rawS === "Pcs") && rawHJ === "" && (!item.row || item.row === "");
+              const isMissingRequiredFields = rawS === "";
               
               if (isDefaultEmptyPcsAndNoPrice || isMissingRequiredFields) {
                 console.log(`[Validation Cleanup - Row ${idx}] Automatically deactivating empty/corrupt background unit (${rawS || 'Empty'}).`);

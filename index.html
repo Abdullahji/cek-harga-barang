@@ -5696,7 +5696,7 @@
           }
           
           // Clean empty values and sort alphabetically
-          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
           
           const select = document.getElementById("form-barangKategori");
           const filterSelect = document.getElementById("filter-barang-kategori");
@@ -5740,7 +5740,7 @@
           }
           
           // Clean empty values and sort alphabetically
-          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
           
           const select = document.getElementById("form-barangMerk");
           const filterSelect = document.getElementById("filter-barang-merk");
@@ -5781,7 +5781,7 @@
         }
 
         // Clean empty values and sort alphabetically
-        list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+        list = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
         const q = (val || "").toLowerCase().trim();
         let matches = list;
@@ -5947,7 +5947,7 @@
             list = ["Pcs", "Box", "Pack", "Rim", "Sachet", "Botol", "Dus", "Lusin", "Kg", "Gram", "Liter"];
           }
           
-          list = getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+          list = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
           
           select.innerHTML = '<option value="">Pilih Satuan Dasar...</option>';
           list.forEach(s => {
@@ -5969,7 +5969,7 @@
           list = ["Pending", "Diproses", "Selesai", "Batal"];
         }
         // Trim, filter, and sort alphabetically
-        return getUniqueCaseInsensitive(list).sort((a, b) => a.localeCompare(b));
+        return getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
       }
 
       function populateOrderStatusDropdown() {
@@ -6226,7 +6226,11 @@
 
       function getSatuanOptionsHtml() {
         if (!rawReferensiData) return '<option value="">Pilih Satuan...</option>';
-        const satuanList = [...new Set(rawReferensiData.filter(r => r.satuan).map(r => r.satuan))];
+        let list = rawReferensiData.filter(r => r.satuan).map(r => r.satuan);
+        if (list.length === 0) {
+          list = ["Pcs", "Box", "Pack", "Rim", "Sachet", "Botol", "Dus", "Lusin", "Kg", "Gram", "Liter"];
+        }
+        const satuanList = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         let html = '<option value="">Pilih Satuan...</option>';
         satuanList.forEach(s => {
           html += `<option value="${s}">${s}</option>`;
@@ -6288,9 +6292,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan</label>
                 <select class="variasi-tipe w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
-                  <option value="KEDUANYA" selected>KEDUANYA</option>
-                  <option value="BELI">BELI</option>
-                  <option value="JUAL">JUAL</option>
+                  \${getTipeSatuanSelectOptionsHtml("KEDUANYA")}
                 </select>
               </div>
 
@@ -7818,7 +7820,11 @@
 
       function getSatuanOptionsSelectHtml(selectedValue = "") {
         if (!rawReferensiData) return '<option value="">Pilih Satuan...</option>';
-        const satuanList = getUniqueCaseInsensitive(rawReferensiData.filter(r => r.satuan).map(r => r.satuan));
+        const list = rawReferensiData.filter(r => r.satuan).map(r => r.satuan);
+        if (list.length === 0) {
+          list.push("Pcs", "Box", "Pack", "Rim", "Sachet", "Botol", "Dus", "Lusin", "Kg", "Gram", "Liter");
+        }
+        const satuanList = getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         let html = '<option value="">Pilih Satuan...</option>';
         satuanList.forEach(s => {
           const selected = isEqualNormalized(s, selectedValue) ? "selected" : "";
@@ -7837,14 +7843,11 @@
             }
           });
         }
-        if (list.length === 0) {
-          return ["BELI", "JUAL", "KEDUANYA"];
-        }
         const standard = ["BELI", "JUAL", "KEDUANYA"];
         standard.forEach(s => {
           list.push(s);
         });
-        return getUniqueCaseInsensitive(list);
+        return getUniqueCaseInsensitive(list).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
       }
 
       function getTipeSatuanSelectOptionsHtml(selected = "KEDUANYA") {
@@ -8390,9 +8393,11 @@
         
         if (typeof rawReferensiData !== 'undefined' && Array.isArray(rawReferensiData)) {
           const satuanList = rawReferensiData.filter(r => r.satuan).map(r => r.satuan);
-          [...new Set(satuanList)].forEach(s => {
-              filterSatuan.innerHTML += `<option value="${s}">${s}</option>`;
-          });
+          getUniqueCaseInsensitive(satuanList)
+            .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+            .forEach(s => {
+                filterSatuan.innerHTML += `<option value="${s}">${s}</option>`;
+            });
         }
         filterSatuan.value = currentFilterSat;
       }
@@ -10030,7 +10035,7 @@
           if (p.namaSupplier) suppliers.add(p.namaSupplier);
         });
         
-        const sortedSuppliers = Array.from(suppliers).sort();
+        const sortedSuppliers = Array.from(suppliers).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         
         const currentVal = select.value || "all";
         select.innerHTML = `<option value="all">Semua Supplier</option>` +
@@ -11436,7 +11441,7 @@
           if (o.namaSupplier) suppliers.add(o.namaSupplier);
         });
 
-        const sortedSuppliers = Array.from(suppliers).sort();
+        const sortedSuppliers = Array.from(suppliers).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
         const currentVal = select.value || "all";
         select.innerHTML = `<option value="all">Semua Supplier</option>` +
           sortedSuppliers.map(s => `<option value="${s}">${s}</option>`).join("");

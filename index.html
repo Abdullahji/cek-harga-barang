@@ -285,7 +285,7 @@
         position: fixed;
         top: 1rem;
         right: 1rem;
-        z-index: 9999;
+        z-index: 99999 !important;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
@@ -3634,6 +3634,9 @@
       }
 
       let loadingCount = 0;
+      let toastQueue = [];
+      let toastFlushTimeout = null;
+      let lastLoadingClosedTime = 0;
 
       function showLoading(show, message = "Processing System...") {
         const overlay = document.getElementById("loadingOverlay");
@@ -3651,6 +3654,16 @@
           loadingCount = Math.max(0, loadingCount - 1);
           if (loadingCount === 0) {
             overlay.classList.remove("active");
+            lastLoadingClosedTime = Date.now();
+            
+            // Trigger deferred/queued toasts after loading is completely closed
+            if (toastQueue.length > 0) {
+              if (toastFlushTimeout) clearTimeout(toastFlushTimeout);
+              toastFlushTimeout = setTimeout(() => {
+                toastFlushTimeout = null;
+                flushToastQueue();
+              }, 400); // 400ms delay to let the loading transition completely finish
+            }
           }
         }
       }
@@ -3700,7 +3713,33 @@
         }
       }
 
-      function showToast(message, type = "info") {
+      function flushToastQueue() {
+        if (toastQueue.length === 0) return;
+        
+        // If there is any success or error toast, filter out generic "info" progress toasts
+        const hasSuccessOrError = toastQueue.some(t => t.type === "success" || t.type === "error");
+        let filteredQueue = toastQueue;
+        
+        if (hasSuccessOrError) {
+          filteredQueue = toastQueue.filter(t => t.type !== "info" || (!t.message.startsWith("Sedang") && !t.message.startsWith("Memperbarui")));
+        }
+        
+        if (filteredQueue.length === 0) {
+          filteredQueue = toastQueue;
+        }
+
+        // Trigger each toast with a tiny stagger so they animate nicely
+        filteredQueue.forEach((t, index) => {
+          setTimeout(() => {
+            triggerToastImmediately(t.message, t.type);
+          }, index * 150);
+        });
+        
+        // Clear the queue
+        toastQueue = [];
+      }
+
+      function triggerToastImmediately(message, type = "info") {
         const container = document.getElementById("toast-container");
         if (!container) return;
 
@@ -3724,12 +3763,51 @@
         container.appendChild(toastEl);
         lucide.createIcons();
         
+        // Custom durations:
+        // - toast sukses tampil 4-5 detik (kita gunakan 4500ms)
+        // - toast error tampil 5-7 detik (kita gunakan 6000ms)
+        let duration = 4000; // default (termasuk info)
+        if (type === "success") {
+          duration = 4500;
+        } else if (type === "error") {
+          duration = 6000;
+        } else if (type === "warning") {
+          duration = 5000;
+        }
+        
         setTimeout(() => {
           toastEl.classList.add("toast-fade-out");
           setTimeout(() => {
             toastEl.remove();
           }, 300);
-        }, 3000);
+        }, duration);
+      }
+
+      function showToast(message, type = "info") {
+        const overlay = document.getElementById("loadingOverlay");
+        const isLoadingActive = loadingCount > 0 || (overlay && overlay.classList.contains("active"));
+        const timeSinceLoadingClose = Date.now() - lastLoadingClosedTime;
+
+        // If loading is active, or was closed very recently (less than 400ms ago), queue the toast
+        if (isLoadingActive || timeSinceLoadingClose < 400) {
+          // Prevent exact duplicate toasts inside the active queue to keep things clean
+          const isDuplicate = toastQueue.some(t => t.message === message && t.type === type);
+          if (!isDuplicate) {
+            toastQueue.push({ message, type });
+          }
+          
+          if (!isLoadingActive) {
+            if (toastFlushTimeout) clearTimeout(toastFlushTimeout);
+            toastFlushTimeout = setTimeout(() => {
+              toastFlushTimeout = null;
+              flushToastQueue();
+            }, Math.max(50, 400 - timeSinceLoadingClose));
+          }
+          return;
+        }
+
+        // Show immediately if loading wasn't active
+        triggerToastImmediately(message, type);
       }
 
       function toast(type, message) {

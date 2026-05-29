@@ -436,6 +436,8 @@
               <span class="font-bold text-sm">Cek Harga</span>
             </button>
 
+
+
             <!-- Group: Master Data -->
             <div class="space-y-1 sidebar-group-container">
               <button
@@ -839,6 +841,10 @@
                 </div>
               </div>
             </section>
+
+
+
+
 
             <!-- SECTION: CEK HARGA -->
             <section
@@ -3010,7 +3016,6 @@
       let pembelianBarangCurrentPage = 1;
       let pembelianBarangItemsPerPage = 10;
       let filteredSupplierData = []; // Track filtered data for pagination
-      let rawCekHargaData = [];
       let html5QrcodeScanner = null;
       let isScanning = false;
       let currentPriceCheckIdBarang = "";
@@ -3018,6 +3023,7 @@
       let currentActivePriceCheckSatuan = "";
       let currentPriceCheckMatchedRow = null;
       let isAdminPriceCheckMode = false;
+
       let referensiSearchTerm = "";
       let barangSearchTerm = "";
       let satuanBarangSearchTerm = "";
@@ -3200,7 +3206,6 @@
         rawHargaPromoData = [];
         rawReferensiData = DEMO_DATA_REFERENSI;
         rawPembelianBarangData = sanitizePembelianBarangData(DEMO_DATA_PEMBELIAN);
-        rawCekHargaData = [];
         
         populateSatuanDropdowns();
         renderDashboard();
@@ -3238,6 +3243,8 @@
             localStorage.setItem("LAST_CODE_URL", GAS_WEBAPP_URL);
           }
 
+          const hasCustomUrl = !!(localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL);
+
           // Extend timeout to 60 seconds (60000ms) to accommodate Google Apps Script cold-starts
           const fetchTimeout = 60000;
 
@@ -3246,7 +3253,6 @@
           }, fetchTimeout);
           
           if (res && res.sukses) {
-            rawCekHargaData = res.cekHarga || [];
             rawReferensiData = res.referensi || [];
             rawBarangData = res.barang || [];
             rawSatuanBarangData = res.satuanBarang || [];
@@ -3455,10 +3461,6 @@
         allMenus.forEach(m => m.classList.add('hidden'));
       });
 
-      function renderCekHargaData() {
-        console.log("Cek Harga page active");
-      }
-
       function switchPage(page) {
         // Reset all sections
         document.querySelectorAll(".page-section").forEach((s) => {
@@ -3484,7 +3486,7 @@
           if (page === "dashboard") {
             renderDashboard();
           } else if (page === "cek-harga") {
-            renderCekHargaData();
+            if (typeof tutupHasil === 'function') tutupHasil();
           } else if (page === "referensi") {
             switchReferensiTab('satuan');
           } else if (page === "barang") {
@@ -3591,7 +3593,7 @@
             if (item.idBarang) seenIds.add(item.idBarang);
           });
         }
-        const totalProduk = seenIds.size > 0 ? seenIds.size : (rawCekHargaData ? rawCekHargaData.length : 0);
+        const totalProduk = seenIds.size;
         const totalSupplier = rawDataSupplierData.length;
   
         document.getElementById("stat-total-produk").innerText = totalProduk;
@@ -3812,7 +3814,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = ""; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwWonwzaC-bEPqEszbgtQVf8E_HUlrGwIpaP5zlIQWiIcigyRsc5b9Xm9kh7OomaLgvow/exec"; 
 
       // Helper function to wait for Google Apps Script script object to load and initialize (in iframe)
       function waitForGoogleScriptRun(timeout = 3000) {
@@ -4943,7 +4945,6 @@
         try {
           await Promise.all([
             fetchDataSupplierData(), 
-            fetchCekHargaData(),
             fetchSatuanBarangData(),
             fetchReferensiData()
           ]);
@@ -4959,25 +4960,6 @@
         } finally {
           isRefreshing = false;
           applyRefreshSpin();
-        }
-      }
-
-      async function fetchCekHargaData() {
-        const res = await callGAS("ambilDataCekHarga");
-        if (res && res.sukses) {
-          rawCekHargaData = res.data || [];
-          // Re-render dashboard if active
-          if (document.getElementById("section-dashboard")?.classList.contains("active")) {
-            renderDashboard();
-          }
-        } else if (!res) {
-          rawCekHargaData = [
-            {
-              namaBarang: "CONTOH BARANG A",
-              barcode: "123456789",
-              hargaBarang: 5000,
-            },
-          ];
         }
       }
 
@@ -5454,7 +5436,7 @@
           toggleIcon.setAttribute("data-lucide", "eye");
           lucide.createIcons();
         }
-        
+         
         const modal = document.getElementById("pinAdminModal");
         if (modal) {
           modal.classList.replace("hidden", "flex");
@@ -5578,10 +5560,24 @@
 
         setTimeout(() => {
           resContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          document.getElementById("manualInput").focus({ preventScroll: true });
+          const mIn = document.getElementById("manualInput");
+          if (mIn) mIn.focus({ preventScroll: true });
           isSearchingBarang = false;
         }, 100);
       }
+
+      function tutupHasil() {
+        const resContainer = document.getElementById("searchResult");
+        if (resContainer) resContainer.classList.add("hidden");
+        const suggestions = document.getElementById("searchSuggestions");
+        if (suggestions) suggestions.classList.add("hidden");
+        const inputField = document.getElementById("manualInput");
+        if (inputField) {
+          inputField.value = ""; // Kosongkan input
+          inputField.focus(); // Kembalikan fokus untuk scan berikutnya
+        }
+      }
+
 
       // --- GLOBAL SCANNER LOGIC ---
       let globalScanner = null;
@@ -5642,13 +5638,7 @@
         }
       }
 
-      function tutupHasil() {
-        document.getElementById("searchResult").classList.add("hidden");
-        document.getElementById("searchSuggestions").classList.add("hidden");
-        const inputField = document.getElementById("manualInput");
-        inputField.value = ""; // Kosongkan input
-        inputField.focus(); // Kembalikan fokus untuk scan berikutnya
-      }
+
       function formatIDR(n) {
         return new Intl.NumberFormat("id-ID", {
           style: "currency",

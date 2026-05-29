@@ -5855,7 +5855,7 @@
         }
       }
 
-      async function fetchBarangData(resetFilters = false) {
+      async function fetchBarangData(resetFilters = false, silent = false) {
         if (isFetchingBarang) return;
         
         if (resetFilters) {
@@ -5871,11 +5871,11 @@
 
         isFetchingBarang = true;
         applyRefreshSpinBarang();
-        showLoading(true);
+        if (!silent) showLoading(true);
         try {
           const res = await callGAS("ambilBarang", { sheetName: "Data_Barang" });
           
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingBarang = false;
           applyRefreshSpinBarang();
 
@@ -5906,7 +5906,7 @@
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingBarang = false;
           applyRefreshSpinBarang();
           console.error("fetchBarangData Error:", err);
@@ -6357,7 +6357,7 @@
                   </td>
                   <td class="px-4 py-4">
                     <div class="flex items-center justify-center gap-2">
-                       <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-95" title="Edit">
+                       <button onclick="openBarangModal('${item.idBarang}')" class="p-2 bg-slate-100 text-slate-500 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-all active:scale-95" title="Edit">
                           <i data-lucide="edit-3" class="w-4 h-4"></i>
                        </button>
                         <!-- Toggle Status Switch -->
@@ -6404,7 +6404,7 @@
                     </div>
                   </div>
                   <div class="flex items-center gap-3 pt-2">
-                     <button onclick='openBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Data</button>
+                     <button onclick="openBarangModal('${item.idBarang}')" class="flex-[3] py-2.5 bg-slate-100 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Data</button>
                      
                      <div class="flex-1 flex justify-center">
                         <button onclick="handleToggleStatusBarang(${item.row}, '${item.status}')" 
@@ -6480,12 +6480,27 @@
         return html;
       }
 
-      function addBarangVariasiRow() {
+      function formatRupiahValue(val) {
+        if (val === undefined || val === null || val === "") return "";
+        let num = Number(String(val).replace(/\D/g, ""));
+        if (isNaN(num) || num === 0) return "";
+        return "Rp " + new Intl.NumberFormat("id-ID").format(num);
+      }
+
+      function addBarangVariasiRow(v = null) {
         const container = document.getElementById("barang-variasi-container");
         if (!container) return;
 
         const rowId = barangVariasiIndex++;
         const optionsHtml = getSatuanOptionsHtml();
+
+        const barcodeVal = v ? (v.barcode || "") : "";
+        const satuanVal = v ? (v.satuan || "") : "";
+        const tipeVal = v ? (v.tipeSatuan || "KEDUANYA") : "KEDUANYA";
+        const qtyKonvVal = v ? (v.qtyInputKonversi || 1) : 1;
+        const hargaModalVal = v ? (v.hargaModal || "") : "";
+        const hargaJualVal = v ? (v.hargaJual || "") : "";
+        const gambarVal = v ? (v.gambar || "") : "";
 
         const rowHtml = `
           <div class="variasi-row p-6 border border-slate-100 rounded-[2rem] bg-slate-50/30 space-y-6 relative transition-all duration-200 animate-in fade-in duration-300" id="variasi-row-${rowId}" data-id="${rowId}">
@@ -6510,7 +6525,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Barcode (Optional)</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" id="variasi-barcode-input-${rowId}" class="variasi-barcode w-full pl-5 pr-20 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." />
+                  <input type="text" id="variasi-barcode-input-${rowId}" class="variasi-barcode w-full pl-5 pr-20 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste / ketik barcode..." value="${barcodeVal}" />
                   <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <button type="button" onclick="clearInlineInput(this)" class="text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
@@ -6525,7 +6540,7 @@
               <!-- Satuan Dropdown -->
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Satuan</label>
-                <select class="variasi-satuan w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                <select id="variasi-satuan-select-${rowId}" class="variasi-satuan w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
                   ${optionsHtml}
                 </select>
               </div>
@@ -6533,8 +6548,8 @@
               <!-- Tipe Satuan -->
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tipe Satuan</label>
-                <select class="variasi-tipe w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
-                  ${getTipeSatuanSelectOptionsHtml("KEDUANYA")}
+                <select id="variasi-tipe-select-${rowId}" class="variasi-tipe w-full px-5 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner appearance-none transition-all" required>
+                  ${getTipeSatuanSelectOptionsHtml(tipeVal)}
                 </select>
               </div>
 
@@ -6542,7 +6557,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Input Konversi</label>
                 <div class="relative flex items-center w-full">
-                  <input type="number" class="variasi-qty-konv w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="1" required />
+                  <input type="number" class="variasi-qty-konv w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="1" min="1" value="${qtyKonvVal}" required />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -6553,7 +6568,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Modal</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-modal w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" />
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-modal w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner font-mono" placeholder="Rp 0" value="${formatRupiahValue(hargaModalVal)}" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -6564,7 +6579,7 @@
               <div class="space-y-2">
                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Harga Jual</label>
                 <div class="relative flex items-center w-full">
-                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-jual w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Rp 0" />
+                  <input type="text" oninput="formatInputToRupiah(this)" class="variasi-harga-jual w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner font-mono" placeholder="Rp 0" value="${formatRupiahValue(hargaJualVal)}" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
                   </button>
@@ -6579,7 +6594,7 @@
                 <!-- Input Link & Drag-and-Drop in a combined column -->
                 <div class="md:col-span-2 space-y-3">
                   <div class="relative flex items-center w-full">
-                    <input type="text" id="variasi-gambar-${rowId}" oninput="updateVariasiPreview(${rowId}, this.value)" class="variasi-gambar w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste link gambar Google Drive (manual)..." />
+                    <input type="text" id="variasi-gambar-${rowId}" oninput="updateVariasiPreview(${rowId}, this.value)" class="variasi-gambar w-full pl-5 pr-12 py-4 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-orange-100/40 text-xs shadow-inner" placeholder="Paste link gambar Google Drive (manual)..." value="${gambarVal}" />
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
@@ -6613,6 +6628,15 @@
         `;
 
         container.insertAdjacentHTML("beforeend", rowHtml);
+
+        if (satuanVal) {
+          setSelectValueCaseInsensitive(`variasi-satuan-select-${rowId}`, satuanVal);
+        }
+
+        if (gambarVal) {
+          updateVariasiPreview(rowId, gambarVal);
+        }
+
         lucide.createIcons();
         initVariasiUploadDragAndDrop(rowId);
         updateVariasiCardNumbers();
@@ -6777,7 +6801,7 @@
         }, false);
       }
 
-      function openBarangModal(data = null) {
+      function openBarangModal(rowOrData = null) {
         const modal = document.getElementById("barangModal");
         const title = document.getElementById("barangFormTitle");
         const form = document.getElementById("barangForm");
@@ -6785,6 +6809,15 @@
         form.reset();
         populateKategoriDropdown();
         populateSatuanDasarDropdown();
+
+        let data = null;
+        if (rowOrData !== null) {
+          if (typeof rowOrData === 'object' && rowOrData.idBarang) {
+            data = rowOrData;
+          } else {
+            data = rawBarangData.find(b => String(b.idBarang).trim().toLowerCase() === String(rowOrData).trim().toLowerCase() || Number(b.row) === Number(rowOrData));
+          }
+        }
 
         if (data) {
           title.innerText = "Edit Barang";
@@ -6799,7 +6832,29 @@
           setSelectValueCaseInsensitive("form-barangSatuanDasar", data.satuanDasar);
           setSelectValueCaseInsensitive("form-barangStatus", data.status);
 
-          document.getElementById("section-barang-variasi").classList.add("hidden");
+          // PENTING: Jangan hide section variasi barang, melainkan muat variasi yang ada!
+          document.getElementById("section-barang-variasi").classList.remove("hidden");
+          const container = document.getElementById("barang-variasi-container");
+          if (container) {
+            container.innerHTML = "";
+            barangVariasiIndex = 0;
+            
+            // Cari seluruh variasi milik barang ini
+            const itemVariations = rawSatuanBarangData.filter(s => 
+              String(s.idBarang).trim().toLowerCase() === String(data.idBarang).trim().toLowerCase()
+            );
+            
+            // Urutkan berdasarkan level_satuan agar berurutan Level 1, Level 2 dst.
+            itemVariations.sort((a, b) => Number(a.levelSatuan || a.level || 0) - Number(b.levelSatuan || b.level || 0));
+
+            if (itemVariations.length > 0) {
+              itemVariations.forEach(v => {
+                addBarangVariasiRow(v);
+              });
+            } else {
+              addBarangVariasiRow();
+            }
+          }
         } else {
           title.innerText = "Tambah Barang";
           document.getElementById("form-barangRow").value = "";
@@ -6839,48 +6894,45 @@
           status: document.getElementById("form-barangStatus").value
         };
 
-        // If in "Tambah Barang" (new item) mode, collect the variations
-        if (!rowVal) {
-          const variasiRows = document.querySelectorAll("#barang-variasi-container .variasi-row");
-          if (variasiRows.length === 0) {
-            showToast("Harap tambahkan setidaknya satu variasi satuan barang.", "warning");
-            return;
+        const variasiRows = document.querySelectorAll("#barang-variasi-container .variasi-row");
+        if (variasiRows.length === 0) {
+          showToast("Harap tambahkan setidaknya satu variasi satuan barang.", "warning");
+          return;
+        }
+
+        const variasiSatuan = [];
+        let accumulatedQty = 1;
+
+        variasiRows.forEach((row, index) => {
+          const barcode = (row.querySelector(".variasi-barcode")?.value || "").trim();
+          const satuan = row.querySelector(".variasi-satuan")?.value || "";
+          const tipeSatuan = row.querySelector(".variasi-tipe")?.value || "KEDUANYA";
+          const qtyInputKonversi = Number(row.querySelector(".variasi-qty-konv")?.value) || 1;
+          const hargaModal = (row.querySelector(".variasi-harga-modal")?.value || "").replace(/\D/g, "");
+          const hargaJual = (row.querySelector(".variasi-harga-jual")?.value || "").replace(/\D/g, "");
+          const gambar = (row.querySelector(".variasi-gambar")?.value || "").trim();
+
+          if (index === 0) {
+            accumulatedQty = 1;
+          } else {
+            accumulatedQty = qtyInputKonversi * accumulatedQty;
           }
 
-          const variasiSatuan = [];
-          let accumulatedQty = 1;
-
-          variasiRows.forEach((row, index) => {
-            const barcode = (row.querySelector(".variasi-barcode")?.value || "").trim();
-            const satuan = row.querySelector(".variasi-satuan")?.value || "";
-            const tipeSatuan = row.querySelector(".variasi-tipe")?.value || "KEDUANYA";
-            const qtyInputKonversi = Number(row.querySelector(".variasi-qty-konv")?.value) || 1;
-            const hargaModal = (row.querySelector(".variasi-harga-modal")?.value || "").replace(/\D/g, "");
-            const hargaJual = (row.querySelector(".variasi-harga-jual")?.value || "").replace(/\D/g, "");
-            const gambar = (row.querySelector(".variasi-gambar")?.value || "").trim();
-
-            if (index === 0) {
-              accumulatedQty = 1;
-            } else {
-              accumulatedQty = qtyInputKonversi * accumulatedQty;
-            }
-
-            variasiSatuan.push({
-              barcode: barcode,
-              satuan: satuan,
-              tipeSatuan: tipeSatuan,
-              qtyInputKonversi: index === 0 ? 1 : qtyInputKonversi,
-              qtySatuan: accumulatedQty,
-              hargaModal: hargaModal,
-              hargaJual: hargaJual,
-              gambar: gambar,
-              status: "Aktif",
-              levelSatuan: index + 1
-            });
+          variasiSatuan.push({
+            barcode: barcode,
+            satuan: satuan,
+            tipeSatuan: tipeSatuan,
+            qtyInputKonversi: index === 0 ? 1 : qtyInputKonversi,
+            qtySatuan: accumulatedQty,
+            hargaModal: hargaModal,
+            hargaJual: hargaJual,
+            gambar: gambar,
+            status: "Aktif",
+            levelSatuan: index + 1
           });
+        });
 
-          payload.variasiSatuan = variasiSatuan;
-        }
+        payload.variasiSatuan = variasiSatuan;
 
         const isInsert = !rowVal;
         let firstSatuan = "PCS"; 
@@ -6903,8 +6955,12 @@
         }
 
         showLoading(true);
+        const t0_backend = performance.now();
         try {
           const res = await callGAS("simpanBarang", { ...payload, sheetName: "Data_Barang" });
+          const t1_backend = performance.now();
+          const backendDuration = ((t1_backend - t0_backend) / 1000).toFixed(2);
+          console.log(`[PERFORMANCE] Backend Simpan Barang: ${backendDuration} detik`);
           showLoading(false);
           
           // Apply local synchronizations immediately for responsive interaction or fallback mode
@@ -6969,10 +7025,19 @@
           if (res && res.sukses) {
             showToast("Berhasil disimpan", "success");
             closeBarangModal();
-            showLoading(true);
-            await fetchBarangData();
-            await fetchSatuanBarangData();
-            showLoading(false);
+            
+            // Render locally updated data instantly
+            renderBarangData();
+            renderSatuanBarangData();
+            
+            // Silent background sync
+            Promise.all([
+              fetchBarangData(false, true),
+              fetchSatuanBarangData(false, true)
+            ]).then(() => {
+              console.log("[PERFORMANCE] Parallel Background Refresh Data (Barang + Satuan) Completed");
+            });
+            
             const targetId = res.idBarang || generatedIdForPromo;
             if (isInsert && targetId) {
               setTimeout(() => {
@@ -7243,8 +7308,15 @@
           
           if (res && res.sukses) {
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
-            fetchBarangData(); // Refresh UI
-            fetchSatuanBarangData(); // Refresh Satuan UI
+            renderBarangData();
+            renderSatuanBarangData();
+            
+            Promise.all([
+              fetchBarangData(false, true),
+              fetchSatuanBarangData(false, true)
+            ]).then(() => {
+              console.log("[PERFORMANCE] Toggle Status Background Refresh Completed");
+            });
           } else {
             renderBarangData();
             renderSatuanBarangData();
@@ -7285,7 +7357,7 @@
         }
       }
 
-      async function fetchSatuanBarangData(resetFilters = false) {
+      async function fetchSatuanBarangData(resetFilters = false, silent = false) {
         if (isFetchingSatuan) return;
 
         if (resetFilters) {
@@ -7300,11 +7372,11 @@
 
         isFetchingSatuan = true;
         applyRefreshSpinSatuanBarang();
-        showLoading(true);
+        if (!silent) showLoading(true);
         try {
           const res = await callGAS("ambilSatuanBarang", { sheetName: "Satuan_Barang" });
           
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingSatuan = false;
           applyRefreshSpinSatuanBarang();
 
@@ -7328,7 +7400,7 @@
              showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingSatuan = false;
           applyRefreshSpinSatuanBarang();
           console.error("fetchSatuanBarangData Error:", err);
@@ -9739,7 +9811,7 @@
             showLoading(false);
             showToast("Semua data satuan berhasil disimpan!", "success");
             closeSatuanBarangModal();
-            fetchSatuanBarangData();
+            fetchSatuanBarangData(false, true);
           } else if (!res) {
             // Local Demo Simulation for Satuan Barang
             satuanList.forEach(item => {
@@ -9820,7 +9892,7 @@
             if (failedCount === 0) {
               showToast("Grup satuan disimpan menggunakan Fallback Mode (Sukses)", "success");
               closeSatuanBarangModal();
-              fetchSatuanBarangData();
+              fetchSatuanBarangData(false, true);
             } else {
               showToast(`Gagal menyimpan ${failedCount} baris satuan: ${lastError}`, "error");
             }
@@ -10299,7 +10371,7 @@
           
           if (res && res.sukses) {
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
-            fetchSatuanBarangData(); // Refresh UI
+            fetchSatuanBarangData(false, true); // Refresh UI silently
           } else {
             renderSatuanBarangData();
             if (res) {
@@ -10390,7 +10462,7 @@
         }
       }
 
-      async function fetchPembelianBarangData(resetFilters = false) {
+      async function fetchPembelianBarangData(resetFilters = false, silent = false) {
         if (isFetchingPembelian) return;
         
         if (resetFilters) {
@@ -10429,11 +10501,11 @@
 
         isFetchingPembelian = true;
         applyRefreshSpinPembelianBarang();
-        showLoading(true);
+        if (!silent) showLoading(true);
         try {
           const res = await callGAS("ambilPembelianBarang", {});
           
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingPembelian = false;
           applyRefreshSpinPembelianBarang();
 
@@ -10452,7 +10524,7 @@
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingPembelian = false;
           applyRefreshSpinPembelianBarang();
           console.error("fetchPembelianBarangData Error:", err);
@@ -11677,7 +11749,7 @@
           if (res && res.sukses) {
             showToast(res.mode === 'create' ? "Transaksi berhasil ditambahkan!" : "Data transaksi berhasil diperbarui!", "success");
             closePembelianBarangModal();
-            fetchPembelianBarangData();
+            fetchPembelianBarangData(false, true);
           } else if (!res) {
             // Static offline demo simulation
             if (payload.row) {
@@ -11768,7 +11840,7 @@
           showLoading(false);
           if (res && res.sukses) {
             showToast(`Status berhasil diubah ke ${newStatus}`, "success");
-            fetchPembelianBarangData();
+            fetchPembelianBarangData(false, true);
           } else if (!res) {
             const idx = rawPembelianBarangData.findIndex(item => item.row == row);
             if (idx !== -1) {
@@ -11808,7 +11880,7 @@
         }
       }
 
-      async function fetchOrderBarangData(resetFilters = false) {
+      async function fetchOrderBarangData(resetFilters = false, silent = false) {
         if (isFetchingOrder) return;
 
         if (resetFilters) {
@@ -11830,7 +11902,7 @@
 
         isFetchingOrder = true;
         applyRefreshSpinOrderBarang();
-        showLoading(true);
+        if (!silent) showLoading(true);
 
         try {
           // If in Demo Mode manually, throw to direct fallback
@@ -11839,7 +11911,7 @@
           }
 
           const res = await callGAS("ambilOrderBarang", {});
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingOrder = false;
           applyRefreshSpinOrderBarang();
 
@@ -11858,7 +11930,7 @@
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
-          showLoading(false);
+          if (!silent) showLoading(false);
           isFetchingOrder = false;
           applyRefreshSpinOrderBarang();
           console.error("fetchOrderBarangData Error:", err);
@@ -12502,7 +12574,7 @@
           if (res && res.sukses) {
             showToast(`Data order ${res.idOrder} berhasil disimpan`, "success");
             closeOrderBarangModal();
-            fetchOrderBarangData();
+            fetchOrderBarangData(false, true);
           } else if (!res) {
             // Local Demo mode Simulation
             let finalId = row ? idOrder : ("ORD-" + String(rawOrderHeaders.length + 1).padStart(3, '0'));
@@ -13686,7 +13758,7 @@
 
               if (res && res.sukses) {
                 showToast(`Status order berhasil diubah ke ${newStatus}`, "success");
-                fetchOrderBarangData();
+                fetchOrderBarangData(false, true);
               } else if (!res) {
                 const idx = rawOrderHeaders.findIndex(h => h.row == row);
                 if (idx !== -1) {

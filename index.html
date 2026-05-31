@@ -2289,13 +2289,20 @@
                         </div>
                       </div>
 
-                      <div class="space-y-3">
+                      <div class="space-y-3 relative">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Barang</label>
                         <div class="relative flex items-center w-full">
-                          <input type="text" id="form-barangNama" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
-                          <button type="button" onclick="clearInlineInput(this)" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                          <input type="text" id="form-barangNama" oninput="autocompleteBarangNama(this.value)" onfocus="autocompleteBarangNama(this.value)" autocomplete="off" class="w-full pl-6 pr-12 py-5 rounded-2xl bg-slate-50 border-none font-bold outline-none focus:ring-4 focus:ring-orange-100 shadow-inner" placeholder="Pocky Cokelat 20gr" required />
+                          <button type="button" onclick="clearInlineInput(this); autocompleteBarangNama('');" class="absolute right-4 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                             <i data-lucide="x" class="w-4 h-4"></i>
                           </button>
+                        </div>
+                        <div id="form-barangNamaSuggestions" class="absolute left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl max-h-60 overflow-y-auto custom-scrollbar z-[7000] hidden">
+                          <!-- Suggestions -->
+                        </div>
+                        <div id="form-barangNamaError" class="text-xs text-rose-500 font-bold ml-1 hidden flex items-center gap-1.5 mt-2 animate-in fade-in duration-200">
+                          <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-rose-500 animate-pulse"></i>
+                          <span>Nama barang sudah terdaftar! Duplikasi nama barang tidak diperbolehkan.</span>
                         </div>
                       </div>
 
@@ -6109,6 +6116,71 @@
         }
       }
 
+      function autocompleteBarangNama(val) {
+        const container = document.getElementById("form-barangNamaSuggestions");
+        const errorEl = document.getElementById("form-barangNamaError");
+        if (!container) return;
+
+        const rowVal = document.getElementById("form-barangRow").value;
+        const currentId = document.getElementById("form-barangId").value;
+
+        const q = (val || "").toLowerCase().trim();
+
+        // Check if exact duplicate exists (excluding current item being edited)
+        let exactDuplicate = false;
+        if (q.length > 0) {
+          exactDuplicate = rawBarangData.some(b => {
+            if (rowVal && String(b.row) === String(rowVal)) return false;
+            if (currentId && String(b.idBarang) === String(currentId)) return false;
+            return String(b.namaBarang || "").trim().toLowerCase() === q;
+          });
+        }
+
+        if (exactDuplicate) {
+          if (errorEl) errorEl.classList.remove("hidden");
+        } else {
+          if (errorEl) errorEl.classList.add("hidden");
+        }
+
+        if (!val || val.trim().length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+
+        // Gather list of matching items for autocomplete suggestions
+        let list = rawBarangData.map(b => String(b.namaBarang || "").trim()).filter(Boolean);
+        list = [...new Set(list)].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
+        let matches = list.filter(item => item.toLowerCase().includes(q));
+
+        if (matches.length === 0) {
+          container.classList.add("hidden");
+          return;
+        }
+
+        let html = matches.map(item => `
+          <button type="button" onclick="pilihBarangNamaAutocomplete('${item.replace(/'/g, "\\'")}')" class="w-full text-left p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors flex flex-col gap-1 font-sans cursor-pointer">
+            <span class="font-black text-slate-800 text-xs">${item}</span>
+          </button>
+        `).join("");
+
+        container.innerHTML = html;
+        container.classList.remove("hidden");
+      }
+
+      function pilihBarangNamaAutocomplete(val) {
+        const input = document.getElementById("form-barangNama");
+        if (input) {
+          input.value = val;
+          // Re-trigger check to show duplicate error block immediately
+          autocompleteBarangNama(val);
+        }
+        const container = document.getElementById("form-barangNamaSuggestions");
+        if (container) {
+          container.classList.add("hidden");
+        }
+      }
+
       async function tambahMerkBaruKeReferensi(namaMerk) {
         if (!namaMerk || !namaMerk.trim()) return;
         const brandClean = namaMerk.trim();
@@ -6838,6 +6910,12 @@
         populateKategoriDropdown();
         populateSatuanDasarDropdown();
 
+        // Reset autocomplete & duplicate check states
+        const namaSuggestions = document.getElementById("form-barangNamaSuggestions");
+        if (namaSuggestions) namaSuggestions.classList.add("hidden");
+        const namaError = document.getElementById("form-barangNamaError");
+        if (namaError) namaError.classList.add("hidden");
+
         let data = null;
         if (rowOrData !== null) {
           if (typeof rowOrData === 'object' && rowOrData.idBarang) {
@@ -6921,6 +6999,20 @@
           satuanDasar: document.getElementById("form-barangSatuanDasar").value,
           status: document.getElementById("form-barangStatus").value
         };
+
+        const namaInputVal = (payload.namaBarang || "").trim();
+        const dupCheck = rawBarangData.some(b => {
+          if (rowVal && String(b.row) === String(rowVal)) return false;
+          if (payload.idBarang && String(b.idBarang) === String(payload.idBarang)) return false;
+          return String(b.namaBarang || "").trim().toLowerCase() === namaInputVal.toLowerCase();
+        });
+
+        if (dupCheck) {
+          showToast("Gagal menyimpan: Nama barang tersebut sudah terdaftar di database!", "error");
+          const errorEl = document.getElementById("form-barangNamaError");
+          if (errorEl) errorEl.classList.remove("hidden");
+          return;
+        }
 
         const variasiRows = document.querySelectorAll("#barang-variasi-container .variasi-row");
         if (variasiRows.length === 0) {
@@ -7505,14 +7597,41 @@
         if (val === undefined || val === null || String(val).trim() === "") {
           return "Belum ada";
         }
-        const strVal = String(val).trim();
-        const numVal = Number(strVal.replace(/[^-0-9]/g, ''));
-        if (isNaN(numVal) || strVal === "") return "Belum ada";
         
-        if (numVal < 0) {
-          return `-Rp ${Math.abs(numVal).toLocaleString('id-ID')}`;
+        let numVal;
+        if (typeof val === "number") {
+          numVal = val;
+        } else {
+          const strVal = String(val).trim();
+          if (!isNaN(Number(strVal))) {
+            numVal = Number(strVal);
+          } else {
+            let cleaned = strVal.replace(/Rp\.?\s*/gi, '').trim();
+            if (!isNaN(Number(cleaned))) {
+              numVal = Number(cleaned);
+            } else {
+              const dotCount = (cleaned.match(/\./g) || []).length;
+              if (dotCount > 1) {
+                cleaned = cleaned.replace(/\./g, '');
+              }
+              const testFloat = Number(cleaned.replace(/[^-0-9.]/g, ''));
+              if (!isNaN(testFloat)) {
+                numVal = testFloat;
+              } else {
+                numVal = Number(cleaned.replace(/[^-0-9]/g, ''));
+              }
+            }
+          }
         }
-        return `Rp ${numVal.toLocaleString('id-ID')}`;
+        
+        if (isNaN(numVal)) return "Belum ada";
+        
+        const roundedVal = Math.round(numVal);
+        
+        if (roundedVal < 0) {
+          return `-Rp ${Math.abs(roundedVal).toLocaleString('id-ID')}`;
+        }
+        return `Rp ${roundedVal.toLocaleString('id-ID')}`;
       }
 
       function getGroupImageUrl(group, activeUnit) {
@@ -7915,9 +8034,9 @@
                 </tr>
               `;
 
-              const hModalNum = Number(item.hargaModal) || 0;
-              const hJualNum = Number(item.hargaJual) || 0;
-              const hProfitNum = Number(item.profit) || (hJualNum - hModalNum);
+              const hModalNum = Math.round(Number(item.hargaModal) || 0);
+              const hJualNum = Math.round(Number(item.hargaJual) || 0);
+              const hProfitNum = Math.round(Number(item.profit) || (hJualNum - hModalNum));
 
               cardContainer.innerHTML += `
                <div class="w-full p-5 bg-white rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4 group transition-all">
@@ -9470,10 +9589,10 @@
           badgeJualIcon = "sparkles";
         }
         
-        const formatPrice = (val) => val === "" || val === null || val === undefined || val === 0 ? "Rp 0" : `Rp ${val.toLocaleString('id-ID')}`;
+        const formatPrice = (val) => val === "" || val === null || val === undefined || val === 0 ? "Rp 0" : `Rp ${Math.round(Number(val)).toLocaleString('id-ID')}`;
         const formatSelisih = (val, stat) => {
           if (val === 0 || stat === "TETAP" || stat === "BARU") return "Rp 0";
-          return `${stat === "NAIK" ? "+" : "-"} Rp ${val.toLocaleString('id-ID')}`;
+          return `${stat === "NAIK" ? "+" : "-"} Rp ${Math.round(Number(val)).toLocaleString('id-ID')}`;
         };
 
         const html = `
@@ -12089,6 +12208,7 @@
             showToast(res.mode === 'create' ? "Transaksi berhasil ditambahkan!" : "Data transaksi berhasil diperbarui!", "success");
             closePembelianBarangModal();
             fetchPembelianBarangData(false, true);
+            fetchSatuanBarangData(false, true);
           } else if (!res) {
             // Static offline demo simulation
             if (payload.row) {
@@ -14141,6 +14261,12 @@
         const brandInput = document.getElementById("form-barangMerk");
         if (brandSuggestions && !brandSuggestions.contains(e.target) && e.target !== brandInput) {
           brandSuggestions.classList.add("hidden");
+        }
+
+        const namaSuggestions = document.getElementById("form-barangNamaSuggestions");
+        const namaInput = document.getElementById("form-barangNama");
+        if (namaSuggestions && !namaSuggestions.contains(e.target) && e.target !== namaInput) {
+          namaSuggestions.classList.add("hidden");
         }
       });
     </script>

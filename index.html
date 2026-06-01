@@ -2106,6 +2106,32 @@
               </div>
             </div>
 
+            <!-- POPUP ANALISIS SUPPLIER MODAL -->
+            <div id="analisisSupplierModal" class="fixed inset-0 z-[7000] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeAnalisisSupplierModal()"></div>
+              <div class="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closeAnalisisSupplierModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-8 sm:p-10">
+                    <div class="mb-8 border-b border-slate-100 pb-6 text-left">
+                      <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-violet-50 border border-violet-100 mb-4">
+                        <i data-lucide="line-chart" class="w-4 h-4 text-violet-600"></i>
+                        <span class="text-[10px] font-black text-violet-600 uppercase tracking-widest font-mono">📊 Detail Analisis Supplier</span>
+                      </div>
+                      <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="analisis-supplier-barang-nama">-</h3>
+                      <p class="text-xs font-bold text-slate-400 mt-1" id="analisis-supplier-barang-id">BARANG ID: -</p>
+                    </div>
+
+                    <div id="analisis-supplier-content" class="space-y-6 text-left">
+                       <!-- Lazy loaded content -->
+                    </div>
+                </div>
+              </div>
+            </div>
+
             <!-- DETAIL DATA BARANG MODAL -->
             <div id="detailBarangModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeDetailBarangModal()"></div>
@@ -6681,6 +6707,13 @@
         return "Rp " + new Intl.NumberFormat("id-ID").format(num);
       }
 
+      function formatRupiah(val) {
+        if (val === undefined || val === null || val === "") return "Rp 0";
+        let num = Number(val);
+        if (isNaN(num)) return "Rp 0";
+        return "Rp " + new Intl.NumberFormat("id-ID").format(num);
+      }
+
       function addBarangVariasiRow(v = null) {
         const container = document.getElementById("barang-variasi-container");
         if (!container) return;
@@ -9937,35 +9970,65 @@
             supplierMap[key].push(pb);
           });
 
+          // Helper for Base Unit and Price
+          function getBaseUnitConversionAndPrice(idBarang, buySatuan, hargaModal) {
+            const hVal = Number(hargaModal) || 0;
+            const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
+            if (units.length === 0) {
+              return { hargaDasar: hVal, satuanDasar: buySatuan };
+            }
+            const sortedUnits = [...units].sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
+            const baseUnitRecord = sortedUnits[sortedUnits.length - 1];
+            const buyUnitRecord = sortedUnits.find(u => String(u.satuan).toUpperCase() === String(buySatuan).toUpperCase());
+            
+            if (!baseUnitRecord || !buyUnitRecord) {
+              return { hargaDasar: hVal, satuanDasar: baseUnitRecord ? baseUnitRecord.satuan : buySatuan };
+            }
+            
+            const qtyBase = Number(baseUnitRecord.qtySatuan) || 1;
+            const qtyBuy = Number(buyUnitRecord.qtySatuan) || 1;
+            
+            const factor = qtyBase / qtyBuy;
+            const hargaDasar = factor > 0 ? (hVal / factor) : hVal;
+            
+            return {
+              hargaDasar: hargaDasar,
+              satuanDasar: baseUnitRecord.satuan
+            };
+          }
+
           const supplierListData = [];
           for (const key in supplierMap) {
             const records = supplierMap[key];
-            // Sort records descending by date of purchase 
             records.sort((a, b) => {
               const dA = parseDetailDate(a.tanggalPembelian) || new Date(0);
               const dB = parseDetailDate(b.tanggalPembelian) || new Date(0);
               return dB - dA;
             });
             const latestRecord = records[0];
+            const conv = getBaseUnitConversionAndPrice(idBrg, latestRecord.satuan, latestRecord.hargaModal);
             supplierListData.push({
               key: key,
               idSupplier: latestRecord.idSupplier || '',
               namaSupplier: latestRecord.namaSupplier || 'Supplier Tanpa Nama',
               hargaModal: Number(latestRecord.hargaModal) || 0,
               tanggalPembelian: latestRecord.tanggalPembelian || '',
-              parsedDate: parseDetailDate(latestRecord.tanggalPembelian) || new Date(0)
+              parsedDate: parseDetailDate(latestRecord.tanggalPembelian) || new Date(0),
+              hargaDasar: conv.hargaDasar,
+              satuanDasar: conv.satuanDasar,
+              buySatuan: latestRecord.satuan
             });
           }
 
-          // Sort final supplier list by Harga Modal Termurah to Termahal (prices low to high)
-          supplierListData.sort((a, b) => a.hargaModal - b.hargaModal);
+          // Sort final supplier list by Harga Dasar Termurah to Termahal (prices low to high)
+          supplierListData.sort((a, b) => a.hargaDasar - b.hargaDasar);
 
           let supplierTermurahText = "-";
           let supplierTermurahHarga = "-";
+          let supplierTermurahSatuan = "";
           let pembelianTerakhirText = "-";
           let pembelianTerakhirDate = "-";
           const jumlahSupplierVal = supplierListData.length;
-          const minPrice = supplierListData.length > 0 ? supplierListData[0].hargaModal : Infinity;
 
           function formatJSDateToDDMMYYYY(d) {
             if (!d || isNaN(d.getTime())) return "-";
@@ -9978,7 +10041,8 @@
           if (supplierListData.length > 0) {
             const cheapest = supplierListData[0];
             supplierTermurahText = cheapest.namaSupplier;
-            supplierTermurahHarga = "Rp " + formatIDRVal(cheapest.hargaModal);
+            supplierTermurahHarga = "Rp " + formatIDRVal(Math.round(cheapest.hargaDasar));
+            supplierTermurahSatuan = cheapest.satuanDasar;
 
             const sortedByDate = [...supplierListData].sort((a, b) => b.parsedDate - a.parsedDate);
             const absoluteLatest = sortedByDate[0];
@@ -10135,75 +10199,55 @@
               </div>
             </div>
 
-            <!-- SECTION 2.5: HISTORI SUPPLIER -->
+            <!-- SECTION 2.5: ANALISIS SUPPLIER -->
             <div class="bg-white border border-slate-100 shadow-[0_4px_20px_rgba(15,23,42,0.02)] rounded-[2rem] p-6 space-y-4">
               <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
-                <i data-lucide="truck" class="w-5 h-5 text-indigo-600"></i>
-                <h4 class="font-black text-slate-800 text-xs sm:text-sm uppercase tracking-wider font-mono">📦 Histori Supplier</h4>
+                <i data-lucide="trending-up" class="w-5 h-5 text-indigo-600"></i>
+                <h4 class="font-black text-slate-800 text-xs sm:text-sm uppercase tracking-wider font-mono">📦 Analisis Supplier</h4>
               </div>
 
               <!-- Summary Cards/Metrics Grid -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-sans">
+                <!-- Count box -->
+                <div class="p-4 bg-indigo-505/5 border border-indigo-100/50 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <span class="block text-[8px] uppercase font-black text-indigo-500 tracking-wider">📈 Jumlah Supplier</span>
+                    <span class="block text-slate-500 font-bold text-[9px] mt-0.5">Total Pemasok Aktif</span>
+                  </div>
+                  <span class="text-xs sm:text-sm font-black text-indigo-600 font-mono mt-1">${jumlahSupplierVal} Supplier</span>
+                </div>
+                <!-- Cheapest Supplier box -->
                 <div class="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex flex-col justify-between">
                   <div>
                     <span class="block text-[8px] uppercase font-black text-emerald-600 tracking-wider">🏆 Supplier Termurah</span>
-                    <span class="block text-slate-800 font-extrabold text-xs mt-1 truncate" title="${supplierTermurahText}">${supplierTermurahText}</span>
+                    <span class="block text-slate-1000/90 font-extrabold text-[11px] mt-0.5 truncate" title="${supplierTermurahText}">${supplierTermurahText}</span>
                   </div>
-                  <span class="text-sm font-black text-emerald-600 font-mono mt-1">${supplierTermurahHarga}</span>
+                  <span class="text-[9px] font-bold text-slate-400">Analisis Termurah</span>
                 </div>
-                <div class="p-4 bg-sky-500/5 border border-sky-500/10 rounded-2xl flex flex-col justify-between">
+                <!-- Base unit price box -->
+                <div class="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <span class="block text-[8px] uppercase font-black text-amber-600 tracking-wider">💰 Harga Dasar Termurah</span>
+                    <span class="block text-slate-800 font-extrabold text-xs mt-0.5 truncate">${supplierTermurahHarga} <span class="text-[9px] font-medium text-slate-400">/ ${supplierTermurahSatuan || '-'}</span></span>
+                  </div>
+                  <span class="text-[9px] font-bold text-amber-600">Analisis Terendah</span>
+                </div>
+                <!-- Last purchased date box -->
+                <div class="p-4 bg-sky-505/5 border border-sky-100 rounded-2xl flex flex-col justify-between">
                   <div>
                     <span class="block text-[8px] uppercase font-black text-sky-600 tracking-wider">📅 Pembelian Terakhir</span>
-                    <span class="block text-slate-800 font-extrabold text-xs mt-1 truncate" title="${pembelianTerakhirText}">${pembelianTerakhirText}</span>
+                    <span class="block text-slate-800 font-extrabold text-[11px] mt-0.5 truncate" title="${pembelianTerakhirText}">${pembelianTerakhirText}</span>
                   </div>
                   <span class="text-sm font-black text-sky-600 font-mono mt-1">${pembelianTerakhirDate}</span>
                 </div>
-                <div class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex flex-col justify-between">
-                  <div>
-                    <span class="block text-[8px] uppercase font-black text-indigo-600 tracking-wider">📈 Jumlah Supplier</span>
-                    <span class="block text-slate-800 font-extrabold text-xs mt-1">Total Pemasok</span>
-                  </div>
-                  <span class="text-sm font-black text-indigo-600 font-mono mt-1">${jumlahSupplierVal} Supplier</span>
-                </div>
               </div>
 
-              <!-- List of Suppliers History -->
-              <div>
-                <span class="block text-[9px] uppercase font-black text-slate-400 tracking-wider mb-2.5">Daftar Riwayat Harga (Termurah ke Termahal)</span>
-                ${supplierListData.length === 0 ? `
-                  <div class="text-slate-400 italic text-xs py-4 text-center bg-slate-50 border border-slate-100 rounded-2xl font-sans">
-                    Belum ada riwayat supplier untuk barang ini.
-                  </div>
-                ` : `
-                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    ${supplierListData.map(sp => {
-                      const priceFormatted = "Rp " + formatIDRVal(sp.hargaModal);
-                      const isCheapest = sp.hargaModal === minPrice && minPrice < Infinity;
-                      const dateFormatted = formatJSDateToDDMMYYYY(sp.parsedDate);
-                      return `
-                        <div class="bg-white p-4 rounded-2xl border ${isCheapest ? 'border-amber-300 shadow-md ring-2 ring-amber-100/35 bg-gradient-to-br from-white to-amber-50/20' : 'border-slate-200/80 shadow-xs'} hover:border-emerald-250 hover:shadow-md transition-all duration-350 flex flex-col justify-between font-sans">
-                          <div class="space-y-1">
-                            ${isCheapest ? `
-                              <div class="mb-1">
-                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[8px] font-black uppercase tracking-widest border border-amber-200/50 shadow-inner">
-                                  🏆 Termurah
-                                </span>
-                              </div>
-                            ` : ''}
-                            <h5 class="font-black text-slate-800 text-[11px] leading-snug break-words" title="${sp.namaSupplier}">
-                              ${sp.namaSupplier}
-                            </h5>
-                            <p class="font-black text-rose-500 text-xs font-mono">${priceFormatted}</p>
-                            <div class="pt-1.5 text-[9px] text-slate-500 font-sans flex items-center justify-between border-t border-dashed border-slate-100 mt-2">
-                              <span class="font-black uppercase tracking-wider text-[8px] text-slate-400">Terakhir:</span>
-                              <span class="font-bold font-mono text-slate-600">${dateFormatted}</span>
-                            </div>
-                          </div>
-                        </div>
-                      `;
-                    }).join("")}
-                  </div>
-                `}
+              <!-- Button area to open Popup with Lazy Loading -->
+              <div class="pt-2 flex justify-center">
+                <button type="button" onclick="bukaAnalisisSupplierModal('${idBrg}', '${namaBarang.replace(/'/g, "\\'")}')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-violet-600 hover:bg-violet-750 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-102 hover:shadow-lg transition-all active:scale-95 cursor-pointer">
+                  <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                  <span>📊 Lihat Analisis Supplier</span>
+                </button>
               </div>
             </div>
 
@@ -12727,6 +12771,213 @@
         startSupplierScan(`cart-item-search-${itemId}`);
       }
 
+      function formatJSDateToDDMMYYYY_Local(d) {
+        if (!d || isNaN(d.getTime())) return "-";
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+
+      function parseDetailDate_Local(d) {
+        if (!d) return null;
+        let str = String(d).trim();
+        let parts = str.split('/');
+        if (parts.length === 3) {
+          return new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        }
+        let parts2 = str.split('-');
+        if (parts2.length === 3) {
+          if (parts2[0].length === 4) {
+            return new Date(parseInt(parts2[0], 10), parseInt(parts2[1], 10) - 1, parseInt(parts2[2], 10));
+          } else if (parts2[2].length === 4) {
+            return new Date(parseInt(parts2[2], 10), parseInt(parts2[1], 10) - 1, parseInt(parts2[0], 10));
+          }
+        }
+        let parsed = new Date(str);
+        return isNaN(parsed.getTime()) ? null : parsed;
+      }
+
+      async function bukaAnalisisSupplierModal(idBarang, namaBarang) {
+        const modal = document.getElementById("analisisSupplierModal");
+        if (!modal) return;
+
+        document.getElementById("analisis-supplier-barang-nama").innerText = namaBarang || "-";
+        document.getElementById("analisis-supplier-barang-id").innerText = `BARANG ID: ${idBarang || "-"}`;
+
+        const contentEl = document.getElementById("analisis-supplier-content");
+        contentEl.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-16 gap-3">
+            <div class="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono animate-pulse">Memproses Riwayat & Analisis Supplier...</span>
+          </div>
+        `;
+
+        modal.classList.replace("hidden", "flex");
+        lucide.createIcons();
+
+        setTimeout(() => {
+          const pbHistory = (rawPembelianBarangData || []).filter(x => String(x.idBarang) === String(idBarang));
+
+          if (pbHistory.length === 0) {
+            contentEl.innerHTML = `
+              <div class="flex flex-col items-center justify-center p-8 bg-slate-50 border border-slate-100 rounded-2xl text-center">
+                <i data-lucide="info" class="w-8 h-8 text-slate-300 mb-2 font-black"></i>
+                <p class="text-xs font-bold text-slate-500">Belum ada histori pembelian untuk barang ini.</p>
+                <p class="text-[10px] text-slate-400 mt-1">Gunakan modul Pembelian Barang untuk mencatat pasokan dari supplier.</p>
+              </div>
+            `;
+            lucide.createIcons();
+            return;
+          }
+
+          // Group by supplier
+          const supplierMap = {};
+          pbHistory.forEach(pb => {
+            const key = pb.idSupplier ? String(pb.idSupplier) : String(pb.namaSupplier || '').trim();
+            if (!supplierMap[key]) {
+              supplierMap[key] = [];
+            }
+            supplierMap[key].push(pb);
+          });
+
+          // Helper for Base Unit and Price
+          function getBaseUnitConversionAndPrice_Local(idBarang, buySatuan, hargaModal) {
+            const hVal = Number(hargaModal) || 0;
+            const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
+            if (units.length === 0) {
+              return { hargaDasar: hVal, satuanDasar: buySatuan };
+            }
+            const sortedUnits = [...units].sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
+            const baseUnitRecord = sortedUnits[sortedUnits.length - 1];
+            const buyUnitRecord = sortedUnits.find(u => String(u.satuan).toUpperCase() === String(buySatuan).toUpperCase());
+            
+            if (!baseUnitRecord || !buyUnitRecord) {
+              return { hargaDasar: hVal, satuanDasar: baseUnitRecord ? baseUnitRecord.satuan : buySatuan };
+            }
+            
+            const qtyBase = Number(baseUnitRecord.qtySatuan) || 1;
+            const qtyBuy = Number(buyUnitRecord.qtySatuan) || 1;
+            
+            const factor = qtyBase / qtyBuy;
+            const hargaDasar = factor > 0 ? (hVal / factor) : hVal;
+            
+            return {
+              hargaDasar: hargaDasar,
+              satuanDasar: baseUnitRecord.satuan
+            };
+          }
+
+          const recordsList = [];
+          for (const key in supplierMap) {
+            const records = supplierMap[key];
+            records.sort((a, b) => {
+              const dA = parseDetailDate_Local(a.tanggalPembelian) || new Date(0);
+              const dB = parseDetailDate_Local(b.tanggalPembelian) || new Date(0);
+              return dB - dA;
+            });
+            const latestRecord = records[0];
+            const conv = getBaseUnitConversionAndPrice_Local(idBarang, latestRecord.satuan, latestRecord.hargaModal);
+            
+            recordsList.push({
+              namaSupplier: latestRecord.namaSupplier || 'Supplier Tanpa Nama',
+              hargaDasar: conv.hargaDasar,
+              satuanDasar: conv.satuanDasar,
+              tanggalPembelian: latestRecord.tanggalPembelian || '',
+              parsedDate: parseDetailDate_Local(latestRecord.tanggalPembelian) || new Date(0),
+              originalHargaModal: Number(latestRecord.hargaModal) || 0,
+              originalSatuan: latestRecord.satuan
+            });
+          }
+
+          // Sort final list by Harga Dasar Termurah to Termahal
+          recordsList.sort((a, b) => a.hargaDasar - b.hargaDasar);
+
+          // Find lowest price
+          const minHargaDasar = recordsList.length > 0 ? recordsList[0].hargaDasar : Infinity;
+
+          // Build a beautiful table of results with visual details
+          let rowsHtml = recordsList.map(r => {
+            const isCheapest = r.hargaDasar === minHargaDasar && minHargaDasar < Infinity;
+            const priceFormatted = "Rp " + formatIDRVal(Math.round(r.hargaDasar));
+            const dateFormatted = formatJSDateToDDMMYYYY_Local(r.parsedDate);
+            
+            // Build explanatory note of original purchase context if units are different
+            const showFormulaNote = String(r.originalSatuan).toUpperCase() !== String(r.satuanDasar).toUpperCase();
+            const formulaNoteHtml = showFormulaNote ? `
+              <div class="text-[9px] text-slate-400 font-medium font-sans mt-0.5">
+                Konversi dari: <span class="font-bold text-slate-600">Rp ${formatIDRVal(r.originalHargaModal)} / ${r.originalSatuan}</span>
+              </div>
+            ` : '';
+
+            return `
+              <tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                <!-- Supplier Info -->
+                <td class="px-5 py-4 text-left font-sans">
+                  <div class="flex flex-col gap-1">
+                    <span class="font-extrabold text-slate-800 text-xs">${r.namaSupplier}</span>
+                    ${isCheapest ? `
+                      <span class="inline-flex self-start items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[8.5px] font-black uppercase tracking-widest shadow-inner mt-0.5">
+                        🏆 Termurah
+                      </span>
+                    ` : ''}
+                  </div>
+                </td>
+                <!-- Detail Harga Dasar -->
+                <td class="px-5 py-4 text-left">
+                  <div class="flex flex-col">
+                    <span class="font-black text-rose-500 text-xs font-mono">${priceFormatted}</span>
+                    ${formulaNoteHtml}
+                  </div>
+                </td>
+                <!-- Satuan Dasar -->
+                <td class="px-5 py-4 text-center font-bold text-slate-600 text-[11px] font-mono whitespace-nowrap">
+                  ${r.satuanDasar}
+                </td>
+                <!-- Tanggal Terakhir -->
+                <td class="px-5 py-4 text-right font-mono text-xs text-slate-600 whitespace-nowrap">
+                  ${dateFormatted}
+                </td>
+              </tr>
+            `;
+          }).join("");
+
+          contentEl.innerHTML = `
+            <div class="overflow-x-auto rounded-[1.5rem] border border-slate-100 shadow-sm bg-white">
+              <table class="w-full border-collapse">
+                <thead>
+                  <tr class="bg-slate-50/75 border-b border-slate-100">
+                    <th class="px-5 py-3.5 text-left text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Supplier</th>
+                    <th class="px-5 py-3.5 text-left text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Harga Dasar</th>
+                    <th class="px-5 py-3.5 text-center text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Satuan Dasar</th>
+                    <th class="px-5 py-3.5 text-right text-[9px] font-black text-slate-400 uppercase tracking-widest font-mono">Tanggal Terakhir</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  ${rowsHtml}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mathematical Footnote block -->
+            <div class="bg-violet-50/30 p-4 rounded-2xl border border-violet-100/30 flex gap-2 text-[10px] text-slate-500 leading-relaxed font-sans">
+              <i data-lucide="info" class="w-4 h-4 text-violet-600 shrink-0 mt-0.5"></i>
+              <p>
+                <strong>Catatan Analisis:</strong> Seluruh harga modal telah dikonversi secara presisi menjadi <strong>Harga Dasar per Satuan Dasar</strong> menggunakan konfigurasi satuan barang yang terdaftar di sistem. Hal ini menjamin perbandingan harga antar supplier tetap akurat meskipun satuan pembelian yang digunakan berbeda.
+              </p>
+            </div>
+          `;
+          lucide.createIcons();
+        }, 400);
+      }
+
+      function closeAnalisisSupplierModal() {
+        const modal = document.getElementById("analisisSupplierModal");
+        if (modal) {
+          modal.classList.replace("flex", "hidden");
+        }
+      }
+
       function formatDateDDMMYYYY(dateStr) {
         if (!dateStr) return "-";
         try {
@@ -13272,7 +13523,7 @@
 
             const isCompleted = isOrderStatusKategoriSelesai(normStatus);
             const editBtnHtml = isCompleted ? '' : `
-              <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100/85 rounded-xl transition-all border border-emerald-50 cursor-pointer" title="Edit Order">
+              <button onclick="openOrderBarangModal(${o.row})" class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100/85 rounded-xl transition-all border border-emerald-50 cursor-pointer" title="Edit Order">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
               </button>
             `;
@@ -13286,7 +13537,7 @@
               <tr class="hover:bg-slate-50/50 transition-colors group">
                 <td class="px-6 py-5 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
                 <td class="px-8 py-5">
-                  <div class="font-black text-slate-800 text-sm cursor-pointer" onclick="openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})">${o.idOrder}</div>
+                  <div class="font-black text-slate-800 text-sm cursor-pointer" onclick="openOrderBarangDetailModal(${o.row})">${o.idOrder}</div>
                 </td>
                 <td class="px-8 py-5 text-xs font-bold text-slate-500">${formatDateHyphen(o.tanggalOrder)}</td>
                 <td class="px-8 py-5">
@@ -13300,7 +13551,7 @@
                 </td>
                 <td class="px-8 py-5 text-center">
                   <div class="flex items-center justify-center gap-2">
-                    <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-slate-50 text-slate-600 hover:bg-slate-100/80 rounded-xl transition-all border border-slate-100 cursor-pointer" title="Detail Order">
+                    <button onclick="openOrderBarangDetailModal(${o.row})" class="p-2 bg-slate-50 text-slate-600 hover:bg-slate-100/80 rounded-xl transition-all border border-slate-100 cursor-pointer" title="Detail Order">
                       <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     </button>
                     ${editBtnHtml}
@@ -13333,7 +13584,7 @@
             const isCompleted = isOrderStatusKategoriSelesai(normStatus);
             const gridColsClass = isCompleted ? "grid-cols-1" : "grid-cols-3";
             const mobileEditBtnHtml = isCompleted ? "" : `
-              <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-emerald-50 border border-emerald-55 flex items-center justify-center gap-1 text-[10px] text-emerald-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+              <button onclick="openOrderBarangModal(${o.row})" class="py-2.5 rounded-xl bg-emerald-50 border border-emerald-55 flex items-center justify-center gap-1 text-[10px] text-emerald-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
                 <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> EDIT
               </button>
             `;
@@ -13348,7 +13599,7 @@
                 <div class="flex justify-between items-start">
                   <div>
                     <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
-                    <span class="font-black text-slate-800 text-sm font-mono bg-slate-100 px-2.5 py-1 rounded-lg cursor-pointer" onclick="openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})">${o.idOrder}</span>
+                    <span class="font-black text-slate-800 text-sm font-mono bg-slate-100 px-2.5 py-1 rounded-lg cursor-pointer" onclick="openOrderBarangDetailModal(${o.row})">${o.idOrder}</span>
                   </div>
                   <div class="flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full ${statusColor}"></span>
@@ -13377,7 +13628,7 @@
                 </div>
 
                 <div class="grid ${gridColsClass} gap-2 pt-2 border-t border-slate-50">
-                  <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                  <button onclick="openOrderBarangDetailModal(${o.row})" class="py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> DETAIL
                   </button>
                   ${mobileEditBtnHtml}
@@ -13545,6 +13796,12 @@
 
         const container = document.getElementById("form-orderSupplierSuggestions");
         if (container) container.classList.add("hidden");
+
+        try {
+          updateHistoryPanelsForOrderItems();
+        } catch (e) {
+          console.warn("Could not auto-update history panels:", e);
+        }
       }
 
       // Multi-Line Items Engine for Goods Order
@@ -13800,9 +14057,21 @@
       }
 
       // Open Forms
-      function openOrderBarangModal(orderData = null) {
+      function openOrderBarangModal(rowOrDataOrId = null) {
         const modal = document.getElementById("orderBarangModal");
         if (!modal) return;
+
+        let orderData = null;
+        if (rowOrDataOrId) {
+          if (typeof rowOrDataOrId === 'object') {
+            orderData = rowOrDataOrId;
+          } else {
+            orderData = rawOrderHeaders.find(h => 
+              (h.row && String(h.row) === String(rowOrDataOrId)) || 
+              (h.idOrder && String(h.idOrder).toUpperCase() === String(rowOrDataOrId).toUpperCase())
+            );
+          }
+        }
 
         // Reset the whole Form
         document.getElementById("orderBarangForm").reset();
@@ -13856,22 +14125,28 @@
           addOrderItemRow();
         }
 
-        // Reset the dynamic "Informasi Pembelian Terakhir" checkbox state
-        window.showHargaTerakhirOrderBarang = false;
+        // Handle last purchase toggle state preservation
         const chkToggle = document.getElementById("chk-toggle-harga-terakhir");
         if (chkToggle) {
-          chkToggle.checked = false;
+          chkToggle.checked = !!window.showHargaTerakhirOrderBarang;
         }
-        hideAllOrderHistoryPanels();
+        
+        if (window.showHargaTerakhirOrderBarang) {
+          if (rawPembelianBarangData.length === 0) {
+            fetchPembelianBarangData(false, true).then(() => {
+              updateHistoryPanelsForOrderItems();
+            });
+          } else {
+            updateHistoryPanelsForOrderItems();
+          }
+        } else {
+          hideAllOrderHistoryPanels();
+        }
 
         modal.classList.remove("hidden");
         modal.classList.add("flex");
         document.body.classList.add("overflow-hidden");
 
-        // Dynamically match history entries if toggle is active
-        if (window.showHargaTerakhirOrderBarang) {
-          updateHistoryPanelsForOrderItems();
-        }
         lucide.createIcons();
       }
 
@@ -13961,15 +14236,15 @@
         const selectedSupplierId = document.getElementById("form-orderIdSupplier").value || "";
         
         const allMatches = rawPembelianBarangData.filter(p => 
-          String(p.idBarang) === String(idBarang) && 
-          String(p.satuan).toUpperCase() === String(satuan).toUpperCase()
+          p.idBarang && String(p.idBarang).trim() === String(idBarang).trim() && 
+          p.satuan && String(p.satuan).trim().toUpperCase() === String(satuan).trim().toUpperCase()
         );
         
         let chosen = null;
         if (allMatches.length > 0) {
           // 1. Try to find matched supplier
           const supplierMatches = allMatches.filter(p => 
-            selectedSupplierId && String(p.idSupplier) === String(selectedSupplierId)
+            selectedSupplierId && String(p.idSupplier).trim() === String(selectedSupplierId).trim()
           );
           
           if (supplierMatches.length > 0) {
@@ -13992,7 +14267,7 @@
         
         if (chosen) {
           const formattedHarga = formatRupiah(chosen.hargaModal || 0);
-          const formattedDate = chosen.tanggalPembelian ? formatDateIndo(chosen.tanggalPembelian) : "-";
+          const formattedDate = chosen.tanggalPembelian ? formatDateHyphen(chosen.tanggalPembelian) : "-";
           historyInfoSpan.innerText = `${formattedHarga} (${formattedDate})`;
         } else {
           historyInfoSpan.innerText = `- (-)`;
@@ -14266,7 +14541,17 @@
       // Detailed Popup Section
       let currentActiveDetailOrder = null;
 
-      function openOrderBarangDetailModal(orderHeader) {
+      function openOrderBarangDetailModal(rowOrHeader) {
+        let orderHeader = null;
+        if (rowOrHeader && typeof rowOrHeader === 'object') {
+          orderHeader = rowOrHeader;
+        } else if (rowOrHeader) {
+          orderHeader = rawOrderHeaders.find(h => 
+            (h.row && String(h.row) === String(rowOrHeader)) || 
+            (h.idOrder && String(h.idOrder).toUpperCase() === String(rowOrHeader).toUpperCase())
+          );
+        }
+        if (!orderHeader) return;
         currentActiveDetailOrder = orderHeader;
 
         // Reset the dynamic "Sertakan Informasi Pembelian Terakhir" checkbox state
@@ -15059,22 +15344,20 @@
         let totalHargaTerakhir = 0;
 
         details.forEach((d, i) => {
-          lines.push(`${i + 1}. ${d.namaBarang} - ${d.qtyOrder} ${d.satuan}`);
-          
           if (includeLastPurchase) {
             const idBarang = d.idBarang;
             const satuan = d.satuan;
             const selectedSupplierId = orderHeader.idSupplier || "";
             
             const allMatches = rawPembelianBarangData.filter(p => 
-              String(p.idBarang) === String(idBarang) && 
-              String(p.satuan).toUpperCase() === String(satuan).toUpperCase()
+              p.idBarang && String(p.idBarang).trim() === String(idBarang).trim() && 
+              p.satuan && String(p.satuan).trim().toUpperCase() === String(satuan).trim().toUpperCase()
             );
             
             let chosen = null;
             if (allMatches.length > 0) {
               const supplierMatches = allMatches.filter(p => 
-                selectedSupplierId && String(p.idSupplier) === String(selectedSupplierId)
+                selectedSupplierId && String(p.idSupplier).trim() === String(selectedSupplierId).trim()
               );
               
               if (supplierMatches.length > 0) {
@@ -15098,22 +15381,21 @@
               const priceVal = Number(chosen.hargaModal) || 0;
               const formattedHarga = formatRupiah(priceVal);
               const formattedDate = chosen.tanggalPembelian ? formatDateHyphen(chosen.tanggalPembelian) : "-";
-              lines.push(`   ${formattedHarga} | ${formattedDate}`);
+              lines.push(`* ${d.qtyOrder} ${String(d.satuan).toUpperCase()} ${d.namaBarang} (Harga Terakhir: ${formattedHarga} tanggal ${formattedDate})`);
               
               const qty = Number(d.qtyOrder) || 0;
               totalHargaTerakhir += (qty * priceVal);
             } else {
-              lines.push(`   Harga Terakhir: - (-)`);
+              lines.push(`* ${d.qtyOrder} ${String(d.satuan).toUpperCase()} ${d.namaBarang} (Harga Terakhir: - tanggal -)`);
             }
+          } else {
+            lines.push(`${i + 1}. ${d.namaBarang} - ${d.qtyOrder} ${d.satuan}`);
           }
         });
 
         if (includeLastPurchase) {
           lines.push(``);
-          lines.push(`---`);
-          lines.push(``);
-          lines.push(`Total Harga Terakhir:`);
-          lines.push(`${formatRupiah(totalHargaTerakhir)}`);
+          lines.push(`Total Terakhir: ${formatRupiah(totalHargaTerakhir)}`);
         }
 
         lines.push(``);

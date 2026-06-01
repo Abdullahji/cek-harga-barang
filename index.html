@@ -1913,11 +1913,11 @@
                           <h4 class="text-xs font-black text-slate-700 uppercase tracking-widest flex items-center gap-1.5">
                             <i data-lucide="box" class="w-4 h-4 text-emerald-500"></i> Daftar Barang
                           </h4>
-                          <!-- Tampilkan Harga Terakhir Toggle -->
-                          <button type="button" id="btn-toggle-harga-terakhir" onclick="toggleTampilkanHargaTerakhir()" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 border border-slate-200/55 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer shadow-sm">
-                            <i data-lucide="eye" id="icon-toggle-harga-terakhir" class="w-3.5 h-3.5"></i>
-                            <span id="text-toggle-harga-terakhir">Tampilkan Harga Terakhir</span>
-                          </button>
+                          <!-- Checkbox Tampilkan Informasi Pembelian Terakhir -->
+                          <div class="flex items-center gap-2">
+                            <input type="checkbox" id="chk-toggle-harga-terakhir" onchange="toggleTampilkanHargaTerakhirCheckbox(this.checked)" class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                            <label for="chk-toggle-harga-terakhir" class="text-xs font-bold text-slate-600 cursor-pointer select-none">Tampilkan Informasi Pembelian Terakhir</label>
+                          </div>
                         </div>
                         
                         <!-- List Container -->
@@ -2016,13 +2016,19 @@
                         </div>
                       </div>
 
-                      <!-- Action Process Order directly to Purchase -->
-                      <div id="detail-order-process-container" class="pt-2 hidden">
-                        <button type="button" onclick="prosesOrderKePembelian()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/10">
-                          <i data-lucide="shopping-cart" class="w-4 h-4 flex-shrink-0"></i>
-                          <span>Proses ke Pembelian</span>
-                        </button>
-                      </div>
+                       <!-- Action Process Order directly to Purchase -->
+                       <div id="detail-order-process-container" class="pt-2 hidden">
+                         <button type="button" onclick="prosesOrderKePembelian()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2.5 cursor-pointer shadow-xl shadow-emerald-500/10">
+                           <span class="text-base">📦</span>
+                           <span>Barang Sudah Datang</span>
+                         </button>
+                       </div>
+
+                       <!-- Checkbox Sertakan Informasi Pembelian Terakhir -->
+                       <div class="flex items-center gap-2 px-1 pt-4">
+                         <input type="checkbox" id="detail-order-include-last-purchase" onchange="toggleSertakanHargaTerakhirWA(this.checked)" class="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
+                         <label for="detail-order-include-last-purchase" class="text-xs font-bold text-slate-600 cursor-pointer select-none">Sertakan Informasi Pembelian Terakhir</label>
+                       </div>
 
                       <!-- Share / Copy Actions -->
                       <div class="flex flex-col sm:flex-row gap-3 pt-4">
@@ -9921,6 +9927,65 @@
           const totalPembelianStr = `${totalPembelianVal} Kali`;
           const totalQtyDibeliStr = String(totalQtyDibeliVal);
 
+          // Group pbHistory by supplier
+          const supplierMap = {};
+          pbHistory.forEach(pb => {
+            const key = pb.idSupplier ? String(pb.idSupplier) : String(pb.namaSupplier || '').trim();
+            if (!supplierMap[key]) {
+              supplierMap[key] = [];
+            }
+            supplierMap[key].push(pb);
+          });
+
+          const supplierListData = [];
+          for (const key in supplierMap) {
+            const records = supplierMap[key];
+            // Sort records descending by date of purchase 
+            records.sort((a, b) => {
+              const dA = parseDetailDate(a.tanggalPembelian) || new Date(0);
+              const dB = parseDetailDate(b.tanggalPembelian) || new Date(0);
+              return dB - dA;
+            });
+            const latestRecord = records[0];
+            supplierListData.push({
+              key: key,
+              idSupplier: latestRecord.idSupplier || '',
+              namaSupplier: latestRecord.namaSupplier || 'Supplier Tanpa Nama',
+              hargaModal: Number(latestRecord.hargaModal) || 0,
+              tanggalPembelian: latestRecord.tanggalPembelian || '',
+              parsedDate: parseDetailDate(latestRecord.tanggalPembelian) || new Date(0)
+            });
+          }
+
+          // Sort final supplier list by Harga Modal Termurah to Termahal (prices low to high)
+          supplierListData.sort((a, b) => a.hargaModal - b.hargaModal);
+
+          let supplierTermurahText = "-";
+          let supplierTermurahHarga = "-";
+          let pembelianTerakhirText = "-";
+          let pembelianTerakhirDate = "-";
+          const jumlahSupplierVal = supplierListData.length;
+          const minPrice = supplierListData.length > 0 ? supplierListData[0].hargaModal : Infinity;
+
+          function formatJSDateToDDMMYYYY(d) {
+            if (!d || isNaN(d.getTime())) return "-";
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}-${month}-${year}`;
+          }
+
+          if (supplierListData.length > 0) {
+            const cheapest = supplierListData[0];
+            supplierTermurahText = cheapest.namaSupplier;
+            supplierTermurahHarga = "Rp " + formatIDRVal(cheapest.hargaModal);
+
+            const sortedByDate = [...supplierListData].sort((a, b) => b.parsedDate - a.parsedDate);
+            const absoluteLatest = sortedByDate[0];
+            pembelianTerakhirText = absoluteLatest.namaSupplier;
+            pembelianTerakhirDate = formatJSDateToDDMMYYYY(absoluteLatest.parsedDate);
+          }
+
           function parseDetailDate(d) {
             if (!d) return null;
             let str = String(d).trim();
@@ -10067,6 +10132,78 @@
                   <span class="block text-[9px] uppercase font-black text-slate-400 tracking-wider mb-2">Status Pembelian</span>
                   <span class="inline-flex px-3.5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${hasPurchased ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50 shadow-sm shadow-emerald-100' : 'bg-rose-50 text-rose-500 border border-rose-100/50 shadow-sm shadow-rose-100'}">${statusPembelian}</span>
                 </div>
+              </div>
+            </div>
+
+            <!-- SECTION 2.5: HISTORI SUPPLIER -->
+            <div class="bg-white border border-slate-100 shadow-[0_4px_20px_rgba(15,23,42,0.02)] rounded-[2rem] p-6 space-y-4">
+              <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
+                <i data-lucide="truck" class="w-5 h-5 text-indigo-600"></i>
+                <h4 class="font-black text-slate-800 text-xs sm:text-sm uppercase tracking-wider font-mono">📦 Histori Supplier</h4>
+              </div>
+
+              <!-- Summary Cards/Metrics Grid -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div class="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <span class="block text-[8px] uppercase font-black text-emerald-600 tracking-wider">🏆 Supplier Termurah</span>
+                    <span class="block text-slate-800 font-extrabold text-xs mt-1 truncate" title="${supplierTermurahText}">${supplierTermurahText}</span>
+                  </div>
+                  <span class="text-sm font-black text-emerald-600 font-mono mt-1">${supplierTermurahHarga}</span>
+                </div>
+                <div class="p-4 bg-sky-500/5 border border-sky-500/10 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <span class="block text-[8px] uppercase font-black text-sky-600 tracking-wider">📅 Pembelian Terakhir</span>
+                    <span class="block text-slate-800 font-extrabold text-xs mt-1 truncate" title="${pembelianTerakhirText}">${pembelianTerakhirText}</span>
+                  </div>
+                  <span class="text-sm font-black text-sky-600 font-mono mt-1">${pembelianTerakhirDate}</span>
+                </div>
+                <div class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl flex flex-col justify-between">
+                  <div>
+                    <span class="block text-[8px] uppercase font-black text-indigo-600 tracking-wider">📈 Jumlah Supplier</span>
+                    <span class="block text-slate-800 font-extrabold text-xs mt-1">Total Pemasok</span>
+                  </div>
+                  <span class="text-sm font-black text-indigo-600 font-mono mt-1">${jumlahSupplierVal} Supplier</span>
+                </div>
+              </div>
+
+              <!-- List of Suppliers History -->
+              <div>
+                <span class="block text-[9px] uppercase font-black text-slate-400 tracking-wider mb-2.5">Daftar Riwayat Harga (Termurah ke Termahal)</span>
+                ${supplierListData.length === 0 ? `
+                  <div class="text-slate-400 italic text-xs py-4 text-center bg-slate-50 border border-slate-100 rounded-2xl font-sans">
+                    Belum ada riwayat supplier untuk barang ini.
+                  </div>
+                ` : `
+                  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    ${supplierListData.map(sp => {
+                      const priceFormatted = "Rp " + formatIDRVal(sp.hargaModal);
+                      const isCheapest = sp.hargaModal === minPrice && minPrice < Infinity;
+                      const dateFormatted = formatJSDateToDDMMYYYY(sp.parsedDate);
+                      return `
+                        <div class="bg-white p-4 rounded-2xl border ${isCheapest ? 'border-amber-300 shadow-md ring-2 ring-amber-100/35 bg-gradient-to-br from-white to-amber-50/20' : 'border-slate-200/80 shadow-xs'} hover:border-emerald-250 hover:shadow-md transition-all duration-350 flex flex-col justify-between font-sans">
+                          <div class="space-y-1">
+                            ${isCheapest ? `
+                              <div class="mb-1">
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[8px] font-black uppercase tracking-widest border border-amber-200/50 shadow-inner">
+                                  🏆 Termurah
+                                </span>
+                              </div>
+                            ` : ''}
+                            <h5 class="font-black text-slate-800 text-[11px] leading-snug break-words" title="${sp.namaSupplier}">
+                              ${sp.namaSupplier}
+                            </h5>
+                            <p class="font-black text-rose-500 text-xs font-mono">${priceFormatted}</p>
+                            <div class="pt-1.5 text-[9px] text-slate-500 font-sans flex items-center justify-between border-t border-dashed border-slate-100 mt-2">
+                              <span class="font-black uppercase tracking-wider text-[8px] text-slate-400">Terakhir:</span>
+                              <span class="font-bold font-mono text-slate-600">${dateFormatted}</span>
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                    }).join("")}
+                  </div>
+                `}
               </div>
             </div>
 
@@ -12151,7 +12288,7 @@
             const eligibleUnits = rawSatuanBarangData.filter(u => 
               String(u.idBarang) === String(item.idBarang) && 
               isEqualNormalized(u.status, 'Aktif') && 
-              String(u.tipeSatuan || "").toUpperCase() !== "JUAL"
+              (String(u.tipeSatuan || "").toUpperCase() === "BELI" || String(u.tipeSatuan || "").toUpperCase() === "KEDUANYA")
             );
             
             const optionsHtml = eligibleUnits.map(u => {
@@ -12180,9 +12317,12 @@
                   ${selectSatuanHtml}
                 </div>
               </div>
-              <div class="space-y-1 flex flex-col justify-center items-end text-right">
-                <button type="button" onclick="resetCartProduct('${item.id}')" class="text-[9px] font-black uppercase tracking-wider text-rose-500 hover:text-rose-700 transition-colors cursor-pointer">
+              <div class="space-y-1.5 flex flex-col justify-center items-end text-right">
+                <button type="button" onclick="resetCartProduct('${item.id}')" class="text-[9.5px] font-black uppercase tracking-wider text-rose-500 hover:text-rose-700 transition-colors cursor-pointer block mb-1">
                   Ganti Barang
+                </button>
+                <button type="button" onclick="tampilkanPerbandinganSupplier('${item.id}', '${item.idBarang}', '${item.satuan}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 bg-sky-50 text-sky-700 border border-sky-100 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-sky-100 hover:scale-102 hover:shadow-sm transition-all active:scale-95 cursor-pointer block">
+                  <span>📊 Bandingkan Supplier</span>
                 </button>
               </div>
             </div>
@@ -12192,7 +12332,7 @@
               <div class="flex gap-2">
                 <div class="relative flex-1 min-w-0 flex items-center">
                   <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
-                  <input type="text" id="cart-item-search-${item.id}" oninput="autocompleteCartItem('${item.id}', this.value)" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold outline-none focus:ring-4 focus:ring-emerald-100/55 shadow-inner animate-pulse-placeholder" placeholder="Cari nama, barcode, atau ID..." />
+                  <input type="text" id="cart-item-search-${item.id}" oninput="autocompleteCartItem('${item.id}', this.value)" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold outline-none focus:ring-4 focus:ring-emerald-100/55 shadow-inner animate-pulse-placeholder" placeholder="Cari Barang (Barcode / ID / Nama)" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
@@ -12226,6 +12366,10 @@
               </div>
 
               ${itemSelectedHTML}
+
+              <!-- SUPPLIER COMPARISON CONTAINER -->
+              <div id="supplier-comparison-container-${item.id}" class="hidden bg-slate-50/50 p-5 rounded-3xl border border-slate-150 space-y-4 font-sans animate-in slide-in-from-top-2 duration-150">
+              </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="space-y-1.5 flex-1 font-sans">
@@ -12581,6 +12725,168 @@
 
       function startCartItemScan(itemId) {
         startSupplierScan(`cart-item-search-${itemId}`);
+      }
+
+      function formatDateDDMMYYYY(dateStr) {
+        if (!dateStr) return "-";
+        try {
+          const d = new Date(dateStr);
+          if (isNaN(d.getTime())) return dateStr;
+          const day = String(d.getDate()).padStart(2, '0');
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const year = d.getFullYear();
+          return `${day}-${month}-${year}`;
+        } catch (e) {
+          return dateStr;
+        }
+      }
+
+      async function tampilkanPerbandinganSupplier(itemId, idBarang, satuan) {
+        const panel = document.getElementById(`supplier-comparison-container-${itemId}`);
+        if (!panel) return;
+
+        // Toggle if already visible
+        if (!panel.classList.contains("hidden")) {
+          panel.classList.add("hidden");
+          panel.innerHTML = "";
+          return;
+        }
+
+        panel.classList.remove("hidden");
+        panel.innerHTML = `
+          <div class="flex items-center justify-center py-6 gap-2">
+            <div class="w-4 h-4 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest font-sans">Memuat Perbandingan Harga...</span>
+          </div>
+        `;
+
+        // Lazy load
+        if (rawPembelianBarangData.length === 0) {
+          try {
+            await fetchPembelianBarangData(false, true);
+          } catch (err) {
+            console.error("Gagal memuat histori pembelian:", err);
+          }
+        }
+
+        const matches = rawPembelianBarangData.filter(p => 
+          String(p.idBarang) === String(idBarang) && 
+          String(p.satuan).toUpperCase() === String(satuan).toUpperCase()
+        );
+
+        if (matches.length === 0) {
+          panel.innerHTML = `
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-205 mb-3">
+              <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest font-sans">📊 Perbandingan Harga Supplier</span>
+              <button type="button" onclick="tutupPerbandinganSupplier('${itemId}')" class="text-rose-500 hover:text-rose-750 text-[9px] font-black uppercase tracking-wider cursor-pointer">
+                Tutup
+              </button>
+            </div>
+            <div class="text-[10px] font-black text-slate-400 italic text-center py-4 font-sans">
+              Belum ada riwayat pembelian sebelumnya untuk barang ini dengan satuan ${satuan}
+            </div>
+          `;
+          return;
+        }
+
+        // Group by Supplier
+        const groups = {};
+        matches.forEach(p => {
+          const key = p.idSupplier ? String(p.idSupplier) : String(p.namaSupplier || '').trim();
+          if (!groups[key]) {
+            groups[key] = [];
+          }
+          groups[key].push(p);
+        });
+
+        const supplierPrices = [];
+        for (const key in groups) {
+          const records = groups[key];
+          // Sort descending by date
+          records.sort((a, b) => new Date(b.tanggalPembelian || 0) - new Date(a.tanggalPembelian || 0));
+          const latest = records[0];
+          supplierPrices.push({
+            idSupplier: latest.idSupplier || '',
+            namaSupplier: latest.namaSupplier || 'Supplier Tanpa Nama',
+            hargaModal: Number(latest.hargaModal) || 0,
+            tanggalPembelian: latest.tanggalPembelian || ''
+          });
+        }
+
+        // Sort by price ascending
+        supplierPrices.sort((a, b) => a.hargaModal - b.hargaModal);
+
+        let minPrice = Infinity;
+        supplierPrices.forEach(sp => {
+          if (sp.hargaModal < minPrice) {
+            minPrice = sp.hargaModal;
+          }
+        });
+
+        const cardsHtml = supplierPrices.map(sp => {
+          const isCheapest = sp.hargaModal === minPrice && minPrice < Infinity;
+          const priceFormatted = "Rp " + formatIDRVal(sp.hargaModal);
+          const dateFormatted = formatDateDDMMYYYY(sp.tanggalPembelian);
+
+          return `
+            <div class="bg-white p-4 rounded-2xl border ${isCheapest ? 'border-amber-300 shadow-md ring-2 ring-amber-100/40 bg-gradient-to-br from-white to-amber-50/20' : 'border-slate-200/80 shadow-xs'} hover:border-emerald-250 hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+              <div class="space-y-1">
+                ${isCheapest ? `
+                  <div class="mb-2">
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-700 text-[8px] font-black uppercase tracking-widest border border-amber-200/60 shadow-inner">
+                      🏆 Harga Termurah
+                    </span>
+                  </div>
+                ` : ''}
+                <h5 class="font-black text-slate-800 text-[11px] leading-snug break-words" title="${sp.namaSupplier}">
+                  ${sp.namaSupplier}
+                </h5>
+                <p class="font-black text-rose-500 text-xs font-mono">${priceFormatted}</p>
+                <div class="pt-1.5 text-[9px] text-slate-500 font-sans flex items-center justify-between border-t border-dashed border-slate-100 mt-2">
+                  <span class="font-black uppercase tracking-wider text-[8px] text-slate-400">Tgl Beli:</span>
+                  <span class="font-bold font-mono text-slate-600">${dateFormatted}</span>
+                </div>
+              </div>
+              <button type="button" onclick="pilihHargaSupplierBandingan('${itemId}', ${sp.hargaModal})" class="mt-3 w-full py-1.5 bg-emerald-50 hover:bg-emerald-650 hover:text-white text-emerald-700 hover:shadow-md border border-emerald-150 rounded-xl text-[8px] font-black uppercase tracking-widest transition-all cursor-pointer">
+                Gunakan Harga Ini
+              </button>
+            </div>
+          `;
+        }).join("");
+
+        panel.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-slate-205 mb-3">
+            <span class="text-[9px] font-black text-slate-600 uppercase tracking-widest flex items-center gap-1.5 font-sans">
+              <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-sky-600"></i> HASIL PERBANDINGAN HARGA SUPPLIER (${supplierPrices.length})
+            </span>
+            <button type="button" onclick="tutupPerbandinganSupplier('${itemId}')" class="text-rose-500 hover:text-rose-750 text-[9px] font-black uppercase tracking-wider cursor-pointer font-sans">
+              Tutup
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            ${cardsHtml}
+          </div>
+        `;
+        
+        lucide.createIcons();
+      }
+
+      function tutupPerbandinganSupplier(itemId) {
+        const panel = document.getElementById(`supplier-comparison-container-${itemId}`);
+        if (panel) {
+          panel.classList.add("hidden");
+          panel.innerHTML = "";
+        }
+      }
+
+      function pilihHargaSupplierBandingan(itemId, harga) {
+        const inputEl = document.getElementById(`cart-hargaModal-${itemId}`);
+        if (inputEl) {
+          inputEl.value = "Rp " + formatIDRVal(harga);
+          updateCartItemPropertyValue(itemId, 'hargaModal', "Rp " + formatIDRVal(harga));
+          renderPembelianCart();
+        }
+        showToast("Harga modal berhasil diterapkan!", "success");
       }
 
       // Backward compatible stubs
@@ -12964,6 +13270,18 @@
             else if (normStatus === "Selesai") badgeClass = "bg-emerald-50 text-emerald-600 border border-emerald-100";
             else if (normStatus === "Dibatalkan") badgeClass = "bg-rose-50 text-rose-500 border border-rose-100";
 
+            const isCompleted = isOrderStatusKategoriSelesai(normStatus);
+            const editBtnHtml = isCompleted ? '' : `
+              <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100/85 rounded-xl transition-all border border-emerald-50 cursor-pointer" title="Edit Order">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              </button>
+            `;
+            const statusBtnHtml = isCompleted ? '' : `
+              <button onclick="handleUbahStatusOrderClick(${o.row}, '${normStatus}')" class="p-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 cursor-pointer" title="Ubah Status">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+              </button>
+            `;
+
             return `
               <tr class="hover:bg-slate-50/50 transition-colors group">
                 <td class="px-6 py-5 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
@@ -12985,12 +13303,8 @@
                     <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-slate-50 text-slate-600 hover:bg-slate-100/80 rounded-xl transition-all border border-slate-100 cursor-pointer" title="Detail Order">
                       <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                     </button>
-                    <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-100/85 rounded-xl transition-all border border-emerald-50 cursor-pointer" title="Edit Order">
-                      <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                    </button>
-                    <button onclick="handleUbahStatusOrderClick(${o.row}, '${normStatus}')" class="p-2 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 cursor-pointer" title="Ubah Status">
-                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                    </button>
+                    ${editBtnHtml}
+                    ${statusBtnHtml}
                   </div>
                 </td>
               </tr>
@@ -13015,6 +13329,19 @@
             else if (normStatus === "Diproses") statusColor = "bg-sky-500";
             else if (normStatus === "Selesai") statusColor = "bg-emerald-500";
             else if (normStatus === "Dibatalkan") statusColor = "bg-rose-500";
+
+            const isCompleted = isOrderStatusKategoriSelesai(normStatus);
+            const gridColsClass = isCompleted ? "grid-cols-1" : "grid-cols-3";
+            const mobileEditBtnHtml = isCompleted ? "" : `
+              <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-emerald-50 border border-emerald-55 flex items-center justify-center gap-1 text-[10px] text-emerald-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> EDIT
+              </button>
+            `;
+            const mobileStatusBtnHtml = isCompleted ? "" : `
+              <button onclick="handleUbahStatusOrderClick(${o.row}, '${normStatus}')" class="py-2.5 rounded-xl bg-slate-100 border border-slate-105 flex items-center justify-center gap-1 text-[10px] text-slate-500 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
+                STATUS
+              </button>
+            `;
 
             return `
               <div class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
@@ -13049,16 +13376,12 @@
                   ` : ''}
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-50">
+                <div class="grid ${gridColsClass} gap-2 pt-2 border-t border-slate-50">
                   <button onclick='openOrderBarangDetailModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> DETAIL
                   </button>
-                  <button onclick='openOrderBarangModal(${JSON.stringify(o).replace(/'/g, "&apos;")})' class="py-2.5 rounded-xl bg-emerald-50 border border-emerald-50 flex items-center justify-center gap-1 text-[10px] text-emerald-600 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
-                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> EDIT
-                  </button>
-                  <button onclick="handleUbahStatusOrderClick(${o.row}, '${normStatus}')" class="py-2.5 rounded-xl bg-slate-100 border border-slate-100 flex items-center justify-center gap-1 text-[10px] text-slate-500 font-black tracking-wider uppercase active:scale-95 transition-all cursor-pointer">
-                    STATUS
-                  </button>
+                  ${mobileEditBtnHtml}
+                  ${mobileStatusBtnHtml}
                 </div>
               </div>
             `;
@@ -13237,7 +13560,7 @@
         const eligibleUnits = sourceData.filter(u => 
           String(u.idBarang) === String(idBarang) && 
           isEqualNormalized(u.status, 'Aktif') && 
-          String(u.tipeSatuan || "").toUpperCase() !== "JUAL"
+          (String(u.tipeSatuan || "").toUpperCase() === "BELI" || String(u.tipeSatuan || "").toUpperCase() === "KEDUANYA")
         );
 
         if (eligibleUnits.length === 0) {
@@ -13301,7 +13624,7 @@
               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Cari Barang (Barcode / ID / Nama)</label>
               <div class="relative flex items-center">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></i>
-                <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Tulis nama barang atau scan..." required />
+                <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Cari Barang (Barcode / ID / Nama)" required />
                 <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button type="button" onclick="clearInlineInput(this)" class="text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -13342,13 +13665,10 @@
           </div>
 
           <!-- History sub-row area -->
-          <div id="order-item-history-${seq}" class="hidden py-3 px-4 bg-slate-50 border border-slate-100/50 rounded-xl text-[10px] font-bold text-slate-500 mt-1 flex flex-wrap gap-x-5 gap-y-1.5 items-center animate-in slide-in-from-top-1">
-             <div class="text-slate-400 uppercase font-black tracking-wider text-[9px] flex items-center gap-1">
-                <i data-lucide="history" class="w-3.5 h-3.5 text-emerald-500"></i> Pembelian Terakhir:
-             </div>
-             <div>Harga Modal: <span id="history-harga-${seq}" class="font-extrabold text-slate-800">-</span></div>
-             <div>Supplier: <span id="history-supplier-${seq}" class="font-extrabold text-slate-800">-</span></div>
-             <div>Tanggal: <span id="history-tanggal-${seq}" class="font-extrabold text-slate-800">-</span></div>
+          <div id="order-item-history-${seq}" class="hidden py-1 px-3 bg-slate-50 border border-slate-100/30 rounded-lg text-[11px] font-bold text-slate-500 mt-1 flex items-center gap-1.5 animate-in slide-in-from-top-1">
+             <span class="inline-block text-[10px] text-emerald-600">🕒</span>
+             <span>Harga Terakhir:</span>
+             <span id="history-info-${seq}" class="font-extrabold text-slate-800">-</span>
           </div>
         `;
 
@@ -13364,7 +13684,7 @@
           populateOrderSatuanDropdown(seq, itemData.idBarang, itemData.satuan);
 
           document.getElementById(`order-item-qtyOrder-${seq}`).value = itemData.qtyOrder || "";
-          document.getElementById(`order-item-search-${seq}`).value = `${itemData.idBarang} - ${itemData.namaBarang}`;
+          document.getElementById(`order-item-search-${seq}`).value = itemData.namaBarang || "";
         }
 
         // Auto render loaded history card if the toggle in on
@@ -13456,7 +13776,7 @@
         const nameInput = document.getElementById(`order-item-namaBarang-${seq}`);
         const qtyInput = document.getElementById(`order-item-qtyOrder-${seq}`);
 
-        if (searchInput) searchInput.value = `${idBarang} - ${namaBarang}`;
+        if (searchInput) searchInput.value = namaBarang;
         if (idInput) idInput.value = idBarang;
         if (nameInput) nameInput.value = namaBarang;
 
@@ -13536,21 +13856,13 @@
           addOrderItemRow();
         }
 
-        // Ensure the visual state of the button matches when opening the modal
-        const toggleBtn = document.getElementById("btn-toggle-harga-terakhir");
-        const toggleIcon = document.getElementById("icon-toggle-harga-terakhir");
-        const toggleText = document.getElementById("text-toggle-harga-terakhir");
-        if (toggleBtn) {
-          if (window.showHargaTerakhirOrderBarang) {
-            toggleBtn.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors cursor-pointer shadow-sm shadow-emerald-500/10";
-            if (toggleIcon) toggleIcon.setAttribute("data-lucide", "eye-off");
-            if (toggleText) toggleText.innerText = "Sembunyikan Harga Terakhir";
-          } else {
-            toggleBtn.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 border border-slate-200/55 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer shadow-sm";
-            if (toggleIcon) toggleIcon.setAttribute("data-lucide", "eye");
-            if (toggleText) toggleText.innerText = "Tampilkan Harga Terakhir";
-          }
+        // Reset the dynamic "Informasi Pembelian Terakhir" checkbox state
+        window.showHargaTerakhirOrderBarang = false;
+        const chkToggle = document.getElementById("chk-toggle-harga-terakhir");
+        if (chkToggle) {
+          chkToggle.checked = false;
         }
+        hideAllOrderHistoryPanels();
 
         modal.classList.remove("hidden");
         modal.classList.add("flex");
@@ -13585,38 +13897,41 @@
         return status;
       }
 
-      async function toggleTampilkanHargaTerakhir() {
-        window.showHargaTerakhirOrderBarang = !window.showHargaTerakhirOrderBarang;
-        
-        const btn = document.getElementById("btn-toggle-harga-terakhir");
-        const icon = document.getElementById("icon-toggle-harga-terakhir");
-        const text = document.getElementById("text-toggle-harga-terakhir");
+      function isOrderStatusKategoriSelesai(status) {
+        const s = String(status || "").trim().toLowerCase();
+        return ["selesai", "completed", "closed", "dibatalkan", "batal"].includes(s);
+      }
+
+      async function toggleTampilkanHargaTerakhirCheckbox(checked) {
+        window.showHargaTerakhirOrderBarang = !!checked;
         
         if (window.showHargaTerakhirOrderBarang) {
-          if (btn) btn.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-colors cursor-pointer shadow-sm shadow-emerald-500/10";
-          if (icon) icon.setAttribute("data-lucide", "eye-off");
-          if (text) text.innerText = "Sembunyikan Harga Terakhir";
-          
           // Lazy load Pembelian Barang history if empty
           if (rawPembelianBarangData.length === 0) {
             showLoading(true);
             try {
-              await fetchPembelianBarangData(true, true);
+              await fetchPembelianBarangData(false, true);
             } catch (err) {
               console.error("fetchPembelianBarangData error under toggle:", err);
             }
             showLoading(false);
           }
-          
           updateHistoryPanelsForOrderItems();
         } else {
-          if (btn) btn.className = "inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 border border-slate-200/55 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-50 hover:text-emerald-600 transition-colors cursor-pointer shadow-sm";
-          if (icon) icon.setAttribute("data-lucide", "eye");
-          if (text) text.innerText = "Tampilkan Harga Terakhir";
-          
           hideAllOrderHistoryPanels();
         }
-        lucide.createIcons();
+      }
+
+      async function toggleSertakanHargaTerakhirWA(checked) {
+        if (checked && rawPembelianBarangData.length === 0) {
+          showLoading(true);
+          try {
+            await fetchPembelianBarangData(false, true);
+          } catch (err) {
+            console.error("fetchPembelianBarangData error under toggle WA:", err);
+          }
+          showLoading(false);
+        }
       }
 
       function hideAllOrderHistoryPanels() {
@@ -13631,8 +13946,9 @@
         const idBarangInput = document.getElementById(`order-item-idBarang-${seq}`);
         const satuanInput = document.getElementById(`order-item-satuan-${seq}`);
         const historyDiv = document.getElementById(`order-item-history-${seq}`);
+        const historyInfoSpan = document.getElementById(`history-info-${seq}`);
         
-        if (!idBarangInput || !satuanInput || !historyDiv) return;
+        if (!idBarangInput || !satuanInput || !historyDiv || !historyInfoSpan) return;
         
         const idBarang = idBarangInput.value;
         const satuan = satuanInput.value;
@@ -13642,32 +13958,47 @@
           return;
         }
         
-        const matches = rawPembelianBarangData.filter(p => 
+        const selectedSupplierId = document.getElementById("form-orderIdSupplier").value || "";
+        
+        const allMatches = rawPembelianBarangData.filter(p => 
           String(p.idBarang) === String(idBarang) && 
           String(p.satuan).toUpperCase() === String(satuan).toUpperCase()
         );
         
-        if (matches.length > 0) {
-          matches.sort((a, b) => {
-            const dateA = new Date(a.tanggalPembelian || 0);
-            const dateB = new Date(b.tanggalPembelian || 0);
-            return dateB - dateA;
-          });
+        let chosen = null;
+        if (allMatches.length > 0) {
+          // 1. Try to find matched supplier
+          const supplierMatches = allMatches.filter(p => 
+            selectedSupplierId && String(p.idSupplier) === String(selectedSupplierId)
+          );
           
-          const latest = matches[0];
-          
-          document.getElementById(`history-harga-${seq}`).innerText = formatRupiah(latest.hargaModal || 0);
-          document.getElementById(`history-supplier-${seq}`).innerText = latest.namaSupplier || "-";
-          document.getElementById(`history-tanggal-${seq}`).innerText = latest.tanggalPembelian ? formatDateIndo(latest.tanggalPembelian) : "-";
-          
-          historyDiv.classList.remove("hidden");
-        } else {
-          document.getElementById(`history-harga-${seq}`).innerText = "Belum Ada";
-          document.getElementById(`history-supplier-${seq}`).innerText = "-";
-          document.getElementById(`history-tanggal-${seq}`).innerText = "-";
-          
-          historyDiv.classList.remove("hidden");
+          if (supplierMatches.length > 0) {
+            supplierMatches.sort((a, b) => {
+              const dateA = new Date(a.tanggalPembelian || 0);
+              const dateB = new Date(b.tanggalPembelian || 0);
+              return dateB - dateA;
+            });
+            chosen = supplierMatches[0];
+          } else {
+            // Fallback to any supplier
+            allMatches.sort((a, b) => {
+              const dateA = new Date(a.tanggalPembelian || 0);
+              const dateB = new Date(b.tanggalPembelian || 0);
+              return dateB - dateA;
+            });
+            chosen = allMatches[0];
+          }
         }
+        
+        if (chosen) {
+          const formattedHarga = formatRupiah(chosen.hargaModal || 0);
+          const formattedDate = chosen.tanggalPembelian ? formatDateIndo(chosen.tanggalPembelian) : "-";
+          historyInfoSpan.innerText = `${formattedHarga} (${formattedDate})`;
+        } else {
+          historyInfoSpan.innerText = `- (-)`;
+        }
+        
+        historyDiv.classList.remove("hidden");
       }
 
       function updateHistoryPanelsForOrderItems() {
@@ -13711,68 +14042,104 @@
         
         const orderHeader = currentActiveDetailOrder;
         
-        showKonfirmasiCustom("Proses ke Pembelian", `Apakah Anda yakin ingin memproses Order *${orderHeader.idOrder}* menjadi Transaksi Pembelian baru?`, `<div class='text-center text-xs font-semibold text-slate-500'>Sistem akan mengisi data supplier dan daftar barang secara otomatis di Form Pembelian.</div>`)
-        .then((agreed) => {
-          if (!agreed) return;
+        // Show confirmation with specific text and Batal / Ya, Proses buttons
+        const dialog = document.getElementById("customDialog");
+        const t = document.getElementById("dialogTitle");
+        const m = document.getElementById("dialogMessage");
+        const c = document.getElementById("dialogContent");
+        const btnConfirm = document.getElementById("dialogConfirmBtn");
+        const btnCancel = document.getElementById("dialogCancelBtn");
+
+        c.parentElement.className = "fixed inset-0 z-[9999] items-center justify-center p-6 flex dialog-warning";
+        t.innerText = "Proses ke Pembelian";
+        m.innerText = "Apakah barang pesanan dari supplier sudah diterima dan ingin diproses menjadi Pembelian Barang?";
+        
+        btnCancel.classList.remove("hidden");
+        const oldConfirmText = btnConfirm.innerText;
+        const oldCancelText = btnCancel.innerText;
+        
+        btnConfirm.innerText = "Ya, Proses";
+        btnCancel.innerText = "Batal";
+
+        btnConfirm.onclick = () => {
+          dialog.classList.add("hidden");
+          btnConfirm.innerText = oldConfirmText;
+          btnCancel.innerText = oldCancelText;
           
-          switchPage('pembelian-barang');
-          closeOrderBarangDetailModal();
+          proceedWithOrderToPembelian(orderHeader);
+        };
+        btnCancel.onclick = () => {
+          dialog.classList.add("hidden");
+          btnConfirm.innerText = oldConfirmText;
+          btnCancel.innerText = oldCancelText;
+        };
+
+        const iconTarget = document.getElementById("iconTarget");
+        if (iconTarget) {
+          iconTarget.setAttribute("data-lucide", "package");
+        }
+        lucide.createIcons();
+        dialog.classList.remove("hidden");
+      }
+
+      function proceedWithOrderToPembelian(orderHeader) {
+        switchPage('pembelian-barang');
+        closeOrderBarangDetailModal();
+        
+        window.activeSourceOrderId = orderHeader.idOrder;
+        
+        // Open Purchase form pre-filled
+        const modal = document.getElementById("pembelianBarangModal");
+        const title = document.getElementById("pembelianBarangFormTitle");
+        const form = document.getElementById("pembelianBarangForm");
+        
+        form.reset();
+        document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
+        
+        title.innerText = "Tambah Transaksi (Dari Order " + orderHeader.idOrder + ")";
+        document.getElementById("form-pembelianRow").value = "";
+        document.getElementById("form-pembelianId").value = "PB-XXX (Otomatis)";
+        
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById("form-pembelianTanggal").value = today;
+        
+        document.getElementById("form-pembelianSearchSupplier").value = orderHeader.idSupplier + " - " + orderHeader.namaSupplier;
+        document.getElementById("form-pembelianIdSupplier").value = orderHeader.idSupplier;
+        document.getElementById("form-pembelianNamaSupplier").value = orderHeader.namaSupplier;
+        document.getElementById("form-pembelianStatus").value = "Lunas";
+        
+        document.getElementById("form-pembelianKeterangan").value = orderHeader.catatan ? 
+          ("Diimpor dari Order #" + orderHeader.idOrder + ". Catatan Order: " + orderHeader.catatan) : 
+          ("Diimpor dari Order #" + orderHeader.idOrder);
+        
+        const itemsMatching = rawOrderDetails.filter(d => d.idOrder === orderHeader.idOrder);
+        pembelianCartItems = itemsMatching.map(it => {
+          const matchedSatuan = rawSatuanBarangData.find(s => 
+            String(s.idBarang) === String(it.idBarang) && 
+            String(s.satuan).toUpperCase() === String(it.satuan).toUpperCase()
+          );
           
-          window.activeSourceOrderId = orderHeader.idOrder;
-          
-          // Open Purchase form pre-filled
-          const modal = document.getElementById("pembelianBarangModal");
-          const title = document.getElementById("pembelianBarangFormTitle");
-          const form = document.getElementById("pembelianBarangForm");
-          
-          form.reset();
-          document.getElementById("form-pembelianSupplierSuggestions").classList.add("hidden");
-          
-          title.innerText = "Tambah Transaksi (Dari Order " + orderHeader.idOrder + ")";
-          document.getElementById("form-pembelianRow").value = "";
-          document.getElementById("form-pembelianId").value = "PB-XXX (Otomatis)";
-          
-          const today = new Date().toISOString().split('T')[0];
-          document.getElementById("form-pembelianTanggal").value = today;
-          
-          document.getElementById("form-pembelianSearchSupplier").value = orderHeader.idSupplier + " - " + orderHeader.namaSupplier;
-          document.getElementById("form-pembelianIdSupplier").value = orderHeader.idSupplier;
-          document.getElementById("form-pembelianNamaSupplier").value = orderHeader.namaSupplier;
-          document.getElementById("form-pembelianStatus").value = "Lunas";
-          
-          document.getElementById("form-pembelianKeterangan").value = orderHeader.catatan ? 
-            ("Diimpor dari Order #" + orderHeader.idOrder + ". Catatan Order: " + orderHeader.catatan) : 
-            ("Diimpor dari Order #" + orderHeader.idOrder);
-          
-          const itemsMatching = rawOrderDetails.filter(d => d.idOrder === orderHeader.idOrder);
-          pembelianCartItems = itemsMatching.map(it => {
-            const matchedSatuan = rawSatuanBarangData.find(s => 
-              String(s.idBarang) === String(it.idBarang) && 
-              String(s.satuan).toUpperCase() === String(it.satuan).toUpperCase()
-            );
-            
-            return {
-              id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000),
-              barcode: matchedSatuan ? (matchedSatuan.barcode || "") : "",
-              idBarang: it.idBarang,
-              namaBarang: it.namaBarang,
-              satuan: it.satuan,
-              tipeSatuan: matchedSatuan ? (matchedSatuan.tipeSatuan || "KEDUANYA") : "KEDUANYA",
-              qtyPembelian: Number(it.qtyOrder) || 1,
-              hargaModal: matchedSatuan ? (Number(matchedSatuan.hargaModal) || 0) : 0,
-              hargaJual: matchedSatuan ? (matchedSatuan.hargaJual !== undefined ? Number(matchedSatuan.hargaJual) : "") : "",
-              hargaModalSebelumnya: matchedSatuan ? (Number(matchedSatuan.hargaModal) || "") : "",
-              hargaJualSebelumnya: matchedSatuan ? (Number(matchedSatuan.hargaJual) || "") : "",
-              tanggalExpired: ""
-            };
-          });
-          
-          renderPembelianCart();
-          modal.classList.replace("hidden", "flex");
-          document.body.classList.add("overflow-hidden");
-          
-          showToast("Form Pembelian diisi otomatis dari Order!", "success");
+          return {
+            id: 'item_' + Date.now() + '_' + Math.floor(Math.random() * 100000),
+            barcode: matchedSatuan ? (matchedSatuan.barcode || "") : "",
+            idBarang: it.idBarang,
+            namaBarang: it.namaBarang,
+            satuan: it.satuan,
+            tipeSatuan: matchedSatuan ? (matchedSatuan.tipeSatuan || "KEDUANYA") : "KEDUANYA",
+            qtyPembelian: Number(it.qtyOrder) || 1,
+            hargaModal: matchedSatuan ? (Number(matchedSatuan.hargaModal) || 0) : 0,
+            hargaJual: matchedSatuan ? (matchedSatuan.hargaJual !== undefined ? Number(matchedSatuan.hargaJual) : "") : "",
+            hargaModalSebelumnya: matchedSatuan ? (Number(matchedSatuan.hargaModal) || "") : "",
+            hargaJualSebelumnya: matchedSatuan ? (Number(matchedSatuan.hargaJual) || "") : "",
+            tanggalExpired: ""
+          };
         });
+        
+        renderPembelianCart();
+        modal.classList.replace("hidden", "flex");
+        document.body.classList.add("overflow-hidden");
+        
+        showToast("Form Pembelian diisi otomatis dari Order!", "success");
       }
 
       // Save Handler
@@ -13902,6 +14269,12 @@
       function openOrderBarangDetailModal(orderHeader) {
         currentActiveDetailOrder = orderHeader;
 
+        // Reset the dynamic "Sertakan Informasi Pembelian Terakhir" checkbox state
+        const chkWA = document.getElementById("detail-order-include-last-purchase");
+        if (chkWA) {
+          chkWA.checked = false;
+        }
+
         document.getElementById("detail-order-id").innerText = orderHeader.idOrder || "-";
         document.getElementById("detail-order-tanggal").innerText = formatDateHyphen(orderHeader.tanggalOrder);
         
@@ -13919,10 +14292,11 @@
         // Manage button container visibility
         const processContainer = document.getElementById("detail-order-process-container");
         if (processContainer) {
-          if (normStatus === "Menunggu" || normStatus === "Diproses") {
-            processContainer.classList.remove("hidden");
-          } else {
+          const isCompleted = isOrderStatusKategoriSelesai(normStatus);
+          if (isCompleted) {
             processContainer.classList.add("hidden");
+          } else {
+            processContainer.classList.remove("hidden");
           }
         }
 
@@ -14208,25 +14582,25 @@
             </div>
           </div>
 
-          \${firstItem.fotoNota ? \`
+          ${firstItem.fotoNota ? `
           <!-- Receipt Photo Gallery Section in Detail -->
           <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200/60 mt-4 font-sans max-h-[170px] overflow-y-auto">
             <h5 class="text-[10px] font-black text-rose-500 uppercase tracking-widest flex items-center gap-1.5 leading-none">
-              <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-600"></i> Lampiran Foto Nota (\${firstItem.fotoNota.split("|").filter(Boolean).length})
+              <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-600"></i> Lampiran Foto Nota (${firstItem.fotoNota.split("|").filter(Boolean).length})
             </h5>
             <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
-              \${firstItem.fotoNota.split("|").filter(Boolean).map((url, i) => {
+              ${firstItem.fotoNota.split("|").filter(Boolean).map((url, i) => {
                 let displayUrl = convertGoogleDriveUrl(url);
-                return \`
-                  <div class="relative bg-white border border-slate-200 rounded-xl overflow-hidden h-20 flex items-center justify-center p-1 cursor-pointer hover:shadow hover:border-emerald-200 transition-all hover:scale-[1.03]" onclick="viewFullNotaImage('\${url}')">
-                    <img src="\${displayUrl}" alt="Nota \${i + 1}" class="max-h-full max-w-full object-contain rounded-lg" referrerPolicy="no-referrer" />
-                    <span class="absolute bottom-1 right-1.5 px-1 rounded bg-slate-900/65 text-[7.5px] font-black tracking-widest text-white uppercase">Nota \${i+1}</span>
+                return `
+                  <div class="relative bg-white border border-slate-200 rounded-xl overflow-hidden h-20 flex items-center justify-center p-1 cursor-pointer hover:shadow hover:border-emerald-200 transition-all hover:scale-[1.03]" onclick="viewFullNotaImage('${url}')">
+                    <img src="${displayUrl}" alt="Nota ${i + 1}" class="max-h-full max-w-full object-contain rounded-lg" referrerPolicy="no-referrer" />
+                    <span class="absolute bottom-1 right-1.5 px-1 rounded bg-slate-900/65 text-[7.5px] font-black tracking-widest text-white uppercase">Nota ${i+1}</span>
                   </div>
-                \`;
+                `;
               }).join("")}
             </div>
           </div>
-          \` : ''}
+          ` : ''}
 
           <!-- Action Buttons Area -->
           <div class="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -14676,9 +15050,71 @@
         lines.push(``);
         lines.push(`Daftar Pesanan:`);
 
+        let includeLastPurchase = false;
+        const chkWA = document.getElementById("detail-order-include-last-purchase");
+        if (chkWA && chkWA.checked) {
+          includeLastPurchase = true;
+        }
+
+        let totalHargaTerakhir = 0;
+
         details.forEach((d, i) => {
           lines.push(`${i + 1}. ${d.namaBarang} - ${d.qtyOrder} ${d.satuan}`);
+          
+          if (includeLastPurchase) {
+            const idBarang = d.idBarang;
+            const satuan = d.satuan;
+            const selectedSupplierId = orderHeader.idSupplier || "";
+            
+            const allMatches = rawPembelianBarangData.filter(p => 
+              String(p.idBarang) === String(idBarang) && 
+              String(p.satuan).toUpperCase() === String(satuan).toUpperCase()
+            );
+            
+            let chosen = null;
+            if (allMatches.length > 0) {
+              const supplierMatches = allMatches.filter(p => 
+                selectedSupplierId && String(p.idSupplier) === String(selectedSupplierId)
+              );
+              
+              if (supplierMatches.length > 0) {
+                supplierMatches.sort((a, b) => {
+                  const dateA = new Date(a.tanggalPembelian || 0);
+                  const dateB = new Date(b.tanggalPembelian || 0);
+                  return dateB - dateA;
+                });
+                chosen = supplierMatches[0];
+              } else {
+                allMatches.sort((a, b) => {
+                  const dateA = new Date(a.tanggalPembelian || 0);
+                  const dateB = new Date(b.tanggalPembelian || 0);
+                  return dateB - dateA;
+                });
+                chosen = allMatches[0];
+              }
+            }
+            
+            if (chosen) {
+              const priceVal = Number(chosen.hargaModal) || 0;
+              const formattedHarga = formatRupiah(priceVal);
+              const formattedDate = chosen.tanggalPembelian ? formatDateHyphen(chosen.tanggalPembelian) : "-";
+              lines.push(`   ${formattedHarga} | ${formattedDate}`);
+              
+              const qty = Number(d.qtyOrder) || 0;
+              totalHargaTerakhir += (qty * priceVal);
+            } else {
+              lines.push(`   Harga Terakhir: - (-)`);
+            }
+          }
         });
+
+        if (includeLastPurchase) {
+          lines.push(``);
+          lines.push(`---`);
+          lines.push(``);
+          lines.push(`Total Harga Terakhir:`);
+          lines.push(`${formatRupiah(totalHargaTerakhir)}`);
+        }
 
         lines.push(``);
         lines.push(`Total Item: ${details.length}`);

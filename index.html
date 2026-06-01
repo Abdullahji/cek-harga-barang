@@ -3682,19 +3682,18 @@
           loadingCount++;
           overlay.classList.add("active");
         } else {
-          loadingCount = Math.max(0, loadingCount - 1);
-          if (loadingCount === 0) {
-            overlay.classList.remove("active");
-            lastLoadingClosedTime = Date.now();
-            
-            // Trigger deferred/queued toasts after loading is completely closed
-            if (toastQueue.length > 0) {
-              if (toastFlushTimeout) clearTimeout(toastFlushTimeout);
-              toastFlushTimeout = setTimeout(() => {
-                toastFlushTimeout = null;
-                flushToastQueue();
-              }, 400); // 400ms delay to let the loading transition completely finish
-            }
+          // Direct reset: when closing general loading overlay, we force-clear the counter to completely deactivate and avoid orphaned state
+          loadingCount = 0;
+          overlay.classList.remove("active");
+          lastLoadingClosedTime = Date.now();
+          
+          // Trigger deferred/queued toasts after loading is completely closed
+          if (toastQueue.length > 0) {
+            if (toastFlushTimeout) clearTimeout(toastFlushTimeout);
+            toastFlushTimeout = setTimeout(() => {
+              toastFlushTimeout = null;
+              flushToastQueue();
+            }, 400); // 400ms delay to let the loading transition completely finish
           }
         }
       }
@@ -3795,15 +3794,16 @@
         lucide.createIcons();
         
         // Custom durations:
-        // - toast sukses tampil 4-5 detik (kita gunakan 4500ms)
-        // - toast error tampil 5-7 detik (kita gunakan 6000ms)
-        let duration = 4000; // default (termasuk info)
+        // - Success: 2 detik (2000ms)
+        // - Warning: 3 detik (3000ms)
+        // - Error: 4 detik (4000ms)
+        let duration = 2000; // default (termasuk info)
         if (type === "success") {
-          duration = 4500;
+          duration = 2000;
         } else if (type === "error") {
-          duration = 6000;
+          duration = 4000;
         } else if (type === "warning") {
-          duration = 5000;
+          duration = 3000;
         }
         
         setTimeout(() => {
@@ -4169,6 +4169,9 @@
         if (!rawSatuanBarangData) return [];
         const groupsMap = {};
         rawSatuanBarangData.forEach(item => {
+           // Dynamically calculate profit in memory: Profit = Harga_Jual - Harga_Modal
+           item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+
            const checkId = String(item.idBarang || "").trim();
            const checkNama = String(item.namaBarang || "").trim();
            const checkBarcode = String(item.barcode || "").trim();
@@ -7502,6 +7505,9 @@
 
           if (res && res.sukses) {
             rawSatuanBarangData = res.data || [];
+            rawSatuanBarangData.forEach(item => {
+              item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+            });
             renderSatuanBarangData();
             populateSatuanDropdowns();
             if (resetFilters) showToast("Data satuan berhasil diperbarui", "success");
@@ -7718,7 +7724,7 @@
                           <div class="flex flex-wrap gap-1 mt-2">
                              ${group.units.map(u => `
                                <button onclick="selectGroupUnit('${group.idBarang}', ${u.row})" class="px-2 py-0.5 text-[9px] font-black rounded-md border transition-all cursor-pointer ${u.row == activeUnit.row ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm' : 'bg-slate-50 text-slate-500 border-slate-100 hover:bg-slate-100'}">
-                                 ${u.satuan}
+                                 ${String(u.satuan || "").toUpperCase()}
                                </button>
                              `).join('')}
                           </div>
@@ -7730,7 +7736,7 @@
                   </td>
                   <td class="px-6 py-6 font-bold text-slate-500 text-xs uppercase font-sans">
                      <div class="flex flex-col gap-1 items-start">
-                       <span class="font-bold text-slate-700 text-xs">${activeUnit.satuan}</span>
+                       <span class="font-bold text-slate-700 text-xs">${String(activeUnit.satuan || "").toUpperCase()}</span>
                        <div class="flex flex-col gap-1 items-start mt-0.5">
                           ${tipeSatuanBadge}
                           ${promoBadge}
@@ -7814,7 +7820,7 @@
                         <div class="flex flex-wrap gap-1">
                           ${group.units.map(u => `
                             <button onclick="selectGroupUnit('${group.idBarang}', ${u.row})" class="px-2 py-1 text-[10px] font-black rounded-lg border transition-all cursor-pointer ${u.row == activeUnit.row ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm' : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-slate-100'}">
-                              ${u.satuan}
+                              ${String(u.satuan || "").toUpperCase()}
                             </button>
                           `).join('')}
                         </div>
@@ -8490,7 +8496,7 @@
         let html = '<option value="">Pilih Satuan...</option>';
         satuanList.forEach(s => {
           const selected = isEqualNormalized(s, selectedValue) ? "selected" : "";
-          html += `<option value="${s}" ${selected}>${s}</option>`;
+          html += `<option value="${s}" ${selected}>${s.toUpperCase()}</option>`;
         });
         return html;
       }
@@ -8922,7 +8928,12 @@
 
             <div class="space-y-1.5">
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Modal Baru</label>
-              <input type="text" id="edit-satuan-harga-modal" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" value="${currentUnit.hargaModal || ''}" />
+              <div class="relative flex items-center w-full">
+                <input type="text" id="edit-satuan-harga-modal" class="w-full pl-5 pr-10 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" value="${currentUnit.hargaModal || ''}" />
+                <button type="button" onclick="clearInlineInput(document.getElementById('edit-satuan-harga-modal')); calculateActiveFormProfit()" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                  <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
 
             <div class="space-y-1.5">
@@ -8932,7 +8943,12 @@
 
             <div class="space-y-1.5">
               <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Harga Jual Baru</label>
-              <input type="text" id="edit-satuan-harga-jual" class="w-full px-5 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" value="${currentUnit.hargaJual || ''}" />
+              <div class="relative flex items-center w-full">
+                <input type="text" id="edit-satuan-harga-jual" class="w-full pl-5 pr-10 py-3.5 rounded-xl bg-white border border-slate-100 font-bold outline-none focus:ring-4 focus:ring-emerald-100/40 text-xs shadow-inner font-mono" oninput="formatInputToRupiah(this); calculateActiveFormProfit()" placeholder="Rp 0" value="${currentUnit.hargaJual || ''}" />
+                <button type="button" onclick="clearInlineInput(document.getElementById('edit-satuan-harga-jual')); calculateActiveFormProfit()" class="absolute right-3 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
+                  <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
 
             <div class="space-y-1.5 md:col-span-2 lg:col-span-1">
@@ -9140,6 +9156,15 @@
 
         modal.classList.replace("hidden", "flex");
         lucide.createIcons();
+
+        // Auto scroll smooth to the top of edit form/modal
+        setTimeout(() => {
+          const scrollContainer = modal.querySelector(".overflow-y-auto") || modal;
+          if (scrollContainer) {
+            scrollContainer.scrollTo({ top: 0, behavior: "smooth" });
+          }
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }, 50);
       }
 
       function closeSatuanBarangModal() {
@@ -9561,7 +9586,7 @@
           }
         }
         
-        const profit = u.profit !== "" && u.profit !== undefined ? Number(u.profit) : "";
+        const profit = (jualBaru || modalBaru) ? (jualBaru - modalBaru) : "";
         
         let badgeModalBg = "bg-slate-100 text-slate-600 border border-slate-200";
         let badgeModalIcon = "minus";

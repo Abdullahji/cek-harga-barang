@@ -11561,33 +11561,39 @@
         return "hover:bg-slate-50/50";
       }
 
-      function getExpiredStatusBadgeHtml(statusStr) {
+      function getExpiredStatusBadgeHtml(statusStr, isDesktop = false) {
         const normalized = String(statusStr || "").trim();
+        const px = isDesktop ? "px-2" : "px-3";
+        const py = isDesktop ? "py-0.5" : "py-1.5";
+        const fontSize = isDesktop ? "text-[9px]" : "text-[10px]";
+        const dotSize = isDesktop ? "w-1 h-1" : "w-1.5 h-1.5";
+        const gap = isDesktop ? "gap-1" : "gap-1.5";
+
         if (normalized.toLowerCase() === "expired" || normalized === "🔴 Expired") {
           return `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100 shadow-sm shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+            <span class="inline-flex items-center ${gap} ${px} ${py} rounded-full ${fontSize} font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100 shadow-sm shrink-0">
+              <span class="${dotSize} rounded-full bg-rose-500 animate-pulse"></span>
               <span>Barang Expired</span>
             </span>
           `;
         } else if (normalized.includes("15") || normalized === "🟠 <=15 Hari") {
           return `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-50 text-orange-600 border border-orange-100 shadow-sm shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+            <span class="inline-flex items-center ${gap} ${px} ${py} rounded-full ${fontSize} font-black uppercase tracking-wider bg-orange-50 text-orange-600 border border-orange-100 shadow-sm shrink-0">
+              <span class="${dotSize} rounded-full bg-orange-500"></span>
               <span>Segera Expired</span>
             </span>
           `;
         } else if (normalized.includes("30") || normalized === "🟡 <=30 Hari") {
           return `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 shadow-sm shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+            <span class="inline-flex items-center ${gap} ${px} ${py} rounded-full ${fontSize} font-black uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100 shadow-sm shrink-0">
+              <span class="${dotSize} rounded-full bg-amber-500"></span>
               <span><=30 Hari</span>
             </span>
           `;
         } else if (normalized.toLowerCase() === "aman" || normalized === "🟢 Aman") {
           return `
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm shrink-0">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span class="inline-flex items-center ${gap} ${px} ${py} rounded-full ${fontSize} font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm shrink-0">
+              <span class="${dotSize} rounded-full bg-emerald-500"></span>
               <span>Aman</span>
             </span>
           `;
@@ -11747,10 +11753,10 @@
                  </td>
                  <td class="px-5 py-4 text-xs">
                     ${item.tanggalExpired ? `
-                      <div class="space-y-1">
-                        <div class="font-mono font-black text-slate-705 text-[11px]">${item.tanggalExpired}</div>
-                        <div class="font-mono text-[10px] font-bold text-slate-500">${item.sisaHari !== undefined && item.sisaHari !== "" ? `${item.sisaHari} Hari` : '-'}</div>
-                        <div class="inline-block mt-0.5">${getExpiredStatusBadgeHtml(item.statusExpired)}</div>
+                      <div class="flex flex-col gap-0.5">
+                        <div class="font-mono font-black text-slate-700 text-[11px] leading-tight">${item.tanggalExpired}</div>
+                        <div class="font-mono text-[10.5px] font-black text-slate-500 leading-tight">${item.sisaHari !== undefined && item.sisaHari !== "" ? `${item.sisaHari} Hari` : '-'}</div>
+                        <div class="inline-block mt-0.5">${getExpiredStatusBadgeHtml(item.statusExpired, true)}</div>
                       </div>
                     ` : '<span class="text-slate-400 font-bold text-xs">-</span>'}
                     ${item.keterangan ? `<div class="max-w-[170px] break-words italic font-bold text-slate-400 mt-2 text-[10px] line-clamp-2" title="${item.keterangan}">Ket: ${item.keterangan}</div>` : ''}

@@ -11475,41 +11475,7 @@
       }
 
       function formatDateIndo(dateStr) {
-        if (!dateStr || dateStr.trim() === "" || dateStr === "-") return "-";
-        try {
-          let parts = [];
-          if (dateStr.includes("-")) {
-            parts = dateStr.trim().split("-");
-          } else if (dateStr.includes("/")) {
-            parts = dateStr.trim().split("/");
-          } else {
-            return dateStr;
-          }
-          
-          if (parts.length === 3) {
-            let day, month, year;
-            if (parts[0].length === 4) {
-              // YYYY-MM-DD
-              year = parts[0];
-              month = parts[1];
-              day = parts[2];
-            } else {
-              // DD-MM-YYYY or MM-DD-YYYY depends on format, usually DD-MM-YYYY
-              day = parts[0];
-              month = parts[1];
-              year = parts[2];
-            }
-            const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-            const mIdx = parseInt(month, 10) - 1;
-            if (mIdx >= 0 && mIdx < 12) {
-              return `${parseInt(day, 10)} ${months[mIdx]} ${year}`;
-            }
-            return `${day}-${month}-${year}`;
-          }
-          return dateStr;
-        } catch (e) {
-          return dateStr;
-        }
+        return formatDateHyphen(dateStr);
       }
 
       function formatDateHyphen(dateStr) {
@@ -11724,7 +11690,7 @@
                         </button>
                       ` : ''}
                     </div>
-                    <div class="text-[10px] font-bold text-slate-400 mt-1">${item.tanggalPembelian}</div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-1">${formatDateHyphen(item.tanggalPembelian)}</div>
                  </td>
                  <td class="px-5 py-4">
                     <div class="font-black text-slate-800 text-sm">${item.namaSupplier}</div>
@@ -12985,17 +12951,7 @@
       }
 
       function formatDateDDMMYYYY(dateStr) {
-        if (!dateStr) return "-";
-        try {
-          const d = new Date(dateStr);
-          if (isNaN(d.getTime())) return dateStr;
-          const day = String(d.getDate()).padStart(2, '0');
-          const month = String(d.getMonth() + 1).padStart(2, '0');
-          const year = d.getFullYear();
-          return `${day}-${month}-${year}`;
-        } catch (e) {
-          return dateStr;
-        }
+        return formatDateHyphen(dateStr);
       }
 
       async function tampilkanPerbandinganSupplier(itemId, idBarang, satuan) {
@@ -15330,16 +15286,17 @@
         }
 
         const totalQty = details.reduce((acc, d) => acc + (parseInt(d.qtyOrder, 10) || 0), 0);
-        const catatanVal = (orderHeader.catatan && orderHeader.catatan.trim() !== "") ? orderHeader.catatan : "-";
 
         let lines = [];
         lines.push(`Pesanan Barang`);
+        lines.push(``);
         lines.push(`Dari : Toko Wina`);
-        lines.push(`Supplier: ${orderHeader.namaSupplier || "-"}`);
-        lines.push(`ID Order: ${orderHeader.idOrder}`);
-        lines.push(`Tanggal: ${formattedDate}`);
+        lines.push(`Supplier : ${orderHeader.namaSupplier || "-"}`);
+        lines.push(`ID Order : ${orderHeader.idOrder}`);
+        lines.push(`Tanggal : ${formattedDate}`);
         lines.push(``);
         lines.push(`Daftar Pesanan:`);
+        lines.push(``);
 
         let includeLastPurchase = false;
         const chkWA = document.getElementById("detail-order-include-last-purchase");
@@ -15350,6 +15307,8 @@
         let totalHargaTerakhir = 0;
 
         details.forEach((d, i) => {
+          lines.push(`${i + 1}. ${d.namaBarang} - ${d.qtyOrder} ${d.satuan}`);
+          
           if (includeLastPurchase) {
             const idBarang = d.idBarang;
             const satuan = d.satuan;
@@ -15387,29 +15346,31 @@
               const priceVal = Number(chosen.hargaModal) || 0;
               const formattedHarga = formatRupiah(priceVal);
               const formattedDate = chosen.tanggalPembelian ? formatDateHyphen(chosen.tanggalPembelian) : "-";
-              lines.push(`* ${d.qtyOrder} ${String(d.satuan).toUpperCase()} ${d.namaBarang} (Harga Terakhir: ${formattedHarga} tanggal ${formattedDate})`);
+              lines.push(`   (${formattedHarga} / ${formattedDate})`);
               
               const qty = Number(d.qtyOrder) || 0;
               totalHargaTerakhir += (qty * priceVal);
             } else {
-              lines.push(`* ${d.qtyOrder} ${String(d.satuan).toUpperCase()} ${d.namaBarang} (Harga Terakhir: - tanggal -)`);
+              lines.push(`   (- / -)`);
             }
-          } else {
-            lines.push(`${i + 1}. ${d.namaBarang} - ${d.qtyOrder} ${d.satuan}`);
           }
         });
 
         if (includeLastPurchase) {
           lines.push(``);
           lines.push(`Total Terakhir: ${formatRupiah(totalHargaTerakhir)}`);
+          lines.push(``);
+        } else {
+          lines.push(``);
         }
 
-        lines.push(``);
         lines.push(`Total Item: ${details.length}`);
         lines.push(`Total Qty: ${totalQty}`);
         lines.push(``);
         lines.push(`Catatan:`);
-        lines.push(`${catatanVal}`);
+        if (orderHeader.catatan && orderHeader.catatan.trim() !== "") {
+          lines.push(`${orderHeader.catatan.trim()}`);
+        }
         lines.push(``);
         lines.push(`Terima kasih.`);
 

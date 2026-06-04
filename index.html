@@ -3098,6 +3098,10 @@
       let rawSatuanBarangData = [];
       let rawHargaPromoData = [];
       let rawPembelianBarangData = [];
+      let activeCartItemSuggestionsMap = {};
+      let activeCartItemSuggestIndexMap = {};
+      let activeOrderBarangSuggestionsMap = {};
+      let activeOrderBarangSuggestIndexMap = {};
       function sanitizePembelianBarangData(data) {
         if (!Array.isArray(data)) return [];
         return data.map(item => {
@@ -4056,7 +4060,7 @@
       // 1. Deploy script kode.gs di atas sebagai Web App.
       // 2. Set "Who has access" ke "Anyone".
       // 3. Paste URL-nya di sini:
-      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwWonwzaC-bEPqEszbgtQVf8E_HUlrGwIpaP5zlIQWiIcigyRsc5b9Xm9kh7OomaLgvow/exec"; 
+      const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxKFs07tcRZMkMM6ewF94f6uW1x-lEUUWQHhqWhEVz8YPFQMlUZt7G9FEii9pzMCemN/exec"; 
 
       // Helper function to wait for Google Apps Script script object to load and initialize (in iframe)
       function waitForGoogleScriptRun(timeout = 3000) {
@@ -12497,7 +12501,7 @@
               <div class="flex gap-2">
                 <div class="relative flex-1 min-w-0 flex items-center">
                   <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4"></i>
-                  <input type="text" id="cart-item-search-${item.id}" oninput="autocompleteCartItem('${item.id}', this.value)" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold outline-none focus:ring-4 focus:ring-emerald-100/55 shadow-inner animate-pulse-placeholder" placeholder="Cari Barang (Barcode / ID / Nama)" />
+                  <input type="text" id="cart-item-search-${item.id}" oninput="autocompleteCartItem('${item.id}', this.value)" onkeydown="handleCartItemSearchKeyDown('${item.id}', event)" autocomplete="off" class="w-full pl-10 pr-10 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-xs font-bold outline-none focus:ring-4 focus:ring-emerald-100/55 shadow-inner animate-pulse-placeholder" placeholder="Cari Barang (Barcode / ID / Nama)" />
                   <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none">
                     <i data-lucide="x" class="w-3.5 h-3.5"></i>
                   </button>
@@ -12743,12 +12747,79 @@
         if (totalEl) totalEl.innerText = formatIDR(grandTotal);
       }
 
+      function handleCartItemSearchKeyDown(itemId, event) {
+        const container = document.getElementById("cart-suggestions-" + itemId);
+        if (!container || container.classList.contains("hidden")) return;
+
+        const suggestions = activeCartItemSuggestionsMap[itemId] || [];
+        const count = suggestions.length;
+        if (count === 0) return;
+
+        let currentIndex = activeCartItemSuggestIndexMap[itemId] !== undefined ? activeCartItemSuggestIndexMap[itemId] : -1;
+
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          currentIndex++;
+          if (currentIndex >= count) {
+            currentIndex = 0; // wrap around
+          }
+          activeCartItemSuggestIndexMap[itemId] = currentIndex;
+          updateCartSuggestHighlight(itemId, suggestions);
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          currentIndex--;
+          if (currentIndex < 0) {
+            currentIndex = count - 1; // wrap around
+          }
+          activeCartItemSuggestIndexMap[itemId] = currentIndex;
+          updateCartSuggestHighlight(itemId, suggestions);
+        } else if (event.key === "Enter") {
+          if (count === 1) {
+            event.preventDefault();
+            const chosen = suggestions[0];
+            pilihCartItemGoods(itemId, '', chosen.idBarang, chosen.namaBarang, '');
+            container.classList.add("hidden");
+            activeCartItemSuggestionsMap[itemId] = [];
+            activeCartItemSuggestIndexMap[itemId] = -1;
+          } else if (currentIndex >= 0 && currentIndex < count) {
+            event.preventDefault();
+            const chosen = suggestions[currentIndex];
+            pilihCartItemGoods(itemId, '', chosen.idBarang, chosen.namaBarang, '');
+            container.classList.add("hidden");
+            activeCartItemSuggestionsMap[itemId] = [];
+            activeCartItemSuggestIndexMap[itemId] = -1;
+          }
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          container.classList.add("hidden");
+          activeCartItemSuggestionsMap[itemId] = [];
+          activeCartItemSuggestIndexMap[itemId] = -1;
+        }
+      }
+
+      function updateCartSuggestHighlight(itemId, suggestions) {
+        const currentIndex = activeCartItemSuggestIndexMap[itemId];
+        suggestions.forEach((item, idx) => {
+          const btn = document.getElementById(`cart-suggest-item-${itemId}-${idx}`);
+          if (btn) {
+            if (idx === currentIndex) {
+              btn.classList.add("bg-emerald-50");
+              btn.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            } else {
+              btn.classList.remove("bg-emerald-50");
+            }
+          }
+        });
+      }
+
       function autocompleteCartItem(itemId, val) {
         const container = document.getElementById("cart-suggestions-" + itemId);
         if (!container) return;
 
         if (!val || val.trim().length === 0) {
           container.classList.add("hidden");
+          activeCartItemSuggestionsMap[itemId] = [];
+          activeCartItemSuggestIndexMap[itemId] = -1;
           return;
         }
 
@@ -12768,6 +12839,8 @@
         );
         if (exactBarcodeMatch) {
           pilihCartItemGoods(itemId, exactBarcodeMatch.barcode || "", exactBarcodeMatch.idBarang, exactBarcodeMatch.namaBarang, exactBarcodeMatch.satuan, exactBarcodeMatch.hargaJual);
+          activeCartItemSuggestionsMap[itemId] = [];
+          activeCartItemSuggestIndexMap[itemId] = -1;
           return;
         }
 
@@ -12776,11 +12849,15 @@
         );
         if (exactIdMatch) {
           pilihCartItemGoods(itemId, exactIdMatch.barcode || "", exactIdMatch.idBarang, exactIdMatch.namaBarang, exactIdMatch.satuan, exactIdMatch.hargaJual);
+          activeCartItemSuggestionsMap[itemId] = [];
+          activeCartItemSuggestIndexMap[itemId] = -1;
           return;
         }
 
         if (matches.length === 0) {
           container.innerHTML = `<div class="p-3.5 text-[10px] font-bold text-slate-400 italic">Barang aktif tidak ditemukan.</div>`;
+          activeCartItemSuggestionsMap[itemId] = [];
+          activeCartItemSuggestIndexMap[itemId] = -1;
         } else {
           // Deduplicate matches to unique idBarang for the suggestions list
           const uniqueMatches = [];
@@ -12793,8 +12870,11 @@
             }
           }
 
-          container.innerHTML = uniqueMatches.map(item => `
-            <button type="button" onclick="pilihCartItemGoods('${itemId}', '', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '')" class="w-full text-left p-3.5 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex justify-between items-center pr-4 font-sans">
+          activeCartItemSuggestionsMap[itemId] = uniqueMatches;
+          activeCartItemSuggestIndexMap[itemId] = -1;
+
+          container.innerHTML = uniqueMatches.map((item, idx) => `
+            <button id="cart-suggest-item-${itemId}-${idx}" type="button" onclick="pilihCartItemGoods('${itemId}', '', '${item.idBarang}', '${item.namaBarang.replace(/'/g, "\\'")}', '')" class="w-full text-left p-3.5 hover:bg-emerald-50/50 border-b border-slate-50 transition-colors flex justify-between items-center pr-4 font-sans focus:outline-none">
               <div class="min-w-0 flex-1">
                 <span class="font-black text-slate-850 text-[11px] block truncate">${item.idBarang} - ${item.namaBarang}</span>
               </div>
@@ -12806,6 +12886,8 @@
       }
 
       function pilihCartItemGoods(itemId, barcode, idBarang, namaBarang, satuan, hargaJualVal) {
+        activeCartItemSuggestionsMap[itemId] = [];
+        activeCartItemSuggestIndexMap[itemId] = -1;
         const item = pembelianCartItems.find(item => item.id === itemId);
         if (!item) return;
 
@@ -14003,7 +14085,7 @@
               <label class="text-[8px] font-black text-slate-400 uppercase tracking-widest leading-none">Cari Barang (Barcode / ID / Nama)</label>
               <div class="relative flex items-center">
                 <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></i>
-                <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Cari Barang (Barcode / ID / Nama)" required />
+                <input type="text" id="order-item-search-${seq}" oninput="autocompleteOrderBarang(this, ${seq})" onkeydown="handleOrderBarangSearchKeyDown(${seq}, event)" autocomplete="off" class="w-full pl-10 pr-20 py-3.5 rounded-xl bg-slate-50 border-none font-bold text-xs outline-none focus:ring-4 focus:ring-emerald-100 shadow-inner text-xs sm:text-sm" placeholder="Cari Barang (Barcode / ID / Nama)" required />
                 <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                   <button type="button" onclick="clearInlineInput(this)" class="text-slate-300 hover:text-slate-500 transition-colors focus:outline-none" title="Clear text">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -14082,6 +14164,71 @@
         }
       }
 
+      function handleOrderBarangSearchKeyDown(seq, event) {
+        const container = document.getElementById(`order-item-suggestions-${seq}`);
+        if (!container || container.classList.contains("hidden")) return;
+
+        const suggestions = activeOrderBarangSuggestionsMap[seq] || [];
+        const count = suggestions.length;
+        if (count === 0) return;
+
+        let currentIndex = activeOrderBarangSuggestIndexMap[seq] !== undefined ? activeOrderBarangSuggestIndexMap[seq] : -1;
+
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          currentIndex++;
+          if (currentIndex >= count) {
+            currentIndex = 0; // wrap around
+          }
+          activeOrderBarangSuggestIndexMap[seq] = currentIndex;
+          updateOrderSuggestHighlight(seq, suggestions);
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          currentIndex--;
+          if (currentIndex < 0) {
+            currentIndex = count - 1; // wrap around
+          }
+          activeOrderBarangSuggestIndexMap[seq] = currentIndex;
+          updateOrderSuggestHighlight(seq, suggestions);
+        } else if (event.key === "Enter") {
+          if (count === 1) {
+            event.preventDefault();
+            const chosen = suggestions[0];
+            selectOrderBarang(seq, '', chosen.idBarang, chosen.namaBarang, '');
+            container.classList.add("hidden");
+            activeOrderBarangSuggestionsMap[seq] = [];
+            activeOrderBarangSuggestIndexMap[seq] = -1;
+          } else if (currentIndex >= 0 && currentIndex < count) {
+            event.preventDefault();
+            const chosen = suggestions[currentIndex];
+            selectOrderBarang(seq, '', chosen.idBarang, chosen.namaBarang, '');
+            container.classList.add("hidden");
+            activeOrderBarangSuggestionsMap[seq] = [];
+            activeOrderBarangSuggestIndexMap[seq] = -1;
+          }
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          container.classList.add("hidden");
+          activeOrderBarangSuggestionsMap[seq] = [];
+          activeOrderBarangSuggestIndexMap[seq] = -1;
+        }
+      }
+
+      function updateOrderSuggestHighlight(seq, suggestions) {
+        const currentIndex = activeOrderBarangSuggestIndexMap[seq];
+        suggestions.forEach((item, idx) => {
+          const div = document.getElementById(`order-suggest-item-${seq}-${idx}`);
+          if (div) {
+            if (idx === currentIndex) {
+              div.classList.add("bg-slate-50");
+              div.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            } else {
+              div.classList.remove("bg-slate-50");
+            }
+          }
+        });
+      }
+
       // Autocomplete for Goods on each multi-line line
       function autocompleteOrderBarang(inputElement, seq) {
         const query = inputElement.value;
@@ -14090,6 +14237,8 @@
 
         if (!query || query.trim() === "") {
           container.classList.add("hidden");
+          activeOrderBarangSuggestionsMap[seq] = [];
+          activeOrderBarangSuggestIndexMap[seq] = -1;
           return;
         }
 
@@ -14113,6 +14262,8 @@
         );
         if (exactBarcodeMatch) {
           selectOrderBarang(seq, exactBarcodeMatch.barcode || "", exactBarcodeMatch.idBarang, exactBarcodeMatch.namaBarang, exactBarcodeMatch.satuan);
+          activeOrderBarangSuggestionsMap[seq] = [];
+          activeOrderBarangSuggestIndexMap[seq] = -1;
           return;
         }
 
@@ -14122,11 +14273,15 @@
         );
         if (exactIdMatch) {
           selectOrderBarang(seq, exactIdMatch.barcode || "", exactIdMatch.idBarang, exactIdMatch.namaBarang, exactIdMatch.satuan);
+          activeOrderBarangSuggestionsMap[seq] = [];
+          activeOrderBarangSuggestIndexMap[seq] = -1;
           return;
         }
 
         if (filtered.length === 0) {
           container.innerHTML = `<div class="p-3 text-xs font-bold text-slate-400 italic">Barang tidak ditemukan</div>`;
+          activeOrderBarangSuggestionsMap[seq] = [];
+          activeOrderBarangSuggestIndexMap[seq] = -1;
         } else {
           // Deduplicate matches to unique idBarang
           const uniqueFiltered = [];
@@ -14139,8 +14294,11 @@
             }
           }
 
-          container.innerHTML = uniqueFiltered.map(s => `
-            <div onclick="selectOrderBarang(${seq}, '', '${s.idBarang}', '${s.namaBarang.replace(/'/g, "\\'")}', '')" class="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 transition-colors">
+          activeOrderBarangSuggestionsMap[seq] = uniqueFiltered;
+          activeOrderBarangSuggestIndexMap[seq] = -1;
+
+          container.innerHTML = uniqueFiltered.map((s, idx) => `
+            <div id="order-suggest-item-${seq}-${idx}" onclick="selectOrderBarang(${seq}, '', '${s.idBarang}', '${s.namaBarang.replace(/'/g, "\\'")}', '')" class="p-3 hover:bg-slate-50 cursor-pointer border-b border-slate-50 transition-colors">
               <div class="text-xs font-black text-slate-800">${s.idBarang} - ${s.namaBarang}</div>
             </div>
           `).join("");
@@ -14150,6 +14308,8 @@
       }
 
       function selectOrderBarang(seq, barcode, idBarang, namaBarang, satuan) {
+        activeOrderBarangSuggestionsMap[seq] = [];
+        activeOrderBarangSuggestIndexMap[seq] = -1;
         const searchInput = document.getElementById(`order-item-search-${seq}`);
         const idInput = document.getElementById(`order-item-idBarang-${seq}`);
         const nameInput = document.getElementById(`order-item-namaBarang-${seq}`);

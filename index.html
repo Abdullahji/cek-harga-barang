@@ -3171,7 +3171,8 @@
           return {
             ...item,
             sisaHari: sHari,
-            statusExpired: sExp
+            statusExpired: sExp,
+            profit: (item.hargaJual === "" || item.hargaJual === null || item.hargaJual === undefined) ? "" : (Number(item.hargaJual) - Number(item.hargaModal))
           };
         });
       }

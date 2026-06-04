@@ -696,6 +696,7 @@
                     </button>
 
                     <button
+                        id="btn-supplier-refresh"
                         onclick="fetchDataSupplierData(true)"
                         class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-orange-600 hover:border-orange-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
                         title="Refresh Data"
@@ -2756,9 +2757,14 @@
                       Atur harga grosir berdasarkan kuantitas
                     </p>
                   </div>
-                  <button onclick="closePromoModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all focus:outline-none">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                  </button>
+                  <div class="flex gap-2">
+                    <button id="btn-promo-refresh" onclick="fetchHargaPromoData(false)" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 hover:text-amber-600 transition-all focus:outline-none cursor-pointer" title="Refresh Promo">
+                      <i data-lucide="rotate-cw" class="w-5 h-5 font-bold"></i>
+                    </button>
+                    <button onclick="closePromoModal()" class="p-3 bg-slate-100 text-slate-400 rounded-xl hover:bg-slate-200 transition-all focus:outline-none cursor-pointer">
+                      <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- TARGET IDENTIFIER -->
@@ -5182,10 +5188,33 @@
         showToast("Menyinkronkan semua data...", "info");
         
         try {
+          // Clear ALL data lama sebelum load ulang data baru
+          rawDataSupplierData = [];
+          rawSatuanBarangData = [];
+          rawReferensiData = [];
+          rawBarangData = [];
+          rawPembelianBarangData = [];
+          rawOrderHeaders = [];
+          rawOrderDetails = [];
+          rawHargaPromoData = [];
+          
+          // Render views as empty
+          try { renderDashboard(); } catch(e) {}
+          try { renderDataSupplierData(); } catch(e) {}
+          try { renderSatuanBarangData(); } catch(e) {}
+          try { renderReferensiData(); } catch(e) {}
+          try { renderBarangData(); } catch(e) {}
+          try { renderPembelianBarangData(); } catch(e) {}
+          try { renderOrderBarangData(); } catch(e) {}
+          
           await Promise.all([
-            fetchDataSupplierData(), 
-            fetchSatuanBarangData(),
-            fetchReferensiData()
+            fetchDataSupplierData(false), 
+            fetchSatuanBarangData(false, true),
+            fetchReferensiData(),
+            fetchBarangData(false, true),
+            fetchPembelianBarangData(false, true),
+            fetchOrderBarangData(false, true),
+            fetchHargaPromoData(true)
           ]);
           
           if (document.getElementById("section-dashboard")?.classList.contains("active")) {
@@ -6027,6 +6056,11 @@
           barangFilterKategori = "all";
           barangFilterMerk = "all";
           barangCurrentPage = 1;
+
+          // Clear data lama sebelum load ulang data baru
+          rawBarangData = [];
+          renderBarangData();
+
           showToast("Memperbarui data barang...", "info");
         }
 
@@ -7625,6 +7659,11 @@
           satuanBarangFilterStatus = "all";
           satuanBarangFilterSatuan = "all";
           satuanBarangCurrentPage = 1;
+
+          // Clear data lama sebelum load ulang data baru
+          rawSatuanBarangData = [];
+          renderSatuanBarangData();
+
           showToast("Memperbarui data satuan...", "info");
         }
 
@@ -9324,6 +9363,59 @@
         }
       }
 
+      let isFetchingPromo = false;
+      async function fetchHargaPromoData(silent = false) {
+        if (isFetchingPromo) return;
+        isFetchingPromo = true;
+        
+        const btn = document.getElementById("btn-promo-refresh");
+        if (btn) {
+          btn.classList.add("bg-amber-50", "text-amber-600");
+          const icon = btn.querySelector("i") || btn.querySelector("svg");
+          if (icon) icon.classList.add("animate-spin");
+        }
+        
+        if (!silent) showLoading(true);
+        try {
+          // Clear data lama sebelum load ulang data baru
+          rawHargaPromoData = [];
+          if (document.getElementById("promoModal")?.classList.contains("flex")) {
+            renderPromoList();
+          }
+          
+          showToast("Memperbarui harga promo...", "info");
+          const res = await callGAS("ambilHargaPromo");
+          if (!silent) showLoading(false);
+          isFetchingPromo = false;
+          
+          if (btn) {
+            btn.classList.remove("bg-amber-50", "text-amber-600");
+            const icon = btn.querySelector("i") || btn.querySelector("svg");
+            if (icon) icon.classList.remove("animate-spin");
+          }
+          
+          if (res && res.sukses) {
+            rawHargaPromoData = res.data || [];
+            if (document.getElementById("promoModal")?.classList.contains("flex")) {
+              renderPromoList();
+            }
+            showToast("Harga promo berhasil diperbarui", "success");
+          } else {
+            showToast("Gagal memuat harga promo", "error");
+          }
+        } catch (err) {
+          if (!silent) showLoading(false);
+          isFetchingPromo = false;
+          if (btn) {
+            btn.classList.remove("bg-amber-50", "text-amber-600");
+            const icon = btn.querySelector("i") || btn.querySelector("svg");
+            if (icon) icon.classList.remove("animate-spin");
+          }
+          console.error("fetchHargaPromoData Error:", err);
+          showToast("Gagal memperbarui harga promo", "error");
+        }
+      }
+
       // --- KELOLA PROMO FRONTEND FUNCTIONS ---
       function openKelolaPromo(idBarang, satuan) {
         const units = rawSatuanBarangData.filter(u => String(u.idBarang) === String(idBarang));
@@ -9352,6 +9444,9 @@
         modal.classList.replace("hidden", "flex");
         
         renderPromoList();
+        
+        // Background silent fetch of fresh promo data
+        fetchHargaPromoData(true);
         
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
           try { lucide.createIcons(); } catch(e) {}
@@ -10668,19 +10763,41 @@
       // FEATURE: DATA SUPPLIER NEW
       // ==========================================
 
+      function applyRefreshSpinSupplier() {
+        const btn = document.getElementById("btn-supplier-refresh");
+        if (!btn) return;
+        const icon = btn.querySelector("i") || btn.querySelector("svg");
+        if (isFetchingDataSupplier) {
+          btn.classList.add("bg-orange-50", "text-orange-600");
+          if (icon) icon.classList.add("animate-spin");
+        } else {
+          btn.classList.remove("bg-orange-50", "text-orange-600");
+          if (icon) icon.classList.remove("animate-spin");
+        }
+      }
+
       async function fetchDataSupplierData(resetFilters = false) {
         if (isFetchingDataSupplier) return;
         
         if (resetFilters) {
           dataSupplierSearchTerm = "";
-          document.getElementById("searchDataSupplier").value = "";
+          const searchInput = document.getElementById("searchDataSupplier");
+          if (searchInput) searchInput.value = "";
           dataSupplierFilterStatus = "all";
+
+          // Clear data lama sebelum load ulang data baru
+          rawDataSupplierData = [];
+          renderDataSupplierData();
+
+          showToast("Memperbarui data supplier...", "info");
         }
         
         isFetchingDataSupplier = true;
+        applyRefreshSpinSupplier();
         try {
           const res = await callGAS("ambilMasterSupplier");
           isFetchingDataSupplier = false;
+          applyRefreshSpinSupplier();
           if (res && res.sukses) {
             rawDataSupplierData = res.data || [];
             // If response is success but data is zero, and we were using demo, keep using demo
@@ -10688,6 +10805,7 @@
                 rawDataSupplierData = DEMO_DATA_SUPPLIER;
             }
             renderDataSupplierData();
+            if (resetFilters) showToast("Data supplier berhasil diperbarui", "success");
           } else {
             // Fallback to demo if fetch fails
             if (rawDataSupplierData.length === 0) {
@@ -10697,6 +10815,7 @@
           }
         } catch (err) {
           isFetchingDataSupplier = false;
+          applyRefreshSpinSupplier();
           console.error("fetchDataSupplierData Error:", err);
           if (rawDataSupplierData.length === 0) {
               rawDataSupplierData = DEMO_DATA_SUPPLIER;
@@ -11235,6 +11354,10 @@
           const supSelect = document.getElementById("filter-pembelian-barang-supplier");
           if (supSelect) supSelect.value = "all";
           pembelianBarangCurrentPage = 1;
+
+          // Clear data lama sebelum load ulang data baru
+          rawPembelianBarangData = [];
+          renderPembelianBarangData();
           
           // Reset UI filter styles
           document.querySelectorAll(".pembelian-barang-status-btn").forEach(btn => {
@@ -12417,7 +12540,7 @@
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Qty Beli</label>
                   <div class="relative flex items-center w-full">
-                    <input type="number" id="cart-qty-${item.id}" min="1" value="${item.qtyPembelian}" oninput="updateCartItemPropertyValue('${item.id}', 'qtyPembelian', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-880 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
+                    <input type="text" inputmode="numeric" pattern="[0-9]*" id="cart-qty-${item.id}" value="${item.qtyPembelian}" oninput="const val = this.value.replace(/\D/g, ''); if (val !== this.value) { this.value = val; } updateCartItemPropertyValue('${item.id}', 'qtyPembelian', val)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-880 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" placeholder="Qty" required />
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-3.5 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
@@ -13366,6 +13489,12 @@
           const supSelect = document.getElementById("filter-order-barang-supplier");
           if (supSelect) supSelect.value = "all";
           orderBarangCurrentPage = 1;
+
+          // Clear data lama sebelum load ulang data baru
+          rawOrderHeaders = [];
+          rawOrderDetails = [];
+          renderOrderBarangData();
+
           showToast("Memperbarui data order & referensi...", "info");
           try {
             await fetchReferensiData();

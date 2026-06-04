@@ -1531,10 +1531,10 @@
 
               <div id="pembelian-barang-sort-panel" class="hidden animate-in fade-in slide-in-from-top-4 duration-300">
                 <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-wrap gap-3">
-                   <button onclick="setPembelianBarangSort('idPembelianBrg')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="idPembelianBrg">
+                   <button onclick="setPembelianBarangSort('idPembelianBrg')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-emerald-600 border-emerald-200" data-val="idPembelianBrg">
                      <span>ID PEMBELIAN</span>
                    </button>
-                   <button onclick="setPembelianBarangSort('tanggalPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-emerald-600 border-emerald-200" data-val="tanggalPembelian">
+                   <button onclick="setPembelianBarangSort('tanggalPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="tanggalPembelian">
                      <span>TANGGAL BELI</span>
                    </button>
                    <button onclick="setPembelianBarangSort('qtyPembelian')" class="pembelian-barang-sort-btn px-6 py-3 text-[10px] font-black rounded-xl border border-slate-100 transition-all flex items-center gap-2 text-slate-600" data-val="qtyPembelian">
@@ -3158,7 +3158,7 @@
       let pembelianBarangFilterStatus = "all";
       let pembelianBarangFilterSupplier = "all";
       let pembelianBarangFilterExpired = "all";
-      let pembelianBarangSortBy = "tanggalPembelian";
+      let pembelianBarangSortBy = "idPembelianBrg";
       let pembelianBarangSortOrder = "desc";
       let pembelianBarangCurrentPage = 1;
       let pembelianBarangItemsPerPage = 10;

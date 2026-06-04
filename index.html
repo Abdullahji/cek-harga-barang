@@ -3109,7 +3109,18 @@
               try {
                 const today = new Date();
                 today.setHours(0,0,0,0);
-                const expDate = new Date(item.tanggalExpired);
+                
+                let expDate;
+                const parts = String(item.tanggalExpired).trim().split("-");
+                if (parts.length === 3) {
+                  if (parts[0].length === 4) {
+                    expDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                  } else {
+                    expDate = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+                  }
+                } else {
+                  expDate = new Date(item.tanggalExpired);
+                }
                 expDate.setHours(0,0,0,0);
                 if (!isNaN(expDate.getTime())) {
                   const diffTime = expDate.getTime() - today.getTime();
@@ -11515,6 +11526,21 @@
         }
       }
 
+      function convertIndoDateToISO(dateStr) {
+        if (!dateStr) return "";
+        const str = String(dateStr).trim();
+        const parts = str.split("-");
+        if (parts.length === 3) {
+          if (parts[0].length <= 2 && parts[2].length === 4) {
+            // DD-MM-YYYY to YYYY-MM-DD
+            const day = parts[0].padStart(2, '0');
+            const month = parts[1].padStart(2, '0');
+            return `${parts[2]}-${month}-${day}`;
+          }
+        }
+        return str;
+      }
+
       function getRowHighlightClass(statusStr) {
         const normalized = String(statusStr || "").trim();
         if (normalized.toLowerCase() === "expired" || normalized === "🔴 Expired") {
@@ -11720,7 +11746,7 @@
                  <td class="px-5 py-4 text-xs">
                     ${item.tanggalExpired ? `
                       <div class="flex flex-col gap-0.5">
-                        <div class="font-mono font-black text-slate-700 text-[11px] leading-tight">${formatDateHyphen(item.tanggalExpired)}</div>
+                        <div class="font-mono font-black text-slate-700 text-[11px] leading-tight">${item.tanggalExpired}</div>
                         <div class="font-mono text-[10.5px] font-black text-slate-500 leading-tight">${item.sisaHari !== undefined && item.sisaHari !== "" ? `${item.sisaHari} Hari` : '-'}</div>
                         <div class="inline-block mt-0.5">${getExpiredStatusBadgeHtml(item.statusExpired, true)}</div>
                       </div>
@@ -11831,7 +11857,7 @@
                   <div class="flex justify-between items-center border-t border-slate-50 pt-3 flex-wrap gap-2">
                     <div class="text-[10px] text-slate-500 font-bold pr-4 truncate">
                       ${item.keterangan ? `<span>Ket: <i>${item.keterangan}</i></span>` : ''}
-                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5 font-black">Exp: ${formatDateIndo(item.tanggalExpired)}</div>` : ''}
+                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5 font-black">Exp: ${item.tanggalExpired}</div>` : ''}
                     </div>
                     ${item.sisaHari !== undefined && item.sisaHari !== "" ? `<div class="text-[10px] text-slate-600 font-black">Sisa Hari: <span class="font-mono bg-slate-100 p-1.5 rounded">${item.sisaHari} Hari</span></div>` : ''}
                     <div>
@@ -12432,7 +12458,7 @@
                 <div class="space-y-1.5 flex-1 font-sans">
                   <label class="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Tgl Expired</label>
                   <div class="relative flex items-center w-full">
-                    <input type="date" id="cart-tanggalExpired-${item.id}" value="${item.tanggalExpired}" onchange="updateCartItemPropertyValue('${item.id}', 'tanggalExpired', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" />
+                    <input type="date" id="cart-tanggalExpired-${item.id}" value="${convertIndoDateToISO(item.tanggalExpired)}" onchange="updateCartItemPropertyValue('${item.id}', 'tanggalExpired', this.value)" class="w-full pl-4 pr-10 py-3 text-xs bg-slate-50 border border-slate-100 rounded-xl font-bold text-slate-700 outline-none focus:ring-4 focus:ring-emerald-100/50 shadow-inner font-mono" />
                     <button type="button" onclick="clearInlineInput(this)" class="absolute right-8 text-slate-400 hover:text-slate-600 transition-colors focus:outline-none" title="Clear text">
                       <i data-lucide="x" class="w-3.5 h-3.5"></i>
                     </button>
@@ -12531,7 +12557,12 @@
             item[prop] = parseFloat(valClean) || 0;
           }
         } else if (prop === 'tanggalExpired') {
-          item.tanggalExpired = rawVal;
+          if (rawVal && /^\d{4}-\d{2}-\d{2}$/.test(rawVal)) {
+            const parts = rawVal.split("-");
+            item.tanggalExpired = `${parts[2]}-${parts[1]}-${parts[0]}`;
+          } else {
+            item.tanggalExpired = rawVal;
+          }
         }
 
         renderPembelianCart();
@@ -14666,7 +14697,7 @@
           const itemProfit = isBeli ? 0 : (rawProfit === "" ? "" : (rawProfit * qty));
 
           // Expired state values
-          const expDateFormatted = x.tanggalExpired ? formatDateIndo(x.tanggalExpired) : "-";
+          const expDateFormatted = x.tanggalExpired ? x.tanggalExpired : "-";
           const expDaysLeft = (x.sisaHari !== undefined && x.sisaHari !== "") ? x.sisaHari + " Days Left" : "- Days Left";
           const expBadgeHtml = getExpiredStatusBadgeHtml(x.statusExpired || "🟢 Aman");
 

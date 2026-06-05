@@ -10474,11 +10474,8 @@
         console.log("=== DEBUG VALIDASI SATUAN BARANG ===");
         console.log("Data modalEditingGroupUnits:", JSON.stringify(window.modalEditingGroupUnits));
 
-        // 1. VALIDASI QTY SATUAN HANYA UNTUK ROW YANG SEDANG AKTIF SAJA
+        // 1. VALIDASI QTY SATUAN UNTUK SEMUA BARIS YANG AKTIF (BUKAN NONAKTIF)
         window.modalEditingGroupUnits.forEach((item, idx) => {
-          if (idx !== window.activeEditingUnitIdx) {
-            return; // Hanya validasi row aktif/visible yang sedang diedit
-          }
           if (!isEqualNormalized(item.status, "Nonaktif")) {
             const rawS = String(item.satuan || "").trim();
             const rawHJ = String(item.hargaJual !== undefined && item.hargaJual !== null ? item.hargaJual : "").trim().replace(/[^\d]/g, "");
@@ -10510,19 +10507,10 @@
         let activeLevel = 1;
 
         window.modalEditingGroupUnits.forEach((item, idx) => {
-          // Rule PRESERVE ROW LAIN / SELAIN ROW YANG SEDANG DI-EDIT:
-          // Agar database tidak mengubah/mengoverwrite level/status row PAK/BALL saat kita edit BKS.
-          // Kita hanya memasukkan row aktif (yang sedang diedit) ATAU baris baru (yang belum punya row ID).
-          const isEditMode = window.modalEditingGroupUnits.some(u => u.row && u.row !== "");
+          // Rule: Kita kirim seluruh set multi-satuan/variasi sekaligus demi menjaga konsistensi dan efisiensi.
+          // Don't omit background rows who are being edited.
           const isNewRow = !item.row || item.row === "";
           const isActiveRow = idx === window.activeEditingUnitIdx;
-
-          if (isEditMode) {
-            if (!isActiveRow && !isNewRow) {
-              console.log(`[Save - Row ${idx}] Omitted dari payload untuk melestarikan baris background di Google Spreadsheet.`);
-              return;
-            }
-          }
 
           const rowVal = item.row || "";
           let barcodeVal = item.barcode || "";
@@ -10567,50 +10555,48 @@
             hargaJualClean
           });
 
-          // Rule 1: VALIDASI HANYA ROW AKTIF SAJA yang sedang diedit/visible
-          if (isActiveRow) {
-            if (!isEqualNormalized(statusVal, "Nonaktif")) {
-              // 1. Satuan: cek value aktual
-              const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
-              
-              // 2. Qty Konversi & Qty Satuan: cek numeric valid
-              const parsedQtyInput = Number(qtyInputVal);
-              const isQtyInputInvalid = isNaN(parsedQtyInput) || parsedQtyInput <= 0;
-              
-              const parsedQtyVal = Number(qtyVal);
-              const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
+          // Rule 1: VALIDASI SEMUA ROW AKTIF (BUKAN NONAKTIF)
+          if (!isEqualNormalized(statusVal, "Nonaktif")) {
+            // 1. Satuan: cek value aktual
+            const isSatuanEmpty = satuanVal === "" || satuanVal === undefined || satuanVal === null || String(satuanVal).trim() === "";
+            
+            // 2. Qty Konversi & Qty Satuan: cek numeric valid
+            const parsedQtyInput = Number(qtyInputVal);
+            const isQtyInputInvalid = isNaN(parsedQtyInput) || parsedQtyInput <= 0;
+            
+            const parsedQtyVal = Number(qtyVal);
+            const isQtyValInvalid = isNaN(parsedQtyVal) || parsedQtyVal <= 0;
 
-              // 3. Harga Jual: strip format currency, harus numeric valid > 0 (jika diisi)
-              const parsedHargaJualClean = Number(hargaJualClean) || 0;
-              const isHargaJualInvalid = hargaJualClean !== "" && (isNaN(parsedHargaJualClean) || parsedHargaJualClean <= 0);
+            // 3. Harga Jual: strip format currency, harus numeric valid > 0 (jika diisi)
+            const parsedHargaJualClean = Number(hargaJualClean) || 0;
+            const isHargaJualInvalid = hargaJualClean !== "" && (isNaN(parsedHargaJualClean) || parsedHargaJualClean <= 0);
 
-              // Rule 5: DEBUG LOGS UNTUK ANALISIS FIELD KOSONG/INVALID
-              const debugMsgs = [];
-              debugMsgs.push(isSatuanEmpty ? "[-] Satuan: KOSONG" : `[+] Satuan: OK (${satuanVal})`);
-              debugMsgs.push(isQtyInputInvalid ? "[-] Qty Konversi: INVALID (<=0)" : `[+] Qty Konversi: OK (${qtyInputVal})`);
-              debugMsgs.push(isQtyValInvalid ? "[-] Qty Satuan: INVALID (<=0)" : `[+] Qty Satuan: OK (${qtyVal})`);
-              debugMsgs.push(isHargaJualInvalid ? `[-] Harga Jual: INVALID (<=0) (raw: '${rawHargaJualStr}', parsed: ${parsedHargaJualClean})` : `[+] Harga Jual: OK (${hargaJualClean || "KOSONG"})`);
-              
-              console.warn(`[DEBUG VALIDASI SAVE] Row ${idx} (${satuanVal}): ` + debugMsgs.join(" | "));
+            // Rule 5: DEBUG LOGS UNTUK ANALISIS FIELD KOSONG/INVALID
+            const debugMsgs = [];
+            debugMsgs.push(isSatuanEmpty ? "[-] Satuan: KOSONG" : `[+] Satuan: OK (${satuanVal})`);
+            debugMsgs.push(isQtyInputInvalid ? "[-] Qty Konversi: INVALID (<=0)" : `[+] Qty Konversi: OK (${qtyInputVal})`);
+            debugMsgs.push(isQtyValInvalid ? "[-] Qty Satuan: INVALID (<=0)" : `[+] Qty Satuan: OK (${qtyVal})`);
+            debugMsgs.push(isHargaJualInvalid ? `[-] Harga Jual: INVALID (<=0) (raw: '${rawHargaJualStr}', parsed: ${parsedHargaJualClean})` : `[+] Harga Jual: OK (${hargaJualClean || "KOSONG"})`);
+            
+            console.warn(`[DEBUG VALIDASI SAVE] Row ${idx} (${satuanVal}): ` + debugMsgs.join(" | "));
 
-              if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
-                console.warn(`[Validation - Row ${idx}] GAGAL VALIDASI detail:`, {
-                  isSatuanEmpty,
-                  isQtyInputInvalid,
-                  isQtyValInvalid,
-                  isHargaJualInvalid,
-                  detailValues: {
-                    satuanVal,
-                    qtyInputVal,
-                    qtyVal,
-                    hargaJualClean,
-                    rawHargaJualStr
-                  }
-                });
-                hasEmptyFields = true;
-              } else {
-                console.log(`[Validation - Row ${idx}] Lolos.`);
-              }
+            if (isSatuanEmpty || isQtyInputInvalid || isQtyValInvalid || isHargaJualInvalid) {
+              console.warn(`[Validation - Row ${idx}] GAGAL VALIDASI detail:`, {
+                isSatuanEmpty,
+                isQtyInputInvalid,
+                isQtyValInvalid,
+                isHargaJualInvalid,
+                detailValues: {
+                  satuanVal,
+                  qtyInputVal,
+                  qtyVal,
+                  hargaJualClean,
+                  rawHargaJualStr
+                }
+              });
+              hasEmptyFields = true;
+            } else {
+              console.log(`[Validation - Row ${idx}] Lolos.`);
             }
           }
 

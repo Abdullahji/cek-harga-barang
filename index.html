@@ -7280,6 +7280,14 @@
                   }
                 });
               }
+
+              if (window.rawHargaPromoData && Array.isArray(window.rawHargaPromoData)) {
+                window.rawHargaPromoData.forEach(promo => {
+                  if (String(promo.idBarang) === String(oldId)) {
+                    promo.namaBarang = payload.namaBarang;
+                  }
+                });
+              }
             }
           } else {
             const newId = generatedIdForPromo;
@@ -7326,13 +7334,17 @@
             // Render locally updated data instantly
             renderBarangData();
             renderSatuanBarangData();
+            if (window.renderPromoList && document.getElementById("promoModal")?.classList.contains("flex")) {
+              renderPromoList();
+            }
             
             // Silent background sync
             Promise.all([
               fetchBarangData(false, true),
-              fetchSatuanBarangData(false, true)
+              fetchSatuanBarangData(false, true),
+              fetchHargaPromoData(true)
             ]).then(() => {
-              console.log("[PERFORMANCE] Parallel Background Refresh Data (Barang + Satuan) Completed");
+              console.log("[PERFORMANCE] Parallel Background Refresh Data (Barang + Satuan + Promo) Completed");
             });
             
             const targetId = res.idBarang || generatedIdForPromo;
@@ -11853,7 +11865,7 @@
                       </div>
                       <div>
                         <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
-                        <span class="font-black text-emerald-600">${item.profit === "" || item.profit === null || item.profit === undefined ? "-" : formatIDR(item.profit)}</span> / <span class="font-black text-emerald-600">${item.profit === "" || item.profit === null || item.profit === undefined ? "-" : formatIDR(item.profit * item.qtyPembelian)}</span>
+                        <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round(Number(item.hargaJual) - Number(item.hargaModal))) : "-")}</span> / <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit * item.qtyPembelian) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round((Number(item.hargaJual) - Number(item.hargaModal)) * item.qtyPembelian)) : "-")}</span>
                       </div>
                     </div>
                  </td>
@@ -11957,7 +11969,7 @@
                      </div>
                      <div>
                        <span class="text-slate-400 font-bold block">Profit (Total)</span>
-                       <span class="font-black text-emerald-600">${item.profit === "" || item.profit === null || item.profit === undefined ? "-" : formatIDR(item.profit)}</span> (<span class="font-black text-emerald-600">${item.profit === "" || item.profit === null || item.profit === undefined ? "-" : formatIDR(item.profit * item.qtyPembelian)}</span>)
+                       <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round(Number(item.hargaJual) - Number(item.hargaModal))) : "-")}</span> (<span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit * item.qtyPembelian) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round((Number(item.hargaJual) - Number(item.hargaModal)) * item.qtyPembelian)) : "-")}</span>)
                      </div>
                      <div class="col-span-2 border-t border-slate-100/80 pt-2 flex justify-between gap-1 text-[9px] text-slate-500">
                        <span>Subtotal: <b class="text-emerald-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>

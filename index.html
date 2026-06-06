@@ -4742,11 +4742,34 @@
         isRefreshingReferensi = true;
         applyRefreshSpinReferensi();
         
-        showToast("Menyinkronkan data referensi...", "info");
+        // Reset states, search, current page & forms
+        referensiSearchTerm = "";
+        const searchInput = document.getElementById("searchReferensi");
+        if (searchInput) searchInput.value = "";
+        referensiCurrentPage = 1;
+        
+        const form = document.getElementById("referensiForm");
+        if (form) form.reset();
+        
+        // Clear local cache
+        rawReferensiData = [];
+        renderReferensiData();
+        
+        showToast("Menyinkronkan data referensi kustom...", "info");
         try {
-          await fetchReferensiData();
-          showToast("Data referensi diperbarui", "success");
+          // Fetch referensi and other related lookup lists (like kategori) in parallel if needed, or just ambilReferensi
+          const res = await callGAS("ambilReferensi");
+          if (res && res.sukses && Array.isArray(res.data)) {
+            rawReferensiData = res.data;
+          } else {
+            rawReferensiData = [];
+          }
+          try { populateKategoriDropdown(); } catch(e) {}
+          try { populateOrderStatusDropdown(); } catch(e) {}
+          renderReferensiData();
+          showToast("Data referensi berhasil diperbarui", "success");
         } catch (err) {
+          console.error("refreshReferensiData Error:", err);
           showToast("Gagal memuat referensi", "error");
         } finally {
           isRefreshingReferensi = false;
@@ -5191,9 +5214,64 @@
         applyRefreshSpin();
         
         showToast("Menyinkronkan semua data...", "info");
+        showLoading(true);
         
         try {
-          // Clear ALL data lama sebelum load ulang data baru
+          // Reset all filter, search, and page variables across all modules
+          barangSearchTerm = "";
+          const sb = document.getElementById("searchBarang"); if (sb) sb.value = "";
+          barangFilterStatus = "all";
+          barangFilterKategori = "all";
+          barangFilterMerk = "all";
+          barangCurrentPage = 1;
+          barangSortBy = "idBarang";
+          barangSortOrder = "asc";
+
+          satuanBarangSearchTerm = "";
+          const ssb = document.getElementById("searchSatuanBarang"); if (ssb) ssb.value = "";
+          satuanBarangFilterStatus = "all";
+          satuanBarangFilterSatuan = "all";
+          satuanBarangCurrentPage = 1;
+          satuanBarangSortBy = "namaBarang";
+          satuanBarangSortOrder = "asc";
+
+          dataSupplierSearchTerm = "";
+          const sd = document.getElementById("searchDataSupplier"); if (sd) sd.value = "";
+          dataSupplierFilterStatus = "all";
+          dataSupplierCurrentPage = 1;
+
+          referensiSearchTerm = "";
+          const sr = document.getElementById("searchReferensi"); if (sr) sr.value = "";
+          referensiCurrentPage = 1;
+
+          pembelianBarangSearchTerm = "";
+          const sp = document.getElementById("searchPembelianBarang"); if (sp) sp.value = "";
+          pembelianBarangFilterStatus = "all";
+          pembelianBarangFilterSupplier = "all";
+          pembelianBarangFilterExpired = "all";
+          pembelianBarangCurrentPage = 1;
+          pembelianCartItems = [];
+
+          orderBarangSearchTerm = "";
+          const so = document.getElementById("searchOrderBarang"); if (so) so.value = "";
+          orderBarangFilterStatus = "all";
+          orderBarangFilterSupplier = "all";
+          orderBarangCurrentPage = 1;
+
+          // Clear dynamic forms
+          const forms = ["barangForm", "satuanBarangForm", "dataSupplierForm", "pembelianBarangForm", "orderBarangForm", "referensiForm", "promoForm", "promoShortcutForm"];
+          forms.forEach(id => {
+            const form = document.getElementById(id);
+            if (form) {
+              try { form.reset(); } catch(e) {}
+            }
+          });
+
+          // Reset order items lines
+          const orderContainer = document.getElementById("order-items-lines-container");
+          if (orderContainer) orderContainer.innerHTML = "";
+
+          // Clear ALL arrays
           rawDataSupplierData = [];
           rawSatuanBarangData = [];
           rawReferensiData = [];
@@ -5203,7 +5281,7 @@
           rawOrderDetails = [];
           rawHargaPromoData = [];
           
-          // Render views as empty
+          // Render views immediately as empty / loading
           try { renderDashboard(); } catch(e) {}
           try { renderDataSupplierData(); } catch(e) {}
           try { renderSatuanBarangData(); } catch(e) {}
@@ -5211,25 +5289,75 @@
           try { renderBarangData(); } catch(e) {}
           try { renderPembelianBarangData(); } catch(e) {}
           try { renderOrderBarangData(); } catch(e) {}
-          
-          await Promise.all([
-            fetchDataSupplierData(false), 
-            fetchSatuanBarangData(false, true),
-            fetchReferensiData(),
-            fetchBarangData(false, true),
-            fetchPembelianBarangData(false, true),
-            fetchOrderBarangData(false, true),
-            fetchHargaPromoData(true)
-          ]);
-          
-          if (document.getElementById("section-dashboard")?.classList.contains("active")) {
-             renderDashboard();
+
+          const res = await callGAS("ambilInisialisasiData");
+          showLoading(false);
+
+          if (res && res.sukses) {
+            rawDataSupplierData = res.masterSupplier || res.dataSupplier || [];
+            if (rawDataSupplierData.length === 0) {
+              rawDataSupplierData = DEMO_DATA_SUPPLIER;
+            }
+            rawReferensiData = res.referensi || [];
+            rawBarangData = res.barang || [];
+            if (rawBarangData.length === 0) {
+              rawBarangData = DEMO_DATA_BARANG;
+            }
+            rawSatuanBarangData = res.satuanBarang || [];
+            if (rawSatuanBarangData.length === 0) {
+              rawSatuanBarangData = DEMO_DATA_SATUAN;
+            }
+            rawSatuanBarangData.forEach(item => {
+              item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+            });
+            rawPembelianBarangData = sanitizePembelianBarangData(res.pembelianBarang || []);
+            rawOrderHeaders = res.orderHeaders || [];
+            rawOrderDetails = res.orderDetails || [];
+            rawHargaPromoData = res.hargaPromo || [];
+
+            // UI populate filters
+            try { populateKategoriDropdown(); } catch(e) {}
+            try { populateOrderStatusDropdown(); } catch(e) {}
+            try { populateSatuanDropdowns(); } catch(e) {}
+            try { populatePembelianSupplierFilter(); } catch(e) {}
+            try { populateOrderSupplierFilter(); } catch(e) {}
+
+            renderDashboard();
+            renderDataSupplierData();
+            renderSatuanBarangData();
+            renderReferensiData();
+            renderBarangData();
+            renderPembelianBarangData();
+            renderOrderBarangData();
+
+            showToast("Semua data berhasil diperbarui!", "success");
+          } else {
+             throw new Error(res ? res.pesan : "Gagal menginisialisasi ulang database");
           }
-          
-          showToast("Semua data berhasil diperbarui!", "success");
         } catch (err) {
+          showLoading(false);
           console.error("Refresh failed:", err);
-          showToast("Gagal memperbarui data", "error");
+          showToast("Gagal memperbarui semua data, menggunakan Demo fallback.", "error");
+          
+          // Use Demo Fallback
+          rawDataSupplierData = DEMO_DATA_SUPPLIER;
+          rawBarangData = DEMO_DATA_BARANG;
+          rawSatuanBarangData = DEMO_DATA_SATUAN;
+          rawSatuanBarangData.forEach(item => {
+            item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+          });
+          rawPembelianBarangData = sanitizePembelianBarangData(DEMO_DATA_PEMBELIAN);
+          rawOrderHeaders = DEMO_DATA_ORDER_HEADER;
+          rawOrderDetails = DEMO_DATA_ORDER_DETAIL;
+          rawHargaPromoData = [];
+
+          renderDashboard();
+          renderDataSupplierData();
+          renderSatuanBarangData();
+          renderReferensiData();
+          renderBarangData();
+          renderPembelianBarangData();
+          renderOrderBarangData();
         } finally {
           isRefreshing = false;
           applyRefreshSpin();
@@ -6061,6 +6189,16 @@
           barangFilterKategori = "all";
           barangFilterMerk = "all";
           barangCurrentPage = 1;
+          barangSortBy = "idBarang";
+          barangSortOrder = "asc";
+
+          // Clear temporary form data & reset active forms
+          const form = document.getElementById("barangForm");
+          if (form) form.reset();
+          const pId = document.getElementById("form-barangId"); if (pId) pId.value = "";
+          const pRow = document.getElementById("form-barangRow"); if (pRow) pRow.value = "";
+          window.modalEditingGroupUnits = [];
+          window.activeEditingUnitIdx = 0;
 
           // Clear data lama sebelum load ulang data baru
           rawBarangData = [];
@@ -6073,14 +6211,28 @@
         applyRefreshSpinBarang();
         if (!silent) showLoading(true);
         try {
-          const res = await callGAS("ambilBarang", { sheetName: "Data_Barang" });
+          // Fetch Barang & Referensi & Satuan Barang in parallel for modern lookup
+          const [resBarang, resRef, resSatuan] = await Promise.all([
+            callGAS("ambilBarang", { sheetName: "Data_Barang" }),
+            callGAS("ambilReferensi"),
+            callGAS("ambilSatuanBarang")
+          ]);
           
           if (!silent) showLoading(false);
           isFetchingBarang = false;
           applyRefreshSpinBarang();
 
-          if (res && res.sukses) {
-            rawBarangData = res.data || [];
+          if (resBarang && resBarang.sukses) {
+            rawBarangData = resBarang.data || [];
+            if (resRef && resRef.sukses && Array.isArray(resRef.data)) {
+              rawReferensiData = resRef.data;
+            }
+            if (resSatuan && resSatuan.sukses && Array.isArray(resSatuan.data)) {
+              rawSatuanBarangData = resSatuan.data;
+              rawSatuanBarangData.forEach(item => {
+                item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+              });
+            }
             renderBarangData();
             populateKategoriDropdown();
             if (resetFilters) showToast("Data barang berhasil diperbarui", "success");
@@ -6102,7 +6254,7 @@
             renderBarangData();
             populateKategoriDropdown();
             
-            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            const errMsg = resBarang ? (resBarang.pesan || "Database belum siap") : "Koneksi terputus";
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
@@ -7676,6 +7828,16 @@
           satuanBarangFilterStatus = "all";
           satuanBarangFilterSatuan = "all";
           satuanBarangCurrentPage = 1;
+          satuanBarangSortBy = "namaBarang";
+          satuanBarangSortOrder = "asc";
+
+          // Clear form & hidden inputs
+          const form = document.getElementById("satuanBarangForm");
+          if (form) form.reset();
+          const pId = document.getElementById("form-satuanIdBarang"); if (pId) pId.value = "";
+          const pName = document.getElementById("form-satuanNamaBarang"); if (pName) pName.value = "";
+          window.modalEditingGroupUnits = [];
+          window.activeEditingUnitIdx = 0;
 
           // Clear data lama sebelum load ulang data baru
           rawSatuanBarangData = [];
@@ -7688,17 +7850,32 @@
         applyRefreshSpinSatuanBarang();
         if (!silent) showLoading(true);
         try {
-          const res = await callGAS("ambilSatuanBarang", { sheetName: "Satuan_Barang" });
+          // Fetch Satuan Barang + Master Barang + Referensi + Promo in parallel for complete modern references
+          const [resSatuan, resBarang, resRef, resPromo] = await Promise.all([
+            callGAS("ambilSatuanBarang", { sheetName: "Satuan_Barang" }),
+            callGAS("ambilBarang", { sheetName: "Data_Barang" }),
+            callGAS("ambilReferensi"),
+            callGAS("ambilHargaPromo")
+          ]);
           
           if (!silent) showLoading(false);
           isFetchingSatuan = false;
           applyRefreshSpinSatuanBarang();
 
-          if (res && res.sukses) {
-            rawSatuanBarangData = res.data || [];
+          if (resSatuan && resSatuan.sukses) {
+            rawSatuanBarangData = resSatuan.data || [];
             rawSatuanBarangData.forEach(item => {
               item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
             });
+            if (resBarang && resBarang.sukses && Array.isArray(resBarang.data)) {
+              rawBarangData = resBarang.data;
+            }
+            if (resRef && resRef.sukses && Array.isArray(resRef.data)) {
+              rawReferensiData = resRef.data;
+            }
+            if (resPromo && resPromo.sukses && Array.isArray(resPromo.data)) {
+              rawHargaPromoData = resPromo.data;
+            }
             renderSatuanBarangData();
             populateSatuanDropdowns();
             if (resetFilters) showToast("Data satuan berhasil diperbarui", "success");
@@ -7713,7 +7890,7 @@
              renderSatuanBarangData();
              populateSatuanDropdowns();
              
-             const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+             const errMsg = resSatuan ? (resSatuan.pesan || "Database belum siap") : "Koneksi terputus";
              showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
@@ -9392,6 +9569,10 @@
           if (icon) icon.classList.add("animate-spin");
         }
         
+        // Bersihkan data form sementara
+        const f1 = document.getElementById("promoForm"); if (f1) f1.reset();
+        const f2 = document.getElementById("promoShortcutForm"); if (f2) f2.reset();
+
         if (!silent) showLoading(true);
         try {
           // Clear data lama sebelum load ulang data baru
@@ -9401,7 +9582,12 @@
           }
           
           showToast("Memperbarui harga promo...", "info");
-          const res = await callGAS("ambilHargaPromo");
+          // Fetch Promo and Satuan Barang in parallel
+          const [resPromo, resSatuan] = await Promise.all([
+            callGAS("ambilHargaPromo"),
+            callGAS("ambilSatuanBarang")
+          ]);
+          
           if (!silent) showLoading(false);
           isFetchingPromo = false;
           
@@ -9411,8 +9597,12 @@
             if (icon) icon.classList.remove("animate-spin");
           }
           
-          if (res && res.sukses) {
-            rawHargaPromoData = res.data || [];
+          if (resSatuan && resSatuan.sukses && Array.isArray(resSatuan.data)) {
+            rawSatuanBarangData = resSatuan.data;
+          }
+
+          if (resPromo && resPromo.sukses) {
+            rawHargaPromoData = resPromo.data || [];
             if (document.getElementById("promoModal")?.classList.contains("flex")) {
               renderPromoList();
             }
@@ -10787,6 +10977,15 @@
           const searchInput = document.getElementById("searchDataSupplier");
           if (searchInput) searchInput.value = "";
           dataSupplierFilterStatus = "all";
+          dataSupplierCurrentPage = 1;
+          dataSupplierSortBy = "idSupplier";
+          dataSupplierSortOrder = "asc";
+
+          // Reset Form
+          const form = document.getElementById("dataSupplierForm");
+          if (form) form.reset();
+          const sId = document.getElementById("form-dataSupplierId"); if (sId) sId.value = "";
+          const sRow = document.getElementById("form-dataSupplierRow"); if (sRow) sRow.value = "";
 
           // Clear data lama sebelum load ulang data baru
           rawDataSupplierData = [];
@@ -11358,6 +11557,14 @@
           if (supSelect) supSelect.value = "all";
           pembelianBarangCurrentPage = 1;
 
+          // Clear temporary form data & reset active forms & empty the purchasing cart
+          const form = document.getElementById("pembelianBarangForm");
+          if (form) form.reset();
+          const supIdInput = document.getElementById("form-pembelianIdSupplier"); if (supIdInput) supIdInput.value = "";
+          const supSearchInput = document.getElementById("form-pembelianSearchSupplier"); if (supSearchInput) supSearchInput.value = "";
+          pembelianCartItems = [];
+          try { renderPembelianCart(); } catch (e) {}
+
           // Clear data lama sebelum load ulang data baru
           rawPembelianBarangData = [];
           renderPembelianBarangData();
@@ -11389,14 +11596,29 @@
         applyRefreshSpinPembelianBarang();
         if (!silent) showLoading(true);
         try {
-          const res = await callGAS("ambilPembelianBarang", {});
+          // Fetch Pembelian & Satuan Barang & Master Supplier in parallel for fresh autocompletes
+          const [resPembelian, resSatuan, resSupplier] = await Promise.all([
+            callGAS("ambilPembelianBarang", {}),
+            callGAS("ambilSatuanBarang"),
+            callGAS("ambilMasterSupplier")
+          ]);
           
           if (!silent) showLoading(false);
           isFetchingPembelian = false;
           applyRefreshSpinPembelianBarang();
 
-          if (res && res.sukses) {
-            rawPembelianBarangData = sanitizePembelianBarangData(res.data || []);
+          if (resSatuan && resSatuan.sukses && Array.isArray(resSatuan.data)) {
+            rawSatuanBarangData = resSatuan.data;
+            rawSatuanBarangData.forEach(item => {
+              item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+            });
+          }
+          if (resSupplier && resSupplier.sukses && Array.isArray(resSupplier.data)) {
+            rawDataSupplierData = resSupplier.data;
+          }
+
+          if (resPembelian && resPembelian.sukses) {
+            rawPembelianBarangData = sanitizePembelianBarangData(resPembelian.data || []);
             renderPembelianBarangData();
             populatePembelianSupplierFilter();
             if (resetFilters) showToast("Data pembelian berhasil diperbarui", "success");
@@ -11406,7 +11628,7 @@
             renderPembelianBarangData();
             populatePembelianSupplierFilter();
             
-            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            const errMsg = resPembelian ? (resPembelian.pesan || "Database belum siap") : "Koneksi terputus";
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {
@@ -13610,18 +13832,28 @@
           const supSelect = document.getElementById("filter-order-barang-supplier");
           if (supSelect) supSelect.value = "all";
           orderBarangCurrentPage = 1;
+          orderBarangSortBy = "tanggalOrder";
+          orderBarangSortOrder = "desc";
+
+          // Clear form & hidden custom fields
+          const form = document.getElementById("orderBarangForm");
+          if (form) form.reset();
+          const pRow = document.getElementById("form-orderRow"); if (pRow) pRow.value = "";
+          const pId = document.getElementById("form-orderId"); if (pId) pId.value = "Otomatis (ORD-001)";
+          const pSearch = document.getElementById("form-orderSearchSupplier"); if (pSearch) pSearch.value = "";
+          const pSupId = document.getElementById("form-orderIdSupplier"); if (pSupId) pSupId.value = "";
+          const pSupNama = document.getElementById("form-orderNamaSupplier"); if (pSupNama) pSupNama.value = "";
+
+          // Empty current item lines
+          const container = document.getElementById("order-items-lines-container");
+          if (container) container.innerHTML = "";
 
           // Clear data lama sebelum load ulang data baru
           rawOrderHeaders = [];
           rawOrderDetails = [];
           renderOrderBarangData();
 
-          showToast("Memperbarui data order & referensi...", "info");
-          try {
-            await fetchReferensiData();
-          } catch (e) {
-            console.error("Failed to fetch referensi data during order refresh:", e);
-          }
+          showToast("Memperbarui data order...", "info");
         }
 
         isFetchingOrder = true;
@@ -13634,14 +13866,34 @@
             throw new Error("Demo Mode Active");
           }
 
-          const res = await callGAS("ambilOrderBarang", {});
+          // Fetch Order + Referensi + Satuan Barang + Master Supplier in parallel
+          const [resOrder, resRef, resSatuan, resSupplier] = await Promise.all([
+            callGAS("ambilOrderBarang", {}),
+            callGAS("ambilReferensi"),
+            callGAS("ambilSatuanBarang"),
+            callGAS("ambilMasterSupplier")
+          ]);
+
           if (!silent) showLoading(false);
           isFetchingOrder = false;
           applyRefreshSpinOrderBarang();
 
-          if (res && res.sukses) {
-            rawOrderHeaders = res.headers || [];
-            rawOrderDetails = res.details || [];
+          if (resRef && resRef.sukses && Array.isArray(resRef.data)) {
+            rawReferensiData = resRef.data;
+          }
+          if (resSatuan && resSatuan.sukses && Array.isArray(resSatuan.data)) {
+            rawSatuanBarangData = resSatuan.data;
+            rawSatuanBarangData.forEach(item => {
+              item.profit = (Number(item.hargaJual) || 0) - (Number(item.hargaModal) || 0);
+            });
+          }
+          if (resSupplier && resSupplier.sukses && Array.isArray(resSupplier.data)) {
+            rawDataSupplierData = resSupplier.data;
+          }
+
+          if (resOrder && resOrder.sukses) {
+            rawOrderHeaders = resOrder.headers || [];
+            rawOrderDetails = resOrder.details || [];
             renderOrderBarangData();
             populateOrderSupplierFilter();
             if (resetFilters) showToast("Data order berhasil diperbarui", "success");
@@ -13650,7 +13902,7 @@
             rawOrderDetails = DEMO_DATA_ORDER_DETAIL;
             renderOrderBarangData();
             populateOrderSupplierFilter();
-            const errMsg = res ? (res.pesan || "Database belum siap") : "Koneksi terputus";
+            const errMsg = resOrder ? (resOrder.pesan || "Database belum siap") : "Koneksi terputus";
             showToast(`${errMsg} (Menggunakan Data Demo)`, "warning");
           }
         } catch (err) {

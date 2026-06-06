@@ -12913,16 +12913,36 @@
         item.satuan = chosenSatuan || "";
         item.tipeSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
 
-        const prevPrices = findPreviousPrices(idBarang, item.satuan, item.barcode);
-        item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
-        item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || (unitRecord ? unitRecord.hargaJual : hargaJualVal) || "";
-        item.hargaModal = prevPrices.hargaModalSebelumnya || 0;
+        if (unitRecord) {
+          const hm = (unitRecord.hargaModal !== "" && unitRecord.hargaModal !== undefined && unitRecord.hargaModal !== null) ? Number(unitRecord.hargaModal) : 0;
+          const hj = (unitRecord.hargaJual !== "" && unitRecord.hargaJual !== undefined && unitRecord.hargaJual !== null) ? Number(unitRecord.hargaJual) : 0;
+          
+          item.hargaModal = hm;
+          
+          if (String(item.tipeSatuan).toUpperCase() === "BELI") {
+            item.hargaJual = "";
+          } else {
+            item.hargaJual = hj === 0 ? "" : hj;
+          }
 
-        if (String(item.tipeSatuan).toUpperCase() === "BELI") {
-          item.hargaJual = "";
+          // Modal Sebelumnya Aturan
+          if (unitRecord.hargaModalLama !== "" && unitRecord.hargaModalLama !== undefined && unitRecord.hargaModalLama !== null) {
+            item.hargaModalSebelumnya = Number(unitRecord.hargaModalLama);
+          } else {
+            item.hargaModalSebelumnya = hm;
+          }
+
+          // Jual Sebelumnya Aturan
+          if (unitRecord.hargaJualLama !== "" && unitRecord.hargaJualLama !== undefined && unitRecord.hargaJualLama !== null) {
+            item.hargaJualSebelumnya = Number(unitRecord.hargaJualLama);
+          } else {
+            item.hargaJualSebelumnya = hj;
+          }
         } else {
-          const proposedJual = (hargaJualVal !== undefined && hargaJualVal !== null && hargaJualVal !== "") ? hargaJualVal : (unitRecord ? unitRecord.hargaJual : "");
-          item.hargaJual = (proposedJual === "" || proposedJual === 0 || proposedJual === null || proposedJual === undefined) ? "" : Number(proposedJual);
+          item.hargaModal = 0;
+          item.hargaJual = "";
+          item.hargaModalSebelumnya = "";
+          item.hargaJualSebelumnya = "";
         }
 
         renderPembelianCart();
@@ -12950,16 +12970,36 @@
         item.barcode = (unitRecord ? unitRecord.barcode : "") || "";
         item.tipeSatuan = unitRecord ? (unitRecord.tipeSatuan || "KEDUANYA") : "KEDUANYA";
 
-        const prevPrices = findPreviousPrices(item.idBarang, newSatuan, item.barcode);
-        item.hargaModalSebelumnya = prevPrices.hargaModalSebelumnya || "";
-        item.hargaJualSebelumnya = prevPrices.hargaJualSebelumnya || (unitRecord ? unitRecord.hargaJual : "") || "";
-        item.hargaModal = prevPrices.hargaModalSebelumnya || 0;
+        if (unitRecord) {
+          const hm = (unitRecord.hargaModal !== "" && unitRecord.hargaModal !== undefined && unitRecord.hargaModal !== null) ? Number(unitRecord.hargaModal) : 0;
+          const hj = (unitRecord.hargaJual !== "" && unitRecord.hargaJual !== undefined && unitRecord.hargaJual !== null) ? Number(unitRecord.hargaJual) : 0;
+          
+          item.hargaModal = hm;
+          
+          if (String(item.tipeSatuan).toUpperCase() === "BELI") {
+            item.hargaJual = "";
+          } else {
+            item.hargaJual = hj === 0 ? "" : hj;
+          }
 
-        if (String(item.tipeSatuan).toUpperCase() === "BELI") {
-          item.hargaJual = "";
+          // Modal Sebelumnya Aturan
+          if (unitRecord.hargaModalLama !== "" && unitRecord.hargaModalLama !== undefined && unitRecord.hargaModalLama !== null) {
+            item.hargaModalSebelumnya = Number(unitRecord.hargaModalLama);
+          } else {
+            item.hargaModalSebelumnya = hm;
+          }
+
+          // Jual Sebelumnya Aturan
+          if (unitRecord.hargaJualLama !== "" && unitRecord.hargaJualLama !== undefined && unitRecord.hargaJualLama !== null) {
+            item.hargaJualSebelumnya = Number(unitRecord.hargaJualLama);
+          } else {
+            item.hargaJualSebelumnya = hj;
+          }
         } else {
-          const proposedJual = unitRecord ? unitRecord.hargaJual : "";
-          item.hargaJual = (proposedJual === "" || proposedJual === 0 || proposedJual === null || proposedJual === undefined) ? "" : Number(proposedJual);
+          item.hargaModal = 0;
+          item.hargaJual = "";
+          item.hargaModalSebelumnya = "";
+          item.hargaJualSebelumnya = "";
         }
 
         renderPembelianCart();

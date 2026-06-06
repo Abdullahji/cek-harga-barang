@@ -1605,6 +1605,15 @@
                         <i data-lucide="arrow-down-narrow-wide" class="w-4 h-4 md:w-5 md:h-5"></i>
                     </button>
                     <button
+                        onclick="bukaPembelianReviewModal()"
+                        id="btn-pembelian-barang-review"
+                        class="flex-1 sm:flex-none px-4 py-3 md:py-4 bg-orange-50 border border-orange-100/70 text-orange-600 rounded-xl md:rounded-2xl hover:bg-orange-100/60 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 gap-2 font-black text-xs uppercase"
+                        title="Review Pembelian Keseluruhan"
+                    >
+                        <i data-lucide="bar-chart-2" class="w-4 h-4 md:w-5 md:h-5 text-orange-600"></i>
+                        <span>📊 Review</span>
+                    </button>
+                    <button
                         id="btn-pembelian-barang-refresh"
                         onclick="fetchPembelianBarangData(true)"
                         class="flex-1 sm:flex-none p-3 md:p-4 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-emerald-600 hover:border-emerald-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0"
@@ -2110,6 +2119,64 @@
 
                     <div id="analisis-pb-content" class="space-y-8">
                        <!-- Analisis content will be populated dynamically -->
+                    </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- REVIEW & ANALISIS PEMBELIAN MODAL -->
+            <div id="pembelianReviewModal" class="fixed inset-0 z-[6500] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePembelianReviewModal()"></div>
+              <div class="relative bg-white w-full max-w-7xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closePembelianReviewModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-8 sm:p-10">
+                    <div class="mb-8 border-b border-slate-100 pb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      <div>
+                        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-orange-50 border border-orange-100 mb-4">
+                          <i data-lucide="bar-chart-2" class="w-4 h-4 text-orange-600"></i>
+                          <span class="text-[10px] font-black uppercase tracking-widest font-sans text-orange-600">Review Pembelian Keseluruhan</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight">Review Pembelian Barang</h3>
+                        <p class="text-xs font-bold text-slate-400 mt-1">Pusat analisis histori harga, optimalisasi supplier, dan statistik penghematan keseluruhan</p>
+                      </div>
+                      
+                      <!-- Top Actions inside review header -->
+                      <div class="flex flex-wrap gap-2.5 lg:self-end">
+                        <button type="button" onclick="downloadPembelianReviewPDF()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-100/50 text-rose-700 hover:text-rose-800 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <i data-lucide="file-text" class="w-4 h-4"></i> Download PDF
+                        </button>
+                        <button type="button" onclick="downloadPembelianReviewExcel()" class="py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100/50 text-emerald-700 hover:text-emerald-800 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <i data-lucide="grid" class="w-4 h-4"></i> Download Excel
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Tabs Trigger -->
+                    <div class="flex border-b border-slate-100 mb-6 gap-2">
+                      <button type="button" id="tab-review-supplier" onclick="switchReviewTab('supplier')" class="px-5 py-3 border-b-2 border-orange-500 font-extrabold text-xs text-orange-600 transition-all cursor-pointer flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4"></i> Analisis Supplier
+                      </button>
+                      <button type="button" id="tab-review-harga" onclick="switchReviewTab('harga')" class="px-5 py-3 border-b-2 border-transparent font-bold text-xs text-slate-450 hover:text-slate-700 transition-all cursor-pointer flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-4 h-4"></i> Analisis Harga
+                      </button>
+                      <button type="button" id="tab-review-stats" onclick="switchReviewTab('stats')" class="px-5 py-3 border-b-2 border-transparent font-bold text-xs text-slate-450 hover:text-slate-700 transition-all cursor-pointer flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i> Statistik & Penghematan
+                      </button>
+                    </div>
+
+                    <!-- Tabs Contents -->
+                    <div id="review-content-supplier" class="space-y-6">
+                      <!-- Analisis Supplier Table populated dynamically -->
+                    </div>
+                    <div id="review-content-harga" class="space-y-6 hidden">
+                      <!-- Analisis Harga Table populated dynamically -->
+                    </div>
+                    <div id="review-content-stats" class="space-y-6 hidden">
+                      <!-- Statistik Cards populated dynamically -->
                     </div>
                 </div>
               </div>
@@ -6084,6 +6151,82 @@
           currency: "IDR",
           maximumFractionDigits: 0,
         }).format(n || 0);
+      }
+
+      function getLatestDateAndAgeForBarangSupplier(idBarang, supplierName) {
+        const matchingTxs = (rawPembelianBarangData || []).filter(h => 
+          String(h.idBarang) === String(idBarang) && 
+          String(h.namaSupplier || "Unknown").trim().toLowerCase() === String(supplierName || "").trim().toLowerCase() &&
+          h.tanggalPembelian
+        );
+        if (matchingTxs.length === 0) {
+          return { dateStr: "-", ageText: "-", indicatorHtml: "", displayHtml: `<span class="text-slate-350">-</span>` };
+        }
+        
+        let latestDateObj = null;
+        matchingTxs.forEach(t => {
+          const d = new Date(t.tanggalPembelian);
+          if (!isNaN(d.getTime())) {
+            if (!latestDateObj || d.getTime() > latestDateObj.getTime()) {
+              latestDateObj = d;
+            }
+          }
+        });
+        
+        if (!latestDateObj) {
+          return { dateStr: "-", ageText: "-", indicatorHtml: "", displayHtml: `<span class="text-slate-350">-</span>` };
+        }
+        
+        const day = String(latestDateObj.getDate()).padStart(2, '0');
+        const month = String(latestDateObj.getMonth() + 1).padStart(2, '0');
+        const year = latestDateObj.getFullYear();
+        const dateStr = `${day}-${month}-${year}`;
+
+        const today = new Date("2026-06-06");
+        today.setHours(0,0,0,0);
+        const compDate = new Date(latestDateObj);
+        compDate.setHours(0,0,0,0);
+        
+        const diffTime = today.getTime() - compDate.getTime();
+        const diffDays = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+
+        let textClass = "";
+        let badgeText = "";
+        let badgeColor = "";
+        if (diffDays <= 30) {
+          badgeText = "Fresh";
+          badgeColor = "bg-emerald-50 text-emerald-600 border border-emerald-150";
+          textClass = "text-emerald-600 font-extrabold";
+        } else if (diffDays <= 90) {
+          badgeText = "Perlu Cek";
+          badgeColor = "bg-amber-50 text-amber-600 border border-amber-150";
+          textClass = "text-amber-500 font-bold";
+        } else {
+          badgeText = "Lama";
+          badgeColor = "bg-rose-50 text-rose-500 border border-rose-150";
+          textClass = "text-rose-500 font-extrabold";
+        }
+
+        const ageText = `${diffDays} Hari`;
+        const emoji = diffDays <= 30 ? "🟢" : diffDays <= 90 ? "🟡" : "🔴";
+        const indicatorHtml = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black ${badgeColor}">${emoji} ${badgeText}</span>`;
+        const displayHtml = `
+          <div class="flex flex-col items-end gap-0.5 text-right font-sans">
+            <span class="font-bold text-slate-800">${dateStr}</span>
+            <span class="text-[10px] text-slate-450 font-medium">
+              ${diffDays} Hari ${indicatorHtml}
+            </span>
+          </div>
+        `;
+
+        return {
+          dateStr: dateStr,
+          ageText: ageText,
+          indicatorHtml: indicatorHtml,
+          displayHtml: displayHtml,
+          diffDays: diffDays,
+          badgeText: badgeText
+        };
       }
 
       function formatPromoLabel(minQty, maxQty, satuan) {
@@ -15563,10 +15706,15 @@
         const supplierNama = firstItem.namaSupplier || "-";
         const supplierId = firstItem.idSupplier || "-";
 
-        // Helper for pricing at specific level
-        function getPriceAtLevel(idBarang, buySatuan, buyPrice, targetLvl) {
+        // Helper for pricing and unit at specific level
+        function getPriceAndUnitAtLevel(idBarang, buySatuan, buyPrice, targetLvl) {
           const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
-          if (units.length === 0) return targetLvl === 1 ? buyPrice : null;
+          if (units.length === 0) {
+            if (targetLvl === 1) {
+              return { price: buyPrice, unit: buySatuan };
+            }
+            return null;
+          }
           
           const buyUnit = units.find(u => String(u.satuan).toUpperCase() === String(buySatuan).toUpperCase());
           const qtyBuy = buyUnit ? (Number(buyUnit.qtySatuan) || 1) : 1;
@@ -15575,7 +15723,8 @@
           if (!targetUnit) return null;
           
           const qtyTarget = Number(targetUnit.qtySatuan) || 1;
-          return buyPrice * (qtyTarget / qtyBuy);
+          const price = buyPrice * (qtyTarget / qtyBuy);
+          return { price: price, unit: targetUnit.satuan };
         }
 
         // Helper for cheapest supplier across all historical purchase orders
@@ -15651,8 +15800,8 @@
 
           const profit = hargaJual - modalBaru;
 
-          const hargaLV1 = getPriceAtLevel(x.idBarang, x.satuan, modalBaru, 1) ?? modalBaru;
-          const hargaLV2 = getPriceAtLevel(x.idBarang, x.satuan, modalBaru, 2);
+          const lvl1Obj = getPriceAndUnitAtLevel(x.idBarang, x.satuan, modalBaru, 1) || { price: modalBaru, unit: x.satuan };
+          const lvl2Obj = getPriceAndUnitAtLevel(x.idBarang, x.satuan, modalBaru, 2);
 
           b1Rows.push({
             barangId: x.idBarang || "-",
@@ -15665,23 +15814,27 @@
             selisihHarga: selisihHarga,
             hargaJual: hargaJual,
             profit: profit,
-            hargaLV2: hargaLV2,
-            hargaLV1: hargaLV1,
+            hargaLV2: lvl2Obj ? lvl2Obj.price : null,
+            hargaLV2Unit: lvl2Obj ? lvl2Obj.unit : "",
+            hargaLV1: lvl1Obj.price,
+            hargaLV1Unit: lvl1Obj.unit,
             satuan: x.satuan
           });
 
           // Supplier termurah
-          const cheapest = findCheapestSupplierForBarang(x.idBarang, supplierNama, hargaLV1);
+          const cheapest = findCheapestSupplierForBarang(x.idBarang, supplierNama, lvl1Obj.price);
           const isTermurah = String(supplierNama).trim().toLowerCase() === String(cheapest.supplier).trim().toLowerCase();
 
           b2Rows.push({
             barangId: x.idBarang || "-",
             barangNama: x.namaBarang || "-",
             supplierDibeli: supplierNama,
-            hargaLV1Dibeli: hargaLV1,
+            hargaLV1Dibeli: lvl1Obj.price,
+            hargaLV1DibeliUnit: lvl1Obj.unit,
             supplierTermurah: cheapest.supplier,
             hargaLV1Termurah: cheapest.hargaLV1,
-            selisih: hargaLV1 - cheapest.hargaLV1,
+            hargaLV1TermurahUnit: lvl1Obj.unit,
+            selisih: lvl1Obj.price - cheapest.hargaLV1,
             statusTermurah: isTermurah ? "✅ Termurah" : "❌ Tidak Termurah"
           });
         });
@@ -15750,8 +15903,8 @@
               <td class="py-3 px-4 text-right">${formatDiffVal(r.selisihHarga)}</td>
               <td class="py-3 px-4 text-right font-mono text-slate-800">${formatIDR(r.hargaJual)}</td>
               <td class="py-3 px-4 text-right font-mono font-bold ${r.profit < 0 ? 'text-rose-500' : 'text-emerald-600'}">${formatIDR(r.profit)}</td>
-              <td class="py-3 px-4 text-right font-mono text-slate-500">${r.hargaLV2 !== null ? formatIDR(r.hargaLV2) : '<span class="text-slate-300">-</span>'}</td>
-              <td class="py-3 px-4 text-right font-mono text-indigo-600 font-extrabold">${formatIDR(r.hargaLV1)}</td>
+              <td class="py-3 px-4 text-right font-mono text-slate-550">${r.hargaLV2 !== null ? `${formatIDR(r.hargaLV2)} / ${r.hargaLV2Unit}` : '<span class="text-slate-300">-</span>'}</td>
+              <td class="py-3 px-4 text-right font-mono text-indigo-600 font-extrabold">${formatIDR(r.hargaLV1)} / ${r.hargaLV1Unit}</td>
             </tr>
           `;
         }).join('');
@@ -15768,6 +15921,8 @@
             </span>`;
           }
 
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.barangId, r.supplierTermurah);
+
           return `
             <tr class="hover:bg-slate-50/50 transition-colors">
               <td class="py-3.5 px-4 text-center font-bold text-slate-400">${i + 1}</td>
@@ -15778,15 +15933,24 @@
               <td class="py-3.5 px-4">
                 <span class="font-bold text-slate-800 text-xs">${r.supplierDibeli}</span>
               </td>
-              <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-xs">${formatIDR(r.hargaLV1Dibeli)}</td>
+              <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-xs">${formatIDR(r.hargaLV1Dibeli)} / ${r.hargaLV1DibeliUnit}</td>
               <td class="py-3.5 px-4">
                 <span class="font-extrabold text-emerald-700 text-xs">${r.supplierTermurah}</span>
               </td>
-              <td class="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs">${formatIDR(r.hargaLV1Termurah)}</td>
+              <td class="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs">${formatIDR(r.hargaLV1Termurah)} / ${r.hargaLV1TermurahUnit}</td>
               <td class="py-3.5 px-4 text-right font-mono font-extrabold text-xs ${r.selisih > 0 ? 'text-rose-500' : 'text-slate-400'}">
-                ${r.selisih > 0 ? `+${formatIDR(r.selisih)}` : 'Rp 0'}
+                ${r.selisih > 0 ? `+${formatIDR(r.selisih)} / ${r.hargaLV1DibeliUnit}` : 'Rp 0'}
               </td>
               <td class="py-3.5 px-4 text-center">${statusBadge}</td>
+              <td class="py-3.5 px-4 text-right font-mono text-xs font-bold text-slate-700">
+                ${lInfo.dateStr}
+              </td>
+              <td class="py-3.5 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <span class="font-mono text-xs font-extrabold text-slate-800">${lInfo.ageText}</span>
+                  ${lInfo.indicatorHtml}
+                </div>
+              </td>
             </tr>
           `;
         }).join('');
@@ -15862,7 +16026,7 @@
             </div>
 
             <div class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar">
-              <table class="w-full border-collapse text-left text-xs min-w-[950px]">
+              <table class="w-full border-collapse text-left text-xs min-w-[1200px]">
                 <thead>
                   <tr class="bg-slate-50 border-b border-slate-150 font-sans text-slate-400 font-extrabold text-[9.5px] tracking-wider uppercase">
                     <th class="py-4 px-4 text-center w-12">No</th>
@@ -15872,7 +16036,9 @@
                     <th class="py-4 px-4">Supplier Termurah</th>
                     <th class="py-4 px-4 text-right">Harga LV1 Termurah</th>
                     <th class="py-4 px-4 text-right">Selisih</th>
-                    <th class="py-4 px-4 text-center w-36">Status</th>
+                    <th class="py-4 px-4 text-center w-32">Status</th>
+                    <th class="py-4 px-4 text-right">Tanggal Pembelian Terakhir</th>
+                    <th class="py-4 px-4 text-right w-44">Umur Data</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -15958,8 +16124,8 @@
             r.selisihHarga,
             r.hargaJual,
             r.profit,
-            r.hargaLV2 !== null ? r.hargaLV2 : "",
-            r.hargaLV1
+            r.hargaLV2 !== null ? `${r.hargaLV2} / ${r.hargaLV2Unit}` : "",
+            `${r.hargaLV1} / ${r.hargaLV1Unit}`
           ].join(";"));
         });
 
@@ -15984,20 +16150,25 @@
           "Supplier Termurah",
           "Harga LV1 Termurah",
           "Selisih",
-          "Status"
+          "Status",
+          "Tanggal Pembelian Terakhir",
+          "Umur Data"
         ].join(";"));
 
         data.b2Rows.forEach((r, idx) => {
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.barangId, r.supplierTermurah);
           csvRows.push([
             idx + 1,
             r.barangId,
             r.barangNama,
             r.supplierDibeli,
-            r.hargaLV1Dibeli,
+            `${r.hargaLV1Dibeli} / ${r.hargaLV1DibeliUnit}`,
             r.supplierTermurah,
-            r.hargaLV1Termurah,
-            r.selisih,
-            r.statusTermurah
+            `${r.hargaLV1Termurah} / ${r.hargaLV1TermurahUnit}`,
+            r.selisih > 0 ? `${r.selisih} / ${r.hargaLV1DibeliUnit}` : "0",
+            r.statusTermurah,
+            lInfo.dateStr,
+            lInfo.ageText
           ].join(";"));
         });
 
@@ -16040,13 +16211,14 @@
               </td>
               <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #334155;">${formatIDR(r.hargaJual)}</td>
               <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; ${r.profit < 0 ? 'color: #e11d48;' : 'color: #059669;'}">${formatIDR(r.profit)}</td>
-              <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #475569;">${r.hargaLV2 !== null ? formatIDR(r.hargaLV2) : '-'}</td>
-              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #4f46e5;">${formatIDR(r.hargaLV1)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #475569;">${r.hargaLV2 !== null ? `${formatIDR(r.hargaLV2)} / ${r.hargaLV2Unit}` : '-'}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #4f46e5;">${formatIDR(r.hargaLV1)} / ${r.hargaLV1Unit}</td>
             </tr>
           `;
         }).join('');
 
         let b2RowsHtml = data.b2Rows.map((r, idx) => {
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.barangId, r.supplierTermurah);
           return `
             <tr style="border-bottom: 1px solid #e2e8f0;">
               <td style="padding: 10px 6px; text-align: center; color: #64748b; font-weight: bold;">${idx + 1}</td>
@@ -16055,16 +16227,18 @@
                 <div style="font-size: 9px; color: #94a3b8; font-family: monospace;">ID: ${r.barangId}</div>
               </td>
               <td style="padding: 10px 6px; font-weight: bold;">${r.supplierDibeli}</td>
-              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold;">${formatIDR(r.hargaLV1Dibeli)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold;">${formatIDR(r.hargaLV1Dibeli)} / ${r.hargaLV1DibeliUnit}</td>
               <td style="padding: 10px 6px; font-weight: bold; color: #059669;">${r.supplierTermurah}</td>
-              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #059669;">${formatIDR(r.hargaLV1Termurah)}</td>
-              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; ${r.selisih > 0 ? 'color: #e11d48;' : 'color: #64748b;'}">${r.selisih > 0 ? '+'+formatIDR(r.selisih) : 'Rp 0'}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #059669;">${formatIDR(r.hargaLV1Termurah)} / ${r.hargaLV1TermurahUnit}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; ${r.selisih > 0 ? 'color: #e11d48;' : 'color: #64748b;'}">${r.selisih > 0 ? '+'+formatIDR(r.selisih) + ' / ' + r.hargaLV1DibeliUnit : 'Rp 0'}</td>
               <td style="padding: 10px 6px; text-align: center;">
                 <span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; 
                   ${r.statusTermurah.includes('Termurah') && !r.statusTermurah.includes('Tidak') ? 'background-color: #d1fae5; color: #059669;' : 'background-color: #ffe4e6; color: #e11d48;'}">
                   ${r.statusTermurah}
                 </span>
               </td>
+              <td style="padding: 10px 6px; text-align: right; font-weight: bold;">${lInfo.dateStr}</td>
+              <td style="padding: 10px 6px; text-align: right; font-weight: bold; color: ${lInfo.diffDays <= 30 ? '#059669' : lInfo.diffDays <= 90 ? '#d97706' : '#e11d48'}">${lInfo.ageText} (${lInfo.badgeText})</td>
             </tr>
           `;
         }).join('');
@@ -16260,11 +16434,13 @@
                       <th style="width: 30px; text-align: center;">No</th>
                       <th style="text-align: left;">Nama & ID Barang</th>
                       <th style="text-align: left;">Supplier Dibeli</th>
-                      <th style="width: 110px; text-align: right;">Harga LV1 Dibeli</th>
+                      <th style="width: 100px; text-align: right;">Harga LV1 Dibeli</th>
                       <th style="text-align: left;">Supplier Termurah (Histori)</th>
-                      <th style="width: 120px; text-align: right;">Harga LV1 Termurah</th>
-                      <th style="width: 115px; text-align: right;">Selisih</th>
-                      <th style="width: 110px; text-align: center;">Status</th>
+                      <th style="width: 105px; text-align: right;">Harga LV1 Termurah</th>
+                      <th style="width: 105px; text-align: right;">Selisih</th>
+                      <th style="width: 100px; text-align: center;">Status</th>
+                      <th style="width: 100px; text-align: right;">Tanggal Terakhir</th>
+                      <th style="width: 105px; text-align: right;">Umur Data</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -16671,6 +16847,1038 @@
                   setTimeout(function() {
                     window.print();
                   }, 300);
+                }
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.bottom = '0';
+        iframe.style.right = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(printContent);
+        iframe.contentWindow.document.close();
+
+      }
+
+      // ==========================================
+      // REVIEW & ANALISIS PEMBELIAN SYSTEM
+      // ==========================================
+      let reviewActiveTab = 'supplier';
+      let reviewActiveHargaSubTab = 'naik';
+
+      function dapatkanDataReviewPembelian() {
+        if (!rawPembelianBarangData || rawPembelianBarangData.length === 0) {
+          return null;
+        }
+
+        // Helper for pricing and unit at specific level
+        function getPriceAndUnitAtLvl(idBarang, buySatuan, buyPrice, targetLvl) {
+          const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
+          if (units.length === 0) {
+            if (targetLvl === 1) return { price: buyPrice, unit: buySatuan };
+            return null;
+          }
+          const buyUnit = units.find(u => String(u.satuan).toUpperCase() === String(buySatuan).toUpperCase());
+          const qtyBuy = buyUnit ? (Number(buyUnit.qtySatuan) || 1) : 1;
+          const targetUnit = units.find(u => (Number(u.levelSatuan) || 1) === targetLvl);
+          if (!targetUnit) return null;
+          const qtyTarget = Number(targetUnit.qtySatuan) || 1;
+          const price = buyPrice * (qtyTarget / qtyBuy);
+          return { price: price, unit: targetUnit.satuan };
+        }
+
+        // Group transactions by barang
+        const itemsGroup = {};
+
+        rawPembelianBarangData.forEach(h => {
+          const idBarang = h.idBarang;
+          if (!idBarang) return;
+
+          if (!itemsGroup[idBarang]) {
+            itemsGroup[idBarang] = {
+              idBarang: idBarang,
+              namaBarang: h.namaBarang || "Unknown Item",
+              transactions: []
+            };
+          }
+          itemsGroup[idBarang].transactions.push(h);
+        });
+
+        const listSupplierAnalisis = [];
+        const listHargaNaik = [];
+        const listHargaTurun = [];
+        const listHargaTetap = [];
+
+        // Global stats variables
+        let grandTotalPembelian = 0;
+        const setUnikBarang = new Set();
+        const setUnikSupplier = new Set();
+        const listUniqueIdPembelian = new Set();
+
+        rawPembelianBarangData.forEach(h => {
+          const qty = Number(h.qtyPembelian) || 0;
+          const price = Number(h.hargaModal) || 0;
+          const sub = h.subtotal !== undefined && h.subtotal !== "" ? Number(h.subtotal) : (qty * price);
+          grandTotalPembelian += sub;
+
+          if (h.idBarang) setUnikBarang.add(String(h.idBarang));
+          if (h.namaSupplier || h.idSupplier) setUnikSupplier.add(String(h.namaSupplier || h.idSupplier));
+          if (h.idPembelianBrg) listUniqueIdPembelian.add(String(h.idPembelianBrg));
+        });
+
+        // Loop over each item group
+        Object.values(itemsGroup).forEach(group => {
+          const idBarang = group.idBarang;
+          const namaBarang = group.namaBarang;
+          const txs = group.transactions;
+
+          // Filter transactions with valid positive prices
+          const validTxs = txs.filter(t => (Number(t.hargaModal) || 0) > 0);
+          if (validTxs.length === 0) return;
+
+          // Sort transactions chronologically
+          validTxs.sort((a, b) => {
+            const dA = a.tanggalPembelian ? new Date(a.tanggalPembelian).getTime() : 0;
+            const dB = b.tanggalPembelian ? new Date(b.tanggalPembelian).getTime() : 0;
+            return dA - dB;
+          });
+
+          // Compute supplier prices normalized to LV1
+          const supDetails = validTxs.map(t => {
+            const price = Number(t.hargaModal) || 0;
+            const lvl1 = getPriceAndUnitAtLvl(idBarang, t.satuan, price, 1) || { price: price, unit: t.satuan };
+            const lvl2 = getPriceAndUnitAtLvl(idBarang, t.satuan, price, 2);
+            return {
+              original: t,
+              supplierName: t.namaSupplier || "Unknown",
+              hargaLV1: lvl1.price,
+              hargaLV1Unit: lvl1.unit,
+              hargaLV2: lvl2 ? lvl2.price : null,
+              hargaLV2Unit: lvl2 ? lvl2.unit : ""
+            };
+          });
+
+          // 1. Supplier Termurah vs Supplier Termahal (based on normalized LV1 cost)
+          let cheapestSup = supDetails[0];
+          let expensiveSup = supDetails[0];
+
+          supDetails.forEach(s => {
+            if (s.hargaLV1 < cheapestSup.hargaLV1) cheapestSup = s;
+            if (s.hargaLV1 > expensiveSup.hargaLV1) expensiveSup = s;
+          });
+
+          const uniqueSupsForItem = new Set(supDetails.map(s => s.supplierName));
+          const selisihHargaSupplier = expensiveSup.hargaLV1 - cheapestSup.hargaLV1;
+
+          listSupplierAnalisis.push({
+            idBarang,
+            namaBarang,
+            supplierTermurah: cheapestSup.supplierName,
+            hargaLV1Termurah: cheapestSup.hargaLV1,
+            hargaLV1TermurahUnit: cheapestSup.hargaLV1Unit,
+            hargaLV2Termurah: cheapestSup.hargaLV2,
+            hargaLV2TermurahUnit: cheapestSup.hargaLV2Unit,
+            supplierTermahal: expensiveSup.supplierName,
+            hargaLV1Termahal: expensiveSup.hargaLV1,
+            hargaLV1TermahalUnit: expensiveSup.hargaLV1Unit,
+            hargaLV2Termahal: expensiveSup.hargaLV2,
+            hargaLV2TermahalUnit: expensiveSup.hargaLV2Unit,
+            selisih: selisihHargaSupplier,
+            jumlahSupplier: uniqueSupsForItem.size
+          });
+
+          // 2. Pricing Status (Latest vs Previous)
+          const latestTx = txs[txs.length - 1]; // Latest based on chronology
+          const latestPrice = Number(latestTx.hargaModal) || 0;
+          
+          let previousPrice = latestPrice;
+          let hasPrevious = false;
+
+          if (latestTx.hargaModalSebelumnya !== undefined && latestTx.hargaModalSebelumnya !== null && latestTx.hargaModalSebelumnya !== "" && Number(latestTx.hargaModalSebelumnya) > 0) {
+            previousPrice = Number(latestTx.hargaModalSebelumnya);
+            hasPrevious = true;
+          } else {
+            if (txs.length > 1) {
+              previousPrice = Number(txs[txs.length - 2].hargaModal) || 0;
+              hasPrevious = true;
+            }
+          }
+
+          const selisihHarga = latestPrice - previousPrice;
+          const statusHarga = selisihHarga > 0 ? "Naik" : selisihHarga < 0 ? "Turun" : "Tetap";
+          const persentase = previousPrice > 0 ? (selisihHarga / previousPrice) * 100 : 0;
+
+          // Find current selling price for that specific item & unit
+          const unitRecord = (rawSatuanBarangData || []).find(s => 
+            String(s.idBarang) === String(idBarang) && 
+            String(s.satuan).toUpperCase() === String(latestTx.satuan).toUpperCase()
+          );
+          const currentSellingPrice = unitRecord ? (Number(unitRecord.hargaJual) || 0) : (Number(latestTx.hargaJual) || 0);
+          const profit = currentSellingPrice - latestPrice;
+
+          const lvl1Obj = getPriceAndUnitAtLvl(idBarang, latestTx.satuan, latestPrice, 1) || { price: latestPrice, unit: latestTx.satuan };
+          const lvl2Obj = getPriceAndUnitAtLvl(idBarang, latestTx.satuan, latestPrice, 2);
+
+          const cardRow = {
+            idBarang,
+            namaBarang,
+            supplier: latestTx.namaSupplier || "-",
+            qtyTerakhir: Number(latestTx.qtyPembelian) || 0,
+            satuan: latestTx.satuan || "-",
+            modalLama: previousPrice,
+            modalBaru: latestPrice,
+            selisih: selisihHarga,
+            persentase: persentase,
+            hargaJual: currentSellingPrice,
+            profit: profit,
+            hargaLV2: lvl2Obj ? lvl2Obj.price : null,
+            hargaLV2Unit: lvl2Obj ? lvl2Obj.unit : "",
+            hargaLV1: lvl1Obj.price,
+            hargaLV1Unit: lvl1Obj.unit
+          };
+
+          if (statusHarga === "Naik") {
+            listHargaNaik.push(cardRow);
+          } else if (statusHarga === "Turun") {
+            listHargaTurun.push(cardRow);
+          } else {
+            listHargaTetap.push(cardRow);
+          }
+        });
+
+        const activeSups = Array.from(setUnikSupplier);
+        const activePurchaseOrdersCount = listUniqueIdPembelian.size || 1;
+        const avgPurchasePerTransaction = grandTotalPembelian / activePurchaseOrdersCount;
+
+        // Find most active supplier
+        const spentPerSup = {};
+        rawPembelianBarangData.forEach(h => {
+          const supName = h.namaSupplier || "Unknown";
+          const qty = Number(h.qtyPembelian) || 0;
+          const modal = Number(h.hargaModal) || 0;
+          const sub = h.subtotal !== undefined && h.subtotal !== "" ? Number(h.subtotal) : (qty * modal);
+          
+          if (!spentPerSup[supName]) spentPerSup[supName] = 0;
+          spentPerSup[supName] += sub;
+        });
+
+        let highestSpendingSupName = "-";
+        let highestSpendingSupVal = 0;
+        Object.entries(spentPerSup).forEach(([sup, val]) => {
+          if (val > highestSpendingSupVal) {
+            highestSpendingSupVal = val;
+            highestSpendingSupName = sup;
+          }
+        });
+
+        // Highest transaction lineitem
+        let highestLineItemText = "-";
+        let highestLineItemValue = 0;
+        rawPembelianBarangData.forEach(h => {
+          const qty = Number(h.qtyPembelian) || 0;
+          const modal = Number(h.hargaModal) || 0;
+          const sub = h.subtotal !== undefined && h.subtotal !== "" ? Number(h.subtotal) : (qty * modal);
+          if (sub > highestLineItemValue) {
+            highestLineItemValue = sub;
+            highestLineItemText = `${h.namaBarang || '-'}`;
+          }
+        });
+
+        return {
+          totalPembelianSeluruhnya: grandTotalPembelian,
+          totalItemUnik: setUnikBarang.size,
+          totalSupplier: activeSups.length,
+          totalTransaksi: activePurchaseOrdersCount,
+          rataRataTransaksi: avgPurchasePerTransaction,
+          supplierTeraktif: highestSpendingSupName,
+          supplierTeraktifSpending: highestSpendingSupVal,
+          highestLineItemName: highestLineItemText,
+          highestLineItemTotal: highestLineItemValue,
+          listSupplierAnalisis,
+          listHargaNaik,
+          listHargaTurun,
+          listHargaTetap
+        };
+      }
+
+      function switchReviewTab(tabId) {
+        reviewActiveTab = tabId;
+        
+        // Update styling of buttons
+        const tabs = [
+          { id: 'supplier', btn: 'tab-review-supplier', content: 'review-content-supplier' },
+          { id: 'harga', btn: 'tab-review-harga', content: 'review-content-harga' },
+          { id: 'stats', btn: 'tab-review-stats', content: 'review-content-stats' }
+        ];
+
+        tabs.forEach(t => {
+          const btnEl = document.getElementById(t.btn);
+          const ctEl = document.getElementById(t.content);
+          if (t.id === tabId) {
+            if (btnEl) {
+              btnEl.classList.remove('border-transparent', 'text-slate-450', 'hover:text-slate-700');
+              btnEl.classList.add('border-orange-500', 'text-orange-600', 'font-extrabold');
+            }
+            if (ctEl) ctEl.classList.remove('hidden');
+          } else {
+            if (btnEl) {
+              btnEl.classList.add('border-transparent', 'text-slate-450', 'hover:text-slate-700');
+              btnEl.classList.remove('border-orange-500', 'text-orange-600', 'font-extrabold');
+            }
+            if (ctEl) ctEl.classList.add('hidden');
+          }
+        });
+      }
+
+      function switchHargaSubTab(subTab) {
+        reviewActiveHargaSubTab = subTab;
+        
+        const subTabs = ['naik', 'turun', 'tetap'];
+        subTabs.forEach(s => {
+          const btn = document.getElementById(`subtab-harga-${s}`);
+          const tbl = document.getElementById(`tbl-container-harga-${s}`);
+          if (s === subTab) {
+            if (btn) btn.className = "px-4 py-2 rounded-xl bg-orange-600 text-white font-extrabold text-xs shadow-md transition-all scale-[1.03]";
+            if (tbl) tbl.classList.remove('hidden');
+          } else {
+            if (btn) btn.className = "px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-600 font-bold text-xs transition-colors";
+            if (tbl) tbl.classList.add('hidden');
+          }
+        });
+      }
+
+      function bukaPembelianReviewModal() {
+        const data = dapatkanDataReviewPembelian();
+        if (!data) {
+          showToast("Belum ada data pembelian untuk direview.", "info");
+          return;
+        }
+
+        // --- 1. Populate Analisis Supplier Tab ---
+        let supplierRowsHtml = data.listSupplierAnalisis.map((r, i) => {
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.idBarang, r.supplierTermurah);
+          return `
+            <tr class="hover:bg-slate-50/40 transition-colors">
+              <td class="py-3 px-4 text-center font-bold text-slate-400">${i + 1}</td>
+              <td class="py-3 px-4 min-w-[180px]">
+                <div class="font-extrabold text-slate-800 text-xs">${r.namaBarang}</div>
+                <div class="text-[9px] font-mono text-slate-450 tracking-tight mt-0.5">${r.idBarang}</div>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-emerald-700 text-xs">${r.supplierTermurah}</div>
+              </td>
+              <td class="py-3 px-4 text-right font-mono text-xs text-slate-600">
+                ${r.hargaLV2Termurah !== null && r.hargaLV2Termurah !== "" ? `${formatIDR(r.hargaLV2Termurah)} / ${r.hargaLV2TermurahUnit}` : '<span class="text-slate-350">-</span>'}
+              </td>
+              <td class="py-3 px-4 text-right font-mono font-extrabold text-xs text-emerald-600">
+                ${formatIDR(r.hargaLV1Termurah)} / ${r.hargaLV1TermurahUnit}
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-rose-700 text-xs">${r.supplierTermahal}</div>
+              </td>
+              <td class="py-3 px-4 text-right font-mono text-xs text-slate-600">
+                ${r.hargaLV2Termahal !== null && r.hargaLV2Termahal !== "" ? `${formatIDR(r.hargaLV2Termahal)} / ${r.hargaLV2TermahalUnit}` : '<span class="text-slate-350">-</span>'}
+              </td>
+              <td class="py-3 px-4 text-right font-mono font-extrabold text-xs text-rose-600">
+                ${formatIDR(r.hargaLV1Termahal)} / ${r.hargaLV1TermahalUnit}
+              </td>
+              <td class="py-3 px-4 text-right font-mono font-black text-xs text-red-700">
+                ${formatDiffVal(r.selisih)}
+              </td>
+              <td class="py-3 px-4 text-center font-bold text-xs">
+                <span class="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-mono text-[11px] border border-slate-150">${r.jumlahSupplier}</span>
+              </td>
+              <td class="py-3 px-4 text-right font-mono text-xs font-bold text-slate-700">
+                ${lInfo.dateStr}
+              </td>
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <span class="font-mono text-xs font-extrabold text-slate-800">${lInfo.ageText}</span>
+                  ${lInfo.indicatorHtml}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        const tabSupplierHtml = `
+          <div class="bg-white border border-slate-100 rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-4">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="users" class="w-5 h-5 text-orange-600"></i>
+              <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Perbandingan Histori Supplier per Barang</h4>
+            </div>
+            
+            <div class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar">
+              <table class="w-full border-collapse text-left text-xs min-w-[1350px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 text-slate-400 font-extrabold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Barang</th>
+                    <th class="py-4 px-4">Supplier Termurah</th>
+                    <th class="py-4 px-4 text-right">HLV2 Termurah</th>
+                    <th class="py-4 px-4 text-right">HLV1 Termurah</th>
+                    <th class="py-4 px-4">Supplier Termahal</th>
+                    <th class="py-4 px-4 text-right">HLV2 Termahal</th>
+                    <th class="py-4 px-4 text-right">HLV1 Termahal</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-center w-28">Jml Supplier</th>
+                    <th class="py-4 px-4 text-right">Tanggal Pembelian Terakhir</th>
+                    <th class="py-4 px-4 text-right w-44">Umur Data</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${supplierRowsHtml.length > 0 ? supplierRowsHtml : `<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">Tidak ada data untuk dibandingkan</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="bg-amber-50/45 p-5 rounded-2xl border border-amber-100 flex gap-3 text-[11px] text-slate-600 leading-relaxed">
+              <i data-lucide="help-circle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+              <div>
+                <h5 class="font-extrabold text-amber-800 mb-0.5">Metodologi & Perhitungan Normalisasi Unit</h5>
+                <p>
+                  Sistem menghitung perbandingan harga supplier menggunakan <strong>Harga LV1 (Base Unit Cost)</strong> hasil normalisasi dari Satuan Dasar Level 1. 
+                  Dengan cara ini perbedaan kemasan pembelian (seperti dus vs sachet vs renteng) tidak membiaskan keputusan pembelian toko Anda.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById("review-content-supplier").innerHTML = tabSupplierHtml;
+
+        // --- 2. Populate Analisis Harga Tab ---
+        function generatePriceRows(rows) {
+          return rows.map((r, i) => {
+            const percentColor = r.persentase > 0 ? 'text-rose-500 font-bold' : r.persentase < 0 ? 'text-emerald-600 font-bold' : 'text-slate-450';
+            const percentSign = r.persentase > 0 ? '+' : '';
+            return `
+              <tr class="hover:bg-slate-50/40 transition-colors">
+                <td class="py-3 px-4 text-center font-bold text-slate-400">${i + 1}</td>
+                <td class="py-3 px-4 min-w-[160px]">
+                  <div class="font-extrabold text-slate-800 text-xs">${r.namaBarang}</div>
+                  <div class="text-[9px] font-mono text-slate-450 mt-0.5">${r.idBarang}</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="font-semibold text-slate-700 text-xs truncate max-w-[140px]">${r.supplier}</div>
+                </td>
+                <td class="py-3 px-4 text-center font-mono font-bold text-slate-700 text-xs">
+                  ${r.qtyTerakhir} <span class="text-[9px] text-slate-450 font-bold uppercase">${r.satuan}</span>
+                </td>
+                <td class="py-3 px-4 text-right font-mono text-xs text-slate-400">${formatIDR(r.modalLama)}</td>
+                <td class="py-3 px-4 text-right font-mono font-extrabold text-xs text-slate-800">${formatIDR(r.modalBaru)}</td>
+                <td class="py-3 px-4 text-right font-mono font-extrabold text-xs">
+                  ${formatDiffVal(r.selisih)}
+                </td>
+                <td class="py-3 px-4 text-center font-mono ${percentColor} text-[11px]">
+                  ${percentSign}${r.persentase.toFixed(1)}%
+                </td>
+                <td class="py-3 px-4 text-right font-mono text-xs text-slate-700">${formatIDR(r.hargaJual)}</td>
+                <td class="py-3 px-4 text-right font-mono text-xs font-semibold ${r.profit < 0 ? 'text-red-500' : 'text-emerald-600'}">
+                  ${formatIDR(r.profit)}
+                </td>
+                <td class="py-3 px-4 text-right font-mono text-slate-500">
+                  ${r.hargaLV2 !== null ? `${formatIDR(r.hargaLV2)} / ${r.hargaLV2Unit}` : '<span class="text-slate-350">-</span>'}
+                </td>
+                <td class="py-3 px-4 text-right font-mono font-black text-indigo-700">
+                  ${formatIDR(r.hargaLV1)} / ${r.hargaLV1Unit}
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        const naikRows = generatePriceRows(data.listHargaNaik);
+        const turunRows = generatePriceRows(data.listHargaTurun);
+        const tetapRows = generatePriceRows(data.listHargaTetap);
+
+        const tabHargaHtml = `
+          <div class="bg-white border border-slate-100 rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div class="flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-orange-600"></i>
+                <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider">Metrik & Fluktuasi Histori Harga Pembelian</h4>
+              </div>
+              
+              <!-- Subtabs for Price trends -->
+              <div class="flex gap-2">
+                <button type="button" id="subtab-harga-naik" onclick="switchHargaSubTab('naik')" class="px-4 py-2 rounded-xl bg-orange-600 text-white font-extrabold text-xs shadow-md transition-all scale-[1.03]">
+                  📈 Hrg Naik (${data.listHargaNaik.length})
+                </button>
+                <button type="button" id="subtab-harga-turun" onclick="switchHargaSubTab('turun')" class="px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-600 font-bold text-xs transition-all">
+                  📉 Hrg Turun (${data.listHargaTurun.length})
+                </button>
+                <button type="button" id="subtab-harga-tetap" onclick="switchHargaSubTab('tetap')" class="px-4 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-150 text-slate-600 font-bold text-xs transition-all">
+                  ☕ Tetap (${data.listHargaTetap.length})
+                </button>
+              </div>
+            </div>
+
+            <!-- Table containers -->
+            <div id="tbl-container-harga-naik" class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar">
+              <table class="w-full border-collapse text-left text-xs min-w-[1200px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 text-slate-400 font-bold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Nama Barang</th>
+                    <th class="py-4 px-4">Supplier</th>
+                    <th class="py-4 px-4 text-center w-28">Qty Terakhir</th>
+                    <th class="py-4 px-4 text-right">Modal Lama</th>
+                    <th class="py-4 px-4 text-right">Modal Baru</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-center">Persentase</th>
+                    <th class="py-4 px-4 text-right">Harga Jual</th>
+                    <th class="py-4 px-4 text-right">Profit</th>
+                    <th class="py-4 px-4 text-right">Harga LV2</th>
+                    <th class="py-4 px-4 text-right">Harga LV1</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${naikRows.length > 0 ? naikRows : '<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">Tidak ada barang yang harganya naik dalam rekaman transaksi</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+
+            <div id="tbl-container-harga-turun" class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar hidden">
+              <table class="w-full border-collapse text-left text-xs min-w-[1200px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 text-slate-400 font-bold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Nama Barang</th>
+                    <th class="py-4 px-4">Supplier</th>
+                    <th class="py-4 px-4 text-center w-28">Qty Terakhir</th>
+                    <th class="py-4 px-4 text-right">Modal Lama</th>
+                    <th class="py-4 px-4 text-right">Modal Baru</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-center">Persentase</th>
+                    <th class="py-4 px-4 text-right">Harga Jual</th>
+                    <th class="py-4 px-4 text-right">Profit</th>
+                    <th class="py-4 px-4 text-right">Harga LV2</th>
+                    <th class="py-4 px-4 text-right">Harga LV1</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${turunRows.length > 0 ? turunRows : '<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">Tidak ada barang yang harganya turun dalam rekaman transaksi</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+
+            <div id="tbl-container-harga-tetap" class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar hidden">
+              <table class="w-full border-collapse text-left text-xs min-w-[1200px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 text-slate-400 font-bold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Nama Barang</th>
+                    <th class="py-4 px-4">Supplier</th>
+                    <th class="py-4 px-4 text-center w-28">Qty Terakhir</th>
+                    <th class="py-4 px-4 text-right">Modal Lama</th>
+                    <th class="py-4 px-4 text-right">Modal Baru</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-center">Persentase</th>
+                    <th class="py-4 px-4 text-right">Harga Jual</th>
+                    <th class="py-4 px-4 text-right">Profit</th>
+                    <th class="py-4 px-4 text-right">Harga LV2</th>
+                    <th class="py-4 px-4 text-right">Harga LV1</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${tetapRows.length > 0 ? tetapRows : '<tr><td colspan="12" class="p-8 text-center text-slate-400 font-bold">Semua barang harganya tetap atau baru dibeli satu kali</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+        document.getElementById("review-content-harga").innerHTML = tabHargaHtml;
+
+        // --- 3. Populate Statistik Tab ---
+        const ratioNaik = data.listHargaNaik.length;
+        const ratioTurun = data.listHargaTurun.length;
+        const ratioTetap = data.listHargaTetap.length;
+        const totalHargaGroup = ratioNaik + ratioTurun + ratioTetap || 1;
+
+        const percNaik = ((ratioNaik / totalHargaGroup) * 100).toFixed(1);
+        const percTurun = ((ratioTurun / totalHargaGroup) * 100).toFixed(1);
+        const percTetap = ((ratioTetap / totalHargaGroup) * 100).toFixed(1);
+
+        const tabStatsHtml = `
+          <!-- Stats Summary Bento -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 font-sans">
+              <div class="bg-gradient-to-br from-indigo-500 to-violet-600 rounded-[2rem] p-6 text-white shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-[10px] font-black uppercase tracking-wider text-indigo-100">Total Belanja Toko</span>
+                  <i data-lucide="shopping-bag" class="w-5 h-5 text-indigo-100"></i>
+                </div>
+                <div>
+                  <h3 class="text-2xl font-black font-mono leading-none">${formatIDR(data.totalPembelianSeluruhnya)}</h3>
+                  <p class="text-[10px] font-medium text-indigo-100/80 mt-1">Akumulasi seluruh transaksi di database</p>
+                </div>
+              </div>
+
+              <div class="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Unik Item & Supplier</span>
+                  <i data-lucide="box" class="w-5 h-5 text-slate-400"></i>
+                </div>
+                <div>
+                  <h3 class="text-2xl font-black text-slate-800 font-mono leading-none">${data.totalItemUnik} <span class="text-xs text-slate-400 font-bold">Barang</span></h3>
+                  <p class="text-[10px] font-bold text-slate-400 mt-1">Disuplai oleh total <strong>${data.totalSupplier} Supplier</strong> pilihan</p>
+                </div>
+              </div>
+
+              <div class="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Rerata Per Transaksi</span>
+                  <i data-lucide="wallet" class="w-5 h-5 text-slate-400"></i>
+                </div>
+                <div>
+                  <h3 class="text-2xl font-black text-slate-800 font-mono leading-none">${formatIDR(data.rataRataTransaksi)}</h3>
+                  <p class="text-[10px] font-bold text-slate-400 mt-1">Dari total <strong>${data.totalTransaksi} ID Transaksi</strong> Pembelian</p>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-orange-500 to-amber-600 rounded-[2rem] p-6 text-white shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-[10px] font-black uppercase tracking-wider text-orange-100">Supplier Teraktif</span>
+                  <i data-lucide="award" class="w-5 h-5 text-orange-100"></i>
+                </div>
+                <div>
+                  <h3 class="text-lg font-black truncate leading-none mb-1">${data.supplierTeraktif}</h3>
+                  <p class="text-[10px] font-bold text-orange-100/90 font-mono">Belanja: ${formatIDR(data.supplierTeraktifSpending)}</p>
+                </div>
+              </div>
+          </div>
+
+          <!-- Section 2 Big Summary and ratio bars -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm space-y-6">
+              <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                <i data-lucide="pie-chart" class="w-5 h-5 text-orange-600"></i>
+                <h5 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider">Perbandingan Proporsi Pergerakan Harga</h5>
+              </div>
+
+              <div class="space-y-4">
+                <!-- Ratio Bar -->
+                <div class="h-6 rounded-full overflow-hidden flex font-mono text-[10px] text-white">
+                  <div class="bg-rose-500 h-full flex items-center justify-center font-bold" style="width: ${percNaik}%">
+                    ${ratioNaik > 0 ? `${percNaik}%` : ''}
+                  </div>
+                  <div class="bg-emerald-600 h-full flex items-center justify-center font-bold" style="width: ${percTurun}%">
+                    ${ratioTurun > 0 ? `${percTurun}%` : ''}
+                  </div>
+                  <div class="bg-slate-400 h-full flex items-center justify-center font-bold" style="width: ${percTetap}%">
+                    ${ratioTetap > 0 ? `${percTetap}%` : ''}
+                  </div>
+                </div>
+
+                <!-- Legend of colors -->
+                <div class="grid grid-cols-3 gap-3 text-xs pt-2">
+                  <div class="flex items-center gap-2 p-2 rounded-xl bg-rose-50 border border-rose-100/50">
+                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
+                    <div>
+                      <div class="font-black text-rose-700">${ratioNaik} Item Naik</div>
+                      <div class="text-[10px] text-slate-400 font-bold">${percNaik}% Proporsi</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 border border-emerald-100/50">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+                    <div>
+                      <div class="font-black text-emerald-700">${ratioTurun} Item Turun</div>
+                      <div class="text-[10px] text-slate-400 font-bold">${percTurun}% Proporsi</div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400 inline-block"></span>
+                    <div>
+                      <div class="font-black text-slate-700">${ratioTetap} Item Tetap</div>
+                      <div class="text-[10px] text-slate-400 font-bold">${percTetap}% Proporsi</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bento Card for Outstanding Transaction -->
+            <div class="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                  <i data-lucide="zap" class="w-5 h-5 text-amber-500"></i>
+                  <h5 class="font-extrabold text-slate-800 text-xs uppercase tracking-wider">Nilai Transaksi Barang Terbesar</h5>
+                </div>
+                
+                <h4 class="text-lg font-black text-slate-800 leading-normal line-clamp-2">${data.highestLineItemName}</h4>
+                <p class="text-[11px] text-slate-450 font-semibold mt-1">Item tunggal dengan total pengeluaran nota tertinggi</p>
+              </div>
+              
+              <div class="pt-4 border-t border-slate-100 mt-4 flex items-end justify-between font-mono">
+                <span class="text-xs font-black text-slate-400 uppercase">Total Subtotal</span>
+                <span class="text-3xl font-black text-orange-600 leading-none">${formatIDR(data.highestLineItemTotal)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById("review-content-stats").innerHTML = tabStatsHtml;
+
+        // Show Modal review
+        const modal = document.getElementById("pembelianReviewModal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          document.body.classList.add("overflow-hidden");
+          switchReviewTab('supplier');
+          switchHargaSubTab('naik');
+          lucide.createIcons();
+        }
+      }
+
+      function closePembelianReviewModal() {
+        const modal = document.getElementById("pembelianReviewModal");
+        if (modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+        }
+      }
+
+      function downloadPembelianReviewExcel() {
+        const data = dapatkanDataReviewPembelian();
+        if (!data) return;
+
+        let csvRows = [];
+        csvRows.push("KASIR TOKO WINA - LAPORAN REVIEW PEMBELIAN KESELURUHAN");
+        csvRows.push("Tanggal Cetak: " + new Date().toLocaleDateString('id-ID'));
+        csvRows.push("");
+
+        // Stats summary
+        csvRows.push("RINGKASAN STATISTIK PEMBELIAN");
+        csvRows.push("Total Pembelian Seluruhnya;" + data.totalPembelianSeluruhnya);
+        csvRows.push("Total Item Unik;" + data.totalItemUnik);
+        csvRows.push("Total Supplier Pilihan;" + data.totalSupplier);
+        csvRows.push("Total Transaksi Nota;" + data.totalTransaksi);
+        csvRows.push("Rata-rata Transaksi;" + data.rataRataTransaksi);
+        csvRows.push("Supplier Teraktif;" + data.supplierTeraktif);
+        csvRows.push("Pengeluaran Supplier Teraktif;" + data.supplierTeraktifSpending);
+        csvRows.push("");
+
+        // Tab 1: Supplier Comparison
+        csvRows.push("TAB 1: ANALISIS SUPPLIER KESELURUHAN");
+        csvRows.push([
+          "No",
+          "ID Barang",
+          "Nama Barang",
+          "Supplier Termurah",
+          "Harga LV2 Termurah",
+          "Harga LV1 Termurah",
+          "Supplier Termahal",
+          "Harga LV2 Termahal",
+          "Harga LV1 Termahal",
+          "Selisih HLV1",
+          "Jumlah Supplier",
+          "Tanggal Pembelian Terakhir",
+          "Umur Data"
+        ].join(";"));
+
+        data.listSupplierAnalisis.forEach((r, idx) => {
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.idBarang, r.supplierTermurah);
+          csvRows.push([
+            idx + 1,
+            r.idBarang,
+            r.namaBarang,
+            r.supplierTermurah,
+            r.hargaLV2Termurah !== null && r.hargaLV2Termurah !== "" ? `${r.hargaLV2Termurah} / ${r.hargaLV2TermurahUnit}` : "-",
+            `${r.hargaLV1Termurah} / ${r.hargaLV1TermurahUnit}`,
+            r.supplierTermahal,
+            r.hargaLV2Termahal !== null && r.hargaLV2Termahal !== "" ? `${r.hargaLV2Termahal} / ${r.hargaLV2TermahalUnit}` : "-",
+            `${r.hargaLV1Termahal} / ${r.hargaLV1TermahalUnit}`,
+            r.selisih,
+            r.jumlahSupplier,
+            lInfo.dateStr,
+            lInfo.ageText
+          ].join(";"));
+        });
+        csvRows.push("");
+
+        // Tab 2: Pricing fluktuasi
+        csvRows.push("TAB 2: ANALISIS PERUBAHAN HARGA");
+        csvRows.push("Sub: Harga Naik");
+        csvRows.push([
+          "No", "ID Barang", "Nama Barang", "Latest Supplier", "Qty Terakhir", "Satuan", "Modal Lama", "Modal Baru", "Selisih", "Persentase", "Harga Jual", "Profit", "Harga LV2", "Harga LV1"
+        ].join(";"));
+        data.listHargaNaik.forEach((r, idx) => {
+          csvRows.push([
+            idx + 1, r.idBarang, r.namaBarang, r.supplier, r.qtyTerakhir, r.satuan, r.modalLama, r.modalBaru, r.selisih, r.persentase.toFixed(1) + "%", r.hargaJual, r.profit, 
+            r.hargaLV2 !== null ? `${r.hargaLV2} / ${r.hargaLV2Unit}` : "-", `${r.hargaLV1} / ${r.hargaLV1Unit}`
+          ].join(";"));
+        });
+        csvRows.push("");
+
+        csvRows.push("Sub: Harga Turun");
+        data.listHargaTurun.forEach((r, idx) => {
+          csvRows.push([
+            idx + 1, r.idBarang, r.namaBarang, r.supplier, r.qtyTerakhir, r.satuan, r.modalLama, r.modalBaru, r.selisih, r.persentase.toFixed(1) + "%", r.hargaJual, r.profit, 
+            r.hargaLV2 !== null ? `${r.hargaLV2} / ${r.hargaLV2Unit}` : "-", `${r.hargaLV1} / ${r.hargaLV1Unit}`
+          ].join(";"));
+        });
+        csvRows.push("");
+
+        csvRows.push("Sub: Harga Tetap");
+        data.listHargaTetap.forEach((r, idx) => {
+          csvRows.push([
+            idx + 1, r.idBarang, r.namaBarang, r.supplier, r.qtyTerakhir, r.satuan, r.modalLama, r.modalBaru, r.selisih, r.persentase.toFixed(1) + "%", r.hargaJual, r.profit, 
+            r.hargaLV2 !== null ? `${r.hargaLV2} / ${r.hargaLV2Unit}` : "-", `${r.hargaLV1} / ${r.hargaLV1Unit}`
+          ].join(";"));
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Review_Pembelian_TokoWina.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast("Laporan Review berhasil diexport ke Excel (CSV)", "success");
+      }
+
+      function downloadPembelianReviewPDF() {
+        const data = dapatkanDataReviewPembelian();
+        if (!data) return;
+
+        let supplierRows = data.listSupplierAnalisis.map((r, i) => {
+          const lInfo = getLatestDateAndAgeForBarangSupplier(r.idBarang, r.supplierTermurah);
+          return `
+            <tr style="border-bottom: 1px solid #e1e8f0; font-size: 10px;">
+              <td style="padding: 10px; text-align:center; font-weight:bold; color:#718096;">${i+1}</td>
+              <td style="padding: 10px;"><strong>${r.namaBarang}</strong><br/><span style="font-family:monospace; font-size:8px; color:#a0aec0;">ID: ${r.idBarang}</span></td>
+              <td style="padding: 10px; color:#276749; font-weight:bold;">${r.supplierTermurah}</td>
+              <td style="padding: 10px; text-align:right;">${r.hargaLV2Termurah !== null && r.hargaLV2Termurah !== "" ? `${formatIDR(r.hargaLV2Termurah)} / ${r.hargaLV2TermurahUnit}` : '-'}</td>
+              <td style="padding: 10px; text-align:right; font-weight:bold; color:#276749;">${formatIDR(r.hargaLV1Termurah)} / ${r.hargaLV1TermurahUnit}</td>
+              <td style="padding: 10px; color:#9b2c2c; font-weight:bold;">${r.supplierTermahal}</td>
+              <td style="padding: 10px; text-align:right;">${r.hargaLV2Termahal !== null && r.hargaLV2Termahal !== "" ? `${formatIDR(r.hargaLV2Termahal)} / ${r.hargaLV2TermahalUnit}` : '-'}</td>
+              <td style="padding: 10px; text-align:right; font-weight:bold; color:#9b2c2c;">${formatIDR(r.hargaLV1Termahal)} / ${r.hargaLV1TermahalUnit}</td>
+              <td style="padding: 10px; text-align:right; font-weight:bold; color:#c53030;">${formatIDR(r.selisih)}</td>
+              <td style="padding: 10px; text-align:center; font-family:monospace;">${r.jumlahSupplier}</td>
+              <td style="padding: 10px; text-align:right; font-weight:bold;">${lInfo.dateStr}</td>
+              <td style="padding: 10px; text-align:right; font-weight:bold; color:${lInfo.diffDays <= 30 ? '#276749' : lInfo.diffDays <= 90 ? '#dd6b20' : '#c53030'}">${lInfo.ageText} (${lInfo.badgeText})</td>
+            </tr>
+          `;
+        }).join('');
+
+        function rMap(rows) {
+          return rows.map((r, i) => {
+            return `
+              <tr style="border-bottom: 1px solid #e1e8f0; font-size: 10px;">
+                <td style="padding: 10px; text-align:center; color:#718096;">${i+1}</td>
+                <td style="padding: 10px;"><strong>${r.namaBarang}</strong><br/><span style="font-family:monospace; font-size:8px; color:#a0aec0;">ID: ${r.idBarang}</span></td>
+                <td style="padding: 10px;">${r.supplier}</td>
+                <td style="padding: 10px; text-align:center;">${r.qtyTerakhir} ${r.satuan}</td>
+                <td style="padding: 10px; text-align:right; color:#718096; font-family:monospace;">${formatIDR(r.modalLama)}</td>
+                <td style="padding: 10px; text-align:right; font-weight:bold; font-family:monospace;">${formatIDR(r.modalBaru)}</td>
+                <td style="padding: 10px; text-align:right; font-weight:bold; font-family:monospace; color:${r.selisih > 0 ? '#c53030' : r.selisih < 0 ? '#276749' : '#718096'}">${r.selisih > 0 ? '+' : ''}${formatIDR(r.selisih)}</td>
+                <td style="padding: 10px; text-align:center; font-family:monospace;">${r.persentase > 0 ? '+' : ''}${r.persentase.toFixed(1)}%</td>
+                <td style="padding: 10px; text-align:right; font-family:monospace;">${formatIDR(r.hargaJual)}</td>
+                <td style="padding: 10px; text-align:right; color:${r.profit < 0 ? '#c53030' : '#276749'}; font-family:monospace; font-weight:bold;">${formatIDR(r.profit)}</td>
+                <td style="padding: 10px; text-align:right; font-family:monospace;">${r.hargaLV2 !== null ? `${formatIDR(r.hargaLV2)} / ${r.hargaLV2Unit}` : '-'}</td>
+                <td style="padding: 10px; text-align:right; font-weight:bold; color:#2b6cb0; font-family:monospace;">${formatIDR(r.hargaLV1)} / ${r.hargaLV1Unit}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+
+        const printContent = `
+          <html>
+            <head>
+              <title>Review & Analisis Pembelian Kolektif - Toko Wina</title>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+                body {
+                  font-family: 'Inter', sans-serif;
+                  color: #2d3748;
+                  margin: 0;
+                  padding: 40px;
+                  background-color: #ffffff;
+                }
+                .container {
+                  max-width: 1050px;
+                  margin: 0 auto;
+                }
+                .title {
+                  font-size: 24px;
+                  font-weight: 900;
+                  color: #1a202c;
+                  text-transform: uppercase;
+                  letter-spacing: -0.01em;
+                }
+                .section-title {
+                  font-size: 13px;
+                  font-weight: 800;
+                  color: #dd6b20;
+                  text-transform: uppercase;
+                  border-bottom: 2px solid #e2e8f0;
+                  padding-bottom: 6px;
+                  margin-top: 35px;
+                  margin-bottom: 12px;
+                }
+                .tbl {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-bottom: 25px;
+                }
+                .tbl th {
+                  background-color: #edf2f7;
+                  color: #4a5568;
+                  font-size: 9px;
+                  font-weight: 800;
+                  text-transform: uppercase;
+                  padding: 10px;
+                  border-bottom: 2px solid #cbd5e0;
+                }
+                .bento-grid {
+                  display: grid;
+                  grid-template-cols: repeat(4, 1fr);
+                  gap: 15px;
+                  margin-bottom: 30px;
+                }
+                .bento-card {
+                  background-color: #f7fafc;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 12px;
+                  padding: 15px;
+                }
+                .bento-label {
+                  font-size: 8px;
+                  font-weight: 800;
+                  color: #718096;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                }
+                .bento-val {
+                  font-size: 15px;
+                  font-weight: 900;
+                  color: #1a202c;
+                  margin-top: 4px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <table style="width:100%; margin-bottom: 20px;">
+                  <tr>
+                    <td>
+                      <div class="title">TOKO WINA</div>
+                      <div style="font-size:10px; color:#718096; font-weight:600;">Pusat Analisis & Review Pembelian Barang Kolektif</div>
+                    </td>
+                    <td style="text-align:right;">
+                      <div style="font-size:14px; font-weight:900;">DOKUMEN REVIEW INTERNAL</div>
+                      <div style="font-size:10px; color:#dd6b20; font-weight:800; margin-top:3px;">CETAKAN: ${new Date().toLocaleDateString('id-ID')}</div>
+                    </td>
+                  </tr>
+                </table>
+
+                <div class="section-title">BAGIAN 1: STATISTIK & RINGKASAN PEMBELIAN</div>
+                <div class="bento-grid">
+                  <div class="bento-card" style="background-color: #ebf8ff; border-color:#bee3f8;">
+                    <span class="bento-label" style="color:#2b6cb0;">Total Pembelian</span>
+                    <div class="bento-val" style="color:#2b6cb0;">${formatIDR(data.totalPembelianSeluruhnya)}</div>
+                  </div>
+                  <div class="bento-card">
+                    <span class="bento-label">Total Item Unik</span>
+                    <div class="bento-val">${data.totalItemUnik} Barang</div>
+                  </div>
+                  <div class="bento-card">
+                    <span class="bento-label">Total Supplier</span>
+                    <div class="bento-val">${data.totalSupplier} Supplier</div>
+                  </div>
+                  <div class="bento-card" style="background-color:#fffaf0; border-color:#fbd38d;">
+                    <span class="bento-label" style="color:#c05621;">Supplier Teraktif</span>
+                    <div class="bento-val" style="color:#c05621; font-size:11px; font-weight:900;">${data.supplierTeraktif}</div>
+                  </div>
+                </div>
+
+                <div class="section-title">BAGIAN 2: ANALISIS SUPPLIER TERMURAH & TERMAHAL (NORMALISASI LV1)</div>
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th style="width:30px;">No</th>
+                      <th style="text-align:left;">Nama Barang</th>
+                      <th style="text-align:left;">Supplier Termurah</th>
+                      <th style="text-align:right;">HLV2 Termurah</th>
+                      <th style="text-align:right;">HLV1 Termurah</th>
+                      <th style="text-align:left;">Supplier Termahal</th>
+                      <th style="text-align:right;">HLV2 Termahal</th>
+                      <th style="text-align:right;">HLV1 Termahal</th>
+                      <th style="text-align:right;">Selisih HLV1</th>
+                      <th>Jml Sup</th>
+                      <th style="text-align:right;">Tanggal Terakhir</th>
+                      <th style="text-align:right;">Umur Data</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${supplierRows}
+                  </tbody>
+                </table>
+
+                <div class="section-title">BAGIAN 3: ANALISIS FLUKTUASI HARGA - HARGA NAIK (${data.listHargaNaik.length} ITEM)</div>
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th style="width:30px;">No</th>
+                      <th style="text-align:left;">Nama Barang</th>
+                      <th style="text-align:left;">Supplier Terakhir</th>
+                      <th>Qty</th>
+                      <th style="text-align:right;">Modal Lama</th>
+                      <th style="text-align:right;">Modal Baru</th>
+                      <th style="text-align:right;">Selisih</th>
+                      <th>%</th>
+                      <th style="text-align:right;">Harga Jual</th>
+                      <th style="text-align:right;">Profit</th>
+                      <th style="text-align:right;">Harga LV2</th>
+                      <th style="text-align:right;">Harga LV1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rMap(data.listHargaNaik)}
+                  </tbody>
+                </table>
+
+                <div class="section-title">BAGIAN 4: ANALISIS FLUKTUASI HARGA - HARGA TURUN (${data.listHargaTurun.length} ITEM)</div>
+                <table class="tbl">
+                  <thead>
+                    <tr>
+                      <th style="width:30px;">No</th>
+                      <th style="text-align:left;">Nama Barang</th>
+                      <th style="text-align:left;">Supplier Terakhir</th>
+                      <th>Qty</th>
+                      <th style="text-align:right;">Modal Lama</th>
+                      <th style="text-align:right;">Modal Baru</th>
+                      <th style="text-align:right;">Selisih</th>
+                      <th>%</th>
+                      <th style="text-align:right;">Harga Jual</th>
+                      <th style="text-align:right;">Profit</th>
+                      <th style="text-align:right;">Harga LV2</th>
+                      <th style="text-align:right;">Harga LV1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${rMap(data.listHargaTurun)}
+                  </tbody>
+                </table>
+              </div>
+
+              <script>
+                window.onload = function() {
+                  setTimeout(function() {
+                    window.print();
+                  }, 400);
                 }
               <\/script>
             </body>

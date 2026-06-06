@@ -2077,6 +2077,44 @@
               </div>
             </div>
 
+            <!-- ANALISIS HARGA PEMBELIAN MODAL -->
+            <div id="pembelianHargaAnalisisModal" class="fixed inset-0 z-[7000] hidden items-center justify-center p-4 sm:p-6">
+              <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closePembelianAnalisisModal()"></div>
+              <div class="relative bg-white w-full max-w-6xl rounded-[3rem] shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar animate-in zoom-in-95 duration-300">
+                <!-- Close Button -->
+                <button type="button" onclick="closePembelianAnalisisModal()" class="absolute top-8 right-8 p-3 bg-slate-100 text-slate-400 rounded-2xl hover:bg-slate-200 transition-all active:scale-90 z-20 cursor-pointer">
+                  <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="p-8 sm:p-10">
+                    <div class="mb-8 border-b border-slate-100 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <div>
+                        <div class="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-orange-50 border border-orange-100 mb-4">
+                          <i data-lucide="bar-chart-2" class="w-4 h-4 text-orange-600"></i>
+                          <span class="text-[10px] font-black text-orange-600 uppercase tracking-widest font-sans">Analisis Harga Pembelian</span>
+                        </div>
+                        <h3 class="text-3xl font-black text-slate-900 tracking-tight" id="analisis-pb-title">PB-XXX</h3>
+                        <p class="text-xs font-bold text-slate-400 mt-1" id="analisis-pb-subtitle">-</p>
+                      </div>
+                      
+                      <!-- Top Actions inside detail header -->
+                      <div class="flex flex-wrap gap-2.5 sm:self-end">
+                        <button type="button" id="btn-analisis-export-pdf" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 border border-rose-100/50 text-rose-700 hover:text-rose-800 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <i data-lucide="file-text" class="w-4 h-4"></i> Download PDF
+                        </button>
+                        <button type="button" id="btn-analisis-export-excel" class="py-2.5 px-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100/50 text-emerald-700 hover:text-emerald-800 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                          <i data-lucide="grid" class="w-4 h-4"></i> Download Excel
+                        </button>
+                      </div>
+                    </div>
+
+                    <div id="analisis-pb-content" class="space-y-8">
+                       <!-- Analisis content will be populated dynamically -->
+                    </div>
+                </div>
+              </div>
+            </div>
+
             <!-- DETAIL SATUAN BARANG MODAL -->
             <div id="satuanBarangDetailModal" class="fixed inset-0 z-[6000] hidden items-center justify-center p-4 sm:p-6">
               <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeSatuanBarangDetailModal()"></div>
@@ -15460,6 +15498,13 @@
           </div>
           ` : ''}
 
+          <!-- Analisis Harga Action -->
+          <div class="pt-4">
+            <button type="button" onclick="bukaPembelianAnalisisModal('${showId}')" class="w-full py-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-orange-500/10">
+              <i data-lucide="bar-chart-2" class="w-4 h-4"></i> 📊 Analisis Harga
+            </button>
+          </div>
+
           <!-- Action Buttons Area -->
           <div class="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button type="button" onclick="downloadPembelianPDF('${showId}')" class="py-3.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100/50 text-emerald-700 hover:text-emerald-800 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
@@ -15499,6 +15544,772 @@
         modal.classList.add("hidden");
         modal.classList.remove("flex");
         document.body.classList.remove("overflow-hidden");
+      }
+
+      function closePembelianBarangDetailModal() {
+        const modal = document.getElementById("pembelianBarangDetailModal");
+        if (!modal) return;
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.classList.remove("overflow-hidden");
+      }
+
+      function dapatkanDataAnalisisPembelian(orderId) {
+        const transactionItems = rawPembelianBarangData.filter(x => String(x.idPembelianBrg) === String(orderId));
+        if (transactionItems.length === 0) return null;
+
+        const firstItem = transactionItems[0];
+        const dateFormatted = firstItem.tanggalPembelian ? formatDateIndo(firstItem.tanggalPembelian) : "-";
+        const supplierNama = firstItem.namaSupplier || "-";
+        const supplierId = firstItem.idSupplier || "-";
+
+        // Helper for pricing at specific level
+        function getPriceAtLevel(idBarang, buySatuan, buyPrice, targetLvl) {
+          const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
+          if (units.length === 0) return targetLvl === 1 ? buyPrice : null;
+          
+          const buyUnit = units.find(u => String(u.satuan).toUpperCase() === String(buySatuan).toUpperCase());
+          const qtyBuy = buyUnit ? (Number(buyUnit.qtySatuan) || 1) : 1;
+          
+          const targetUnit = units.find(u => (Number(u.levelSatuan) || 1) === targetLvl);
+          if (!targetUnit) return null;
+          
+          const qtyTarget = Number(targetUnit.qtySatuan) || 1;
+          return buyPrice * (qtyTarget / qtyBuy);
+        }
+
+        // Helper for cheapest supplier across all historical purchase orders
+        function findCheapestSupplierForBarang(idBarang, defaultSupplier, defaultHLV1) {
+          const history = (rawPembelianBarangData || []).filter(h => String(h.idBarang) === String(idBarang));
+          
+          let cheapestSup = defaultSupplier;
+          let cheapestLV1 = defaultHLV1;
+          
+          history.forEach(h => {
+            const supName = h.namaSupplier || "Unknown";
+            const cleanPrice = Number(h.hargaModal) || 0;
+            if (cleanPrice <= 0) return;
+            
+            const units = (rawSatuanBarangData || []).filter(u => String(u.idBarang) === String(idBarang));
+            const buyUnit = units.find(u => String(u.satuan).toUpperCase() === String(h.satuan).toUpperCase());
+            const qtyBuy = buyUnit ? (Number(buyUnit.qtySatuan) || 1) : 1;
+            
+            const unitLV1 = units.find(u => (Number(u.levelSatuan) || 1) === 1);
+            const qtyLV1 = unitLV1 ? (Number(unitLV1.qtySatuan) || 1) : 1;
+            
+            const hLV1 = cleanPrice * (qtyLV1 / qtyBuy);
+            
+            if (hLV1 > 0 && hLV1 < cheapestLV1) {
+              cheapestLV1 = hLV1;
+              cheapestSup = supName;
+            }
+          });
+          
+          return {
+            supplier: cheapestSup,
+            hargaLV1: cheapestLV1
+          };
+        }
+
+        let totalItems = transactionItems.length;
+        let totalQty = 0;
+        let totalPembelianValue = 0;
+        let itemsNaik = 0;
+        let itemsTurun = 0;
+        let itemsTetap = 0;
+
+        const b1Rows = [];
+        const b2Rows = [];
+
+        transactionItems.forEach(x => {
+          const qty = Number(x.qtyPembelian) || 0;
+          const modalBaru = Number(x.hargaModal) || 0;
+          totalQty += qty;
+          
+          const subtotal = x.subtotal !== undefined && x.subtotal !== "" ? Number(x.subtotal) : (qty * modalBaru);
+          totalPembelianValue += subtotal;
+
+          // Modal Lama = Harga_Modal_Lama jika kosong gunakan Harga_Modal
+          const modalLama = (x.hargaModalSebelumnya !== undefined && x.hargaModalSebelumnya !== null && x.hargaModalSebelumnya !== "") ? Number(x.hargaModalSebelumnya) : modalBaru;
+
+          let statusHarga = "Tetap";
+          if (modalBaru > modalLama) {
+            statusHarga = "Naik";
+            itemsNaik++;
+          } else if (modalBaru < modalLama) {
+            statusHarga = "Turun";
+            itemsTurun++;
+          } else {
+            itemsTetap++;
+          }
+
+          const selisihHarga = modalBaru - modalLama;
+
+          // Harga Jual live dari Satuan_Barang
+          const unitDb = (rawSatuanBarangData || []).find(u => String(u.idBarang) === String(x.idBarang) && String(u.satuan).toUpperCase() === String(x.satuan).toUpperCase());
+          const hargaJual = unitDb ? (Number(unitDb.hargaJual) || 0) : (Number(x.hargaJual) || 0);
+
+          const profit = hargaJual - modalBaru;
+
+          const hargaLV1 = getPriceAtLevel(x.idBarang, x.satuan, modalBaru, 1) ?? modalBaru;
+          const hargaLV2 = getPriceAtLevel(x.idBarang, x.satuan, modalBaru, 2);
+
+          b1Rows.push({
+            barangId: x.idBarang || "-",
+            barangNama: x.namaBarang || "-",
+            qty: qty,
+            hargaAsli: modalBaru,
+            modalLama: modalLama,
+            modalBaru: modalBaru,
+            statusHarga: statusHarga,
+            selisihHarga: selisihHarga,
+            hargaJual: hargaJual,
+            profit: profit,
+            hargaLV2: hargaLV2,
+            hargaLV1: hargaLV1,
+            satuan: x.satuan
+          });
+
+          // Supplier termurah
+          const cheapest = findCheapestSupplierForBarang(x.idBarang, supplierNama, hargaLV1);
+          const isTermurah = String(supplierNama).trim().toLowerCase() === String(cheapest.supplier).trim().toLowerCase();
+
+          b2Rows.push({
+            barangId: x.idBarang || "-",
+            barangNama: x.namaBarang || "-",
+            supplierDibeli: supplierNama,
+            hargaLV1Dibeli: hargaLV1,
+            supplierTermurah: cheapest.supplier,
+            hargaLV1Termurah: cheapest.hargaLV1,
+            selisih: hargaLV1 - cheapest.hargaLV1,
+            statusTermurah: isTermurah ? "✅ Termurah" : "❌ Tidak Termurah"
+          });
+        });
+
+        return {
+          orderId,
+          tanggal: firstItem.tanggalPembelian || "",
+          tanggalFormatted: dateFormatted,
+          supplierNama,
+          supplierId,
+          totalItems,
+          totalQty,
+          totalPembelianValue,
+          itemsNaik,
+          itemsTurun,
+          itemsTetap,
+          b1Rows,
+          b2Rows
+        };
+      }
+
+      function formatDiffVal(val) {
+        if (val > 0) return `<span class="text-rose-500 font-extrabold font-mono">+${formatIDRVal(val)}</span>`;
+        if (val < 0) return `<span class="text-emerald-600 font-extrabold font-mono">-${formatIDRVal(Math.abs(val))}</span>`;
+        return `<span class="text-slate-400 font-medium font-mono">Rp 0</span>`;
+      }
+
+      function bukaPembelianAnalisisModal(orderId) {
+        const data = dapatkanDataAnalisisPembelian(orderId);
+        if (!data) {
+          showToast("Data analisis tidak dapat dihitung.", "error");
+          return;
+        }
+
+        document.getElementById("analisis-pb-title").innerText = data.orderId;
+        document.getElementById("analisis-pb-subtitle").innerText = `Supplier: ${data.supplierNama} | Tanggal: ${data.tanggalFormatted}`;
+
+        // Bind download actions
+        document.getElementById("btn-analisis-export-pdf").onclick = () => downloadPembelianAnalisisPDF(orderId);
+        document.getElementById("btn-analisis-export-excel").onclick = () => downloadPembelianAnalisisExcel(orderId);
+
+        let b1HtmlRows = data.b1Rows.map((r, i) => {
+          let badgeStatus = '';
+          if (r.statusHarga === 'Naik') {
+            badgeStatus = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9.5px] font-black bg-rose-50 text-rose-600 border border-rose-100">Naik</span>`;
+          } else if (r.statusHarga === 'Turun') {
+            badgeStatus = `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[9.5px] font-black bg-emerald-50 text-emerald-600 border border-emerald-100">Turun</span>`;
+          } else {
+            badgeStatus = `<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[9.5px] font-bold bg-slate-50 text-slate-500 border border-slate-100">Tetap</span>`;
+          }
+
+          return `
+            <tr class="hover:bg-slate-50/50 transition-colors">
+              <td class="py-3 px-4 text-center font-bold text-slate-400">${i + 1}</td>
+              <td class="py-3 px-4 min-w-[150px]">
+                <div class="font-extrabold text-slate-800 text-xs leading-normal">${r.barangNama}</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5">${r.barangId}</div>
+              </td>
+              <td class="py-3 px-4 text-center font-bold font-mono text-slate-900">
+                ${r.qty} <span class="text-[9px] text-slate-400 font-bold uppercase">${r.satuan}</span>
+              </td>
+              <td class="py-3 px-4 text-right font-mono font-bold text-slate-700">${formatIDR(r.hargaAsli)}</td>
+              <td class="py-3 px-4 text-right font-mono text-slate-400">${formatIDR(r.modalLama)}</td>
+              <td class="py-3 px-4 text-right font-mono font-extrabold text-slate-900">${formatIDR(r.modalBaru)}</td>
+              <td class="py-3 px-4 text-center">${badgeStatus}</td>
+              <td class="py-3 px-4 text-right">${formatDiffVal(r.selisihHarga)}</td>
+              <td class="py-3 px-4 text-right font-mono text-slate-800">${formatIDR(r.hargaJual)}</td>
+              <td class="py-3 px-4 text-right font-mono font-bold ${r.profit < 0 ? 'text-rose-500' : 'text-emerald-600'}">${formatIDR(r.profit)}</td>
+              <td class="py-3 px-4 text-right font-mono text-slate-500">${r.hargaLV2 !== null ? formatIDR(r.hargaLV2) : '<span class="text-slate-300">-</span>'}</td>
+              <td class="py-3 px-4 text-right font-mono text-indigo-600 font-extrabold">${formatIDR(r.hargaLV1)}</td>
+            </tr>
+          `;
+        }).join('');
+
+        let b2HtmlRows = data.b2Rows.map((r, i) => {
+          let statusBadge = '';
+          if (r.statusTermurah.includes('✅')) {
+            statusBadge = `<span class="inline-flex items-center gap-1 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-emerald-600 text-[10px] font-black">
+              ✅ Termurah
+            </span>`;
+          } else {
+            statusBadge = `<span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-50 border border-rose-100 rounded-full text-rose-600 text-[10px] font-black">
+              ❌ Tidak Termurah
+            </span>`;
+          }
+
+          return `
+            <tr class="hover:bg-slate-50/50 transition-colors">
+              <td class="py-3.5 px-4 text-center font-bold text-slate-400">${i + 1}</td>
+              <td class="py-3.5 px-4 min-w-[150px]">
+                <div class="font-extrabold text-slate-800 text-xs leading-normal">${r.barangNama}</div>
+                <div class="text-[9px] text-slate-400 font-mono mt-0.5">${r.barangId}</div>
+              </td>
+              <td class="py-3.5 px-4">
+                <span class="font-bold text-slate-800 text-xs">${r.supplierDibeli}</span>
+              </td>
+              <td class="py-3.5 px-4 text-right font-mono font-bold text-slate-900 text-xs">${formatIDR(r.hargaLV1Dibeli)}</td>
+              <td class="py-3.5 px-4">
+                <span class="font-extrabold text-emerald-700 text-xs">${r.supplierTermurah}</span>
+              </td>
+              <td class="py-3.5 px-4 text-right font-mono font-bold text-emerald-600 text-xs">${formatIDR(r.hargaLV1Termurah)}</td>
+              <td class="py-3.5 px-4 text-right font-mono font-extrabold text-xs ${r.selisih > 0 ? 'text-rose-500' : 'text-slate-400'}">
+                ${r.selisih > 0 ? `+${formatIDR(r.selisih)}` : 'Rp 0'}
+              </td>
+              <td class="py-3.5 px-4 text-center">${statusBadge}</td>
+            </tr>
+          `;
+        }).join('');
+
+        const contentHtml = `
+          <!-- Section 1 Card -->
+          <div class="bg-white border border-slate-100 rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="package" class="w-5 h-5 text-indigo-600"></i>
+              <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider font-sans">Bagian 1: Ringkasan Analis Transaksi</h4>
+            </div>
+
+            <div class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar">
+              <table class="w-full border-collapse text-left text-xs min-w-[1100px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 font-sans text-slate-400 font-extrabold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Barang</th>
+                    <th class="py-4 px-4 text-center w-28">Qty</th>
+                    <th class="py-4 px-4 text-right">Harga Transaksi</th>
+                    <th class="py-4 px-4 text-right">Modal Lama</th>
+                    <th class="py-4 px-4 text-right">Modal Baru</th>
+                    <th class="py-4 px-4 text-center w-28">Status Harga</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-right">Harga Jual</th>
+                    <th class="py-4 px-4 text-right">Profit</th>
+                    <th class="py-4 px-4 text-right">Harga LV2</th>
+                    <th class="py-4 px-4 text-right">Harga LV1</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${b1HtmlRows}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Ringkasan di bawah tabel -->
+            <div class="grid grid-cols-2 md:grid-cols-6 gap-4 pt-4 border-t border-slate-100 font-sans">
+              <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block mb-1">Total Item</span>
+                <span class="text-lg font-black text-slate-800 font-mono">${data.totalItems} <span class="text-xs text-slate-400 font-bold">Macam</span></span>
+              </div>
+              <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider block mb-1">Total Qty</span>
+                <span class="text-lg font-black text-slate-800 font-mono">${data.totalQty} <span class="text-xs text-slate-400 font-bold">Pcs</span></span>
+              </div>
+              <div class="bg-indigo-50/40 border border-indigo-100/50 rounded-2xl p-4 flex flex-col justify-between col-span-2 md:col-span-2">
+                <span class="text-[9px] font-black text-indigo-500 uppercase tracking-wider block mb-1">Total Nilai Pembelian</span>
+                <span class="text-lg font-black text-indigo-600 font-mono">${formatIDR(data.totalPembelianValue)}</span>
+              </div>
+              <div class="bg-rose-50/50 border border-rose-100/40 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-[9px] font-black text-rose-500 uppercase tracking-wider block mb-1">Harga Naik</span>
+                <span class="text-lg font-black text-rose-600 font-mono">${data.itemsNaik} <span class="text-xs text-rose-450 font-bold">Item</span></span>
+              </div>
+              <div class="bg-emerald-50/50 border border-emerald-100/45 rounded-2xl p-4 flex flex-col justify-between">
+                <span class="text-[9px] font-black text-emerald-500 uppercase tracking-wider block mb-1">Harga Turun</span>
+                <span class="text-lg font-black text-emerald-600 font-mono">${data.itemsTurun} <span class="text-xs text-emerald-450 font-bold">Item</span></span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4 pt-1 font-sans text-[11px] font-bold text-slate-600">
+              <div class="bg-slate-50 border border-slate-150 rounded-xl px-3 py-1.5 inline-flex items-center gap-1.5 shadow-sm">
+                 <span class="w-2 h-2 rounded-full bg-slate-400"></span> Harga Tetap: <strong class="text-slate-800">${data.itemsTetap} Barang</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2 Card -->
+          <div class="bg-white border border-slate-100 rounded-[2rem] p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+              <i data-lucide="git-compare" class="w-5 h-5 text-emerald-600"></i>
+              <h4 class="font-extrabold text-slate-800 text-sm uppercase tracking-wider font-sans">Bagian 2: Evaluasi & Perbandingan Supplier</h4>
+            </div>
+
+            <div class="overflow-x-auto rounded-3xl border border-slate-150/60 bg-slate-50/20 custom-scrollbar">
+              <table class="w-full border-collapse text-left text-xs min-w-[950px]">
+                <thead>
+                  <tr class="bg-slate-50 border-b border-slate-150 font-sans text-slate-400 font-extrabold text-[9.5px] tracking-wider uppercase">
+                    <th class="py-4 px-4 text-center w-12">No</th>
+                    <th class="py-4 px-4">Barang</th>
+                    <th class="py-4 px-4">Supplier Dibeli</th>
+                    <th class="py-4 px-4 text-right">Harga LV1 Dibeli</th>
+                    <th class="py-4 px-4">Supplier Termurah</th>
+                    <th class="py-4 px-4 text-right">Harga LV1 Termurah</th>
+                    <th class="py-4 px-4 text-right">Selisih</th>
+                    <th class="py-4 px-4 text-center w-36">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                  ${b2HtmlRows}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Explanatory Block -->
+            <div class="bg-amber-50/30 p-5 rounded-2xl border border-amber-100/50 flex gap-3 text-[11px] text-slate-600 leading-relaxed font-sans">
+              <i data-lucide="help-circle" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+              <div>
+                <h5 class="font-extrabold text-amber-800 mb-0.5">Penjelasan Normalisasi Harga Satuan Dasar (Level 1)</h5>
+                <p>
+                  Perbandingan supplier wajib dianalisis berdasarkan <strong>Satuan Dasar / Unit Level 1</strong> (e.g. PCS, Sachet, dll) bukan satuan asli transaksi pembelian. 
+                  Hal ini dilakukan untuk mengeliminasi bias perbedaan kemasan pembelian (seperti dus, pak, ball, atau sachet) sehingga perbandingan harga penawaran dari berbagai supplier tetap adil, valid, dan sangat akurat.
+                </p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.getElementById("analisis-pb-content").innerHTML = contentHtml;
+
+        // Open Modal
+        const modal = document.getElementById("pembelianHargaAnalisisModal");
+        if (modal) {
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+          lucide.createIcons();
+        }
+      }
+
+      function closePembelianAnalisisModal() {
+        const modal = document.getElementById("pembelianHargaAnalisisModal");
+        if (modal) {
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+        }
+      }
+
+      function downloadPembelianAnalisisExcel(orderId) {
+        const data = dapatkanDataAnalisisPembelian(orderId);
+        if (!data) return;
+
+        let csvRows = [];
+        
+        csvRows.push("ANALISIS HARGA PEMBELIAN");
+        csvRows.push("ID Pembelian: " + data.orderId);
+        csvRows.push("Supplier: " + data.supplierNama + " (" + data.supplierId + ")");
+        csvRows.push("Tanggal: " + data.tanggalFormatted);
+        csvRows.push("");
+
+        csvRows.push("BAGIAN 1: RINGKASAN PEMBELIAN TRANSAKSI");
+        csvRows.push([
+          "No",
+          "ID Barang",
+          "Nama Barang",
+          "Qty Beli",
+          "Satuan Beli",
+          "Harga Asli Transaksi",
+          "Modal Lama",
+          "Modal Baru",
+          "Status Harga",
+          "Selisih Harga",
+          "Harga Jual",
+          "Profit",
+          "Harga LV2",
+          "Harga LV1"
+        ].join(";"));
+
+        data.b1Rows.forEach((r, idx) => {
+          csvRows.push([
+            idx + 1,
+            r.barangId,
+            r.barangNama,
+            r.qty,
+            r.satuan,
+            r.hargaAsli,
+            r.modalLama,
+            r.modalBaru,
+            r.statusHarga,
+            r.selisihHarga,
+            r.hargaJual,
+            r.profit,
+            r.hargaLV2 !== null ? r.hargaLV2 : "",
+            r.hargaLV1
+          ].join(";"));
+        });
+
+        csvRows.push("");
+        csvRows.push("Ringkasan Statistik:");
+        csvRows.push("Total Item;" + data.totalItems);
+        csvRows.push("Total Qty;" + data.totalQty);
+        csvRows.push("Total Nilai Pembelian;" + data.totalPembelianValue);
+        csvRows.push("Barang Harga Naik;" + data.itemsNaik);
+        csvRows.push("Barang Harga Turun;" + data.itemsTurun);
+        csvRows.push("Barang Harga Tetap;" + data.itemsTetap);
+        
+        csvRows.push("");
+        
+        csvRows.push("BAGIAN 2: PERBANDINGAN SUPPLIER");
+        csvRows.push([
+          "No",
+          "ID Barang",
+          "Nama Barang",
+          "Supplier Dibeli",
+          "Harga LV1 Dibeli",
+          "Supplier Termurah",
+          "Harga LV1 Termurah",
+          "Selisih",
+          "Status"
+        ].join(";"));
+
+        data.b2Rows.forEach((r, idx) => {
+          csvRows.push([
+            idx + 1,
+            r.barangId,
+            r.barangNama,
+            r.supplierDibeli,
+            r.hargaLV1Dibeli,
+            r.supplierTermurah,
+            r.hargaLV1Termurah,
+            r.selisih,
+            r.statusTermurah
+          ].join(";"));
+        });
+
+        const csvString = csvRows.join("\n");
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvString], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `Analisis_Harga_${orderId}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast("Download Excel (CSV) Berhasil!", "success");
+      }
+
+      function downloadPembelianAnalisisPDF(orderId) {
+        const data = dapatkanDataAnalisisPembelian(orderId);
+        if (!data) return;
+
+        let b1RowsHtml = data.b1Rows.map((r, idx) => {
+          return `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 10px 6px; text-align: center; color: #64748b; font-weight: bold;">${idx + 1}</td>
+              <td style="padding: 10px 6px;">
+                <div style="font-weight: 800; color: #1e293b; font-size: 11px;">${r.barangNama}</div>
+                <div style="font-size: 9px; color: #94a3b8; font-family: monospace;">ID: ${r.barangId}</div>
+              </td>
+              <td style="padding: 10px 6px; text-align: center; font-weight: bold;">${r.qty} <span style="font-size: 9px; color: #94a3b8;">${r.satuan}</span></td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold;">${formatIDR(r.hargaAsli)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #64748b;">${formatIDR(r.modalLama)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: 800; color: #0f172a;">${formatIDR(r.modalBaru)}</td>
+              <td style="padding: 10px 6px; text-align: center;">
+                <span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; 
+                  ${r.statusHarga === 'Naik' ? 'background-color: #ffe4e6; color: #e11d48;' : r.statusHarga === 'Turun' ? 'background-color: #d1fae5; color: #059669;' : 'background-color: #f1f5f9; color: #64748b;'}">
+                  ${r.statusHarga}
+                </span>
+              </td>
+              <td style="padding: 10px 6px; text-align: right; font-size: 10px;">
+                ${r.selisihHarga > 0 ? '+'+formatIDR(r.selisihHarga) : r.selisihHarga < 0 ? '-'+formatIDR(Math.abs(r.selisihHarga)) : 'Rp 0'}
+              </td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #334155;">${formatIDR(r.hargaJual)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; ${r.profit < 0 ? 'color: #e11d48;' : 'color: #059669;'}">${formatIDR(r.profit)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; color: #475569;">${r.hargaLV2 !== null ? formatIDR(r.hargaLV2) : '-'}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #4f46e5;">${formatIDR(r.hargaLV1)}</td>
+            </tr>
+          `;
+        }).join('');
+
+        let b2RowsHtml = data.b2Rows.map((r, idx) => {
+          return `
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+              <td style="padding: 10px 6px; text-align: center; color: #64748b; font-weight: bold;">${idx + 1}</td>
+              <td style="padding: 10px 6px;">
+                <div style="font-weight: 800; color: #1e293b; font-size: 11px;">${r.barangNama}</div>
+                <div style="font-size: 9px; color: #94a3b8; font-family: monospace;">ID: ${r.barangId}</div>
+              </td>
+              <td style="padding: 10px 6px; font-weight: bold;">${r.supplierDibeli}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold;">${formatIDR(r.hargaLV1Dibeli)}</td>
+              <td style="padding: 10px 6px; font-weight: bold; color: #059669;">${r.supplierTermurah}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; color: #059669;">${formatIDR(r.hargaLV1Termurah)}</td>
+              <td style="padding: 10px 6px; text-align: right; font-family: monospace; font-weight: bold; ${r.selisih > 0 ? 'color: #e11d48;' : 'color: #64748b;'}">${r.selisih > 0 ? '+'+formatIDR(r.selisih) : 'Rp 0'}</td>
+              <td style="padding: 10px 6px; text-align: center;">
+                <span style="display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; 
+                  ${r.statusTermurah.includes('Termurah') && !r.statusTermurah.includes('Tidak') ? 'background-color: #d1fae5; color: #059669;' : 'background-color: #ffe4e6; color: #e11d48;'}">
+                  ${r.statusTermurah}
+                </span>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+        const printContent = `
+          <html>
+            <head>
+              <title>Analisis Harga Pembelian #${orderId} - Toko Wina</title>
+              <style>
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+                body {
+                  font-family: 'Inter', sans-serif;
+                  color: #1e293b;
+                  background-color: #ffffff;
+                  margin: 0;
+                  padding: 30px;
+                  font-size: 11px;
+                }
+                .invoice-card {
+                  max-width: 1050px;
+                  margin: 0 auto;
+                }
+                .header-table {
+                  width: 100%;
+                  margin-bottom: 25px;
+                  border-collapse: collapse;
+                }
+                .title-area {
+                  font-size: 22px;
+                  font-weight: 900;
+                  color: #0f172a;
+                }
+                .info-grid {
+                  display: grid;
+                  grid-template-cols: 1fr 1fr;
+                  gap: 15px;
+                  background-color: #f8fafc;
+                  border: 1px solid #f1f5f9;
+                  border-radius: 12px;
+                  padding: 15px;
+                  font-size: 11px;
+                  margin-bottom: 25px;
+                }
+                .info-label {
+                  font-size: 9px;
+                  font-weight: 800;
+                  color: #94a3b8;
+                  text-transform: uppercase;
+                  margin-bottom: 2px;
+                }
+                .info-value {
+                  font-weight: 700;
+                  color: #334155;
+                }
+                .items-table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-bottom: 25px;
+                  font-size: 10px;
+                }
+                .items-table th {
+                  background-color: #f1f5f9;
+                  padding: 8px 6px;
+                  font-size: 9px;
+                  font-weight: 800;
+                  color: #64748b;
+                  text-transform: uppercase;
+                  border-bottom: 2px solid #e2e8f0;
+                }
+                .summary-container {
+                  display: grid;
+                  grid-template-cols: repeat(6, 1fr);
+                  gap: 10px;
+                  margin-bottom: 30px;
+                  font-size: 10px;
+                }
+                .summary-box {
+                  background-color: #f8fafc;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 8px;
+                  padding: 10px;
+                  text-align: left;
+                }
+                .summary-box-accent {
+                  background-color: #f5f3ff;
+                  border-color: #ddd6fe;
+                }
+                .section-title {
+                  font-size: 11px;
+                  font-weight: 900;
+                  color: #ea580c;
+                  text-transform: uppercase;
+                  letter-spacing: 0.05em;
+                  margin-bottom: 10px;
+                  border-bottom: 1px solid #e2e8f0;
+                  padding-bottom: 4px;
+                }
+                .footer {
+                  margin-top: 40px;
+                  border-top: 1px solid #e2e8f0;
+                  padding-top: 15px;
+                  text-align: center;
+                  font-size: 9px;
+                  color: #94a3b8;
+                }
+                @media print {
+                  body { padding: 0; }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="invoice-card">
+                <!-- Top Header -->
+                <table class="header-table">
+                  <tr>
+                    <td>
+                      <div class="title-area">TOKO WINA</div>
+                      <div style="font-size: 10px; font-weight: 600; color: #64748b; margin-top: 2px;">Sistem Kasir & Management Stok</div>
+                    </td>
+                    <td style="text-align: right;">
+                      <div style="font-size: 16px; font-weight: 900; color: #0f172a;">ANALISIS HARGA PEMBELIAN</div>
+                      <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #ea580c; margin-top: 4px;">#${orderId}</div>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- General Meta Info -->
+                <div class="info-grid">
+                  <div>
+                    <div class="info-label">Supplier</div>
+                    <div class="info-value" style="font-size: 12px; color: #0f172a;">${data.supplierNama}</div>
+                    <div style="color: #64748b; font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 2px;">ID: ${data.supplierId}</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div class="info-label">Tanggal Transaksi</div>
+                    <div class="info-value" style="font-size: 12px; color: #0f172a;">${data.tanggalFormatted}</div>
+                  </div>
+                </div>
+
+                <!-- Section 1 -->
+                <div class="section-title">Bagian 1: Ringkasan Analis Transaksi</div>
+                <table class="items-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 30px; text-align: center;">No</th>
+                      <th style="text-align: left;">Nama & ID Barang</th>
+                      <th style="width: 70px; text-align: center;">Qty Beli</th>
+                      <th style="width: 85px; text-align: right;">Harga Transaksi</th>
+                      <th style="width: 85px; text-align: right;">Modal Lama</th>
+                      <th style="width: 90px; text-align: right;">Modal Baru</th>
+                      <th style="width: 75px; text-align: center;">Status Harga</th>
+                      <th style="width: 80px; text-align: right;">Selisih Harga</th>
+                      <th style="width: 85px; text-align: right;">Harga Jual</th>
+                      <th style="width: 80px; text-align: right;">Profit</th>
+                      <th style="width: 85px; text-align: right;">Harga LV2</th>
+                      <th style="width: 85px; text-align: right;">Harga LV1</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${b1RowsHtml}
+                  </tbody>
+                </table>
+
+                <!-- Section 1 Aggregates and stats -->
+                <div class="summary-container">
+                  <div class="summary-box">
+                    <span class="info-label">Total Item</span>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 3px;">${data.totalItems} Macam</div>
+                  </div>
+                  <div class="summary-box">
+                    <span class="info-label">Total Qty</span>
+                    <div style="font-size: 12px; font-weight: 800; margin-top: 3px;">${data.totalQty} Pcs</div>
+                  </div>
+                  <div class="summary-box summary-box-accent" style="grid-span: 2; grid-column: span 2;">
+                    <span class="info-label" style="color: #4f46e5;">Total Pembelian</span>
+                    <div style="font-size: 12px; font-weight: 800; color: #4f46e5; margin-top: 3px;">${formatIDR(data.totalPembelianValue)}</div>
+                  </div>
+                  <div class="summary-box" style="border-color: #fecdd3; background-color: #fff5f5;">
+                    <span class="info-label" style="color: #e11d48;">Barang Harga Naik</span>
+                    <div style="font-size: 12px; font-weight: 800; color: #e11d48; margin-top: 3px;">${data.itemsNaik} Item</div>
+                  </div>
+                  <div class="summary-box" style="border-color: #a7f3d0; background-color: #f0fdf4;">
+                    <span class="info-label" style="color: #059669;">Barang Harga Turun</span>
+                    <div style="font-size: 12px; font-weight: 800; color: #059669; margin-top: 3px;">${data.itemsTurun} Item</div>
+                  </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="section-title" style="margin-top: 30px;">Bagian 2: Evaluasi & Perbandingan Supplier</div>
+                <table class="items-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 30px; text-align: center;">No</th>
+                      <th style="text-align: left;">Nama & ID Barang</th>
+                      <th style="text-align: left;">Supplier Dibeli</th>
+                      <th style="width: 110px; text-align: right;">Harga LV1 Dibeli</th>
+                      <th style="text-align: left;">Supplier Termurah (Histori)</th>
+                      <th style="width: 120px; text-align: right;">Harga LV1 Termurah</th>
+                      <th style="width: 115px; text-align: right;">Selisih</th>
+                      <th style="width: 110px; text-align: center;">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${b2RowsHtml}
+                  </tbody>
+                </table>
+
+                <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; font-size: 9.5px; color: #78350f; line-height: 1.4;">
+                  <strong>Catatan Evaluasi Normalisasi:</strong> Analisis perbandingan supplier menggunakan satuan dasar / Level 1 (PCS, Sachet, dll) agar adil karena satuan pembelian masing-masing transaksi supplier dapat berbeda (DUS, Sachet, PAK).
+                </div>
+
+                <!-- Footer -->
+                <div class="footer">
+                  <p>Dokumen Laporan Analisis Harga Pembelian Sah diakses sistem Kasir TOKO WINA.</p>
+                  <p style="margin-top: 2px;">Dicetak otomatis pada tanggal ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                </div>
+              </div>
+
+              <script>
+                window.onload = function() {
+                  setTimeout(function() {
+                    window.print();
+                  }, 300);
+                }
+              <\/script>
+            </body>
+          </html>
+        `;
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.bottom = '0';
+        iframe.style.right = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        document.body.appendChild(iframe);
+
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(printContent);
+        iframe.contentWindow.document.close();
+
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+        }, 120000);
       }
 
       function getFormattedPembelianTextOnly(orderId) {

@@ -1632,13 +1632,14 @@
                     <thead>
                       <tr class="bg-gradient-to-r from-slate-900 to-slate-800 text-[10px] font-black uppercase text-white tracking-widest border-b border-slate-700">
                         <th class="px-4 py-5 w-[60px] text-center">No.</th>
-                        <th class="px-5 py-5 w-[140px]">ID Pembelian</th>
+                        <th class="px-5 py-5 w-[160px]">ID Pembelian</th>
                         <th class="px-5 py-5 w-[220px]">Supplier</th>
-                        <th class="px-5 py-5 w-[280px]">Barang</th>
-                        <th class="px-5 py-5 w-[330px]">Qty & Keuangan</th>
-                        <th class="px-5 py-5 w-[220px]">Expired Info</th>
+                        <th class="px-5 py-5 w-[280px]">Ringkasan Barang</th>
+                        <th class="px-5 py-5 w-[160px] text-right">Total Nilai</th>
+                        <th class="px-5 py-5 w-[200px]">Expired Info</th>
+                        <th class="px-5 py-5 w-[160px]">Catatan</th>
                         <th class="px-5 py-5 w-[110px] text-center">Status</th>
-                        <th class="px-5 py-5 w-[110px] text-center">Aksi</th>
+                        <th class="px-5 py-5 w-[150px] text-center">Aksi</th>
                       </tr>
                     </thead>
                     <tbody id="pembelianBarangTableBody" class="divide-y divide-slate-50">
@@ -12132,44 +12133,127 @@
         
         if (!tbody || !cardContainer) return;
 
-        let filtered = rawPembelianBarangData.slice();
+        // Group rawPembelianBarangData by idPembelianBrg first
+        const transactionsMap = {};
+        (rawPembelianBarangData || []).forEach(item => {
+          const id = item.idPembelianBrg || "NO_ID";
+          if (!transactionsMap[id]) {
+            transactionsMap[id] = {
+              idPembelianBrg: id,
+              tanggalPembelian: item.tanggalPembelian || "",
+              idSupplier: item.idSupplier || "",
+              namaSupplier: item.namaSupplier || "",
+              status: item.status || "Hutang",
+              keterangan: item.keterangan || "",
+              fotoNota: item.fotoNota || "",
+              items: [],
+              totalNilai: 0,
+              totalQty: 0,
+              statusExpired: "🟢 Aman",
+              sisaHari: null,
+              tanggalExpired: "",
+              row: item.row,
+              firstItem: item,
+              matchedSearchItems: []
+            };
+          }
+          
+          const tx = transactionsMap[id];
+          tx.items.push(item);
+          
+          const qty = Number(item.qtyPembelian) || 0;
+          const price = Number(item.hargaModal) || 0;
+          const sub = (item.subtotal !== undefined && item.subtotal !== "") ? Number(item.subtotal) : (qty * price);
+          tx.totalNilai += sub;
+          tx.totalQty += qty;
+          
+          if (item.fotoNota && !tx.fotoNota) {
+            tx.fotoNota = item.fotoNota;
+          }
+          if (item.keterangan && !tx.keterangan) {
+            tx.keterangan = item.keterangan;
+          }
+          
+          const normExp = String(item.statusExpired || "").trim().toLowerCase();
+          const isItemExpired = normExp === "expired" || normExp === "🔴 expired";
+          const isItemSegera = normExp.includes("15") || normExp === "🟠 <=15 hari" || normExp === "🟠 <=15 Hari";
+          const isItemTigaPuluh = normExp.includes("30") || normExp === "🟡 <=30 hari" || normExp === "🟡 <=30 Hari";
+          
+          const currentWorst = String(tx.statusExpired).trim().toLowerCase();
+          const isCurrentExpired = currentWorst === "expired" || currentWorst === "🔴 expired";
+          const isCurrentSegera = currentWorst.includes("15") || currentWorst === "🟠 <=15 hari" || currentWorst === "🟠 <=15 Hari";
+          
+          if (isItemExpired) {
+            tx.statusExpired = "🔴 Expired";
+          } else if (isItemSegera && !isCurrentExpired) {
+            tx.statusExpired = "🟠 <=15 Hari";
+          } else if (isItemTigaPuluh && !isCurrentExpired && !isCurrentSegera) {
+            tx.statusExpired = "🟡 <=30 Hari";
+          }
+          
+          if (item.sisaHari !== undefined && item.sisaHari !== null && item.sisaHari !== "") {
+            const sh = Number(item.sisaHari);
+            if (!isNaN(sh)) {
+              if (tx.sisaHari === null || sh < tx.sisaHari) {
+                tx.sisaHari = sh;
+              }
+            }
+          }
+          if (item.tanggalExpired) {
+            if (!tx.tanggalExpired || item.tanggalExpired < tx.tanggalExpired) {
+              tx.tanggalExpired = item.tanggalExpired;
+            }
+          }
+        });
         
+        let txList = Object.values(transactionsMap);
+
         // Apply Filters
+        // 1. Search Term
         if (pembelianBarangSearchTerm) {
-          const q = pembelianBarangSearchTerm.toLowerCase();
-          filtered = filtered.filter(item => 
-            (item.idPembelianBrg || "").toLowerCase().includes(q) ||
-            (item.namaSupplier || "").toLowerCase().includes(q) ||
-            (item.idSupplier || "").toLowerCase().includes(q) ||
-            (item.namaBarang || "").toLowerCase().includes(q) ||
-            (item.idBarang || "").toLowerCase().includes(q) ||
-            (item.barcode || "").toLowerCase().includes(q) ||
-            (item.keterangan || "").toLowerCase().includes(q)
-          );
-        }
-        
-        if (pembelianBarangFilterStatus !== "all") {
-          filtered = filtered.filter(item => {
-            // Data expired tetap tampil walaupun status barang Nonaktif
-            const norm = String(item.statusExpired || "").trim().toLowerCase();
-            const isExpired = norm === "expired" || norm === "🔴 expired";
-            if (isExpired) return true;
-            return item.status === pembelianBarangFilterStatus;
+          const q = pembelianBarangSearchTerm.toLowerCase().trim();
+          txList = txList.filter(tx => {
+            const matchHeader = 
+              (tx.idPembelianBrg || "").toLowerCase().includes(q) ||
+              (tx.namaSupplier || "").toLowerCase().includes(q) ||
+              (tx.idSupplier || "").toLowerCase().includes(q) ||
+              (tx.keterangan || "").toLowerCase().includes(q);
+              
+            const matchedItems = tx.items.filter(item => 
+              (item.namaBarang || "").toLowerCase().includes(q) ||
+              (item.idBarang || "").toLowerCase().includes(q) ||
+              (item.barcode || "").toLowerCase().includes(q) ||
+              (item.keterangan || "").toLowerCase().includes(q)
+            );
+            
+            tx.matchedSearchItems = matchedItems;
+            return matchHeader || matchedItems.length > 0;
           });
         }
         
+        // 2. Status Filter
+        if (pembelianBarangFilterStatus !== "all") {
+          txList = txList.filter(tx => {
+            const worstNorm = String(tx.statusExpired || "").trim().toLowerCase();
+            const isAnyExpired = worstNorm === "expired" || worstNorm === "🔴 expired";
+            if (isAnyExpired) return true;
+            return tx.status === pembelianBarangFilterStatus;
+          });
+        }
+        
+        // 3. Supplier Filter
         if (pembelianBarangFilterSupplier !== "all") {
-          filtered = filtered.filter(item => item.namaSupplier === pembelianBarangFilterSupplier);
+          txList = txList.filter(tx => tx.namaSupplier === pembelianBarangFilterSupplier);
         }
 
-        // Apply Expired Filter
+        // 4. Expired Status Filter
         if (pembelianBarangFilterExpired !== "all") {
-          filtered = filtered.filter(item => {
-            const norm = String(item.statusExpired || "").trim().toLowerCase();
+          txList = txList.filter(tx => {
+            const norm = String(tx.statusExpired || "").trim().toLowerCase();
             if (pembelianBarangFilterExpired === "Aman") {
               return norm === "aman" || norm === "🟢 aman" || norm === "";
             } else if (pembelianBarangFilterExpired === "Mendekati Expired") {
-              return norm.includes("15") || norm.includes("30") || norm === "🟠 <=15 hari" || norm === "🟡 <=30 hari";
+              return norm.includes("15") || norm.includes("30") || norm === "🟠 <=15 hari" || norm === "🟡 <=30 hari" || norm === "🟠 <=15 Hari" || norm === "🟡 <=30 Hari";
             } else if (pembelianBarangFilterExpired === "Expired") {
               return norm === "expired" || norm === "🔴 expired";
             }
@@ -12178,22 +12262,35 @@
         }
 
         // Apply Sorting
-        filtered.sort((a, b) => {
+        txList.sort((a, b) => {
           let valA = a[pembelianBarangSortBy];
           let valB = b[pembelianBarangSortBy];
           
-          if (pembelianBarangSortBy === "qtyPembelian" || pembelianBarangSortBy === "profit" || pembelianBarangSortBy === "hargaModal" || pembelianBarangSortBy === "sisaHari") {
-            if (pembelianBarangSortBy === "sisaHari") {
-              const aEmpty = a.sisaHari === undefined || a.sisaHari === null || a.sisaHari === "";
-              const bEmpty = b.sisaHari === undefined || b.sisaHari === null || b.sisaHari === "";
-              if (aEmpty && !bEmpty) return 1; // puts empty at bottom
+          if (pembelianBarangSortBy === "qtyPembelian" || pembelianBarangSortBy === "profit" || pembelianBarangSortBy === "sisaHari") {
+            if (pembelianBarangSortBy === "qtyPembelian") {
+              valA = a.totalQty;
+              valB = b.totalQty;
+            } else if (pembelianBarangSortBy === "profit") {
+              valA = a.items.reduce((acc, x) => {
+                const qty = Number(x.qtyPembelian) || 0;
+                const modal = Number(x.hargaModal) || 0;
+                const selling = Number(x.hargaJual) || 0;
+                return acc + ((selling - modal) * qty);
+              }, 0);
+              valB = b.items.reduce((acc, x) => {
+                const qty = Number(x.qtyPembelian) || 0;
+                const modal = Number(x.hargaModal) || 0;
+                const selling = Number(x.hargaJual) || 0;
+                return acc + ((selling - modal) * qty);
+              }, 0);
+            } else if (pembelianBarangSortBy === "sisaHari") {
+              const aEmpty = a.sisaHari === null;
+              const bEmpty = b.sisaHari === null;
+              if (aEmpty && !bEmpty) return 1;
               if (!aEmpty && bEmpty) return -1;
               if (aEmpty && bEmpty) return 0;
               valA = Number(a.sisaHari);
               valB = Number(b.sisaHari);
-            } else {
-              valA = Number(valA) || 0;
-              valB = Number(valB) || 0;
             }
             return pembelianBarangSortOrder === 'asc' ? valA - valB : valB - valA;
           }
@@ -12214,9 +12311,9 @@
           return 0;
         });
 
-        const total = filtered.length;
+        const total = txList.length;
         if (total === 0) {
-          tbody.innerHTML = `<tr><td colspan="10" class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="9" class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</td></tr>`;
           cardContainer.innerHTML = '<div class="p-12 text-center text-slate-400 font-bold italic">Data tidak ditemukan.</div>';
           if (info) info.innerText = "SHOWING 0 TO 0 OF 0 DATA";
           if (prevBtn) prevBtn.disabled = true;
@@ -12227,171 +12324,185 @@
 
           const start = (pembelianBarangCurrentPage - 1) * pembelianBarangItemsPerPage;
           const end = Math.min(start + pembelianBarangItemsPerPage, total);
-          const paginated = filtered.slice(start, end);
+          const paginated = txList.slice(start, end);
 
-          tbody.innerHTML = paginated.map((item, idx) => {
+          tbody.innerHTML = paginated.map((tx, idx) => {
              const rowIdx = start + idx + 1;
-             const rowHighlight = getRowHighlightClass(item.statusExpired);
+             const rowHighlight = getRowHighlightClass(tx.statusExpired);
+             const formattedDate = formatDateHyphen(tx.tanggalPembelian);
              
+             const matchedItemsSection = (tx.matchedSearchItems && tx.matchedSearchItems.length > 0 && pembelianBarangSearchTerm) ? `
+               <div class="mt-1 text-[10px] bg-amber-50 border border-amber-100 rounded-lg p-1.5 text-amber-800">
+                 <span class="font-black uppercase tracking-wider block text-[8px] text-amber-600 mb-0.5">Hasil ditemukan:</span>
+                 <ul class="list-disc list-inside space-y-0.5 font-bold font-sans">
+                   ${tx.matchedSearchItems.map(m => `<li>${m.namaBarang} (${m.qtyPembelian} ${m.satuan})</li>`).join("")}
+                 </ul>
+               </div>
+             ` : '';
+
              return `
                <tr class="${rowHighlight} transition-colors group">
                  <td class="px-4 py-4 text-center font-bold text-slate-400 text-xs">${rowIdx}</td>
                  <td class="px-5 py-4 font-sans">
                     <div class="font-black text-slate-800 text-sm flex items-center gap-1.5 leading-none">
-                      <span>${item.idPembelianBrg}</span>
-                      ${item.fotoNota ? `
-                        <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 border border-emerald-150 text-[9px] font-black tracking-tight text-emerald-700 flex items-center gap-0.5 transition-all active:scale-95 cursor-pointer inline-flex whitespace-nowrap animate-in fade-in zoom-in-95" title="Lihat Foto Nota">
+                      <span>${tx.idPembelianBrg}</span>
+                      ${tx.fotoNota ? `
+                        <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="px-1.5 py-0.5 rounded bg-emerald-50 hover:bg-emerald-100 border border-emerald-150 text-[9px] font-black tracking-tight text-emerald-700 flex items-center gap-0.5 transition-all active:scale-95 cursor-pointer inline-flex whitespace-nowrap animate-in fade-in zoom-in-95" title="Lihat Foto Nota">
                           <i data-lucide="image" class="w-2.5 h-2.5 text-emerald-600"></i> 📷 Nota
                         </button>
                       ` : ''}
                     </div>
-                    <div class="text-[10px] font-bold text-slate-400 mt-1">${formatDateHyphen(item.tanggalPembelian)}</div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-1">${formattedDate}</div>
                  </td>
                  <td class="px-5 py-4">
-                    <div class="font-black text-slate-800 text-sm">${item.namaSupplier}</div>
-                    <div class="text-[10px] font-mono font-bold text-emerald-500 mt-0.5">${item.idSupplier}</div>
+                    <div class="font-black text-slate-800 text-sm">${tx.namaSupplier}</div>
+                    <div class="text-[10px] font-mono font-bold text-emerald-500 mt-0.5">${tx.idSupplier}</div>
                  </td>
                  <td class="px-5 py-4">
-                    <div class="font-black text-slate-800 text-sm max-w-[260px] truncate" title="${item.namaBarang}">${item.namaBarang}</div>
-                    <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-0.5">
-                      <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
-                      ${item.barcode ? `<span class="bg-emerald-50/80 px-1.5 py-0.5 rounded font-mono text-emerald-600">★ ${item.barcode}</span>` : ''}
+                    <div class="text-xs font-bold text-slate-600">
+                      <span class="font-black text-slate-800">${tx.items.length}</span> Jenis Barang
                     </div>
-                 </td>
-                 <td class="px-5 py-4">
-                    <div class="text-xs font-bold text-slate-600">Qty Beli: <span class="font-black text-slate-800">${item.qtyPembelian}</span> <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${item.satuan}</span></div>
-                    <div class="text-xs font-black text-slate-700 mt-1">Subtotal: <span class="text-emerald-600 font-extrabold">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</span></div>
-                    <div class="grid grid-cols-2 gap-4 mt-2 text-[10px] bg-slate-50/80 p-2 rounded-xl border border-slate-100/50">
-                      <div>
-                        <span class="text-slate-400 font-bold block">Modal / Jual</span>
-                        <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-emerald-500">${item.hargaJual === "" || item.hargaJual === null || item.hargaJual === undefined ? '<span class="text-slate-400 font-medium italic">Belum ditentukan</span>' : formatIDR(item.hargaJual)}</span>
-                      </div>
-                      <div>
-                        <span class="text-slate-400 font-bold block">Profit (Pcs / Total)</span>
-                        <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round(Number(item.hargaJual) - Number(item.hargaModal))) : "-")}</span> / <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit * item.qtyPembelian) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round((Number(item.hargaJual) - Number(item.hargaModal)) * item.qtyPembelian)) : "-")}</span>
-                      </div>
+                    <div class="text-xs font-bold text-slate-400 mt-0.5">
+                      Total Qty: <span class="font-black text-slate-700">${tx.totalQty}</span>
                     </div>
+                    ${matchedItemsSection}
+                 </td>
+                 <td class="px-5 py-4 text-right font-mono font-extrabold text-xs text-emerald-600">
+                    ${formatIDR(tx.totalNilai)}
                  </td>
                  <td class="px-5 py-4 text-xs">
-                    ${item.tanggalExpired ? `
+                    ${tx.tanggalExpired ? `
                       <div class="flex flex-col gap-0.5">
-                        <div class="font-mono font-black text-slate-700 text-[11px] leading-tight">${item.tanggalExpired}</div>
-                        <div class="font-mono text-[10.5px] font-black text-slate-500 leading-tight">${item.sisaHari !== undefined && item.sisaHari !== "" ? `${item.sisaHari} Hari` : '-'}</div>
-                        <div class="inline-block mt-0.5">${getExpiredStatusBadgeHtml(item.statusExpired, true)}</div>
+                        <div class="font-mono font-black text-slate-700 text-[11px] leading-tight">${tx.tanggalExpired}</div>
+                        <div class="font-mono text-[10.5px] font-black text-slate-500 leading-tight">${tx.sisaHari !== null ? `${tx.sisaHari} Hari` : '-'}</div>
+                        <div class="inline-block mt-0.5">${getExpiredStatusBadgeHtml(tx.statusExpired, true)}</div>
                       </div>
                     ` : '<span class="text-slate-400 font-bold text-xs">-</span>'}
-                    ${item.keterangan ? `<div class="max-w-[170px] break-words italic font-bold text-slate-400 mt-2 text-[10px] line-clamp-2" title="${item.keterangan}">Ket: ${item.keterangan}</div>` : ''}
+                 </td>
+                 <td class="px-5 py-4 text-xs text-slate-500 italic max-w-[150px] truncate" title="${tx.keterangan || ''}">
+                    ${tx.keterangan ? tx.keterangan : '<span class="text-slate-300 font-bold">-</span>'}
                  </td>
                  <td class="px-5 py-4 text-center">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${item.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${item.status || 'Hutang'}</span>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${tx.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'}">${tx.status || 'Hutang'}</span>
                  </td>
                  <td class="px-5 py-4 text-center">
-                    <div class="relative inline-block text-left">
-                       <button onclick="toggleCardAction(event, 'pb-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100" title="Aksi">
-                          <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                       </button>
-                       <div id="pb-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left font-sans">
-                          <button onclick='event.stopPropagation(); openPembelianBarangDetailModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-indigo-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest border-b border-slate-50">
-                             <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-500 font-bold"></i> Detail Transaksi
-                          </button>
-                          ${item.fotoNota ? `
-                          <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-2 uppercase tracking-widest border-b border-slate-50">
-                             <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-600"></i> Lihat Nota
-                          </button>
-                          ` : ''}
-                          <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
-                             <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
-                          </button>
-                          <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                             <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${item.status === 'Lunas' ? 'Hutang' : 'Lunas'}
-                          </button>
-                       </div>
+                    <div class="flex items-center justify-center gap-1.5">
+                      <button onclick='event.stopPropagation(); openPembelianBarangDetailModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-150 text-indigo-700 hover:text-indigo-800 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-sm" title="Detail Transaksi">
+                        <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i> Detail
+                      </button>
+                      <div class="relative inline-block text-left">
+                         <button onclick="toggleCardAction(event, 'pb-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100" title="Aksi Lainnya">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                         </button>
+                         <div id="pb-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left font-sans">
+                            <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                               <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
+                            </button>
+                            <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${tx.firstItem.row}, '${tx.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${tx.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                               <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${tx.status === 'Lunas' ? 'Hutang' : 'Lunas'}
+                            </button>
+                         </div>
+                      </div>
                     </div>
                  </td>
                </tr>
              `;
           }).join("");
 
-          cardContainer.innerHTML = paginated.map((item, idx) => {
+          cardContainer.innerHTML = paginated.map((tx, idx) => {
              const rowIdx = start + idx + 1;
-             const cardHighlight = getRowHighlightClass(item.statusExpired);
+             const cardHighlight = getRowHighlightClass(tx.statusExpired);
+             const formattedDate = formatDateHyphen(tx.tanggalPembelian);
              
+             const matchedItemsSection = (tx.matchedSearchItems && tx.matchedSearchItems.length > 0 && pembelianBarangSearchTerm) ? `
+               <div class="mt-2 text-[10px] bg-amber-50 border border-amber-100 rounded-lg p-2 text-amber-800">
+                 <span class="font-black uppercase tracking-wider block text-[8px] text-amber-600 mb-1">Hasil ditemukan:</span>
+                 <ul class="list-disc list-inside space-y-0.5 font-bold font-sans">
+                   ${tx.matchedSearchItems.map(m => `<li>${m.namaBarang} (${m.qtyPembelian} ${m.satuan})</li>`).join("")}
+                 </ul>
+               </div>
+             ` : '';
+
              return `
-               <div class="pembelian-card-item relative p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4 ${item.statusExpired && item.statusExpired !== '🟢 Aman' ? cardHighlight : 'bg-white hover:bg-slate-50'}">
+               <div class="pembelian-card-item relative p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4 ${tx.statusExpired && tx.statusExpired !== '🟢 Aman' ? cardHighlight : 'bg-white hover:bg-slate-50'}">
                   <div class="flex justify-between items-start">
                     <div>
                       <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
-                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100/60 px-2 py-1 rounded-lg">${item.idPembelianBrg}</span>
+                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100/60 px-2 py-1 rounded-lg">${tx.idPembelianBrg}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${item.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${item.status || 'Hutang'}</span>
+                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${tx.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${tx.status || 'Hutang'}</span>
                        <div class="relative">
                           <button onclick="toggleCardAction(event, 'pb-card-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
                              <i data-lucide="chevron-down" class="w-4 h-4"></i>
                           </button>
-                          <div id="pb-card-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left">
-                             <button onclick='event.stopPropagation(); openPembelianBarangDetailModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-indigo-600 hover:bg-indigo-50 hover:text-indigo-600 transition-colors flex items-center gap-2 uppercase tracking-widest border-b border-slate-50">
-                              <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-500 font-bold"></i> Detail Transaksi
-                           </button>
-                           ${item.fotoNota ? `
-                           <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors flex items-center gap-2 uppercase tracking-widest border-b border-slate-50">
-                              <i data-lucide="image" class="w-3.5 h-3.5 text-emerald-600"></i> Lihat Nota
-                           </button>
-                           ` : ''}
-                           <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(item).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
+                          <div id="pb-card-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left font-sans">
+                             <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
                                 <i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400"></i> Edit data
                              </button>
-                             <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${item.row}, '${item.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${item.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
-                                <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${item.status === 'Lunas' ? 'Hutang' : 'Lunas'}
+                             <button onclick="event.stopPropagation(); handleToggleStatusPembelianBarang(${tx.firstItem.row}, '${tx.status || 'Hutang'}')" class="w-full px-4 py-2.5 text-left text-[10px] font-black ${tx.status === 'Lunas' ? 'text-rose-600 hover:bg-rose-50' : 'text-emerald-600 hover:bg-emerald-50'} transition-colors flex items-center gap-2 uppercase tracking-widest border-t border-slate-50">
+                                <i data-lucide="power" class="w-3.5 h-3.5 text-slate-400"></i> Set ${tx.status === 'Lunas' ? 'Hutang' : 'Lunas'}
                              </button>
                           </div>
                        </div>
                     </div>
                   </div>
                   
-                  <div>
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</h4>
-                    <p class="text-sm font-black text-slate-800">${item.namaSupplier}</p>
-                    <p class="text-[10px] font-bold text-emerald-500 mt-0.5">${item.idSupplier}</p>
+                  <div class="grid grid-cols-2 gap-3 border-t border-b border-slate-50 py-3">
+                    <div>
+                      <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Supplier</h4>
+                      <p class="text-xs font-black text-slate-800">${tx.namaSupplier}</p>
+                      <p class="text-[9px] font-mono font-bold text-emerald-500">${tx.idSupplier}</p>
+                    </div>
+                    <div>
+                      <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Tanggal</h4>
+                      <p class="text-xs font-black text-slate-800">${formattedDate}</p>
+                    </div>
                   </div>
 
-                  <div class="border-t border-slate-50 pt-3">
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Barang</h4>
-                    <p class="text-sm font-black text-slate-800 font-sans">${item.namaBarang}</p>
-                    <div class="flex gap-2 items-center text-[10px] font-bold text-slate-400 mt-1">
-                      <span class="font-mono bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${item.idBarang}</span>
-                      ${item.barcode ? `<span class="bg-emerald-50/80 px-1.5 py-0.5 font-mono text-emerald-600 rounded">★ ${item.barcode}</span>` : ''}
-                      <span class="text-slate-600 font-black uppercase tracking-widest ml-auto">${item.qtyPembelian} ${item.satuan}</span>
+                  <div>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Daftar Barang</h4>
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-600">
+                      <span><b class="text-slate-800 font-extrabold">${tx.items.length}</b> Jenis Barang</span>
+                      <span>Total Qty: <b class="text-slate-800 font-extrabold">${tx.totalQty}</b></span>
                     </div>
+                    ${matchedItemsSection}
                   </div>
 
                   <div class="grid grid-cols-2 gap-3 bg-slate-50/80 p-3 rounded-2xl border border-slate-100/50 text-[10px] font-sans">
-                     <div>
-                       <span class="text-slate-400 font-bold block">Harga Modal / Jual</span>
-                       <span class="font-bold text-rose-500">${formatIDR(item.hargaModal)}</span> / <span class="font-bold text-emerald-500">${item.hargaJual === "" || item.hargaJual === null || item.hargaJual === undefined ? '<span class="text-slate-400 font-medium italic">Belum ditentukan</span>' : formatIDR(item.hargaJual)}</span>
-                     </div>
-                     <div>
-                       <span class="text-slate-400 font-bold block">Profit (Total)</span>
-                       <span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round(Number(item.hargaJual) - Number(item.hargaModal))) : "-")}</span> (<span class="font-black text-emerald-600">${(item.profit !== "" && item.profit !== null && item.profit !== undefined) ? formatIDR(item.profit * item.qtyPembelian) : (item.hargaJual !== "" && item.hargaJual !== null && item.hargaJual !== undefined ? formatIDR(Math.round((Number(item.hargaJual) - Number(item.hargaModal)) * item.qtyPembelian)) : "-")}</span>)
-                     </div>
-                     <div class="col-span-2 border-t border-slate-100/80 pt-2 flex justify-between gap-1 text-[9px] text-slate-500">
-                       <span>Subtotal: <b class="text-emerald-600 font-black">${formatIDR(item.subtotal || (item.qtyPembelian * item.hargaModal))}</b></span>
+                     <div class="col-span-2 flex justify-between items-center">
+                       <span class="text-slate-400 font-bold">Total Nilai Pembelian:</span>
+                       <span class="font-extrabold text-sm text-emerald-600 font-mono">${formatIDR(tx.totalNilai)}</span>
                      </div>
                   </div>
 
+                  ${tx.keterangan ? `
+                  <div class="text-[10px] text-slate-400 italic">
+                    Catatan: ${tx.keterangan}
+                  </div>
+                  ` : ''}
 
+                  ${tx.tanggalExpired ? `
+                  <div class="flex justify-between items-center bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/40 text-[10px]">
+                     <div class="text-slate-500 font-bold">
+                       <div>Terdekat Expired: <b class="text-slate-700 font-mono">${tx.tanggalExpired}</b></div>
+                       <div>Sisa Hari: <b class="text-rose-600 font-mono">${tx.sisaHari !== null ? tx.sisaHari + ' Hari' : '-'}</b></div>
+                     </div>
+                     <div>
+                       ${getExpiredStatusBadgeHtml(tx.statusExpired)}
+                     </div>
+                  </div>
+                  ` : ''}
 
-
-
-                  <div class="flex justify-between items-center border-t border-slate-50 pt-3 flex-wrap gap-2">
-                    <div class="text-[10px] text-slate-500 font-bold pr-4 truncate">
-                      ${item.keterangan ? `<span>Ket: <i>${item.keterangan}</i></span>` : ''}
-                      ${item.tanggalExpired ? `<div class="text-rose-500 mt-0.5 font-black">Exp: ${item.tanggalExpired}</div>` : ''}
-                    </div>
-                    ${item.sisaHari !== undefined && item.sisaHari !== "" ? `<div class="text-[10px] text-slate-600 font-black">Sisa Hari: <span class="font-mono bg-slate-100 p-1.5 rounded">${item.sisaHari} Hari</span></div>` : ''}
-                    <div>
-                      ${getExpiredStatusBadgeHtml(item.statusExpired)}
-                    </div>
+                  <div class="pt-2 flex gap-2">
+                    <button onclick='event.stopPropagation(); openPembelianBarangDetailModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-150 text-indigo-700 hover:text-indigo-800 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm">
+                      <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i> Detail Transaksi
+                    </button>
+                    ${tx.fotoNota ? `
+                      <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="px-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-150 text-emerald-700 hover:text-emerald-800 rounded-xl font-black text-[10px] uppercase transition-all active:scale-95 cursor-pointer flex items-center justify-center shadow-sm" title="Lihat Foto Nota">
+                        <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
+                      </button>
+                    ` : ''}
                   </div>
                </div>
              `;

@@ -3697,6 +3697,21 @@
         }
       }
 
+      function togglePbCardExpand(idx) {
+        const expandBlock = document.getElementById(`pb-card-expand-${idx}`);
+        const btn = document.getElementById(`pb-card-expand-btn-${idx}`);
+        if (!expandBlock || !btn) return;
+        
+        const isHidden = expandBlock.classList.contains('hidden');
+        if (isHidden) {
+          expandBlock.classList.remove('hidden');
+          btn.innerHTML = `▲ Sembunyikan Ringkasan`;
+        } else {
+          expandBlock.classList.add('hidden');
+          btn.innerHTML = `▼ Lihat Ringkasan`;
+        }
+      }
+
       // Toggle Detail Harga for Master Satuan Barang in mobile cards
       function toggleCardDetail(btn, elementId, mainHargaJualId = null) {
         if (!btn) return;
@@ -12424,17 +12439,19 @@
              ` : '';
 
              return `
-               <div class="pembelian-card-item relative p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4 ${tx.statusExpired && tx.statusExpired !== '🟢 Aman' ? cardHighlight : 'bg-white hover:bg-slate-50'}">
-                  <div class="flex justify-between items-start">
-                    <div>
-                      <span class="text-[10px] font-black text-slate-400 mr-2">NO.${rowIdx}</span>
-                      <span class="font-black text-slate-800 text-sm font-mono bg-slate-100/60 px-2 py-1 rounded-lg">${tx.idPembelianBrg}</span>
+               <div class="pembelian-card-item relative p-5 rounded-3xl border border-slate-150 bg-white hover:bg-slate-50 shadow-sm space-y-4">
+                  <!-- Header: ID & Status & Action Menu -->
+                  <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[10px] font-black text-slate-400">NO.${rowIdx}</span>
+                      <span class="font-mono font-black text-slate-800 text-sm bg-slate-100 px-2.5 py-1 rounded-xl">${tx.idPembelianBrg}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                       <span class="px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest ${tx.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border-emerald-100/50' : 'bg-rose-50 text-rose-500 border border-rose-100/50'} shrink-0">${tx.status || 'Hutang'}</span>
+                       <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${tx.status === 'Lunas' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 shadow-sm' : 'bg-rose-50 text-rose-500 border border-rose-100 shadow-sm'}">${tx.status || 'Hutang'}</span>
+                       
                        <div class="relative">
-                          <button onclick="toggleCardAction(event, 'pb-card-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 transition-all shadow-sm border border-slate-100">
-                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                          <button onclick="toggleCardAction(event, 'pb-card-action-${idx}')" class="w-8 h-8 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-100 hover:text-slate-700 transition-all shadow-sm border border-slate-100 cursor-pointer">
+                             <i data-lucide="more-vertical" class="w-4 h-4"></i>
                           </button>
                           <div id="pb-card-action-${idx}" class="hidden absolute right-0 mt-2 w-36 bg-white rounded-2xl shadow-xl border border-slate-100 z-[100] overflow-hidden animate-in fade-in zoom-in-95 duration-200 text-left font-sans">
                              <button onclick='event.stopPropagation(); openPembelianBarangModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="w-full px-4 py-2.5 text-left text-[10px] font-black text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors flex items-center gap-2 uppercase tracking-widest">
@@ -12448,59 +12465,75 @@
                     </div>
                   </div>
                   
-                  <div class="grid grid-cols-2 gap-3 border-t border-b border-slate-50 py-3">
+                  <!-- Main Info Lines (Default View) -->
+                  <div class="space-y-2 font-bold text-xs text-slate-700">
+                    <!-- Tanggal -->
+                    <div>📅 ${formattedDate}</div>
+
+                    <!-- Supplier -->
+                    <div>🏪 ${tx.namaSupplier} <span class="font-mono text-[10px] text-emerald-500">(${tx.idSupplier})</span></div>
+
+                    <!-- Items & Qty -->
+                    <div>📦 ${tx.items.length} Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;📊 Qty : ${tx.totalQty}</div>
+
+                    <!-- Nilai Pembelian -->
+                    <div class="text-sm font-black text-slate-800 flex items-center gap-1">
+                      <span>💰</span>
+                      <span class="font-black text-base text-emerald-600 font-mono">${formatIDR(tx.totalNilai)}</span>
+                    </div>
+                  </div>
+
+                  <!-- Optional Search Result Matched Items -->
+                  ${matchedItemsSection}
+
+                  <!-- Expand Toggle Button -->
+                  <div class="pt-1">
+                    <button id="pb-card-expand-btn-${idx}" onclick="event.stopPropagation(); togglePbCardExpand(${idx})" class="w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1 transition-all cursor-pointer">
+                      ▼ Lihat Ringkasan
+                    </button>
+                  </div>
+
+                  <!-- Expand Content: Preview Barang & Catatan -->
+                  <div id="pb-card-expand-${idx}" class="hidden border-t border-slate-100 pt-3 space-y-3">
+                    <!-- Preview Barang -->
                     <div>
-                      <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Supplier</h4>
-                      <p class="text-xs font-black text-slate-800">${tx.namaSupplier}</p>
-                      <p class="text-[9px] font-mono font-bold text-emerald-500">${tx.idSupplier}</p>
+                      <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Preview Barang</h5>
+                      <ul class="space-y-0.5 text-xs font-bold text-slate-700 pl-1">
+                        ${tx.items.slice(0, 2).map(item => `<li>• ${item.namaBarang || 'Barang'}</li>`).join("")}
+                      </ul>
+                      ${tx.items.length > 2 ? `<div class="text-[10px] font-black text-slate-400 mt-1 pl-2">+${tx.items.length - 2} item lainnya...</div>` : ''}
                     </div>
-                    <div>
-                      <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Tanggal</h4>
-                      <p class="text-xs font-black text-slate-800">${formattedDate}</p>
+
+                    <!-- Catatan -->
+                    ${tx.keterangan && tx.keterangan.trim() ? `
+                    <div class="border-t border-slate-100 pt-2">
+                      <h5 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Catatan</h5>
+                      <p class="text-xs font-bold text-slate-600 italic pl-1">${tx.keterangan}</p>
                     </div>
-                  </div>
+                    ` : ''}
 
-                  <div>
-                    <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Daftar Barang</h4>
-                    <div class="flex items-center justify-between text-xs font-bold text-slate-600">
-                      <span><b class="text-slate-800 font-extrabold">${tx.items.length}</b> Jenis Barang</span>
-                      <span>Total Qty: <b class="text-slate-800 font-extrabold">${tx.totalQty}</b></span>
+                    <!-- Expired Info warning box if any -->
+                    ${tx.tanggalExpired ? `
+                    <div class="flex justify-between items-center bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/40 text-[10px] mt-2">
+                       <div class="text-slate-500 font-bold">
+                         <div>Terdekat Expired: <b class="text-slate-700 font-mono">${tx.tanggalExpired}</b></div>
+                         <div>Sisa Hari: <b class="text-rose-600 font-mono">${tx.sisaHari !== null ? tx.sisaHari + ' Hari' : '-'}</b></div>
+                       </div>
+                       <div>
+                         ${getExpiredStatusBadgeHtml(tx.statusExpired)}
+                       </div>
                     </div>
-                    ${matchedItemsSection}
+                    ` : ''}
                   </div>
 
-                  <div class="grid grid-cols-2 gap-3 bg-slate-50/80 p-3 rounded-2xl border border-slate-100/50 text-[10px] font-sans">
-                     <div class="col-span-2 flex justify-between items-center">
-                       <span class="text-slate-400 font-bold">Total Nilai Pembelian:</span>
-                       <span class="font-extrabold text-sm text-emerald-600 font-mono">${formatIDR(tx.totalNilai)}</span>
-                     </div>
-                  </div>
-
-                  ${tx.keterangan ? `
-                  <div class="text-[10px] text-slate-400 italic">
-                    Catatan: ${tx.keterangan}
-                  </div>
-                  ` : ''}
-
-                  ${tx.tanggalExpired ? `
-                  <div class="flex justify-between items-center bg-rose-50/50 p-2.5 rounded-xl border border-rose-100/40 text-[10px]">
-                     <div class="text-slate-500 font-bold">
-                       <div>Terdekat Expired: <b class="text-slate-700 font-mono">${tx.tanggalExpired}</b></div>
-                       <div>Sisa Hari: <b class="text-rose-600 font-mono">${tx.sisaHari !== null ? tx.sisaHari + ' Hari' : '-'}</b></div>
-                     </div>
-                     <div>
-                       ${getExpiredStatusBadgeHtml(tx.statusExpired)}
-                     </div>
-                  </div>
-                  ` : ''}
-
-                  <div class="pt-2 flex gap-2">
+                  <!-- Primary Action Buttons (At the very bottom) -->
+                  <div class="pt-2 border-t border-slate-100 flex gap-2">
                     <button onclick='event.stopPropagation(); openPembelianBarangDetailModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-100 border border-indigo-150 text-indigo-700 hover:text-indigo-800 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm">
-                      <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i> Detail Transaksi
+                      ⓘ Detail Transaksi
                     </button>
                     ${tx.fotoNota ? `
                       <button onclick='event.stopPropagation(); openNotaGalleryModal(${JSON.stringify(tx.firstItem).replace(/'/g, "&apos;")})' class="px-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-150 text-emerald-700 hover:text-emerald-800 rounded-xl font-black text-[10px] uppercase transition-all active:scale-95 cursor-pointer flex items-center justify-center shadow-sm" title="Lihat Foto Nota">
-                        <i data-lucide="image" class="w-4 h-4 text-emerald-600"></i>
+                        📷 Nota
                       </button>
                     ` : ''}
                   </div>

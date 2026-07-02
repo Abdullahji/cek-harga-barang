@@ -983,7 +983,7 @@
                     <!-- Floating Photo Preview -->
                     <div
                       id="searchSuggestionsPhotoPreview"
-                      class="hidden absolute left-full top-full mt-3 ml-4 w-44 h-44 bg-white border border-slate-100 rounded-[1.5rem] shadow-2xl p-2.5 items-center justify-center z-50 animate-in fade-in zoom-in-95 duration-150 flex-col"
+                      class="hidden absolute bottom-full right-0 mb-3 md:bottom-auto md:top-full md:left-full md:ml-4 md:mt-3 md:mb-0 md:right-auto w-32 h-32 md:w-44 md:h-44 bg-white border border-slate-100 rounded-[1.5rem] shadow-2xl p-2.5 items-center justify-center z-50 animate-in fade-in zoom-in-95 duration-150 flex-col"
                     >
                       <img id="searchSuggestionsPhotoPreviewImg" src="" referrerpolicy="no-referrer" class="w-full h-full object-contain rounded-[1rem]" />
                     </div>
@@ -6161,8 +6161,7 @@
             
             // Photo Preview
             const photoUrl = getProductPhotoUrl(match.idBarang);
-            const isDesktop = window.innerWidth >= 768;
-            if (isDesktop && photoUrl) {
+            if (photoUrl) {
               if (previewImg) previewImg.src = photoUrl;
               if (previewEl) {
                 previewEl.classList.remove("hidden");

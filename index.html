@@ -1271,7 +1271,6 @@
                           <th class="px-8 py-7 w-44">Tanggal</th>
                           <th class="px-8 py-7">Nama Customer</th>
                           <th class="px-8 py-7 w-36 text-right">Total</th>
-                          <th class="px-8 py-7 w-32 text-center">Status</th>
                           <th class="px-8 py-7 w-48 text-center">Aksi</th>
                         </tr>
                       </thead>
@@ -1587,7 +1586,7 @@
                           <span id="nota-summary-total" class="text-xl font-black text-indigo-600 font-mono">Rp 0</span>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div class="pt-2">
                           <!-- Bayar Input -->
                           <div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Bayar (Rp)</label>
@@ -1599,19 +1598,6 @@
                               oninput="calculateInvoiceTotals()"
                               class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 font-mono"
                             />
-                          </div>
-
-                          <!-- Status Lunas/Hutang -->
-                          <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Status</label>
-                            <select
-                              id="nota-form-status"
-                              onchange="updateLivePreview()"
-                              class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
-                            >
-                              <option value="LUNAS">LUNAS</option>
-                              <option value="HUTANG">HUTANG</option>
-                            </select>
                           </div>
                         </div>
 
@@ -4101,7 +4087,9 @@
             localStorage.setItem("LAST_CODE_URL", GAS_WEBAPP_URL);
           }
 
-          const hasCustomUrl = !!(localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL);
+          const activeUrl = localStorage.getItem("CUSTOM_GAS_URL") || GAS_WEBAPP_URL;
+          const isDefaultUrl = activeUrl === GAS_WEBAPP_URL;
+          const hasCustomUrl = !isDefaultUrl;
 
           // Extend timeout to 60 seconds (60000ms) to accommodate Google Apps Script cold-starts
           const fetchTimeout = 60000;
@@ -19412,7 +19400,6 @@
           document.getElementById("nota-form-diskon-nota").value = 0;
         }
         document.getElementById("nota-form-bayar").value = 0;
-        document.getElementById("nota-form-status").value = "LUNAS";
         
         renderActiveNotaItems();
         calculateInvoiceTotals();
@@ -19917,16 +19904,6 @@
         document.getElementById("nota-summary-total").innerText = formatIDR(total);
         document.getElementById("nota-summary-kembali").innerText = formatIDR(kembali);
 
-        // Auto status
-        const statusSelect = document.getElementById("nota-form-status");
-        if (statusSelect) {
-          if (bayar >= total && total > 0) {
-            statusSelect.value = "LUNAS";
-          } else if (total > 0) {
-            statusSelect.value = "HUTANG";
-          }
-        }
-
         // Update live preview
         updateLivePreview();
       }
@@ -20122,7 +20099,6 @@
         const kembali = Math.max(0, bayar - total);
         const customer = document.getElementById("nota-form-customer").value.trim() || "Umum";
         const kasir = document.getElementById("nota-form-kasir").value.trim() || "Admin";
-        const status = document.getElementById("nota-form-status").value;
 
         // Extract selected date and format to DD-MM-YYYY
         const tanggalVal = document.getElementById("nota-form-tanggal").value;
@@ -20151,8 +20127,7 @@
             diskonNotaNilai: diskonNotaVal,
             total: total,
             bayar: bayar,
-            kembali: kembali,
-            status: status
+            kembali: kembali
           };
 
           const detailNota = activeNotaCustomerItems.map(item => ({
@@ -20321,10 +20296,6 @@
 
         // Render Table (Desktop)
         tbody.innerHTML = filtered.map((it, idx) => {
-          const statusBadge = it.status === "LUNAS" 
-            ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">LUNAS</span>`
-            : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100">HUTANG</span>`;
-
           return `
             <tr class="hover:bg-slate-50 transition-all">
               <td class="px-6 py-5 text-center font-bold text-slate-400">${idx + 1}</td>
@@ -20335,7 +20306,6 @@
                 <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Kasir: ${it.kasir || 'Admin'}</div>
               </td>
               <td class="px-8 py-5 font-black text-indigo-600 text-right font-mono">${formatIDR(it.total)}</td>
-              <td class="px-8 py-5 text-center">${statusBadge}</td>
               <td class="px-8 py-5 text-center">
                 <div class="flex items-center justify-center gap-1.5">
                   <button onclick="viewNotaDetail('${it.noNota}')" class="p-2 bg-slate-50 border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition-all active:scale-95 cursor-pointer" title="Lihat Detail">
@@ -20358,15 +20328,10 @@
 
         // Render Cards (Mobile)
         cardContainer.innerHTML = filtered.map(it => {
-          const statusBadge = it.status === "LUNAS" 
-            ? `<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-600 border border-emerald-100">LUNAS</span>`
-            : `<span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-100">HUTANG</span>`;
-
           return `
             <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-3">
               <div class="flex justify-between items-center">
                 <span class="font-extrabold text-sm text-slate-800">${it.noNota}</span>
-                ${statusBadge}
               </div>
               <div class="text-xs text-slate-500 font-semibold space-y-1">
                 <p class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i> ${it.tanggal}</p>
@@ -20628,6 +20593,7 @@
               <div class="divider"></div>
               <div class="footer text-center">
                 <p style="font-weight: bold; font-size: 10px; margin: 0;">Terima kasih telah berbelanja.</p>
+                <p style="font-weight: bold; font-size: 10px; margin: 0;">Barang yang sudah dibeli tidak dapat ditukar atau dikembalikan kecuali ada perjanjian sebelumnya.</p>
               </div>
               <script>
                 window.onload = function() {

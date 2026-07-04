@@ -19916,16 +19916,21 @@
         const customerVal = document.getElementById("nota-form-customer").value.trim() || "Umum";
         const kasirVal = document.getElementById("nota-form-kasir").value.trim() || "Admin";
 
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const timePart = `${hh}:${mm}`;
+
         let formattedDate = "-";
         if (tanggalVal) {
           const parts = tanggalVal.split("-");
           if (parts.length === 3) {
-            formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            formattedDate = `${parts[2]}-${parts[1]}-${parts[0]} ${timePart}`;
           } else {
-            formattedDate = tanggalVal;
+            formattedDate = `${tanggalVal} ${timePart}`;
           }
         } else {
-          formattedDate = getTodayDateFormatted();
+          formattedDate = `${getTodayDateFormatted()} ${timePart}`;
         }
 
         let itemsHtml = "";
@@ -20100,19 +20105,24 @@
         const customer = document.getElementById("nota-form-customer").value.trim() || "Umum";
         const kasir = document.getElementById("nota-form-kasir").value.trim() || "Admin";
 
-        // Extract selected date and format to DD-MM-YYYY
+        // Extract selected date and format to DD-MM-YYYY with HH:mm
         const tanggalVal = document.getElementById("nota-form-tanggal").value;
-        let formattedDate = "";
+        let formattedDateOnly = "";
         if (tanggalVal) {
           const parts = tanggalVal.split("-"); // YYYY-MM-DD
           if (parts.length === 3) {
-            formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+            formattedDateOnly = `${parts[2]}-${parts[1]}-${parts[0]}`;
           } else {
-            formattedDate = tanggalVal;
+            formattedDateOnly = tanggalVal;
           }
         } else {
-          formattedDate = getTodayDateFormatted();
+          formattedDateOnly = getTodayDateFormatted();
         }
+
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        const formattedDate = `${formattedDateOnly} ${hh}:${mm}`;
 
         showLoading(true, "Menghubungkan ke server & menyimpan Nota...");
 
@@ -20152,6 +20162,8 @@
             const newInvoice = {
               noNota: noNota,
               ...headerNota,
+              tanggal: res.tanggal || headerNota.tanggal,
+              createdAt: res.createdAt || new Date().toISOString(),
               items: detailNota
             };
 

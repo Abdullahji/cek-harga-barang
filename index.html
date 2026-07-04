@@ -11259,7 +11259,7 @@
             const qtyBuy = Number(buyUnitRecord.qtySatuan) || 1;
             
             const factor = qtyBase / qtyBuy;
-            const hargaDasar = factor > 0 ? (hVal / factor) : hVal;
+            const hargaDasar = factor > 0 ? Math.round(hVal / factor) : hVal;
             
             return {
               hargaDasar: hargaDasar,
@@ -14414,7 +14414,7 @@
             const qtyBuy = Number(buyUnitRecord.qtySatuan) || 1;
             
             const factor = qtyBase / qtyBuy;
-            const hargaDasar = factor > 0 ? (hVal / factor) : hVal;
+            const hargaDasar = factor > 0 ? Math.round(hVal / factor) : hVal;
             
             return {
               hargaDasar: hargaDasar,
@@ -16627,7 +16627,7 @@
           if (!targetUnit) return null;
           
           const qtyTarget = Number(targetUnit.qtySatuan) || 1;
-          const price = buyPrice * (qtyTarget / qtyBuy);
+          const price = Math.round(buyPrice * (qtyTarget / qtyBuy));
           return { price: price, unit: targetUnit.satuan };
         }
 
@@ -16650,7 +16650,7 @@
             const unitLV1 = units.find(u => (Number(u.levelSatuan) || 1) === 1);
             const qtyLV1 = unitLV1 ? (Number(unitLV1.qtySatuan) || 1) : 1;
             
-            const hLV1 = cleanPrice * (qtyLV1 / qtyBuy);
+            const hLV1 = Math.round(cleanPrice * (qtyLV1 / qtyBuy));
             
             if (hLV1 > 0 && hLV1 < cheapestLV1) {
               cheapestLV1 = hLV1;
@@ -17795,7 +17795,7 @@
           const targetUnit = units.find(u => (Number(u.levelSatuan) || 1) === targetLvl);
           if (!targetUnit) return null;
           const qtyTarget = Number(targetUnit.qtySatuan) || 1;
-          const price = buyPrice * (qtyTarget / qtyBuy);
+          const price = Math.round(buyPrice * (qtyTarget / qtyBuy));
           return { price: price, unit: targetUnit.satuan };
         }
 

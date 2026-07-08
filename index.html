@@ -556,8 +556,8 @@
               id="nav-nota-customer"
               class="nav-btn w-full flex items-center gap-4 px-6 py-4.5 rounded-2xl text-slate-400 transition-all hover:bg-slate-50"
             >
-              <i data-lucide="receipt" class="w-5 h-5"></i>
-              <span class="font-bold text-sm">🧾 Nota Customer</span>
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+              <span class="font-bold text-sm">Nota Customer</span>
             </button>
 
 
@@ -1368,9 +1368,9 @@
                       <!-- Search Box with autocomplete -->
                       <div class="relative space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Cari Barang</label>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                          <div class="relative flex-1">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4"></i>
+                        <div class="flex flex-col lg:flex-row gap-2">
+                          <div class="relative w-full lg:flex-1">
+                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 shrink-0"></i>
                             <input
                               type="text"
                               id="nota-search-barang"
@@ -1378,15 +1378,15 @@
                               placeholder="Ketik Nama, Barcode, atau ID Barang..."
                               class="w-full pl-11 pr-10 py-3.5 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 transition-all"
                             />
-                            <button type="button" onclick="clearNotaSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none">
+                            <button type="button" onclick="clearNotaSearch()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors focus:outline-none w-8 h-8 flex items-center justify-center shrink-0">
                               <i data-lucide="x" class="w-4 h-4"></i>
                             </button>
                           </div>
-                          <div class="flex gap-2">
+                          <div class="flex w-full lg:w-auto gap-2">
                             <button
                               type="button"
                               onclick="startNotaBarcodeScan()"
-                              class="flex-1 sm:flex-initial px-4 py-3.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-indigo-100/50 cursor-pointer"
+                              class="w-1/2 lg:w-auto px-4 py-3.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-indigo-100/50 cursor-pointer shrink-0"
                               title="Scan Barcode"
                             >
                               <i data-lucide="camera" class="w-4 h-4"></i> Scan Barcode
@@ -1394,7 +1394,7 @@
                             <button
                               type="button"
                               onclick="openNotaManualBarang()"
-                              class="flex-1 sm:flex-initial px-4 py-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-emerald-100/50 cursor-pointer"
+                              class="w-1/2 lg:w-auto px-4 py-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 transition-all active:scale-95 border border-emerald-100/50 cursor-pointer shrink-0"
                               title="Tambah Barang Manual"
                             >
                               <i data-lucide="plus" class="w-4 h-4"></i> Barang Manual
@@ -1415,35 +1415,60 @@
                             type="text"
                             id="nota-item-nama"
                             placeholder="Ketik Nama Barang..."
-                            class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                            class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400 readonly:bg-slate-50/50 readonly:text-slate-500"
                           />
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                           <div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Satuan</label>
-                            <input
-                              type="text"
-                              id="nota-item-satuan"
-                              placeholder="Pcs, Dus, dll..."
-                              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
-                            />
+                            <!-- Dropdown Satuan -->
+                            <div id="nota-item-satuan-select-wrapper" class="w-full">
+                              <select
+                                id="nota-item-satuan-select"
+                                onchange="handleNotaSatuanSelectChange(this)"
+                                class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
+                              >
+                                <option value="">-- Pilih Satuan --</option>
+                              </select>
+                            </div>
+                            <!-- Custom/Manual Input Satuan -->
+                            <div id="nota-item-satuan-custom-wrapper" class="w-full hidden mt-2">
+                              <div class="relative flex items-center">
+                                <input
+                                  type="text"
+                                  id="nota-item-satuan-custom"
+                                  placeholder="Ketik Satuan..."
+                                  oninput="handleNotaSatuanCustomInput(this)"
+                                  class="w-full pl-4 pr-16 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                                />
+                                <button
+                                  type="button"
+                                  onclick="cancelCustomSatuan()"
+                                  class="absolute right-2 px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-bold text-[10px] transition-all cursor-pointer"
+                                >
+                                  Batal
+                                </button>
+                              </div>
+                            </div>
+                            <!-- Backing hidden input to preserve standard compatibility -->
+                            <input type="hidden" id="nota-item-satuan" value="" />
                           </div>
 
                           <div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Harga (Rp)</label>
                             <input
-                              type="number"
+                              type="text"
                               id="nota-item-harga"
-                              placeholder="0"
-                              min="0"
-                              oninput="calculateNotaItemLineTotal()"
-                              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                              placeholder="Rp 0"
+                              oninput="formatRupiahInput(this); calculateNotaItemLineTotal()"
+                              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400 readonly:bg-slate-50/50 readonly:text-slate-500"
                             />
+                            <p id="nota-item-harga-manual-indicator" class="text-[10px] text-amber-600 font-bold mt-1 ml-1 hidden">⚡ Harga Diubah</p>
                           </div>
                         </div>
 
-                        <div class="grid grid-cols-1">
+                        <div class="grid grid-cols-2 gap-4">
                           <div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Qty</label>
                             <input
@@ -1452,8 +1477,20 @@
                               value="1"
                               min="1"
                               oninput="calculateNotaItemLineTotal()"
-                              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+                              class="w-full px-4 py-3 rounded-xl bg-white border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition-all disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
                             />
+                            <p id="nota-item-qty-error" class="text-[10px] text-rose-500 font-bold mt-1 ml-1 hidden"></p>
+                          </div>
+                          <div class="flex items-center pt-5">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-black text-slate-700 select-none">
+                              <input
+                                type="checkbox"
+                                id="nota-item-harga-paket"
+                                onchange="calculateNotaItemLineTotal()"
+                                class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                              />
+                              Harga Paket
+                            </label>
                           </div>
                         </div>
 
@@ -1463,7 +1500,7 @@
                             type="button"
                             id="btn-toggle-item-discount"
                             onclick="toggleNotaItemDiscount()"
-                            class="text-xs font-black text-indigo-600 uppercase tracking-wider hover:underline flex items-center gap-1 cursor-pointer"
+                            class="text-xs font-black text-indigo-600 uppercase tracking-wider hover:underline flex items-center gap-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:no-underline"
                           >
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Diskon Barang
                           </button>
@@ -1478,21 +1515,20 @@
                             </div>
                             <div class="flex gap-4">
                               <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600">
-                                <input type="radio" name="nota-discount-type" value="nominal" checked onchange="calculateNotaItemLineTotal()" class="accent-indigo-600" /> Nominal (Rp)
+                                <input type="radio" name="nota-discount-type" value="nominal" checked onchange="formatRupiahInput(document.getElementById('nota-item-discount-val'), false); calculateNotaItemLineTotal()" class="accent-indigo-600" /> Nominal (Rp)
                               </label>
                               <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600">
-                                <input type="radio" name="nota-discount-type" value="percentage" onchange="calculateNotaItemLineTotal()" class="accent-indigo-600" /> Persentase (%)
+                                <input type="radio" name="nota-discount-type" value="percentage" onchange="formatRupiahInput(document.getElementById('nota-item-discount-val'), true); calculateNotaItemLineTotal()" class="accent-indigo-600" /> Persentase (%)
                               </label>
                             </div>
                             <div>
                               <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Nilai Diskon</label>
                               <input
-                                type="number"
+                                type="text"
                                 id="nota-item-discount-val"
-                                value="0"
-                                min="0"
-                                oninput="calculateNotaItemLineTotal()"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10"
+                                value="Rp 0"
+                                oninput="formatRupiahInput(this, document.querySelector('input[name=\'nota-discount-type\']:checked')?.value === 'percentage'); calculateNotaItemLineTotal()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
                               />
                             </div>
                           </div>
@@ -1510,15 +1546,26 @@
                           </div>
                         </div>
 
-                        <!-- Add/Edit Button -->
-                        <button
-                          type="button"
-                          id="btn-add-nota-item"
-                          onclick="addNotaItemToList()"
-                          class="w-full mt-2 py-3.5 bg-slate-900 hover:bg-indigo-950 text-white rounded-xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md"
-                        >
-                          <i data-lucide="plus" class="w-4 h-4"></i> <span id="btn-add-nota-item-text">Tambah ke Daftar</span>
-                        </button>
+                        <!-- Add/Edit & Cancel Buttons -->
+                        <div class="flex gap-2 mt-2">
+                          <button
+                            type="button"
+                            id="btn-add-nota-item"
+                            onclick="addNotaItemToList()"
+                            class="flex-1 py-3.5 bg-slate-900 hover:bg-indigo-950 text-white rounded-xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-slate-900"
+                          >
+                            <i data-lucide="plus" class="w-4 h-4"></i> <span id="btn-add-nota-item-text">Tambah ke Daftar</span>
+                          </button>
+                          <button
+                            type="button"
+                            id="btn-cancel-nota-item"
+                            onclick="cancelNotaItemForm()"
+                            class="px-4 py-3.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-black uppercase tracking-widest active:scale-95 transition-all flex items-center justify-center gap-1 cursor-pointer border border-rose-100/50 hidden"
+                            title="Batal"
+                          >
+                            Batal
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1577,21 +1624,20 @@
                             </div>
                             <div class="flex gap-4">
                               <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600">
-                                <input type="radio" name="nota-invoice-discount-type" value="nominal" checked onchange="calculateInvoiceTotals()" class="accent-indigo-600" /> Nominal (Rp)
+                                <input type="radio" name="nota-invoice-discount-type" value="nominal" checked onchange="formatRupiahInput(document.getElementById('nota-form-diskon-nota'), false); calculateInvoiceTotals()" class="accent-indigo-600" /> Nominal (Rp)
                               </label>
                               <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-slate-600">
-                                <input type="radio" name="nota-invoice-discount-type" value="percentage" onchange="calculateInvoiceTotals()" class="accent-indigo-600" /> Persentase (%)
+                                <input type="radio" name="nota-invoice-discount-type" value="percentage" onchange="formatRupiahInput(document.getElementById('nota-form-diskon-nota'), true); calculateInvoiceTotals()" class="accent-indigo-600" /> Persentase (%)
                               </label>
                             </div>
                             <div>
                               <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Nilai Diskon Nota</label>
                               <input
-                                type="number"
+                                type="text"
                                 id="nota-form-diskon-nota"
-                                value="0"
-                                min="0"
-                                oninput="calculateInvoiceTotals()"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500 font-mono"
+                                value="Rp 0"
+                                oninput="formatRupiahInput(this, document.querySelector('input[name=\'nota-invoice-discount-type\']:checked')?.value === 'percentage'); calculateInvoiceTotals()"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-bold outline-none focus:border-indigo-500 font-mono disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
                               />
                             </div>
                           </div>
@@ -1611,12 +1657,11 @@
                           <div>
                             <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1 ml-1">Bayar (Rp)</label>
                             <input
-                              type="number"
+                              type="text"
                               id="nota-form-bayar"
-                              value="0"
-                              min="0"
-                              oninput="calculateInvoiceTotals()"
-                              class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 font-mono"
+                              value="Rp 0"
+                              oninput="formatRupiahInput(this); calculateInvoiceTotals()"
+                              class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-xs text-slate-700 outline-none focus:border-indigo-500 font-mono disabled:bg-slate-50 disabled:cursor-not-allowed disabled:text-slate-400"
                             />
                           </div>
                         </div>
@@ -19377,6 +19422,160 @@
 
       let editingNotaItemIdx = null;
 
+      // =====================================================
+      // RUPIAH FORMATTING HELPERS
+      // =====================================================
+      function formatRupiahText(value) {
+        let clean = String(value).replace(/\D/g, "");
+        if (clean.length > 1) {
+          clean = clean.replace(/^0+/, "");
+        }
+        if (!clean) {
+          return "Rp 0";
+        }
+        let formatted = clean.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        return "Rp " + formatted;
+      }
+
+      function parseRupiahText(value) {
+        let clean = String(value).replace(/\D/g, "");
+        return Number(clean) || 0;
+      }
+
+      function formatRupiahInput(inputEl, isPercentage = false) {
+        if (!inputEl) return;
+        let valStr = inputEl.value;
+        if (isPercentage) {
+          let clean = String(valStr).replace(/\D/g, "");
+          if (clean.length > 1) {
+            clean = clean.replace(/^0+/, "");
+          }
+          let num = Number(clean) || 0;
+          if (num > 100) num = 100;
+          inputEl.value = num;
+        } else {
+          let parsed = parseRupiahText(valStr);
+          inputEl.value = formatRupiahText(parsed);
+        }
+      }
+
+      function getNotaNumberValue(id) {
+        const el = document.getElementById(id);
+        if (!el) return 0;
+        return parseRupiahText(el.value);
+      }
+
+      // =====================================================
+      // STATE MANAGEMENT (MANUAL / MASTER / DEFAULT)
+      // =====================================================
+      let currentNotaFormMode = "DEFAULT"; // "DEFAULT", "MASTER", "MANUAL"
+
+      function setNotaFormState(state) {
+        currentNotaFormMode = state;
+        const nameInput = document.getElementById("nota-item-nama");
+        const satuanInput = document.getElementById("nota-item-satuan");
+        const hargaInput = document.getElementById("nota-item-harga");
+        const qtyInput = document.getElementById("nota-item-qty");
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        const btnToggleDiscount = document.getElementById("btn-toggle-item-discount");
+        const btnAdd = document.getElementById("btn-add-nota-item");
+        const btnCancel = document.getElementById("btn-cancel-nota-item");
+        
+        const selectEl = document.getElementById("nota-item-satuan-select");
+        const customEl = document.getElementById("nota-item-satuan-custom");
+
+        if (!nameInput || !satuanInput || !hargaInput || !qtyInput) return;
+
+        if (state === "DEFAULT") {
+          nameInput.disabled = true;
+          nameInput.readOnly = false;
+          satuanInput.disabled = true;
+          satuanInput.readOnly = false;
+          hargaInput.disabled = true;
+          hargaInput.readOnly = false;
+          qtyInput.disabled = true;
+          qtyInput.readOnly = false;
+          if (hargaPaketCheckbox) {
+            hargaPaketCheckbox.disabled = true;
+          }
+          
+          if (selectEl) selectEl.disabled = true;
+          if (customEl) customEl.disabled = true;
+          
+          if (btnToggleDiscount) {
+            btnToggleDiscount.disabled = true;
+            btnToggleDiscount.classList.add("opacity-50", "cursor-not-allowed");
+          }
+          if (btnAdd) {
+            btnAdd.disabled = true;
+            btnAdd.classList.add("opacity-50", "cursor-not-allowed");
+          }
+          if (btnCancel) {
+            btnCancel.classList.add("hidden");
+          }
+        } else if (state === "MASTER") {
+          nameInput.disabled = false;
+          nameInput.readOnly = true;
+          satuanInput.disabled = false;
+          satuanInput.readOnly = true;
+          hargaInput.disabled = false;
+          hargaInput.readOnly = false; // Harga can be edited
+          qtyInput.disabled = false;
+          qtyInput.readOnly = false;
+          if (hargaPaketCheckbox) {
+            hargaPaketCheckbox.disabled = false;
+          }
+
+          if (selectEl) selectEl.disabled = false;
+          if (customEl) customEl.disabled = false;
+
+          if (btnToggleDiscount) {
+            btnToggleDiscount.disabled = false;
+            btnToggleDiscount.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          if (btnAdd) {
+            btnAdd.disabled = false;
+            btnAdd.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          if (btnCancel) {
+            btnCancel.classList.remove("hidden");
+          }
+        } else if (state === "MANUAL") {
+          nameInput.disabled = false;
+          nameInput.readOnly = false;
+          satuanInput.disabled = false;
+          satuanInput.readOnly = false;
+          hargaInput.disabled = false;
+          hargaInput.readOnly = false;
+          qtyInput.disabled = false;
+          qtyInput.readOnly = false;
+          if (hargaPaketCheckbox) {
+            hargaPaketCheckbox.disabled = false;
+          }
+
+          if (selectEl) selectEl.disabled = false;
+          if (customEl) customEl.disabled = false;
+
+          if (btnToggleDiscount) {
+            btnToggleDiscount.disabled = false;
+            btnToggleDiscount.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          if (btnAdd) {
+            // Enable button only if required inputs are present
+            btnAdd.disabled = false;
+            btnAdd.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          if (btnCancel) {
+            btnCancel.classList.remove("hidden");
+          }
+        }
+      }
+
+      function cancelNotaItemForm() {
+        clearNotaSearch();
+        showToast("Pengisian barang dibatalkan.", "info");
+      }
+
       function openFormBuatNota() {
         document.getElementById("notaListContainer").classList.add("hidden");
         document.getElementById("notaFormContainer").classList.remove("hidden");
@@ -19409,7 +19608,7 @@
         if (!discountSection.classList.contains("hidden")) {
           toggleNotaItemDiscount();
         } else {
-          document.getElementById("nota-item-discount-val").value = 0;
+          document.getElementById("nota-item-discount-val").value = "Rp 0";
         }
 
         // Reset payment fields
@@ -19417,9 +19616,9 @@
         if (invoiceDiscountSection && !invoiceDiscountSection.classList.contains("hidden")) {
           toggleNotaInvoiceDiscount();
         } else {
-          document.getElementById("nota-form-diskon-nota").value = 0;
+          document.getElementById("nota-form-diskon-nota").value = "Rp 0";
         }
-        document.getElementById("nota-form-bayar").value = 0;
+        document.getElementById("nota-form-bayar").value = "Rp 0";
         
         renderActiveNotaItems();
         calculateInvoiceTotals();
@@ -19505,6 +19704,182 @@
         }
       }
 
+      function getQtyPerHargaForItem(item) {
+        if (!item) return 1;
+        if (item.qtyPerHarga !== undefined) return Number(item.qtyPerHarga) || 1;
+        if (!item.idBarang) return 1;
+        
+        // Find matching unit in master units list
+        if (typeof rawSatuanBarangData !== 'undefined' && Array.isArray(rawSatuanBarangData)) {
+          const unitRecord = rawSatuanBarangData.find(s => 
+            String(s.idBarang).trim().toLowerCase() === String(item.idBarang).trim().toLowerCase() &&
+            String(s.satuan || "").trim().toLowerCase() === String(item.satuan || "").trim().toLowerCase()
+          );
+          if (unitRecord) {
+            return Number(unitRecord.qtyInputKonversi) || 1;
+          }
+        }
+        return 1;
+      }
+
+      function handleNotaSatuanSelectChange(selectEl) {
+        const val = selectEl.value;
+        const hiddenInput = document.getElementById("nota-item-satuan");
+        if (!hiddenInput) return;
+        
+        if (val === "__CUSTOM__") {
+          // Show custom input, focus on it
+          document.getElementById("nota-item-satuan-custom-wrapper").classList.remove("hidden");
+          const customInput = document.getElementById("nota-item-satuan-custom");
+          if (customInput) {
+            customInput.value = "";
+            customInput.focus();
+          }
+          hiddenInput.value = "";
+        } else {
+          // Hide custom input
+          document.getElementById("nota-item-satuan-custom-wrapper").classList.add("hidden");
+          hiddenInput.value = val;
+          
+          // Auto fill price if MASTER mode
+          if (selectedNotaProduct && selectedNotaProduct.idBarang) {
+            const matched = selectedNotaProductUnits.find(u => u.satuan.trim().toLowerCase() === val.trim().toLowerCase());
+            if (matched) {
+              document.getElementById("nota-item-harga").value = formatRupiahText(matched.hargaJual || 0);
+            }
+          }
+        }
+        calculateNotaItemLineTotal();
+      }
+
+      function handleNotaSatuanCustomInput(inputEl) {
+        const hiddenInput = document.getElementById("nota-item-satuan");
+        if (hiddenInput) {
+          hiddenInput.value = inputEl.value.trim();
+        }
+        calculateNotaItemLineTotal();
+      }
+
+      function cancelCustomSatuan() {
+        document.getElementById("nota-item-satuan-custom-wrapper").classList.add("hidden");
+        const selectEl = document.getElementById("nota-item-satuan-select");
+        if (selectEl) {
+          selectEl.value = "";
+        }
+        const hiddenInput = document.getElementById("nota-item-satuan");
+        if (hiddenInput) {
+          hiddenInput.value = "";
+        }
+        calculateNotaItemLineTotal();
+      }
+
+      function updateSatuanUIForMode(mode, selectedUnit = "") {
+        const selectEl = document.getElementById("nota-item-satuan-select");
+        const selectWrapper = document.getElementById("nota-item-satuan-select-wrapper");
+        const customWrapper = document.getElementById("nota-item-satuan-custom-wrapper");
+        const customInput = document.getElementById("nota-item-satuan-custom");
+        const hiddenInput = document.getElementById("nota-item-satuan");
+
+        if (!selectEl) return;
+
+        // Reset
+        selectEl.innerHTML = "";
+        selectEl.disabled = (mode === "DEFAULT");
+        customWrapper.classList.add("hidden");
+        if (customInput) customInput.value = "";
+        if (customInput) customInput.disabled = (mode === "DEFAULT");
+        
+        const normSelected = String(selectedUnit || "").trim();
+
+        if (mode === "MANUAL") {
+          selectWrapper.classList.remove("hidden");
+          
+          // Get unique units from rawReferensiData
+          let refUnits = [];
+          if (typeof rawReferensiData !== 'undefined' && Array.isArray(rawReferensiData)) {
+            refUnits = rawReferensiData.filter(r => r.satuan).map(r => r.satuan.trim());
+          }
+          // Remove duplicates (case-insensitive)
+          const seen = new Set();
+          const uniqueUnits = [];
+          for (const u of refUnits) {
+            const lower = u.toLowerCase();
+            if (!seen.has(lower)) {
+              seen.add(lower);
+              uniqueUnits.push(u);
+            }
+          }
+
+          // Add default standard units if they are not already present
+          const stdUnits = ["PCS", "BKS", "PAK", "BALL", "DUS"];
+          for (const u of stdUnits) {
+            const lower = u.toLowerCase();
+            if (!seen.has(lower)) {
+              seen.add(lower);
+              uniqueUnits.push(u);
+            }
+          }
+
+          // Build option list
+          let optionsHtml = `<option value="">-- Pilih Satuan --</option>`;
+          optionsHtml += uniqueUnits.map(u => `<option value="${u}">${u}</option>`).join("");
+          optionsHtml += `<option value="__CUSTOM__" class="text-indigo-600 font-black">+ Satuan Lain...</option>`;
+          selectEl.innerHTML = optionsHtml;
+
+          // Check if selectedUnit is custom or referential
+          if (normSelected) {
+            const isRef = uniqueUnits.some(u => u.toLowerCase() === normSelected.toLowerCase());
+            if (isRef) {
+              const matchedVal = uniqueUnits.find(u => u.toLowerCase() === normSelected.toLowerCase());
+              selectEl.value = matchedVal;
+              if (hiddenInput) hiddenInput.value = matchedVal;
+            } else {
+              selectEl.value = "__CUSTOM__";
+              customWrapper.classList.remove("hidden");
+              if (customInput) customInput.value = selectedUnit;
+              if (hiddenInput) hiddenInput.value = selectedUnit;
+            }
+          } else {
+            selectEl.value = "";
+            if (hiddenInput) hiddenInput.value = "";
+          }
+        } else if (mode === "MASTER") {
+          selectWrapper.classList.remove("hidden");
+          
+          // Sort selectedNotaProductUnits so levelSatuan ascending
+          const sorted = [...selectedNotaProductUnits].sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
+          
+          let optionsHtml = sorted.map(u => `
+            <option value="${u.satuan}">${u.satuan}</option>
+          `).join("");
+          selectEl.innerHTML = optionsHtml;
+
+          if (normSelected) {
+            const matchedUnit = sorted.find(u => u.satuan.toLowerCase() === normSelected.toLowerCase());
+            if (matchedUnit) {
+              selectEl.value = matchedUnit.satuan;
+              if (hiddenInput) hiddenInput.value = matchedUnit.satuan;
+            } else {
+              // fallback
+              if (sorted.length > 0) {
+                selectEl.value = sorted[0].satuan;
+                if (hiddenInput) hiddenInput.value = sorted[0].satuan;
+              }
+            }
+          } else {
+            if (sorted.length > 0) {
+              selectEl.value = sorted[0].satuan;
+              if (hiddenInput) hiddenInput.value = sorted[0].satuan;
+            }
+          }
+        } else {
+          // DEFAULT mode
+          selectEl.innerHTML = `<option value="">-- Pilih Satuan --</option>`;
+          selectEl.disabled = true;
+          if (hiddenInput) hiddenInput.value = "";
+        }
+      }
+
       function clearNotaSearch() {
         document.getElementById("nota-search-barang").value = "";
         document.getElementById("nota-barang-suggestions").classList.add("hidden");
@@ -19512,12 +19887,19 @@
         // Reset editable fields instead of hiding the section
         document.getElementById("nota-item-nama").value = "";
         document.getElementById("nota-item-satuan").value = "";
-        document.getElementById("nota-item-harga").value = "";
+        document.getElementById("nota-item-harga").value = "Rp 0";
         document.getElementById("nota-item-qty").value = "1";
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = false;
+        }
+        document.getElementById("nota-item-discount-val").value = "Rp 0";
         
         selectedNotaProduct = null;
         selectedNotaProductUnits = [];
         
+        updateSatuanUIForMode("DEFAULT", "");
+        setNotaFormState("DEFAULT");
         calculateNotaItemLineTotal();
       }
 
@@ -19532,46 +19914,43 @@
           return;
         }
 
-        const firstUnit = selectedNotaProductUnits[0];
+        // Find Satuan Dasar
+        let baseUnit = null;
+        if (idBarang) {
+          const parentProduct = rawBarangData.find(b => b.idBarang === idBarang);
+          if (parentProduct && parentProduct.satuanDasar) {
+            baseUnit = selectedNotaProductUnits.find(u => u.satuan.toLowerCase() === parentProduct.satuanDasar.toLowerCase());
+          }
+        }
+        if (!baseUnit) {
+          const sorted = [...selectedNotaProductUnits].sort((a, b) => (Number(a.levelSatuan) || 1) - (Number(b.levelSatuan) || 1));
+          baseUnit = sorted[0];
+        }
+
         selectedNotaProduct = {
-          idBarang: firstUnit.idBarang || "",
-          namaBarang: firstUnit.namaBarang,
-          barcode: firstUnit.barcode || ""
+          idBarang: baseUnit.idBarang || "",
+          namaBarang: baseUnit.namaBarang,
+          barcode: baseUnit.barcode || ""
         };
 
         // Populate fields
         document.getElementById("nota-item-nama").value = selectedNotaProduct.namaBarang;
-        document.getElementById("nota-item-satuan").value = firstUnit.satuan;
-        document.getElementById("nota-item-harga").value = firstUnit.hargaJual || 0;
+        document.getElementById("nota-item-harga").value = formatRupiahText(baseUnit.hargaJual || 0);
         document.getElementById("nota-item-qty").value = 1;
-
-        // Set up datalist for quick unit selection options
-        const datalistId = "nota-item-satuan-options";
-        let datalist = document.getElementById(datalistId);
-        if (!datalist) {
-          datalist = document.createElement("datalist");
-          datalist.id = datalistId;
-          document.body.appendChild(datalist);
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = false;
         }
-        document.getElementById("nota-item-satuan").setAttribute("list", datalistId);
-        datalist.innerHTML = selectedNotaProductUnits.map(u => `
-          <option value="${u.satuan}">${u.satuan} (${formatIDR(u.hargaJual || 0)})</option>
-        `).join("");
-
-        // Add auto listener for matching typed unit to its price
-        const satuanInput = document.getElementById("nota-item-satuan");
-        satuanInput.oninput = () => {
-          const val = satuanInput.value.trim().toUpperCase();
-          const matched = selectedNotaProductUnits.find(u => u.satuan.trim().toUpperCase() === val);
-          if (matched) {
-            document.getElementById("nota-item-harga").value = matched.hargaJual || 0;
-            calculateNotaItemLineTotal();
-          }
-        };
 
         // Hide suggestions list
         document.getElementById("nota-barang-suggestions").classList.add("hidden");
         
+        // Update Satuan dropdown with the selected Satuan Dasar
+        updateSatuanUIForMode("MASTER", baseUnit.satuan);
+
+        // Set state to MASTER
+        setNotaFormState("MASTER");
+
         // Focus Qty
         document.getElementById("nota-item-qty").focus();
         document.getElementById("nota-item-qty").select();
@@ -19594,10 +19973,13 @@
         
         // Populate Nama Barang and reset other fields
         document.getElementById("nota-item-nama").value = name;
-        document.getElementById("nota-item-satuan").value = "";
-        document.getElementById("nota-item-harga").value = "";
+        document.getElementById("nota-item-harga").value = "Rp 0";
         document.getElementById("nota-item-qty").value = "1";
-        document.getElementById("nota-item-discount-val").value = "0";
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = false;
+        }
+        document.getElementById("nota-item-discount-val").value = "Rp 0";
         
         const discountSection = document.getElementById("nota-item-discount-section");
         if (discountSection) {
@@ -19608,12 +19990,16 @@
           btnToggle.innerHTML = `<i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Diskon Barang`;
         }
         
+        // Populate Satuan dropdown for MANUAL mode and default to PCS
+        updateSatuanUIForMode("MANUAL", "PCS");
+
+        setNotaFormState("MANUAL");
         calculateNotaItemLineTotal();
         
-        // Focus Satuan field
-        const satuanInput = document.getElementById("nota-item-satuan");
-        if (satuanInput) {
-          satuanInput.focus();
+        // Focus Qty input or Harga
+        const qtyInput = document.getElementById("nota-item-qty");
+        if (qtyInput) {
+          qtyInput.focus();
         }
         showToast(`Barang manual "${name}" siap diisi.`, "success");
       }
@@ -19629,10 +20015,13 @@
         
         // Reset form inputs except name
         document.getElementById("nota-item-nama").value = "";
-        document.getElementById("nota-item-satuan").value = "";
-        document.getElementById("nota-item-harga").value = "";
+        document.getElementById("nota-item-harga").value = "Rp 0";
         document.getElementById("nota-item-qty").value = "1";
-        document.getElementById("nota-item-discount-val").value = "0";
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = false;
+        }
+        document.getElementById("nota-item-discount-val").value = "Rp 0";
         const discountSection = document.getElementById("nota-item-discount-section");
         if (discountSection) {
           discountSection.classList.add("hidden");
@@ -19642,6 +20031,10 @@
           btnToggle.innerHTML = `<i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Diskon Barang`;
         }
         
+        // Populate Satuan dropdown for MANUAL mode and default to PCS
+        updateSatuanUIForMode("MANUAL", "PCS");
+
+        setNotaFormState("MANUAL");
         calculateNotaItemLineTotal();
         
         // Focus Nama Barang input
@@ -19764,20 +20157,53 @@
         if (section.classList.contains("hidden")) {
           section.classList.remove("hidden");
           btn.innerHTML = `<i data-lucide="minus" class="w-3.5 h-3.5"></i> Sembunyikan Diskon`;
-          document.getElementById("nota-form-diskon-nota").value = 0;
+          document.getElementById("nota-form-diskon-nota").value = "Rp 0";
         } else {
           section.classList.add("hidden");
           btn.innerHTML = `<i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Diskon Nota`;
-          document.getElementById("nota-form-diskon-nota").value = 0;
+          document.getElementById("nota-form-diskon-nota").value = "Rp 0";
         }
         lucide.createIcons();
         calculateInvoiceTotals();
       }
 
+      function getMasterPriceForCurrentSelection() {
+        if (selectedNotaProduct && selectedNotaProduct.idBarang) {
+          const satuanInputVal = (document.getElementById("nota-item-satuan")?.value || "").trim().toLowerCase();
+          if (satuanInputVal) {
+            const matched = selectedNotaProductUnits.find(u => u.satuan.trim().toLowerCase() === satuanInputVal);
+            if (matched) {
+              return Number(matched.hargaJual) || 0;
+            }
+          }
+        }
+        return null;
+      }
+
       function calculateNotaItemLineTotal() {
-        const hargaJual = Number(document.getElementById("nota-item-harga").value) || 0;
-        const qty = Number(document.getElementById("nota-item-qty").value) || 1;
+        const hargaJual = getNotaNumberValue("nota-item-harga");
+        const qty = Number(document.getElementById("nota-item-qty").value) || 0;
         
+        // Check "Harga Paket" checkbox state
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        const isHargaPaket = hargaPaketCheckbox ? hargaPaketCheckbox.checked : false;
+        
+        // qtyPerHarga is qty if it's a package price, else 1
+        const qtyPerHarga = (isHargaPaket && qty > 0) ? qty : 1;
+
+        // Ensure error elements are always clean and hidden
+        const errorEl = document.getElementById("nota-item-qty-error");
+        if (errorEl) {
+          errorEl.innerText = "";
+          errorEl.classList.add("hidden");
+        }
+        
+        const btnAdd = document.getElementById("btn-add-nota-item");
+        if (btnAdd && currentNotaFormMode !== "DEFAULT") {
+          btnAdd.disabled = false;
+          btnAdd.classList.remove("opacity-50", "cursor-not-allowed");
+        }
+
         // Check if discount section is active
         const discountSection = document.getElementById("nota-item-discount-section");
         const isDiscountActive = !discountSection.classList.contains("hidden");
@@ -19787,9 +20213,9 @@
         let discountType = "nominal";
 
         if (isDiscountActive) {
-          discountVal = Number(document.getElementById("nota-item-discount-val").value) || 0;
           const typeRadio = document.querySelector('input[name="nota-discount-type"]:checked');
           discountType = typeRadio ? typeRadio.value : "nominal";
+          discountVal = getNotaNumberValue("nota-item-discount-val");
 
           if (discountType === "percentage") {
             discountAmountPerUnit = (hargaJual * discountVal) / 100;
@@ -19798,8 +20224,22 @@
           }
         }
 
+        // Check if price is manually changed from master
+        const indicatorEl = document.getElementById("nota-item-harga-manual-indicator");
+        if (indicatorEl) {
+          const masterPrice = getMasterPriceForCurrentSelection();
+          if (masterPrice !== null && currentNotaFormMode === "MASTER" && hargaJual !== masterPrice) {
+            indicatorEl.classList.remove("hidden");
+          } else {
+            indicatorEl.classList.add("hidden");
+          }
+        }
+
         const finalPrice = Math.max(0, hargaJual - discountAmountPerUnit);
-        const lineTotal = finalPrice * qty;
+        
+        // Calculate total using Formula
+        // If Harga Paket is checked, lineTotal is simply finalPrice (since hargaJual represents total price before discount)
+        const lineTotal = isHargaPaket ? finalPrice : (qty * finalPrice);
 
         document.getElementById("nota-item-final-price-preview").innerText = formatIDR(finalPrice);
         document.getElementById("nota-item-total-preview").innerText = formatIDR(lineTotal);
@@ -19807,6 +20247,8 @@
         return {
           hargaJual,
           qty,
+          qtyPerHarga,
+          isHargaPaket,
           isDiscountActive,
           discountVal,
           discountType,
@@ -19819,7 +20261,7 @@
       function addNotaItemToList() {
         const namaBarang = document.getElementById("nota-item-nama").value.trim();
         const satuan = document.getElementById("nota-item-satuan").value.trim();
-        const harga = Number(document.getElementById("nota-item-harga").value) || 0;
+        const harga = getNotaNumberValue("nota-item-harga");
         const qty = Number(document.getElementById("nota-item-qty").value) || 1;
 
         if (!namaBarang) {
@@ -19847,11 +20289,13 @@
           barcode: selectedNotaProduct ? selectedNotaProduct.barcode : "",
           satuan: satuan,
           qty: qty,
+          qtyPerHarga: calc.qtyPerHarga,
           harga: harga, // original unit price
           diskon: calc.discountAmountPerUnit, // discount per unit
           diskonTipe: calc.discountType,
           diskonNilai: calc.discountVal,
-          subtotal: calc.lineTotal // final total for this line
+          subtotal: calc.lineTotal, // final total for this line
+          isHargaPaket: calc.isHargaPaket
         };
 
         if (editingNotaItemIdx !== null) {
@@ -19867,17 +20311,22 @@
           lucide.createIcons();
         } else {
           // Add new item
-          // Check if item already exists with same unit and price
+          // Check if item already exists with same unit, price, and is NOT a package
           const existingIdx = activeNotaCustomerItems.findIndex(item => 
-            item.namaBarang.toLowerCase() === namaBarang.toLowerCase() && item.satuan.toLowerCase() === satuan.toLowerCase()
+            item.namaBarang.toLowerCase() === namaBarang.toLowerCase() && 
+            item.satuan.toLowerCase() === satuan.toLowerCase() &&
+            !item.isHargaPaket && !calc.isHargaPaket &&
+            item.harga === harga
           );
 
           if (existingIdx > -1) {
             // Merge Qty
-            activeNotaCustomerItems[existingIdx].qty += qty;
-            // Recalculate line total
+            const currentQty = activeNotaCustomerItems[existingIdx].qty + qty;
+            const itemQtyPerHarga = activeNotaCustomerItems[existingIdx].qtyPerHarga || 1;
+
+            activeNotaCustomerItems[existingIdx].qty = currentQty;
             const finalPrice = Math.max(0, activeNotaCustomerItems[existingIdx].harga - activeNotaCustomerItems[existingIdx].diskon);
-            activeNotaCustomerItems[existingIdx].subtotal = finalPrice * activeNotaCustomerItems[existingIdx].qty;
+            activeNotaCustomerItems[existingIdx].subtotal = (currentQty / itemQtyPerHarga) * finalPrice;
             showToast("Barang sudah ada, Qty digabungkan.", "info");
           } else {
             activeNotaCustomerItems.push(itemData);
@@ -19888,8 +20337,12 @@
         // Reset form inputs
         document.getElementById("nota-item-nama").value = "";
         document.getElementById("nota-item-satuan").value = "";
-        document.getElementById("nota-item-harga").value = "";
+        document.getElementById("nota-item-harga").value = "Rp 0";
         document.getElementById("nota-item-qty").value = "1";
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = false;
+        }
         document.getElementById("nota-search-barang").value = "";
         
         // Hide discount if active
@@ -19897,10 +20350,12 @@
         if (!discountSection.classList.contains("hidden")) {
           toggleNotaItemDiscount();
         } else {
-          document.getElementById("nota-item-discount-val").value = 0;
+          document.getElementById("nota-item-discount-val").value = "Rp 0";
         }
 
         selectedNotaProduct = null;
+        updateSatuanUIForMode("DEFAULT", "");
+        setNotaFormState("DEFAULT");
 
         // Render & Recalculate everything
         renderActiveNotaItems();
@@ -19921,9 +20376,12 @@
         }
 
         container.innerHTML = activeNotaCustomerItems.map((item, idx) => {
-          const originalTotal = item.harga * item.qty;
+          const itemQtyPerHarga = getQtyPerHargaForItem(item);
+          const isPaket = item.isHargaPaket || false;
+          
+          const originalTotal = isPaket ? item.harga : ((item.qty / itemQtyPerHarga) * item.harga);
           const finalPrice = Math.max(0, item.harga - item.diskon);
-          const finalTotal = finalPrice * item.qty;
+          const finalTotal = isPaket ? finalPrice : ((item.qty / itemQtyPerHarga) * finalPrice);
           const hasDiscount = item.diskon > 0;
 
           // Build Discount Line
@@ -19931,11 +20389,15 @@
           if (hasDiscount) {
             discountHtml = `
               <div class="text-[11px] font-bold text-rose-500 mt-1 flex justify-between bg-rose-50/50 px-2.5 py-1.5 rounded-lg border border-rose-100/30">
-                <span>(-) Diskon ${formatIDR(item.diskon * item.qty)}</span>
+                <span>(-) Diskon ${formatIDR(isPaket ? item.diskon : ((item.qty / itemQtyPerHarga) * item.diskon))}</span>
                 <span>= ${formatIDR(finalTotal)}</span>
               </div>
             `;
           }
+
+          const displayPriceLine = isPaket 
+            ? `<span>${item.qty} ${item.satuan} = ${formatIDR(item.harga)} <span class="text-[10px] text-amber-600 font-bold ml-1">📦 Paket</span></span>`
+            : `<span>${item.qty} ${item.satuan} × ${formatIDR(item.harga)}</span>`;
 
           return `
             <div class="p-4 bg-white border border-slate-100 rounded-2xl shadow-sm space-y-3 hover:border-indigo-100 transition-all animate-in fade-in zoom-in-95 duration-150">
@@ -19949,7 +20411,7 @@
 
               <div class="text-slate-600 text-[11px] font-semibold font-sans">
                 <div class="flex justify-between">
-                  <span>${item.qty} ${item.satuan} × ${formatIDR(item.harga)}</span>
+                  ${displayPriceLine}
                   <span class="font-mono text-slate-800 font-black">${formatIDR(originalTotal)}</span>
                 </div>
                 ${discountHtml}
@@ -19976,9 +20438,12 @@
         
         // Populate fields
         document.getElementById("nota-item-nama").value = item.namaBarang;
-        document.getElementById("nota-item-satuan").value = item.satuan;
-        document.getElementById("nota-item-harga").value = item.harga;
+        document.getElementById("nota-item-harga").value = formatRupiahText(item.harga);
         document.getElementById("nota-item-qty").value = item.qty;
+        const hargaPaketCheckbox = document.getElementById("nota-item-harga-paket");
+        if (hargaPaketCheckbox) {
+          hargaPaketCheckbox.checked = item.isHargaPaket || false;
+        }
 
         // If there is discount
         const hasDiscount = item.diskonNilai > 0 || item.diskon > 0;
@@ -19988,28 +20453,41 @@
         if (hasDiscount) {
           discountSection.classList.remove("hidden");
           btnToggleDiscount.innerHTML = `<i data-lucide="minus" class="w-3.5 h-3.5"></i> Sembunyikan Diskon`;
-          document.getElementById("nota-item-discount-val").value = item.diskonNilai || (item.diskon * 1); // fallback
           
           const nominalRadio = document.querySelector('input[name="nota-discount-type"][value="nominal"]');
           const percentageRadio = document.querySelector('input[name="nota-discount-type"][value="percentage"]');
           
           if (item.diskonTipe === "percentage") {
             if (percentageRadio) percentageRadio.checked = true;
+            document.getElementById("nota-item-discount-val").value = item.diskonNilai || 0;
           } else {
             if (nominalRadio) nominalRadio.checked = true;
+            document.getElementById("nota-item-discount-val").value = formatRupiahText(item.diskonNilai || (item.diskon * 1));
           }
         } else {
           discountSection.classList.add("hidden");
           btnToggleDiscount.innerHTML = `<i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Diskon Barang`;
-          document.getElementById("nota-item-discount-val").value = 0;
+          document.getElementById("nota-item-discount-val").value = "Rp 0";
         }
 
         // Keep reference to product if we matched one
-        selectedNotaProduct = {
+        selectedNotaProduct = item.idBarang ? {
           idBarang: item.idBarang,
           namaBarang: item.namaBarang,
           barcode: item.barcode
-        };
+        } : null;
+
+        if (item.idBarang) {
+          selectedNotaProductUnits = rawSatuanBarangData.filter(u => 
+            u.idBarang === item.idBarang
+          );
+        } else {
+          selectedNotaProductUnits = [];
+        }
+
+        const mode = item.idBarang ? "MASTER" : "MANUAL";
+        updateSatuanUIForMode(mode, item.satuan);
+        setNotaFormState(mode);
 
         // Set index of editing item
         editingNotaItemIdx = idx;
@@ -20074,9 +20552,9 @@
         let diskonNotaType = "nominal";
 
         if (isInvoiceDiscountActive) {
-          diskonNotaVal = Number(document.getElementById("nota-form-diskon-nota").value) || 0;
           const typeRadio = document.querySelector('input[name="nota-invoice-discount-type"]:checked');
           diskonNotaType = typeRadio ? typeRadio.value : "nominal";
+          diskonNotaVal = getNotaNumberValue("nota-form-diskon-nota");
 
           if (diskonNotaType === "percentage") {
             diskonNota = (subtotal * diskonNotaVal) / 100;
@@ -20086,7 +20564,7 @@
         }
         
         const total = Math.max(0, subtotal - diskonNota);
-        const bayar = Number(document.getElementById("nota-form-bayar").value) || 0;
+        const bayar = getNotaNumberValue("nota-form-bayar");
         const kembali = Math.max(0, bayar - total);
 
         // Update elements in DOM
@@ -20138,7 +20616,8 @@
         } else {
           activeNotaCustomerItems.forEach(it => {
             const hasDiscount = it.diskon > 0;
-            const originalTotal = it.harga * it.qty;
+            const itemQtyPerHarga = getQtyPerHargaForItem(it);
+            const originalTotal = (it.qty / itemQtyPerHarga) * it.harga;
             const lineTotal = it.subtotal;
 
             itemsHtml += `
@@ -20153,7 +20632,7 @@
               itemsHtml += `
                 <div class="flex justify-between items-center text-[9px] text-rose-500 font-mono mt-0.5">
                   <span>(-) Diskon:</span>
-                  <span>-${formatIDR(it.diskon * it.qty)}</span>
+                  <span>-${formatIDR((it.qty / itemQtyPerHarga) * it.diskon)}</span>
                 </div>
                 <div class="flex justify-between items-center text-[9px] font-bold text-slate-700 font-mono">
                   <span>Total Setelah Diskon:</span>
@@ -20174,7 +20653,7 @@
         
         let diskonNota = 0;
         if (isInvoiceDiscountActive) {
-          const diskonNotaVal = Number(document.getElementById("nota-form-diskon-nota").value) || 0;
+          const diskonNotaVal = getNotaNumberValue("nota-form-diskon-nota");
           const typeRadio = document.querySelector('input[name="nota-invoice-discount-type"]:checked');
           const diskonNotaType = typeRadio ? typeRadio.value : "nominal";
 
@@ -20186,7 +20665,7 @@
         }
 
         const total = Math.max(0, subtotal - diskonNota);
-        const bayar = Number(document.getElementById("nota-form-bayar").value) || 0;
+        const bayar = getNotaNumberValue("nota-form-bayar");
         const kembali = Math.max(0, bayar - total);
 
         contentEl.innerHTML = `
@@ -20283,9 +20762,9 @@
         let diskonNotaType = "nominal";
 
         if (isInvoiceDiscountActive) {
-          diskonNotaVal = Number(document.getElementById("nota-form-diskon-nota").value) || 0;
           const typeRadio = document.querySelector('input[name="nota-invoice-discount-type"]:checked');
           diskonNotaType = typeRadio ? typeRadio.value : "nominal";
+          diskonNotaVal = getNotaNumberValue("nota-form-diskon-nota");
 
           if (diskonNotaType === "percentage") {
             diskonNota = (subtotal * diskonNotaVal) / 100;
@@ -20295,7 +20774,7 @@
         }
 
         const total = Math.max(0, subtotal - diskonNota);
-        const bayar = Number(document.getElementById("nota-form-bayar").value) || 0;
+        const bayar = getNotaNumberValue("nota-form-bayar");
         const kembali = Math.max(0, bayar - total);
         const customer = document.getElementById("nota-form-customer").value.trim() || "Umum";
         const kasir = document.getElementById("nota-form-kasir").value.trim() || "Admin";
@@ -20581,7 +21060,8 @@
         let itemsHtml = "";
         nota.items.forEach(it => {
           const hasDiscount = it.diskon > 0;
-          const originalTotal = it.harga * it.qty;
+          const itemQtyPerHarga = getQtyPerHargaForItem(it);
+          const originalTotal = (it.qty / itemQtyPerHarga) * it.harga;
           const finalTotal = it.subtotal;
 
           itemsHtml += `
@@ -20596,7 +21076,7 @@
             itemsHtml += `
               <div class="flex justify-between items-center text-[9px] text-rose-500 font-mono mt-0.5">
                 <span>(-) Diskon:</span>
-                <span>-${formatIDR(it.diskon * it.qty)}</span>
+                <span>-${formatIDR((it.qty / itemQtyPerHarga) * it.diskon)}</span>
               </div>
               <div class="flex justify-between items-center text-[9px] font-bold text-slate-700 font-mono">
                 <span>Total Setelah Diskon:</span>
@@ -20680,7 +21160,8 @@
         let itemsHtml = "";
         nota.items.forEach(it => {
           const hasDiscount = it.diskon > 0;
-          const originalTotal = it.harga * it.qty;
+          const itemQtyPerHarga = getQtyPerHargaForItem(it);
+          const originalTotal = (it.qty / itemQtyPerHarga) * it.harga;
           const finalTotal = it.subtotal;
 
           itemsHtml += `
@@ -20695,7 +21176,7 @@
             itemsHtml += `
               <div class="item-discount">
                 <span>(-) Diskon:</span>
-                <span>-${formatIDR(it.diskon * it.qty)}</span>
+                <span>-${formatIDR((it.qty / itemQtyPerHarga) * it.diskon)}</span>
               </div>
               <div class="item-discount" style="font-weight: bold; color: #000;">
                 <span>Total Setelah Diskon:</span>

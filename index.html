@@ -16,6 +16,7 @@
     />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
       body {
@@ -419,6 +420,14 @@
               <i data-lucide="download" class="w-4 h-4"></i> PDF
             </button>
           </div>
+
+          <!-- Download Gambar -->
+          <button 
+            onclick="downloadNotaAsImageBtn()"
+            class="py-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <i data-lucide="camera" class="w-4 h-4"></i> 📷 Download Gambar
+          </button>
 
           <!-- Share WhatsApp -->
           <button 
@@ -1246,7 +1255,7 @@
                 </div>
 
                 <!-- SEARCH & ACTIONS BAR -->
-                <div class="flex flex-col sm:flex-row items-center gap-2 w-full">
+                <div class="flex items-center gap-2 w-full">
                   <div class="flex-1 relative group w-full min-w-0">
                     <i data-lucide="search" class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-300 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-indigo-500 transition-colors"></i>
                     <input
@@ -1257,6 +1266,14 @@
                       class="w-full pl-10 md:pl-16 pr-12 py-3.5 md:py-4.5 rounded-xl md:rounded-2xl bg-white font-bold text-xs md:text-sm shadow-sm outline-none border border-slate-100 focus:ring-4 focus:ring-indigo-500/10 transition-all"
                     />
                   </div>
+                  <button
+                    id="btn-nota-customer-refresh"
+                    onclick="fetchNotaCustomerData(true)"
+                    class="flex-none p-3.5 md:p-4.5 bg-white border border-slate-100 text-slate-400 rounded-xl md:rounded-2xl hover:text-indigo-600 hover:border-indigo-100 transition-all shadow-sm active:scale-95 flex items-center justify-center shrink-0 cursor-pointer"
+                    title="Refresh Data Nota"
+                  >
+                    <i data-lucide="rotate-cw" class="w-4 h-4 md:w-5 md:h-5"></i>
+                  </button>
                 </div>
 
                 <!-- Table/List Container -->
@@ -4170,6 +4187,7 @@
             rawHargaPromoData = res.hargaPromo || [];
             rawDataSupplierData = res.masterSupplier || [];
             rawPembelianBarangData = sanitizePembelianBarangData(res.pembelianBarang || []);
+            rawNotaCustomerData = res.notaCustomer || [];
             
             // Check if database is truly empty
             if (rawDataSupplierData.length === 0 && rawBarangData.length === 0 && rawPembelianBarangData.length === 0) {
@@ -4432,7 +4450,7 @@
             if (rawOrderHeaders.length === 0) fetchOrderBarangData();
             if (rawDataSupplierData.length === 0) fetchDataSupplierData();
           } else if (page === "nota-customer") {
-            renderNotaCustomerList();
+            fetchNotaCustomerData();
           }
         }
 
@@ -6042,6 +6060,7 @@
           rawOrderHeaders = [];
           rawOrderDetails = [];
           rawHargaPromoData = [];
+          rawNotaCustomerData = [];
           
           // Render views immediately as empty / loading
           try { renderDashboard(); } catch(e) {}
@@ -6051,6 +6070,7 @@
           try { renderBarangData(); } catch(e) {}
           try { renderPembelianBarangData(); } catch(e) {}
           try { renderOrderBarangData(); } catch(e) {}
+          try { renderNotaCustomerList(); } catch(e) {}
 
           const res = await callGAS("ambilInisialisasiData");
           showLoading(false);
@@ -6076,6 +6096,7 @@
             rawOrderHeaders = res.orderHeaders || [];
             rawOrderDetails = res.orderDetails || [];
             rawHargaPromoData = res.hargaPromo || [];
+            rawNotaCustomerData = res.notaCustomer || [];
 
             // UI populate filters
             try { populateKategoriDropdown(); } catch(e) {}
@@ -6091,6 +6112,7 @@
             renderBarangData();
             renderPembelianBarangData();
             renderOrderBarangData();
+            renderNotaCustomerList();
 
             showToast("Semua data berhasil diperbarui!", "success");
           } else {
@@ -19403,6 +19425,61 @@
         return `${day}-${month}-${year}`;
       }
 
+      async function fetchNotaCustomerData(force = false) {
+        if (!force && rawNotaCustomerData && rawNotaCustomerData.length > 0) {
+          renderNotaCustomerList();
+          return;
+        }
+
+        const tbody = document.getElementById("notaCustomerTableBody");
+        const cardContainer = document.getElementById("notaCustomerCardContainer");
+        const emptyState = document.getElementById("notaCustomerEmptyState");
+
+        if (tbody) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="px-8 py-10 text-center font-bold text-slate-400">
+                <div class="flex flex-col items-center justify-center gap-2">
+                  <div class="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                  <span>Memuat Riwayat Nota dari Server...</span>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+        if (cardContainer) {
+          cardContainer.innerHTML = `
+            <div class="text-center font-bold text-slate-400 py-10">
+              <div class="flex flex-col items-center justify-center gap-2">
+                <div class="w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <span>Memuat Riwayat Nota dari Server...</span>
+              </div>
+            </div>
+          `;
+        }
+        if (emptyState) {
+          emptyState.classList.add("hidden");
+        }
+
+        try {
+          const res = await callGAS("ambilNotaCustomer");
+          if (res && res.sukses) {
+            rawNotaCustomerData = res.data || [];
+            localStorage.setItem("toko_wina_nota_customer", JSON.stringify(rawNotaCustomerData));
+          } else {
+            console.error("Gagal mengambil data nota dari GAS:", res ? res.pesan : "No response");
+            showToast("Gagal menyinkronkan riwayat nota dari server. Menggunakan data cache.", "error");
+            loadNotaCustomerData();
+          }
+        } catch (e) {
+          console.error("Error fetchNotaCustomerData:", e);
+          showToast("Koneksi bermasalah saat mengambil riwayat nota. Menggunakan data cache.", "error");
+          loadNotaCustomerData();
+        }
+
+        renderNotaCustomerList();
+      }
+
       function loadNotaCustomerData() {
         try {
           const stored = localStorage.getItem("toko_wina_nota_customer");
@@ -20852,6 +20929,7 @@
             // Close form and render list
             closeFormBuatNota();
             renderNotaCustomerList();
+            fetchNotaCustomerData(true);
 
             // Show success popup with choice options
             showNotaSuccessModal(noNota);
@@ -20927,7 +21005,7 @@
         };
         
         document.getElementById("btn-success-jpg").onclick = function() {
-          showToast("Simpan JPG akan tersedia pada Milestone berikutnya!", "info");
+          downloadNotaAsImage(noNota);
         };
         
         document.getElementById("btn-success-wa").onclick = function() {
@@ -21003,6 +21081,9 @@
                   <button onclick="downloadPDF('${it.noNota}')" class="p-2 bg-slate-50 border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition-all active:scale-95 cursor-pointer" title="Download PDF">
                     <i data-lucide="download" class="w-4 h-4"></i>
                   </button>
+                  <button onclick="downloadNotaAsImage('${it.noNota}')" class="p-2 bg-slate-50 border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl transition-all active:scale-95 cursor-pointer" title="Download Gambar">
+                    <i data-lucide="camera" class="w-4 h-4"></i>
+                  </button>
                   <button onclick="shareWhatsApp('${it.noNota}')" class="p-2 bg-emerald-50 border border-emerald-100 text-emerald-600 rounded-xl hover:bg-emerald-100 transition-all active:scale-95 cursor-pointer" title="Share WhatsApp">
                     <i data-lucide="send" class="w-4 h-4"></i>
                   </button>
@@ -21024,18 +21105,18 @@
                 <p class="flex items-center gap-1.5"><i data-lucide="user" class="w-3.5 h-3.5 text-slate-400"></i> ${it.customer} <span class="text-slate-300">|</span> Kasir: ${it.kasir || 'Admin'}</p>
                 <p class="flex items-center gap-1.5 text-indigo-600 font-black text-sm pt-1"><i data-lucide="wallet" class="w-3.5 h-3.5"></i> ${formatIDR(it.total)}</p>
               </div>
-              <div class="grid grid-cols-4 gap-1.5 pt-2 border-t border-slate-50">
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-50">
                 <button onclick="viewNotaDetail('${it.noNota}')" class="py-2.5 bg-slate-50 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer">
                   <i data-lucide="eye" class="w-3.5 h-3.5"></i> Detail
                 </button>
                 <button onclick="cetakNota('${it.noNota}')" class="py-2.5 bg-indigo-50 text-indigo-600 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer">
                   <i data-lucide="printer" class="w-3.5 h-3.5"></i> Cetak
                 </button>
-                <button onclick="downloadPDF('${it.noNota}')" class="py-2.5 bg-slate-50 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer">
-                  <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                <button onclick="downloadNotaAsImage('${it.noNota}')" class="py-2.5 bg-slate-50 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer">
+                  <i data-lucide="camera" class="w-3.5 h-3.5"></i> Gambar
                 </button>
                 <button onclick="shareWhatsApp('${it.noNota}')" class="py-2.5 bg-emerald-50 text-emerald-600 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer">
-                  <i data-lucide="send" class="w-3.5 h-3.5"></i> WA
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i> Share WA
                 </button>
               </div>
             </div>
@@ -21322,16 +21403,96 @@
         printThermalReceipt(noNota);
       }
 
-      function shareWhatsApp(noNota) {
-        const nota = rawNotaCustomerData.find(n => n.noNota === noNota);
-        if (!nota) {
-          showToast("Data nota tidak ditemukan.", "error");
-          return;
+      async function generateNotaImageBlob(noNota) {
+        if (activeNotaCustomerPrintId !== noNota) {
+          viewNotaDetail(noNota);
         }
 
-        const msg = `TOKO WINA\n\nNota:\n${nota.noNota}\n\nTanggal:\n${nota.tanggal}\n\nCustomer:\n${nota.customer}\n\nTotal:\n${formatIDR(nota.total)}\n\nTerima kasih sudah berbelanja.`;
-        const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
-        window.open(url, "_blank");
+        const element = document.getElementById("thermal-receipt-preview");
+        if (!element) {
+          throw new Error("Preview element tidak ditemukan.");
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        const options = {
+          scale: 3,
+          useCORS: true,
+          logging: false,
+          backgroundColor: "#ffffff"
+        };
+
+        const canvas = await html2canvas(element, options);
+        return new Promise((resolve) => {
+          canvas.toBlob((blob) => {
+            resolve(blob);
+          }, "image/png", 1.0);
+        });
+      }
+
+      async function downloadNotaAsImage(noNota) {
+        showLoading(true, "Mempersiapkan gambar...");
+        try {
+          const blob = await generateNotaImageBlob(noNota);
+          if (!blob) throw new Error("Gagal membuat gambar nota.");
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${noNota}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast(`✓ Gambar ${noNota}.png berhasil diunduh!`, "success");
+        } catch (e) {
+          console.error("Gagal download gambar:", e);
+          showToast("Gagal mengunduh gambar: " + e.toString(), "error");
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      function downloadNotaAsImageBtn() {
+        if (!activeNotaCustomerPrintId) return;
+        downloadNotaAsImage(activeNotaCustomerPrintId);
+      }
+
+      async function shareWhatsApp(noNota) {
+        showLoading(true, "Mempersiapkan gambar...");
+        try {
+          const blob = await generateNotaImageBlob(noNota);
+          if (!blob) throw new Error("Gagal membuat gambar nota.");
+
+          const file = new File([blob], `${noNota}.png`, { type: "image/png" });
+
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            showLoading(false);
+            await navigator.share({
+              files: [file],
+              title: `Nota ${noNota} - Toko Wina`,
+              text: `Berikut adalah nota transaksi ${noNota} dari Toko Wina.`
+            });
+          } else {
+            showLoading(false);
+            showToast("Membagikan gambar tidak didukung di perangkat ini. Mengunduh gambar secara otomatis...", "info");
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${noNota}.png`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+          }
+        } catch (e) {
+          showLoading(false);
+          if (e.name !== "AbortError") {
+            console.error("Gagal membagikan gambar:", e);
+            showToast("Gagal membagikan gambar: " + e.toString(), "error");
+          }
+        }
       }
 
       function cetakNotaCustomer() {
